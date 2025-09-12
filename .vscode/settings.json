@@ -1,0 +1,8 @@
+{
+    "css.validate": false,  // 禁用 VS Code 内置 CSS 验证
+    "scss.validate": false, // 如果使用 SCSS 也需要禁用
+    "editor.quickSuggestions": {
+      "strings": true  // 启用字符串内智能提示（如 class="..."）
+    },
+    "kiroAgent.configureMCP": "Disabled"
+  }

@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+// 多环境数据库配置
+// 开发环境：SQLite
+// 生产环境：PostgreSQL
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// 用户模型
+model User {
+  id          String    @id @default(cuid())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  bio         String?
+  avatar      String?
+  lastLoginAt DateTime? @map("last_login_at")
+  role        UserRole  @default(USER)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // 关联关系
+  userPreferences UserPreferences?
+  discussions     Discussion[]
+  comments        Comment[]
+
+  @@map("users")
+}
+
+// 用户偏好设置模型
+model UserPreferences {
+  id             String   @id @default(cuid())
+  userId         String   @unique @map("user_id")
+  theme          String   @default("dark")
+  codePanelRatio Int      @default(50) @map("code_panel_ratio")
+  language       String   @default("javascript")
+  notifications  Boolean  @default(true)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+// 社区帖子模型
+model Discussion {
+  id        String             @id @default(cuid())
+  title     String
+  content   String
+  excerpt   String
+  category  DiscussionCategory
+  views     Int                @default(0)
+  likes     Int                @default(0)
+  authorId  String             @map("author_id")
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+
+  // 关联关系
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+
+  @@map("discussions")
+}
+
+// 评论模型
+model Comment {
+  id           String   @id @default(cuid())
+  content      String
+  likes        Int      @default(0)
+  authorId     String   @map("author_id")
+  discussionId String   @map("discussion_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+// 枚举类型
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum DiscussionCategory {
+  TECH
+  EXPERIENCE
+  PROJECT
+  HELP
+}
+
+// 课程模型
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  level       String?
+  cover       String?
+  url         String
+  tags        Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("courses")
+}
+
+// 资源模型（后续可从 JSON 迁移至此表）
+model Resource {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  cover       String?
+  url         String
+  tags        Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("resources")
+}
