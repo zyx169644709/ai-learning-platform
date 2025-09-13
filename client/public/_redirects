@@ -1,1 +1,2 @@
-/*    /index.html   200
+# 确保静态资源正确重定向
+/assets/* /assets/:splat 200

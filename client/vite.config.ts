@@ -38,11 +38,19 @@ export default defineConfig({
       output: {
         assetFileNames: 'assets/[name].[hash][extname]'
       }
-    }
+    },
+    // 确保静态资源正确复制
+    copyPublicDir: true
   },
+  // 确保静态资源正确处理
+  publicDir: 'public',
   server: {
     proxy: {
       '/api': 'http://localhost:3000'
+    },
+    // 确保静态资源正确服务
+    fs: {
+      strict: false
     }
   },
   css: {

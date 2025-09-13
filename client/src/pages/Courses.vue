@@ -12,7 +12,7 @@
       <div class="grid">
         <div class="card" v-for="c in filteredCourses" :key="c.id" @click="goToBilibiliVideo(c)">
           <div class="thumb">
-            <img :src="c.cover" :alt="c.title" />
+            <img :src="getCourseCoverUrl(c.cover)" :alt="c.title" @error="(e) => handleImageError(e)" @load="(e) => handleImageLoad(e)" />
             
             <!-- 添加播放按钮图标 -->
             <div class="play-overlay" v-if="c.bilibiliUrl">
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { getCourseCoverUrl, handleImageError, handleImageLoad } from '@/utils/imageUtils'
 
 const query = ref('')
 
@@ -70,7 +71,7 @@ onMounted(async () => {
       title: c.title,
       desc: c.description || '',
       level: (c.level as Level) || '',
-      cover: c.cover || '/assets/images/course-beginner-cover.svg',
+      cover: getCourseCoverUrl(c.cover || ''),
       author: '课程组',
       authorAvatar: '/assets/images/default.png',
       bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
