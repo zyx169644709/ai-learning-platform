@@ -86,9 +86,6 @@ Prisma.NullTypes = {
  * Enums
  */
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -172,11 +169,6 @@ exports.Prisma.NullableJsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
-exports.Prisma.QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-};
-
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
@@ -186,6 +178,11 @@ exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 exports.UserRole = exports.$Enums.UserRole = {
   USER: 'USER',
@@ -253,18 +250,18 @@ const config = {
   "datasourceNames": [
     "db"
   ],
-  "activeProvider": "postgresql",
+  "activeProvider": "sqlite",
   "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "fromEnvVar": null,
+        "value": "file:./dev.db"
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\n// 多环境数据库配置\n// 开发环境：SQLite\n// 生产环境：PostgreSQL\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// 用户模型\nmodel User {\n  id          String    @id @default(cuid())\n  username    String    @unique\n  email       String    @unique\n  password    String\n  bio         String?\n  avatar      String?\n  lastLoginAt DateTime? @map(\"last_login_at\")\n  role        UserRole  @default(USER)\n  createdAt   DateTime  @default(now()) @map(\"created_at\")\n  updatedAt   DateTime  @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  userPreferences UserPreferences?\n  discussions     Discussion[]\n  comments        Comment[]\n\n  @@map(\"users\")\n}\n\n// 用户偏好设置模型\nmodel UserPreferences {\n  id             String   @id @default(cuid())\n  userId         String   @unique @map(\"user_id\")\n  theme          String   @default(\"dark\")\n  codePanelRatio Int      @default(50) @map(\"code_panel_ratio\")\n  language       String   @default(\"javascript\")\n  notifications  Boolean  @default(true)\n  createdAt      DateTime @default(now()) @map(\"created_at\")\n  updatedAt      DateTime @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"user_preferences\")\n}\n\n// 社区帖子模型\nmodel Discussion {\n  id        String             @id @default(cuid())\n  title     String\n  content   String\n  excerpt   String\n  category  DiscussionCategory\n  views     Int                @default(0)\n  likes     Int                @default(0)\n  authorId  String             @map(\"author_id\")\n  createdAt DateTime           @default(now()) @map(\"created_at\")\n  updatedAt DateTime           @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  comments Comment[]\n\n  @@map(\"discussions\")\n}\n\n// 评论模型\nmodel Comment {\n  id           String   @id @default(cuid())\n  content      String\n  likes        Int      @default(0)\n  authorId     String   @map(\"author_id\")\n  discussionId String   @map(\"discussion_id\")\n  createdAt    DateTime @default(now()) @map(\"created_at\")\n  updatedAt    DateTime @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)\n\n  @@map(\"comments\")\n}\n\n// 枚举类型\nenum UserRole {\n  USER\n  ADMIN\n  MODERATOR\n}\n\nenum ProgressStatus {\n  NOT_STARTED\n  IN_PROGRESS\n  COMPLETED\n  SKIPPED\n}\n\nenum DiscussionCategory {\n  TECH\n  EXPERIENCE\n  PROJECT\n  HELP\n}\n\n// 课程模型\nmodel Course {\n  id          String   @id @default(cuid())\n  title       String\n  description String?\n  level       String?\n  cover       String?\n  url         String\n  tags        Json?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n  updatedAt   DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"courses\")\n}\n\n// 资源模型（后续可从 JSON 迁移至此表）\nmodel Resource {\n  id          String   @id @default(cuid())\n  title       String\n  description String?\n  cover       String?\n  url         String\n  tags        Json?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n  updatedAt   DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"resources\")\n}\n",
-  "inlineSchemaHash": "cd04671ea2404a95126657ac74a925d0b3ee675d8c7f2f1a2ab65eb09114cf44",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\n// 多环境数据库配置\n// 开发环境：SQLite\n// 生产环境：PostgreSQL\ndatasource db {\n  provider = \"sqlite\"\n  url      = \"file:./dev.db\"\n}\n\n// 用户模型\nmodel User {\n  id          String    @id @default(cuid())\n  username    String    @unique\n  email       String    @unique\n  password    String\n  bio         String?\n  avatar      String?\n  lastLoginAt DateTime? @map(\"last_login_at\")\n  role        UserRole  @default(USER)\n  createdAt   DateTime  @default(now()) @map(\"created_at\")\n  updatedAt   DateTime  @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  userPreferences UserPreferences?\n  discussions     Discussion[]\n  comments        Comment[]\n\n  @@map(\"users\")\n}\n\n// 用户偏好设置模型\nmodel UserPreferences {\n  id             String   @id @default(cuid())\n  userId         String   @unique @map(\"user_id\")\n  theme          String   @default(\"dark\")\n  codePanelRatio Int      @default(50) @map(\"code_panel_ratio\")\n  language       String   @default(\"javascript\")\n  notifications  Boolean  @default(true)\n  createdAt      DateTime @default(now()) @map(\"created_at\")\n  updatedAt      DateTime @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"user_preferences\")\n}\n\n// 社区帖子模型\nmodel Discussion {\n  id        String             @id @default(cuid())\n  title     String\n  content   String\n  excerpt   String\n  category  DiscussionCategory\n  views     Int                @default(0)\n  likes     Int                @default(0)\n  authorId  String             @map(\"author_id\")\n  createdAt DateTime           @default(now()) @map(\"created_at\")\n  updatedAt DateTime           @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  comments Comment[]\n\n  @@map(\"discussions\")\n}\n\n// 评论模型\nmodel Comment {\n  id           String   @id @default(cuid())\n  content      String\n  likes        Int      @default(0)\n  authorId     String   @map(\"author_id\")\n  discussionId String   @map(\"discussion_id\")\n  createdAt    DateTime @default(now()) @map(\"created_at\")\n  updatedAt    DateTime @updatedAt @map(\"updated_at\")\n\n  // 关联关系\n  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)\n  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)\n\n  @@map(\"comments\")\n}\n\n// 枚举类型\nenum UserRole {\n  USER\n  ADMIN\n  MODERATOR\n}\n\nenum ProgressStatus {\n  NOT_STARTED\n  IN_PROGRESS\n  COMPLETED\n  SKIPPED\n}\n\nenum DiscussionCategory {\n  TECH\n  EXPERIENCE\n  PROJECT\n  HELP\n}\n\n// 课程模型\nmodel Course {\n  id          String   @id @default(cuid())\n  title       String\n  description String?\n  level       String?\n  cover       String?\n  url         String\n  tags        Json?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n  updatedAt   DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"courses\")\n}\n\n// 资源模型（后续可从 JSON 迁移至此表）\nmodel Resource {\n  id          String   @id @default(cuid())\n  title       String\n  description String?\n  cover       String?\n  url         String\n  tags        Json?\n  createdAt   DateTime @default(now()) @map(\"created_at\")\n  updatedAt   DateTime @updatedAt @map(\"updated_at\")\n\n  @@map(\"resources\")\n}\n",
+  "inlineSchemaHash": "bcc26537f98789c680d7ea4aec7fa0f5da58331657f3bb097d64ea351871f55c",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -275,9 +272,7 @@ config.engineWasm = undefined
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
-  parsed: {
-    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
-  }
+  parsed: {}
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
