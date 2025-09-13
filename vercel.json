@@ -9,14 +9,14 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
     },
     {
-      "src": "/((?!api/|assets/).*)",
-      "dest": "/index.html"
+      "source": "/((?!api/|assets/).*)",
+      "destination": "/index.html"
     }
   ]
 }
