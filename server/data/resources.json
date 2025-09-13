@@ -1,0 +1,56 @@
+[
+  {
+    "id": "res-coursera-ml",
+    "title": "Coursera 机器学习课程",
+    "description": "Andrew Ng 经典机器学习课程，覆盖监督/无监督学习、正则化、KMeans、降维等",
+    "url": "/resources/coursera-ml",
+    "tags": ["机器学习", "Coursera", "Andrew Ng"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  },
+  {
+    "id": "res-math-foundation",
+    "title": "数学基础",
+    "description": "AI 学习所需数学：线性代数、概率统计、微积分等核心概念与练习",
+    "url": "/resources/math-foundation",
+    "tags": ["数学", "线性代数", "概率统计", "微积分"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  },
+  {
+    "id": "res-python-ai-guide",
+    "title": "Python AI 编程指南",
+    "description": "Python 在 AI 方向的常用库与最佳实践：NumPy/Pandas/scikit-learn/Matplotlib 等",
+    "url": "/resources/python-ai-guide",
+    "tags": ["Python", "AI", "编程", "指南"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  },
+  {
+    "id": "res-course-ai-basics",
+    "title": "课程入口：人工智能基础",
+    "description": "AI 的核心概念与模块化知识地图，构建完整认知框架",
+    "url": "/courses/ai-basics",
+    "tags": ["课程", "AI", "基础"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  },
+  {
+    "id": "res-course-ml-algorithms",
+    "title": "课程入口：机器学习算法",
+    "description": "监督/无监督/提升等算法原理与实践",
+    "url": "/courses/ml-algorithms",
+    "tags": ["课程", "机器学习", "算法"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  },
+  {
+    "id": "res-community-tech",
+    "title": "社区精选：AI 技术讨论",
+    "description": "与 AI 爱好者和专家交流技术问题与实战经验",
+    "url": "/community",
+    "tags": ["社区", "讨论", "技术"],
+    "createdAt": "2025-09-07T00:00:00.000Z",
+    "updatedAt": "2025-09-07T00:00:00.000Z"
+  }
+]

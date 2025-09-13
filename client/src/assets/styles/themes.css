@@ -1,0 +1,182 @@
+/* 主题变量定义 */
+:root {
+  /* 日间主题 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f6fa;
+  --bg-tertiary: #f0f4f0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  --border-color: #e2e8f0;
+  --border-secondary: #cbd5e0;
+  --accent-color: #42b883;
+  --accent-hover: #3ca677;
+  --shadow-color: rgba(66, 184, 131, 0.1);
+  --shadow-hover: rgba(66, 184, 131, 0.2);
+
+  /* 代码块（日间） */
+  --code-bg: #fafafa;
+  --code-border: #e5e7eb;
+  --code-text: #111827;
+  --code-comment: #6b7280;
+  --code-keyword: #8b5cf6;
+  /* 紫 */
+  --code-string: #16a34a;
+  /* 绿 */
+  --code-number: #b45309;
+  /* 琥珀 */
+  --code-symbol: #2563eb;
+  /* 蓝 */
+  --code-variable: #dc2626;
+  /* 红 */
+  --code-badge-bg: rgba(0, 0, 0, 0.06);
+  --code-badge-text: #374151;
+  --code-badge-border: rgba(0, 0, 0, 0.08);
+
+  /* 滚动条（亮色） */
+  --scrollbar-track: #0080ff;
+  --scrollbar-thumb: #e2e8f0;
+  --scrollbar-thumb-hover: #cbd5e0;
+  --scrollbar-thumb-border: #ffffff;
+}
+
+/* 让浏览器原生控件/滚动条遵循主题配色 */
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+
+[data-theme="dark"] {
+  /* 夜间主题（当前样式） */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #0f0f0f;
+  --text-primary: #ebebeb;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+  --border-color: #333333;
+  --border-secondary: #444444;
+  --accent-color: #42b883;
+  --accent-hover: #3ca677;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+
+  /* 代码块（夜间） */
+  --code-bg: #0b1220;
+  --code-border: rgba(148, 163, 184, 0.2);
+  --code-text: #e5e7eb;
+  --code-comment: #94a3b8;
+  --code-keyword: #f472b6;
+  --code-string: #34d399;
+  --code-number: #f59e0b;
+  --code-symbol: #60a5fa;
+  --code-variable: #f87171;
+  --code-badge-bg: rgba(148, 163, 184, 0.12);
+  --code-badge-text: #cbd5e1;
+  --code-badge-border: rgba(148, 163, 184, 0.2);
+
+  /* 滚动条（暗色）：降低对比度，贴合主背景 */
+  --scrollbar-track: #1a1a1a;
+  /* 与 --bg-primary 保持一致，减少突兀感 */
+  --scrollbar-thumb: #2a2a2a;
+  /* 比背景略亮 */
+  --scrollbar-thumb-hover: #3a3a3a;
+  /* 悬停时稍亮 */
+  --scrollbar-thumb-border: #1a1a1a;
+  /* 与轨道同色，避免亮边 */
+}
+
+/* 平滑过渡效果 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 全局滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Blink/WebKit 自定义滚动条尺寸 */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 6px;
+  border: 2px solid var(--scrollbar-thumb-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* 水平滚动条 */
+*::-webkit-scrollbar:horizontal {
+  height: 12px;
+}
+
+/* 针对特定元素的滚动条样式覆盖 */
+.main-content,
+.ai-panel,
+.sidebar-content,
+.chat-history,
+.teaching-assistant-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.main-content::-webkit-scrollbar,
+.ai-panel::-webkit-scrollbar,
+.sidebar-content::-webkit-scrollbar,
+.chat-history::-webkit-scrollbar,
+.teaching-assistant-content::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* 让容器为滚动条预留空间，避免 Windows 11 Overlay Scrollbar 过细且悬浮覆盖 */
+html,
+body,
+.main-content,
+.sidebar-content {
+  scrollbar-gutter: stable both-edges;
+}
+
+.main-content::-webkit-scrollbar-track,
+.ai-panel::-webkit-scrollbar-track,
+.sidebar-content::-webkit-scrollbar-track,
+.chat-history::-webkit-scrollbar-track,
+.teaching-assistant-content::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 6px;
+}
+
+.main-content::-webkit-scrollbar-thumb,
+.ai-panel::-webkit-scrollbar-thumb,
+.sidebar-content::-webkit-scrollbar-thumb,
+.chat-history::-webkit-scrollbar-thumb,
+.teaching-assistant-content::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 6px;
+  border: 2px solid var(--scrollbar-thumb-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover,
+.ai-panel::-webkit-scrollbar-thumb:hover,
+.sidebar-content::-webkit-scrollbar-thumb:hover,
+.chat-history::-webkit-scrollbar-thumb:hover,
+.teaching-assistant-content::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}

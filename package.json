@@ -1,0 +1,36 @@
+{
+  "name": "ai-learning-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npx ts-node server.ts",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "db:setup": "cd server && npm run db:setup",
+    "db:seed": "cd server && npm run db:seed",
+    "db:studio": "cd server && npm run db:studio"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "description": "AI Learning Platform - 前后端分离的全栈学习平台",
+  "keywords": [
+    "ai",
+    "learning",
+    "platform",
+    "vue",
+    "nodejs",
+    "prisma",
+    "typescript"
+  ],
+  "author": "AI Learning Platform Team",
+  "license": "ISC"
+}
