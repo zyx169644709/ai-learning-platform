@@ -16,7 +16,7 @@
               <span v-else>{{ getUserInitial() }}</span>
             </template>
             <template v-else>
-              <img src="@/assets/images/tarot.png" alt="塔罗师头像" class="ai-avatar-img" />
+              <img src="/assets/images/tarot.png" alt="塔罗师头像" class="ai-avatar-img" />
             </template>
           </div>
           <div class="message-content">
@@ -36,7 +36,7 @@
 
         <div v-if="isLoading" class="message assistant">
           <div class="message-avatar">
-            <img src="@/assets/images/tarot.png" alt="塔罗师头像" class="ai-avatar-img" />
+            <img src="/assets/images/tarot.png" alt="塔罗师头像" class="ai-avatar-img" />
           </div>
           <div class="message-content">
             <div class="typing-indicator"><span></span><span></span><span></span></div>
@@ -62,7 +62,7 @@ import { ref, nextTick, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { sendMessageToCoze } from '@/services'
-import defaultAvatar from '@/assets/images/default.png'
+const defaultAvatar = '/assets/images/default.png'
 
 const router = useRouter()
 const userStore = useUserStore()

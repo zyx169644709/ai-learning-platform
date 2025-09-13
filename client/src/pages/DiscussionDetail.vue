@@ -92,7 +92,7 @@
               <div v-for="comment in discussion.comments" :key="comment.id" class="comment-item">
                 <div class="comment-header">
                   <div class="comment-avatar-wrapper">
-                    <img :src="comment.authorInfo?.avatar || comment.authorAvatar || '/src/assets/images/default.png'" :alt="comment.authorInfo?.username || comment.author" class="comment-avatar" />
+                    <img :src="comment.authorInfo?.avatar || comment.authorAvatar || '/assets/images/default.png'" :alt="comment.authorInfo?.username || comment.author" class="comment-avatar" />
                   </div>
                   <div class="comment-info">
                     <span class="comment-author">{{ comment.authorInfo?.username || comment.author }}</span>
@@ -125,7 +125,7 @@
         <div v-if="discussion" class="author-card">
           <div class="author-header">
             <div class="author-avatar-wrapper">
-              <img :src="discussion.authorInfo?.avatar || discussion.authorAvatar || '/src/assets/images/default.png'" :alt="discussion.authorInfo?.username || discussion.author" class="author-avatar" />
+              <img :src="discussion.authorInfo?.avatar || discussion.authorAvatar || '/assets/images/default.png'" :alt="discussion.authorInfo?.username || discussion.author" class="author-avatar" />
               <div class="online-indicator"></div>
             </div>
             <div class="author-info">

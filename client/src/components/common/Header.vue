@@ -309,7 +309,7 @@ const debouncedSearch = useDebounceFn(async (query: string) => {
 
 
 const avatarSrc = computed(() => {
-  return userStore.avatar || '/src/assets/images/default.png'
+  return userStore.avatar || '/assets/images/default.png'
 })
 
 // 处理搜索输入变化

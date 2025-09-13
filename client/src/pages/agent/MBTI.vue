@@ -61,7 +61,7 @@
 import { ref, nextTick, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { sendMessageToMBTI } from '@/services'
-import defaultAvatar from '@/assets/images/MBTI.png'
+const defaultAvatar = '/assets/images/MBTI.png'
 
 const userStore = useUserStore()
 
