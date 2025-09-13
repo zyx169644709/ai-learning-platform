@@ -63,7 +63,7 @@ type ApiCourse = { id: string; title: string; description?: string; level?: stri
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/courses')
+    const res = await fetch('/api/courses')
     const data: ApiCourse[] = await res.json()
     courses.value = (data || []).map((c) => ({
       id: c.id,

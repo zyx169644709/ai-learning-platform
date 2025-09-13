@@ -87,7 +87,7 @@ type ApiResource = { id: string; title: string; description?: string; url?: stri
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources')
+    const res = await fetch('/api/resources')
     const data: ApiResource[] = await res.json()
     resources.value = (data || []).map((r) => ({
       id: r.id,
