@@ -395,15 +395,7 @@ const handleSendMessage = async () => {
         // 直接处理完整内容，分离主要内容和相关问题
         const { mainContent, suggestedQuestions } = separateContentAndQuestions(cleanedResponse)
 
-        // 调试信息
-        console.log('=== 内容分离调试 ===')
-        console.log('原始内容长度:', cleanedResponse.length)
-        console.log('主要内容长度:', mainContent.length)
-        console.log('主要内容:', mainContent.substring(0, 100) + '...')
-        console.log('相关问题数量:', suggestedQuestions.length)
-        console.log('相关问题:', suggestedQuestions)
-        console.log('==================')
-
+       
         chatMessages.value[responseIndex].content = mainContent
         chatMessages.value[responseIndex].suggestedQuestions = suggestedQuestions
 

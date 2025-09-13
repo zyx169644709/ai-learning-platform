@@ -94,9 +94,9 @@ onMounted(async () => {
       title: r.title,
       description: r.description || '',
       type: (Array.isArray(r.tags) && r.tags[0]) === 'video' ? 'video' : 'document',
-      preview: r.cover || '/src/assets/images/document-cover.svg',
+      preview: r.cover || '/assets/images/document-cover.svg',
       author: '资源库',
-      authorAvatar: '/src/assets/images/default.png',
+      authorAvatar: '/assets/images/default.png',
       externalUrl: r.url,
       tags: Array.isArray(r.tags) ? r.tags : []
     }))

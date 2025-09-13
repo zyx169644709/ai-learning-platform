@@ -196,12 +196,12 @@ const load = async () => {
       // 访问章节主页，加载 index.md
       fileType = 'chapter index'
       console.log('Loading chapter index')
-      raw = await fetchMarkdownSafe(`/src/content/markdown/${chapter.value.slug}/index.md`)
+      raw = await fetchMarkdownSafe(`/content/markdown/${chapter.value.slug}/index.md`)
     } else {
       // 访问具体小节，加载对应的 md 文件
       fileType = 'section'
       console.log('Loading section:', sectionSlug.value)
-      raw = await fetchMarkdownSafe(`/src/content/markdown/${chapter.value.slug}/${sectionSlug.value}.md`)
+      raw = await fetchMarkdownSafe(`/content/markdown/${chapter.value.slug}/${sectionSlug.value}.md`)
     }
 
     if (!raw) {
