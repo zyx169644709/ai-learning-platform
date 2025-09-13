@@ -4,7 +4,7 @@
       <div class="logo-section">
         <div class="logo" @click="goWelcome">
           <div class="logo-img-container">
-            <img src="@/assets/images/AI-Learning.png" alt="AI Learning Logo" class="logo-img">
+            <img src="/assets/images/AI-Learning.png" alt="AI Learning Logo" class="logo-img">
           </div>
           <h1 class="logo-title">AI Learning</h1>
         </div>
