@@ -144,8 +144,6 @@ const separateContentAndQuestions = (content) => {
 
         // 确保主要内容不为空且问题数量合理
         if (mainContent.length > 0 && questions.length > 0 && questions.length <= 5) {
-          console.log('找到问题模式:', questionText)
-          console.log('提取的问题:', questions)
           return { mainContent, suggestedQuestions: questions }
         }
       }
@@ -178,8 +176,6 @@ const separateContentAndQuestions = (content) => {
       if (questionText.length > 0 && mainContent.length > 0) {
         const questions = extractQuestionsFromText(questionText)
         if (questions.length > 0) {
-          console.log('通过问号位置找到问题:', questionText)
-          console.log('提取的问题:', questions)
           return { mainContent, suggestedQuestions: questions }
         }
       }
