@@ -13,8 +13,8 @@ generator client {
 // 开发环境：SQLite
 // 生产环境：PostgreSQL
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // 用户模型
