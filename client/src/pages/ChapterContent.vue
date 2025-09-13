@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, createVNode, render, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, watch, createVNode, render, getCurrentInstance, nextTick } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'

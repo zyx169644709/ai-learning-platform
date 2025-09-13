@@ -1,0 +1,20 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="200" fill="url(#bg)" rx="10"/>
+  <rect x="80" y="60" width="140" height="80" fill="white" opacity="0.1" rx="5"/>
+  <rect x="90" y="70" width="20" height="15" fill="white" opacity="0.8" rx="2"/>
+  <rect x="115" y="70" width="20" height="15" fill="white" opacity="0.6" rx="2"/>
+  <rect x="140" y="70" width="20" height="15" fill="white" opacity="0.4" rx="2"/>
+  <rect x="165" y="70" width="20" height="15" fill="white" opacity="0.2" rx="2"/>
+  <rect x="190" y="70" width="20" height="15" fill="white" opacity="0.1" rx="2"/>
+  <rect x="90" y="90" width="20" height="15" fill="white" opacity="0.6" rx="2"/>
+  <rect x="115" y="90" width="20" height="15" fill="white" opacity="0.4" rx="2"/>
+  <rect x="140" y="90" width="20" height="15" fill="white" opacity="0.2" rx="2"/>
+  <rect x="165" y="90" width="20" height="15" fill="white" opacity="0.1" rx="2"/>
+  <text x="150" y="160" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">数据集</text>
+</svg>
