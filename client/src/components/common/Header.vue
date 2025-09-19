@@ -4,7 +4,7 @@
       <div class="logo-section">
         <div class="logo" @click="goWelcome">
           <div class="logo-img-container">
-            <img src="/assets/images/AI-Learning.png" alt="AI Learning Logo" class="logo-img">
+            <img src="@/assets/images/AI-Learning.png" alt="AI Learning Logo" class="logo-img">
           </div>
           <h1 class="logo-title">AI Learning</h1>
         </div>
@@ -309,7 +309,7 @@ const debouncedSearch = useDebounceFn(async (query: string) => {
 
 
 const avatarSrc = computed(() => {
-  return userStore.avatar || '/assets/images/default.png'
+  return userStore.avatar || '/src/assets/images/default.png'
 })
 
 // 处理搜索输入变化

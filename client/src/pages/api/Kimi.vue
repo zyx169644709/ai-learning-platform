@@ -60,7 +60,7 @@ const chatRef = ref<HTMLElement | null>(null)
 
 // 计算用户头像
 const userAvatar = computed(() => {
-  return userStore.avatar || '/assets/images/default.png'
+  return userStore.avatar || '/src/assets/images/default.png'
 })
 
 // 快速问题案例

@@ -1,0 +1,16 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="datasetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9C27B0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B1FA2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="200" fill="url(#datasetGrad)" rx="10"/>
+  <rect x="120" y="60" width="60" height="40" fill="white" opacity="0.9" rx="5"/>
+  <rect x="130" y="70" width="40" height="3" fill="#9C27B0"/>
+  <rect x="130" y="76" width="35" height="3" fill="#9C27B0"/>
+  <rect x="130" y="82" width="30" height="3" fill="#9C27B0"/>
+  <rect x="130" y="88" width="25" height="3" fill="#9C27B0"/>
+  <text x="150" y="130" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="bold">数据集</text>
+  <text x="150" y="150" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" opacity="0.9">Dataset</text>
+</svg>

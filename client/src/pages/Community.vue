@@ -51,7 +51,7 @@
             <div class="c-desc">{{ d.excerpt }}</div>
             <div class="row bottom">
               <span class="author"><img class="avatar"
-                  :src="d.authorInfo?.avatar || d.authorAvatar || '/assets/images/default.png'" alt="" /> {{
+                  :src="d.authorInfo?.avatar || d.authorAvatar || '/src/assets/images/default.png'" alt="" /> {{
                     d.authorInfo?.username || d.author }}</span>
 
             </div>

@@ -1,5 +1,0 @@
-[33ma8bf1dd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m 修复Vercel静态资源重写配置
-[33mefbe948[m 简化Vercel配置，修复静态资源问题
-[33m829fed3[m 修复Vercel部署环境图片显示问题
-[33m7d66d44[m 修复部署环境图片显示问题
-[33m6032c24[m Fix Vite build config and Vercel routing for static assets

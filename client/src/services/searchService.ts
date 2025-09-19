@@ -87,7 +87,7 @@ const initializeSearchIndex = async () => {
 
     // 实时资源数据（后端）
     try {
-      const { data } = await axios.get('/api/resources')
+      const { data } = await axios.get('http://localhost:3000/api/resources')
       const remoteResources: SearchResult[] = (data || []).map((r: any) => ({
         id: `resource-${r.id}`,
         title: r.title,
@@ -105,7 +105,7 @@ const initializeSearchIndex = async () => {
 
     // 实时课程数据（后端）
     try {
-      const { data } = await axios.get('/api/courses')
+      const { data } = await axios.get('http://localhost:3000/api/courses')
       const remoteCourses: SearchResult[] = (data || []).map((c: any) => ({
         id: `course-${c.id}`,
         title: c.title,

@@ -210,7 +210,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { ref } from 'vue'
-const defaultAvatar = '/assets/images/default.png'
+import defaultAvatar from '@/assets/images/default.png'
 import { User, Setting, Lock, DataAnalysis, Camera, Edit, Loading, Calendar, Clock, Star, Message } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
