@@ -1,22 +1,28 @@
 import axios from 'axios'
 
 // DeepSeek API 配置（从环境变量读取，避免硬编码密钥）
-const DEEPSEEK_API_BASE = (import.meta as any)?.env?.VITE_DEEPSEEK_API_BASE || 'https://api.deepseek.com/v1'
-const DEEPSEEK_API_KEY = (import.meta as any)?.env?.VITE_DEEPSEEK_API_KEY as string | undefined
-if (!DEEPSEEK_API_KEY) {
-  console.error('[DeepSeek] 缺少 VITE_DEEPSEEK_API_KEY，请在 client/.env.local 或 .env.production 中配置')
-  throw new Error('缺少 DeepSeek API Key 配置')
+const env = (import.meta as any)?.env || {}
+const DEEPSEEK_API_BASE = (env.VITE_DEEPSEEK_API_BASE as string)?.toString().trim() || 'https://api.deepseek.com/v1'
+const DEEPSEEK_API_KEY = (env.VITE_DEEPSEEK_API_KEY as string | undefined)?.toString().trim()
+const FLAG_RAW = (env.VITE_ENABLE_DEEPSEEK as string | undefined)?.toString().trim().toLowerCase() ?? 'false'
+const DEEPSEEK_FEATURE_FLAG = FLAG_RAW === 'true' || FLAG_RAW === '1' || FLAG_RAW === 'yes'
+const DEEPSEEK_ENABLED = Boolean(DEEPSEEK_FEATURE_FLAG && DEEPSEEK_API_KEY && DEEPSEEK_API_KEY.length > 0)
+
+console.log('[deepseek env]', { flag: (import.meta as any).env?.VITE_ENABLE_DEEPSEEK, keyExists: !!(import.meta as any).env?.VITE_DEEPSEEK_API_KEY })
+let deepseekApi: ReturnType<typeof axios.create> | null = null
+if (DEEPSEEK_ENABLED) {
+  deepseekApi = axios.create({
+    baseURL: DEEPSEEK_API_BASE,
+    timeout: 30000,
+    headers: {
+      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      'Content-Type': 'application/json'
+    }
+  })
+} else {
+  // 仅警告，不阻断应用启动
+  console.warn('[DeepSeek] 未启用：缺少 VITE_DEEPSEEK_API_KEY 或 VITE_ENABLE_DEEPSEEK!=="true"。功能将被禁用。')
 }
-console.log('[DeepSeek API] env key exists?', Boolean((import.meta as any).env?.VITE_DEEPSEEK_API || (import.meta as any).env?.VITE_DEEPSEEK_API_KEY))
-// 创建axios实例
-const deepseekApi = axios.create({
-  baseURL: DEEPSEEK_API_BASE,
-  timeout: 30000,
-  headers: {
-    'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
-    'Content-Type': 'application/json'
-  }
-})
 
 // 类型定义
 interface ChatMessage {
@@ -36,6 +42,9 @@ interface StreamCallback {
  */
 export const askTeachingAssistant = async (question: string, context: string = ''): Promise<string> => {
   try {
+    if (!DEEPSEEK_ENABLED || !deepseekApi) {
+      return 'DeepSeek 功能未启用。请配置 VITE_DEEPSEEK_API_KEY 并将 VITE_ENABLE_DEEPSEEK 设为 true 后重试。'
+    }
     const systemPrompt = `你是一个专业的AI教学助手，专门帮助学生学习人工智能、机器学习和深度学习相关知识。请遵循以下原则：
 
 1. 用通俗易懂的语言解释复杂概念
@@ -85,6 +94,10 @@ export const streamTeachingChat = async (
   chatHistory: ChatMessage[] = []
 ): Promise<void> => {
   try {
+    if (!DEEPSEEK_ENABLED) {
+      onMessage('DeepSeek 流式对话未启用。请配置环境变量后重试。')
+      return
+    }
     const systemPrompt = `你是一个专业的AI教学助手，专门帮助学生学习人工智能、机器学习和深度学习相关知识。请用中文回答，语言要亲切友好，富有教学性。`
 
     const messages: ChatMessage[] = [
@@ -166,6 +179,9 @@ export const analyzeCodeWithDeepSeek = async (
   task: 'explain' | 'optimize' | 'debug' = 'explain'
 ): Promise<string> => {
   try {
+    if (!DEEPSEEK_ENABLED || !deepseekApi) {
+      return 'DeepSeek 代码分析未启用。请配置 VITE_DEEPSEEK_API_KEY 并将 VITE_ENABLE_DEEPSEEK 设为 true 后重试。'
+    }
     let prompt = ''
     
     switch (task) {
@@ -209,6 +225,9 @@ export const generateLearningPlan = async (
   duration: number = 4
 ): Promise<string> => {
   try {
+    if (!DEEPSEEK_ENABLED || !deepseekApi) {
+      return 'DeepSeek 学习计划生成功能未启用。请配置环境变量后重试。'
+    }
     const prompt = `请为${level === 'beginner' ? '初学者' : level === 'intermediate' ? '中级学习者' : '高级学习者'}制定一个${duration}周的"${topic}"学习计划。
 
 要求：

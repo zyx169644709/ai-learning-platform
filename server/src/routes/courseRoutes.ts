@@ -58,7 +58,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: 'AI 基础入门',
       description: '零基础友好，快速理解 AI 与机器学习核心概念。',
       level: 'beginner',
-      cover: '/src/assets/images/course-beginner-cover.svg',
+      cover: '/assets/images/course-beginner-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['AI', '基础', '视频']
     },
@@ -66,7 +66,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: 'Prompt 工程与工作流',
       description: '掌握高质量提示与多步工作流的设计与实现。',
       level: 'intermediate',
-      cover: '/src/assets/images/course-intermediate-cover.svg',
+      cover: '/assets/images/course-intermediate-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['Prompt', '工程', '视频']
     },
@@ -74,7 +74,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: 'RAG 应用工程实践',
       description: '从检索到生成，构建企业级检索增强应用。',
       level: 'intermediate',
-      cover: '/src/assets/images/course-intermediate-cover.svg',
+      cover: '/assets/images/course-intermediate-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['RAG', '检索增强', '视频']
     },
@@ -82,7 +82,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: '深度学习基础',
       description: '神经网络原理与实现，从感知机到卷积神经网络。',
       level: 'beginner',
-      cover: '/src/assets/images/course-beginner-cover.svg',
+      cover: '/assets/images/course-beginner-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['深度学习', '神经网络', '视频']
     },
@@ -90,7 +90,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: '计算机视觉实战',
       description: '图像识别、目标检测、语义分割等CV核心技术。',
       level: 'advanced',
-      cover: '/src/assets/images/course-advanced-cover.svg',
+      cover: '/assets/images/course-advanced-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['CV', '视觉', '视频']
     },
@@ -98,7 +98,7 @@ router.post('/seed-from-frontend', authMiddleware as any, async (_req, res) => {
       title: '自然语言处理入门',
       description: '文本预处理、词向量、情感分析等NLP基础技术。',
       level: 'beginner',
-      cover: '/src/assets/images/course-beginner-cover.svg',
+      cover: '/assets/images/course-beginner-cover.svg',
       url: 'https://www.bilibili.com/video/BV1xx411c7mu',
       tags: ['NLP', '文本', '视频']
     }

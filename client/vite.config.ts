@@ -7,7 +7,6 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
   plugins: [
     vue(),
     // Element Plus 自动导入
@@ -32,25 +31,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
-  build: {
-    assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        assetFileNames: 'assets/[name].[hash][extname]'
-      }
-    },
-    // 确保静态资源正确复制
-    copyPublicDir: true
-  },
-  // 确保静态资源正确处理
-  publicDir: 'public',
   server: {
     proxy: {
       '/api': 'http://localhost:3000'
-    },
-    // 确保静态资源正确服务
-    fs: {
-      strict: false
     }
   },
   css: {

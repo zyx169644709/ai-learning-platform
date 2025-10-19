@@ -12,7 +12,7 @@
       <div class="grid">
         <div class="card" v-for="c in filteredCourses" :key="c.id" @click="goToBilibiliVideo(c)">
           <div class="thumb">
-            <img :src="getCourseCoverUrl(c.cover)" :alt="c.title" @error="(e) => handleImageError(e)" @load="(e) => handleImageLoad(e)" />
+            <img :src="c.cover" :alt="c.title" />
             
             <!-- 添加播放按钮图标 -->
             <div class="play-overlay" v-if="c.bilibiliUrl">
@@ -38,7 +38,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { getCourseCoverUrl, handleImageError, handleImageLoad } from '@/utils/imageUtils'
 
 const query = ref('')
 
@@ -64,16 +63,16 @@ type ApiCourse = { id: string; title: string; description?: string; level?: stri
 
 onMounted(async () => {
   try {
-    const res = await fetch('/api/courses')
+    const res = await fetch('http://localhost:3000/api/courses')
     const data: ApiCourse[] = await res.json()
     courses.value = (data || []).map((c) => ({
       id: c.id,
       title: c.title,
       desc: c.description || '',
       level: (c.level as Level) || '',
-      cover: getCourseCoverUrl(c.cover || ''),
+      cover: c.cover ? new URL(c.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/course-beginner-cover.svg', import.meta.url).href,
       author: '课程组',
-      authorAvatar: '/assets/images/default.png',
+      authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
       bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
       url: c.url,
       videoPlatform: c.url?.includes('bilibili') ? 'bilibili' : undefined,

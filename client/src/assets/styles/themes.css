@@ -15,9 +15,9 @@
   --shadow-hover: rgba(66, 184, 131, 0.2);
 
   /* 代码块（日间） */
-  --code-bg: #fafafa;
-  --code-border: #e5e7eb;
-  --code-text: #111827;
+  --code-bg: #f8fafc;
+  --code-border: #e2e8f0;
+  --code-text: #1e293b;
   --code-comment: #6b7280;
   --code-keyword: #8b5cf6;
   /* 紫 */

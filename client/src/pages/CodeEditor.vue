@@ -1125,7 +1125,7 @@ onUnmounted(() => {
   box-sizing: border-box;
   border: none;
   background: var(--bg-primary);
-  color: var(--text-primary);
+  color: var(--code-text);
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.6;
@@ -1142,15 +1142,7 @@ onUnmounted(() => {
   box-shadow: inset 0 0 0 2px var(--accent-color);
 }
 
-.code-textarea.theme-dark {
-  background: #1e1e1e;
-  color: #d4d4d4;
-}
-
-.code-textarea.theme-light {
-  background: #ffffff;
-  color: #1e1e1e;
-}
+/* 主题样式现在通过CSS变量自动处理 */
 
 .line-numbers {
   position: absolute;
@@ -1158,7 +1150,7 @@ onUnmounted(() => {
   left: 0;
   width: 40px;
   height: 100%;
-  background: var(--bg-tertiary);
+  background: var(--bg-primary);
   color: var(--text-tertiary);
   font-size: 12px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
@@ -1167,7 +1159,7 @@ onUnmounted(() => {
   padding: 16px 0;
   box-sizing: border-box;
   pointer-events: none;
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid var(--code-border);
 }
 
 .line-number {

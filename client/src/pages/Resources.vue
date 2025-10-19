@@ -87,16 +87,16 @@ type ApiResource = { id: string; title: string; description?: string; url?: stri
 
 onMounted(async () => {
   try {
-    const res = await fetch('/api/resources')
+    const res = await fetch('http://localhost:3000/api/resources')
     const data: ApiResource[] = await res.json()
     resources.value = (data || []).map((r) => ({
       id: r.id,
       title: r.title,
       description: r.description || '',
       type: (Array.isArray(r.tags) && r.tags[0]) === 'video' ? 'video' : 'document',
-      preview: r.cover || '/assets/images/document-cover.svg',
+      preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
       author: '资源库',
-      authorAvatar: '/assets/images/default.png',
+      authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
       externalUrl: r.url,
       tags: Array.isArray(r.tags) ? r.tags : []
     }))
