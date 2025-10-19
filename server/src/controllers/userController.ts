@@ -53,9 +53,21 @@ export const login = async (req: Request, res: Response) => {
 
     await user.update({ lastLoginAt: new Date() })
 
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' })
+    // 生成 access token (短期，1小时)
+    const accessToken = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' })
+    // 生成 refresh token (长期，7天)
+    const refreshToken = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' })
+    
     const updatedUser = await User.findByPk(user.id)
-    res.json({ success: true, message: '登录成功', data: { user: updatedUser.toJSON(), token } })
+    res.json({ 
+      success: true, 
+      message: '登录成功', 
+      data: { 
+        user: updatedUser.toJSON(), 
+        token: accessToken,
+        refreshToken: refreshToken
+      } 
+    })
   } catch (error: any) {
     console.error('登录错误:', error)
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
@@ -140,6 +152,43 @@ export const changePassword = async (req: Request & { user?: any }, res: Respons
   }
 }
 
+// 刷新 token
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body as { refreshToken?: string }
+    
+    if (!refreshToken) {
+      return res.status(400).json({ success: false, message: '缺少 refresh token' })
+    }
+
+    // 验证 refresh token
+    const decoded = jwt.verify(refreshToken, JWT_SECRET) as { userId: number; username: string }
+    
+    // 查找用户
+    const user = await User.findByPk(decoded.userId)
+    if (!user) {
+      return res.status(401).json({ success: false, message: '用户不存在' })
+    }
+
+    // 生成新的 access token
+    const newAccessToken = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1h' })
+    
+    res.json({ 
+      success: true, 
+      message: 'Token 刷新成功', 
+      data: { 
+        token: newAccessToken 
+      } 
+    })
+  } catch (error: any) {
+    console.error('刷新 token 错误:', error)
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      return res.status(401).json({ success: false, message: 'Refresh token 无效或已过期' })
+    }
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
 // 登出
 export const logout = async (_req: Request, res: Response) => {
   try {
@@ -151,6 +200,6 @@ export const logout = async (_req: Request, res: Response) => {
 }
 
 // 保持与 CommonJS 兼容
-module.exports = { register, login, getProfile, updateProfile, changePassword, logout }
+module.exports = { register, login, getProfile, updateProfile, changePassword, refreshToken, logout }
 
 

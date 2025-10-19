@@ -25,20 +25,91 @@ api.interceptors.request.use(
   }
 )
 
-// 响应拦截器 - 处理错误
+// 是否正在刷新 token 的标志
+let isRefreshing = false
+// 存储等待刷新的请求
+let failedQueue: Array<{
+  resolve: (value?: any) => void
+  reject: (error?: any) => void
+}> = []
+
+// 处理等待队列
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error)
+    } else {
+      resolve(token)
+    }
+  })
+  
+  failedQueue = []
+}
+
+// 响应拦截器 - 处理错误和自动刷新
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response
   },
-  (error: any) => {
-    console.error('API请求错误:', error)
+  async (error: any) => {
+    const originalRequest = error.config
 
-    if (error.response?.status === 401) {
-      // token过期或无效，清除本地存储
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
-      // 不要直接跳转，让组件处理
-      console.log('Token无效，已清除本地存储')
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // 如果正在刷新，将请求加入队列
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        }).then(token => {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return api(originalRequest)
+        }).catch(err => {
+          return Promise.reject(err)
+        })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken')
+        if (!refreshToken) {
+          throw new Error('没有 refresh token')
+        }
+
+        // 尝试刷新 token
+        const response = await api.post('/user/refresh-token', {
+          refreshToken
+        })
+
+        if (response.data.success) {
+          const newToken = response.data.data!.token
+          localStorage.setItem('token', newToken)
+          
+          // 处理等待队列
+          processQueue(null, newToken)
+          
+          // 重试原始请求
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          return api(originalRequest)
+        } else {
+          throw new Error('刷新 token 失败')
+        }
+      } catch (refreshError) {
+        // 刷新失败，清除本地存储并跳转到登录页
+        console.error('Token 刷新失败:', refreshError)
+        localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('userInfo')
+        
+        // 处理等待队列
+        processQueue(refreshError, null)
+        
+        // 跳转到登录页
+        window.location.href = '/login'
+        return Promise.reject(refreshError)
+      } finally {
+        isRefreshing = false
+      }
     } else if (error.response?.status === 413) {
       // 请求体过大
       console.error('上传文件过大')
@@ -54,6 +125,14 @@ api.interceptors.response.use(
 interface LoginCredentials {
   username: string;
   password: string;
+}
+
+interface RefreshTokenResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    token: string;
+  };
 }
 
 interface RegisterData {
@@ -87,7 +166,7 @@ export const userService = {
   // 用户登录
   async login(credentials: LoginCredentials) {
     try {
-      const response: AxiosResponse<ApiResponse<{ token: string; user: UserInfo }>> = await api.post('/user/login', credentials)
+      const response: AxiosResponse<ApiResponse<{ token: string; refreshToken: string; user: UserInfo }>> = await api.post('/user/login', credentials)
       return response.data
     } catch (error: any) {
       console.error('登录请求失败:', error)
@@ -135,6 +214,24 @@ export const userService = {
       return response.data
     } catch (error: any) {
       console.error('修改密码失败:', error)
+      throw error
+    }
+  },
+
+  // 刷新 token
+  async refreshToken() {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken')
+      if (!refreshToken) {
+        throw new Error('没有 refresh token')
+      }
+      
+      const response: AxiosResponse<RefreshTokenResponse> = await api.post('/user/refresh-token', {
+        refreshToken
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('刷新 token 失败:', error)
       throw error
     }
   },

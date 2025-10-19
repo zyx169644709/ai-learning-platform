@@ -7,6 +7,7 @@ const router = Router()
 // 公开路由
 router.post('/register', userController.register)
 router.post('/login', userController.login)
+router.post('/refresh-token', userController.refreshToken)
 
 // 需要认证的路由
 router.get('/profile', authMiddleware, userController.getProfile)

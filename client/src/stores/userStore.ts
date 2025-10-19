@@ -17,6 +17,12 @@ interface LoginCredentials {
   password: string;
 }
 
+interface LoginResponse {
+  token: string;
+  refreshToken: string;
+  user: UserInfo;
+}
+
 interface RegisterData {
   username: string;
   password: string;
@@ -54,12 +60,13 @@ export const useUserStore = defineStore('user', {
     async login(credentials: LoginCredentials) {
       this.loading = true
       try {
-        const response: ApiResponse<{ token: string; user: UserInfo }> = await userService.login(credentials)
+        const response: ApiResponse<LoginResponse> = await userService.login(credentials)
         if (response.success) {
           this.token = response.data!.token
           this.userInfo = response.data!.user
           this.isLogin = true
           localStorage.setItem('token', response.data!.token)
+          localStorage.setItem('refreshToken', response.data!.refreshToken)
           localStorage.setItem('userInfo', JSON.stringify(response.data!.user))
           return { success: true, message: response.message }
         } else {
@@ -152,6 +159,7 @@ export const useUserStore = defineStore('user', {
       this.token = ''
       this.isLogin = false
       localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
       localStorage.removeItem('userInfo')
     },
 
