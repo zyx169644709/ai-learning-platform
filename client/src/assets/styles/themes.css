@@ -60,7 +60,7 @@ html[data-theme="dark"] { color-scheme: dark; }
   --shadow-hover: rgba(0, 0, 0, 0.4);
 
   /* 代码块（夜间） */
-  --code-bg: #0b1220;
+  --code-bg: #1a1a1a;
   --code-border: rgba(148, 163, 184, 0.2);
   --code-text: #e5e7eb;
   --code-comment: #94a3b8;

@@ -19,7 +19,7 @@
         <button class="btn btn-primary" @click="runCode" :disabled="isRunning">
           <span v-if="isRunning" class="loading-spinner"></span>
           {{ isRunning ? '运行中...' : '运行代码' }}
-        </button>
+        </button> 
         <button class="btn btn-secondary" @click="clearOutput">清空输出</button>
         <button class="btn btn-ghost" @click="resetCode">重置代码</button>
         <button class="btn btn-accent" @click="goToFullscreenEditor">
@@ -39,17 +39,10 @@
         </div>
         <div class="code-input-container">
           <textarea
-            ref="codeTextarea"
+            class="simple-editor-textarea"
             v-model="codeContent"
-            :class="['code-textarea', `language-${selectedLanguage}`]"
             :placeholder="getPlaceholder()"
-            @input="handleCodeInput"
-            @keydown.tab.prevent="handleTab"
-            @keydown.enter="handleEnter"
-          ></textarea>
-          <div class="line-numbers">
-            <span v-for="line in lineCount" :key="line" class="line-number">{{ line }}</span>
-          </div>
+          />
         </div>
       </div>
       
@@ -145,11 +138,11 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 响应式数据
-const codeTextarea = ref<HTMLTextAreaElement>()
 const selectedLanguage = ref(props.language)
 const codeContent = ref(props.initialCode)
 const isRunning = ref(false)
 const activeTab = ref('console')
+const isDarkTheme = ref(true)
 
 // 输出数据
 const output = ref({
@@ -166,11 +159,7 @@ const outputTabs = ref([
   { id: 'performance', label: '性能' }
 ])
 
-// 计算行数
-const lineCount = computed(() => {
-  const lines = codeContent.value.split('\n')
-  return Array.from({ length: Math.max(lines.length, 10) }, (_, i) => i + 1)
-})
+// Textarea 模式无需专门配置
 
 // 默认代码模板
 const codeTemplates = {
@@ -260,7 +249,7 @@ class Program {
   go: `// Go 代码示例
 package main
 
-import "fmt"
+imp${''}ort "fmt"
 
 func fibonacci(n int) int {
     if n <= 1 {
@@ -344,52 +333,6 @@ const getPlaceholder = () => {
   return `在这里输入你的 ${selectedLanguage.value} 代码...`
 }
 
-// 处理代码输入
-const handleCodeInput = () => {
-  // 自动调整高度
-  if (codeTextarea.value) {
-    codeTextarea.value.style.height = 'auto'
-    codeTextarea.value.style.height = codeTextarea.value.scrollHeight + 'px'
-  }
-}
-
-// 处理 Tab 键
-const handleTab = (e: KeyboardEvent) => {
-  const target = e.target as HTMLTextAreaElement
-  const start = target.selectionStart
-  const end = target.selectionEnd
-  
-  // 插入两个空格
-  const newValue = codeContent.value.substring(0, start) + '  ' + codeContent.value.substring(end)
-  codeContent.value = newValue
-  
-  // 设置光标位置
-  nextTick(() => {
-    target.selectionStart = target.selectionEnd = start + 2
-  })
-}
-
-// 处理回车键
-const handleEnter = (e: KeyboardEvent) => {
-  const target = e.target as HTMLTextAreaElement
-  const start = target.selectionStart
-  const beforeCursor = codeContent.value.substring(0, start)
-  const afterCursor = codeContent.value.substring(start)
-  
-  // 获取当前行的缩进
-  const currentLine = beforeCursor.split('\n').pop() || ''
-  const indent = currentLine.match(/^(\s*)/)?.[1] || ''
-  
-  // 插入换行和缩进
-  const newValue = beforeCursor + '\n' + indent + afterCursor
-  codeContent.value = newValue
-  
-  // 设置光标位置
-  nextTick(() => {
-    const newPosition = start + 1 + indent.length
-    target.selectionStart = target.selectionEnd = newPosition
-  })
-}
 
 // 运行代码
 const runCode = async () => {
@@ -623,6 +566,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border-color);
+  min-height: 0; /* 关键：避免子元素出现额外空白 */
 }
 
 .output-panel {
@@ -680,6 +624,7 @@ onMounted(async () => {
 .panel-content {
   flex: 1;
   overflow: hidden;
+  min-height: 0; /* 关键：让内容区可以把高度让给编辑器 */
   background: var(--bg-primary);
 }
 
@@ -687,91 +632,22 @@ onMounted(async () => {
   position: relative;
   height: 100%;
   display: flex;
+  min-height: 0;
 }
 
-.code-textarea {
+.simple-editor-textarea {
   flex: 1;
+  width: 100%;
   height: 100%;
-  padding: 16px;
-  padding-left: 50px; /* Space for line numbers */
-  box-sizing: border-box;
+  resize: none;
+  padding: 12px;
+  outline: none;
   border: none;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--code-bg, var(--bg-primary));
+  color: var(--code-text, var(--text-primary));
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
-  line-height: 1.5;
-  resize: none;
-  overflow-y: auto;
-  white-space: pre;
-  word-wrap: break-word;
-  tab-size: 2;
-  outline: none;
-}
-
-.code-textarea:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--accent-color);
-}
-
-.code-textarea.language-javascript {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-python {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-java {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-cpp {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-csharp {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-go {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-rust {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.code-textarea.language-typescript {
-  font-family: 'Consolas', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-}
-
-.line-numbers {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 100%;
-  background: var(--bg-tertiary);
-  color: var(--text-tertiary);
-  font-size: 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-  box-sizing: border-box;
-  pointer-events: none;
-  border-right: 1px solid var(--border-color);
-}
-
-.line-number {
-  text-align: right;
-  padding-right: 10px;
-  user-select: none;
-  height: 21px; /* Match line height */
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  line-height: 22px;
 }
 
 .console-output,

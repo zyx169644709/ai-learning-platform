@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 const { PrismaClient } = require('../../generated/prisma')
 const prisma = new PrismaClient()
 
-type Where = { username?: string; email?: string }
+type Where = { username?: string; email?: string }  
 
 class UserModel {
   static async findOne(options: { where: Where }) {
@@ -18,7 +18,7 @@ class UserModel {
     return Object.assign(user, attachMethods(user))
   }
 
-  static async findByPk(id: number) {
+  static async findByPk(id: string) {
     const user = await prisma.user.findUnique({ where: { id } })
     if (!user) return null
     return Object.assign(user, attachMethods(user))

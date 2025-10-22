@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response) => {
 // 获取用户信息
 export const getProfile = async (req: Request & { user?: any }, res: Response) => {
   try {
-    const userId = req.user?.userId
+    const userId = req.user?.userId as string
     const user = await User.findByPk(userId)
     if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
     res.json({ success: true, data: { user: user.toJSON() } })
@@ -90,7 +90,7 @@ export const getProfile = async (req: Request & { user?: any }, res: Response) =
 // 更新用户信息
 export const updateProfile = async (req: Request & { user?: any }, res: Response) => {
   try {
-    const userId = req.user?.userId
+    const userId = req.user?.userId as string
     const { bio, avatar, username, email } = req.body as { bio?: string; avatar?: string; username?: string; email?: string }
 
     const user = await User.findByPk(userId)
@@ -162,7 +162,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     }
 
     // 验证 refresh token
-    const decoded = jwt.verify(refreshToken, JWT_SECRET) as { userId: number; username: string }
+    const decoded = jwt.verify(refreshToken, JWT_SECRET) as { userId: string; username: string }
     
     // 查找用户
     const user = await User.findByPk(decoded.userId)

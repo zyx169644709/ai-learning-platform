@@ -70,19 +70,13 @@
         
         <div class="code-input-container">
           <textarea
-            ref="codeTextarea"
+            class="simple-editor-textarea"
             v-model="codeContent"
-            :class="['code-textarea', `language-${selectedLanguage}`, `theme-${isDarkTheme ? 'dark' : 'light'}`]"
             :placeholder="getPlaceholder()"
-            @input="handleCodeInput"
-            @keydown.tab.prevent="handleTab"
-            @keydown.enter="handleEnter"
-            @keydown.ctrl.s.prevent="saveCode"
-            @keydown.ctrl.enter.prevent="runCode"
-          ></textarea>
-          <div class="line-numbers">
-            <span v-for="line in lineCount" :key="line" class="line-number">{{ line }}</span>
-          </div>
+            @input="updateCursor"
+            @click="updateCursor"
+            @keyup="updateCursor"
+          />
         </div>
       </div>
       
@@ -250,7 +244,6 @@ const prefs = useUserPrefs()
 const router = useRouter()
 
 // 响应式数据
-const codeTextarea = ref<HTMLTextAreaElement>()
 const selectedLanguage = ref('javascript')
 const codeContent = ref('')
 const isRunning = ref(false)
@@ -275,11 +268,14 @@ const outputTabs = ref([
   { id: 'performance', label: '性能' }
 ])
 
-// 计算行数
-const lineCount = computed(() => {
-  const lines = codeContent.value.split('\n')
-  return Array.from({ length: Math.max(lines.length, 20) }, (_, i) => i + 1)
-})
+// Textarea 光标位置更新
+const updateCursor = (e: Event) => {
+  const el = e.target as HTMLTextAreaElement
+  const value = el.value.slice(0, el.selectionStart)
+  currentLine.value = value.split('\n').length
+  const lastNewline = value.lastIndexOf('\n')
+  currentColumn.value = lastNewline === -1 ? value.length + 1 : value.length - lastNewline
+}
 
 // 默认代码模板
 const codeTemplates = {
@@ -498,64 +494,7 @@ const getFileSize = () => {
   return `${(size / (1024 * 1024)).toFixed(1)}MB`
 }
 
-// 处理代码输入
-const handleCodeInput = () => {
-  updateCursorPosition()
-}
-
-// 更新光标位置
-const updateCursorPosition = () => {
-  if (codeTextarea.value) {
-    const text = codeTextarea.value.value
-    const cursorPos = codeTextarea.value.selectionStart
-    
-    const beforeCursor = text.substring(0, cursorPos)
-    const lines = beforeCursor.split('\n')
-    
-    currentLine.value = lines.length
-    currentColumn.value = lines[lines.length - 1].length + 1
-  }
-}
-
-// 处理 Tab 键
-const handleTab = (e: KeyboardEvent) => {
-  const target = e.target as HTMLTextAreaElement
-  const start = target.selectionStart
-  const end = target.selectionEnd
-  
-  // 插入两个空格
-  const newValue = codeContent.value.substring(0, start) + '  ' + codeContent.value.substring(end)
-  codeContent.value = newValue
-  
-  // 设置光标位置
-  nextTick(() => {
-    target.selectionStart = target.selectionEnd = start + 2
-    updateCursorPosition()
-  })
-}
-
-// 处理回车键
-const handleEnter = (e: KeyboardEvent) => {
-  const target = e.target as HTMLTextAreaElement
-  const start = target.selectionStart
-  const beforeCursor = codeContent.value.substring(0, start)
-  const afterCursor = codeContent.value.substring(start)
-  
-  // 获取当前行的缩进
-  const currentLineText = beforeCursor.split('\n').pop() || ''
-  const indent = currentLineText.match(/^(\s*)/)?.[1] || ''
-  
-  // 插入换行和缩进
-  const newValue = beforeCursor + '\n' + indent + afterCursor
-  codeContent.value = newValue
-  
-  // 设置光标位置
-  nextTick(() => {
-    const newPosition = start + 1 + indent.length
-    target.selectionStart = target.selectionEnd = newPosition
-    updateCursorPosition()
-  })
-}
+// Monaco Editor 会自动处理这些功能，所以移除原有的处理逻辑
 
 // 保存代码
 const saveCode = () => {
@@ -1117,60 +1056,22 @@ onUnmounted(() => {
   display: flex;
 }
 
-.code-textarea {
+.simple-editor-textarea {
   flex: 1;
+  width: 100%;
   height: 100%;
-  padding: 16px;
-  padding-left: 50px;
-  box-sizing: border-box;
+  resize: none;
+  padding: 12px;
+  outline: none;
   border: none;
-  background: var(--bg-primary);
-  color: var(--code-text);
+  background: var(--code-bg, var(--bg-primary));
+  color: var(--code-text, var(--text-primary));
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
-  line-height: 1.6;
-  resize: none;
-  overflow-y: auto;
-  white-space: pre;
-  word-wrap: break-word;
-  tab-size: 2;
-  outline: none;
+  line-height: 22px;
 }
 
-.code-textarea:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--accent-color);
-}
-
-/* 主题样式现在通过CSS变量自动处理 */
-
-.line-numbers {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 100%;
-  background: var(--bg-primary);
-  color: var(--text-tertiary);
-  font-size: 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-  box-sizing: border-box;
-  pointer-events: none;
-  border-right: 1px solid var(--code-border);
-}
-
-.line-number {
-  text-align: right;
-  padding-right: 10px;
-  user-select: none;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
+/* Monaco Editor 样式已由组件内部处理 */
 
 /* 输出面板 */
 .output-panel {

@@ -44,9 +44,7 @@ class UserService {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        userPreferences: true,
-        codeSnippets: { orderBy: { createdAt: 'desc' }, take: 10 },
-        learningProgress: { orderBy: { updatedAt: 'desc' } }
+        userPreferences: true
       }
     })
     if (!user) throw new Error('用户不存在')

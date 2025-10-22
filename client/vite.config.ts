@@ -26,6 +26,34 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
   ],
+  // Monaco Editor 配置
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['monaco-editor/esm/vs/language/json/json.worker', 'monaco-editor/esm/vs/language/css/css.worker', 'monaco-editor/esm/vs/language/html/html.worker', 'monaco-editor/esm/vs/language/typescript/ts.worker', 'monaco-editor/esm/vs/editor/editor.worker']
+  },
+  // 性能优化配置
+  build: {
+    target: 'es2015',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['vue', 'vue-router', 'pinia'],
+          element: ['element-plus'],
+          utils: ['axios', 'highlight.js', 'markdown-it'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
