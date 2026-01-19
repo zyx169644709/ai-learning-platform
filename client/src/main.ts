@@ -4,6 +4,10 @@ import App from './App.vue'
 import router from './router'
 import './assets/styles/themes.css'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+// 开发环境下导入通知测试工具
+if (import.meta.env.DEV) {
+  import('./utils/test-notification')
+}
 
 const app = createApp(App)
 

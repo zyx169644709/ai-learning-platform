@@ -21,7 +21,6 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
     Header: typeof import('./components/common/Header.vue')['default']
-    MonacoEditor: typeof import('./components/common/MonacoEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./components/common/Sidebar.vue')['default']

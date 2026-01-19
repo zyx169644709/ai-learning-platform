@@ -175,7 +175,6 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { ElMessage } from 'element-plus'
 import { 
   User, 
   Message, 
@@ -186,6 +185,7 @@ import {
   Connection
 } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import { notification } from '@/utils/notification'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -286,9 +286,11 @@ const handleRegister = async () => {
       successMsg.value = '注册成功！正在跳转到首页...'
       console.log('注册成功，准备跳转')
       
+      // 显示注册成功提示
+      notification.success('注册成功！欢迎加入AI学习平台！')
+      
       // 延迟跳转，让用户看到成功提示
       setTimeout(() => {
-        ElMessage.success('欢迎加入AI学习平台！')
         router.push('/')
       }, 1500)
     } else {

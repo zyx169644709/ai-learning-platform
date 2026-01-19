@@ -141,9 +141,10 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import { User, Lock, Monitor, DataAnalysis, ChatDotRound } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import { notification } from '@/utils/notification'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -210,9 +211,11 @@ const handleLogin = async () => {
         localStorage.removeItem('rememberedUsername')
       }
 
+      // 显示登录成功提示
+      ;(notification as any).success('登录成功！欢迎回来！')
+      
       // 延迟跳转，让用户看到成功提示
       setTimeout(() => {
-        ElMessage.success('欢迎回来！')
         router.push('/')
       }, 1000)
     } else {

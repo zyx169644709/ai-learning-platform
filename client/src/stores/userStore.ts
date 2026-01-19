@@ -113,6 +113,7 @@ export const useUserStore = defineStore('user', {
         this.token = ''
         this.isLogin = false
         localStorage.removeItem('token')
+        localStorage.removeItem('refreshToken')
         localStorage.removeItem('userInfo')
       }
     },
@@ -144,7 +145,7 @@ export const useUserStore = defineStore('user', {
         }
       } catch (error: any) {
         console.error('加载用户信息出错:', error)
-        // 如果是401错误，说明token无效
+        // 如果是401错误，说明token无效（注意：axios拦截器会自动处理并跳转）
         if (error.response?.status === 401) {
           console.log('Token无效，清除登录状态')
           this.clearUserState()

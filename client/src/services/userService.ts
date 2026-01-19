@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { notification } from '@/utils/notification'
 
 // 创建axios实例
 // 开发环境：使用 Vite 代理（/api -> http://localhost:3000）
@@ -108,8 +109,14 @@ api.interceptors.response.use(
         // 处理等待队列
         processQueue(refreshError, null)
         
-        // 跳转到登录页
-        window.location.href = '/login'
+        // 显示友好的提示信息
+        notification.warning('登录已过期，请重新登录', 2000)
+        
+        // 延迟跳转，让用户看到提示
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 2000)
+        
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

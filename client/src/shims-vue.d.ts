@@ -3,3 +3,14 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+// 全局声明 notification
+declare module '@/utils/notification' {
+  export const notification: {
+    error(message: string, duration?: number): void;
+    success(message: string, duration?: number): void;
+    warning(message: string, duration?: number): void;
+    info(message: string, duration?: number): void;
+    show(message: string, type?: 'error' | 'success' | 'warning' | 'info', duration?: number): void;
+  }
+}

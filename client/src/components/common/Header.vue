@@ -255,6 +255,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useEventListener, useDebounceFn } from '@vueuse/core'
 import { searchService, type SearchResult } from '@/services/searchService'
 import { useUserPrefs } from '@/stores/userPrefs'
+import { notification } from '@/utils/notification'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -469,17 +470,49 @@ const goWelcome = () => {
 }
 
 const logout = async () => {
+  console.log('=== 退出登录按钮被点击 ===')
+  console.log('当前登录状态:', userStore.isLogin)
+  console.log('当前用户信息:', userStore.userInfo)
+  
+  if (!userStore.isLogin) {
+    console.log('用户未登录，直接跳转到首页')
+    await router.push('/')
+    return
+  }
+  
   try {
+    console.log('开始执行 logout...')
     await userStore.logout()
-    router.push('/')
+    console.log('logout 完成，准备跳转到首页')
+    notification.success('退出登录成功')
+    await router.push('/')
+    console.log('跳转完成')
   } catch (error) {
     console.error('登出失败:', error)
-    router.push('/')
+    await router.push('/')
   }
 }
 
-const goToProfile = () => {
-  router.push('/profile')
+const goToProfile = async () => {
+  console.log('=== 个人中心按钮被点击 ===')
+  console.log('当前登录状态:', userStore.isLogin)
+  console.log('当前用户信息:', userStore.userInfo)
+  console.log('当前 token:', userStore.token)
+  
+  if (!userStore.isLogin || !userStore.token) {
+    console.log('用户未登录或 token 无效，跳转到登录页')
+    notification.warning('请先登录后再访问个人中心')
+    await router.push('/login')
+    return
+  }
+  
+  console.log('准备跳转到 /profile')
+  try {
+    await router.push('/profile')
+    console.log('路由跳转成功')
+  } catch (err) {
+    console.error('路由跳转失败:', err)
+  }
 }
 
 const toggleAvatarEnlarged = () => {
