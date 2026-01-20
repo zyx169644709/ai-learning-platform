@@ -2,9 +2,8 @@
   <div class="teaching-assistant">
     <div class="chat-container">
       <div class="chat-header">
-        <h3>🛰️ Kimi 助手</h3>
-        <p>与月之暗面 Kimi 对话，询问你想知道的任意内容</p>
-        
+        <h3>🛰️ Vue 学习助手 (Kimi)</h3>
+        <p>与智能助手 Kimi 对话，获取 Vue 3 开发建议、代码审查与技术指导</p>
       </div>
       <div class="chat-messages" ref="chatRef">
         <div v-for="(m, i) in messages" :key="i" :class="['message', m.role]">
@@ -65,18 +64,18 @@ const userAvatar = computed(() => {
 
 // 快速问题案例
 const quickQuestions = [
-  '帮我写一封求职信',
-  '解释一下人工智能的发展历程',
-  '写一篇关于人工智能的论文大纲',
-  '简述微积分的概念',
-  '推荐几本好书'
+  '如何优化 Vue 3 组件性能？',
+  'Vue 3 中如何处理跨组件通信？',
+  '解释一下 Vue 3 的依赖注入 (Provide/Inject)',
+  'Vite 相比 Webpack 的优势是什么？',
+  '推荐一些 Vue 3 的 UI 组件库'
 ]
 
 // 初始化欢迎消息
 onMounted(() => {
   messages.value.push({
     role: 'assistant',
-    content: '你好！我是月之暗面的 Kimi 助手 🛰️\n\n我可以帮助你：\n• 回答各种问题，提供准确的信息\n• 协助写作、翻译和创作\n• 分析和解释复杂的概念\n• 提供学习和工作建议\n\n有什么问题尽管问我吧！'
+    content: '你好！我是基于 Kimi 的 Vue 学习助手 🛰️\n\n我可以帮助你：\n• 解答 Vue 3、Vite、Pinia 等技术疑问\n• 优化你的 Vue 代码逻辑\n• 分析复杂的组件通信方案\n• 提供前端工程化最佳实践建议\n\n有什么 Vue 相关的问题，尽管问我吧！'
   })
 })
 

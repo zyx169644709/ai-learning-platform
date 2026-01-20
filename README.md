@@ -1,5 +1,9 @@
-# ai-learning-platform
-AI Learning Platform built with Vue 3 + Node.js + Prisma
+# vue-learning-platform
+Vue.js 学习实战平台 - 基于 Vue 3 + Node.js + Prisma 的全栈实战教学系统
+
+## 项目定位
+
+本平台致力于提供“理论讲解 + 习题练习 + 实操项目 + 智能反馈”的闭环学习体验，帮助开发者系统化掌握 Vue 3 现代化开发的核心能力。
 
 ## 环境变量与功能开关
 
@@ -8,7 +12,7 @@ AI Learning Platform built with Vue 3 + Node.js + Prisma
 - `client/.env.example` → 复制为 `client/.env.local`
 - `server/.env.example` → 复制为 `server/.env.local` 或 `server/.env`
 
-当未配置任何 AI 密钥时，站点仍可正常访问；AI 相关功能默认关闭，不会阻断页面渲染。
+当未配置任何 AI 密钥时，站点仍可正常访问；Vue 专家助教（基于 DeepSeek/Kimi）相关功能默认关闭。
 
 客户端示例变量（节选）：
 
@@ -33,6 +37,14 @@ DEEPSEEK_API_KEY=
 KIMI_API_KEY=
 COZE_API_KEY=
 ```
+
+## 核心功能
+
+- **系统化课程**：涵盖 Vue 3 基础、Composition API、状态管理、工程化等全方位内容。
+- **交互式编辑器**：内置基于 Monaco Editor 的在线 Vue 代码编辑器，即写即播。
+- **专家助教**：集成 DeepSeek/Kimi API，提供代码诊断、技术答疑与学习规划。
+- **实战演练**：配套习题与项目实战，从 TodoList 到复杂 SPA 完整覆盖。
+- **资源社区**：分享前端资源，参与技术讨论。
 
 ## 首次启动指南（安装与开发运行）
 

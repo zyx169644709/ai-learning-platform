@@ -2,8 +2,8 @@
   <div class="teaching-assistant">
     <div class="chat-container">
       <div class="chat-header">
-        <h3>🤖 AI教学助手</h3>
-        <p>我是您的专属AI老师，随时为您解答AI学习中的疑问</p>
+        <h3>💚 Vue 专家助教</h3>
+        <p>我是您的 Vue 学习助手，随时为您解答 Vue 3 开发中的各类疑问</p>
       </div>
 
       <div class="chat-messages" ref="chatMessages">
@@ -58,12 +58,11 @@
     <!-- 代码分析弹窗 -->
     <div v-if="showCodeAnalyzer" class="modal-overlay" @click="showCodeAnalyzer = false">
       <div class="modal-content" @click.stop>
-        <h3>代码分析助手</h3>
+        <h3>Vue 代码诊断助手</h3>
         <select v-model="codeLanguage" class="language-select">
-          <option value="python">Python</option>
           <option value="javascript">JavaScript</option>
-          <option value="java">Java</option>
-          <option value="cpp">C++</option>
+          <option value="typescript">TypeScript</option>
+          <option value="vue">Vue SFC</option>
         </select>
         
         <textarea v-model="codeToAnalyze" 
@@ -93,7 +92,7 @@
         
         <div class="form-group">
           <label>学习主题：</label>
-          <input v-model="learningTopic" placeholder="例如：机器学习基础" />
+          <input v-model="learningTopic" placeholder="例如：Vue 3 组合式 API" />
         </div>
         
         <div class="form-group">
@@ -141,7 +140,7 @@ const userAvatar = computed(() => {
 // 代码分析相关
 const showCodeAnalyzer = ref(false)
 const codeToAnalyze = ref('')
-const codeLanguage = ref('python')
+const codeLanguage = ref('javascript')
 const codeAnalyzing = ref(false)
 
 // 学习规划相关
@@ -153,18 +152,18 @@ const planGenerating = ref(false)
 
 // 快速问题
 const quickQuestions = [
-  '什么是机器学习？',
-  '神经网络是如何工作的？',
-  '如何开始学习深度学习？',
-  'Python在AI中的应用',
-  '推荐一些AI学习资源'
+  '什么是 Composition API？',
+  'ref 和 reactive 有什么区别？',
+  'Vue 3 生命周期钩子有哪些变化？',
+  '如何在 Vue 3 中使用 Pinia？',
+  '推荐一些 Vue 3 学习资源'
 ]
 
 // 初始化欢迎消息
 onMounted(() => {
   messages.value.push({
     role: 'assistant',
-    content: '你好！我是你的AI教学助手 有什么问题尽管问我吧！',
+    content: '你好！我是你的 Vue 专家助教，关于 Vue 3、Vite、Pinia 或 Vue Router 的任何问题，我都能帮你解答！',
     timestamp: new Date()
   })
 })

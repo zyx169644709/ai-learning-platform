@@ -1,21 +1,21 @@
 <template>
   <div class="ai-panel">
     <div class="panel-header">
-      <h3 class="panel-title">基于api调用的AI辅助工具</h3>
-      <div class="panel-subtitle">DeepSeek代码助手</div>
+      <h3 class="panel-title">Vue 智能辅助工具</h3>
+      <div class="panel-subtitle">DeepSeek 代码诊断</div>
       <div class="ai-card">
-        <button @click="openCodeAssistant" class="card-button code-button">Code Assistant </button>
+        <button @click="openCodeAssistant" class="card-button code-button">Vue 专家诊断</button>
       </div>
-      <div class="panel-subtitle">Kimi全能助手</div>
-      <button @click="openKimiPage" class="card-button kimi-button">Kimi</button>
+      <div class="panel-subtitle">Kimi 技术答疑</div>
+      <button @click="openKimiPage" class="card-button kimi-button">Vue 知识问答</button>
     </div>
-    <h3 class="panel-title">基于coze空间的智能体</h3>
-    <div class="panel-subtitle">塔罗牌占卜</div>
+    <h3 class="panel-title">实战反馈与规划</h3>
+    <div class="panel-subtitle">Vue 学习路线</div>
     <div class="ai-features">
-      <button @click="openTarotPage" class="card-button tarot-button">Tarot</button>
+      <button @click="openCodeAssistant" class="card-button tarot-button">定制学习路径</button>
     </div>
-    <div class="panel-subtitle">MBTI分析助手</div>
-    <button @click="openMBTIPage" class="card-button tarot-button">MBTI</button>
+    <div class="panel-subtitle">项目实操建议</div>
+    <button @click="openKimiPage" class="card-button tarot-button">获取实战思路</button>
   </div>
 </template>
 
@@ -24,20 +24,12 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const openTarotPage = () => {
-  router.push('/agent/tarot')
-}
-
 const openCodeAssistant = () => {
   router.push('/api/deepseek')
 }
 
 const openKimiPage = () => {
   router.push('/api/kimi')
-}
-
-const openMBTIPage = () => {
-  router.push('/agent/mbti')
 }
 
 </script>

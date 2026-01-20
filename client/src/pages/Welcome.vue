@@ -4,56 +4,54 @@
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-left">
-          <h1 class="brand">AI Learning</h1>
-          <h2 class="headline">AI 教学与实战平台</h2>
-          <p class="tagline">系统课程 · 项目实战 · 智能助教，快速掌握大模型时代的核心能力</p>
+          <h1 class="brand">Vue.js 学习平台</h1>
+          <h2 class="headline">掌握 Vue 现代化开发</h2>
+          <p class="tagline">理论讲解 + 习题练习 + 实操项目 + 智能反馈，全方位系统掌握 Vue 3 生态系统</p>
           <div class="actions">
-            <RouterLink to="/home" class="btn btn-primary">开始学习 →</RouterLink>
-            <RouterLink to="/api/deepseek" class="btn btn-ghost">试用智能助教</RouterLink>
+            <RouterLink to="/home" class="btn btn-primary">快速开始 →</RouterLink>
+            <RouterLink to="/api/deepseek" class="btn btn-ghost">咨询 Vue 专家助教</RouterLink>
           </div>
         </div>
         <div class="hero-right">
-          <div class="ai-visual" aria-hidden="true">
-            <div class="ai-orb"></div>
-            <span class="dot" style="--x:20%;--y:25%"></span>
-            <span class="dot" style="--x:78%;--y:30%"></span>
-            <span class="dot" style="--x:65%;--y:10%"></span>
-            <span class="dot" style="--x:30%;--y:85%"></span>
-            <!-- AI themed elements inside the orb -->
+          <div class="vue-visual" aria-hidden="true">
+            <div class="vue-orb"></div>
+            <!-- Vue Logo Image -->
+            <img src="@/assets/images/v.png" alt="Vue Logo" class="vue-logo-img">
+            
+            <!-- Animated Vue elements -->
+            <div class="vue-element vue-reactive" style="--x:25%;--y:20%">
+              <span>{{ }}</span>
+            </div>
+            <div class="vue-element vue-component" style="--x:75%;--y:25%">
+              <span>&lt;/&gt;</span>
+            </div>
+            <div class="vue-element v-directive" style="--x:70%;--y:70%">
+              <span>v-</span>
+            </div>
+            <div class="vue-element vue-data" style="--x:20%;--y:75%">
+              <span>{}</span>
+            </div>
+            <!-- Orbits with Vue icons -->
+            <div class="orbit o1">
+              <span class="orbit-node vue-icon">V</span>
+            </div>
+            <div class="orbit o2">
+              <span class="orbit-node vue-icon">U</span>
+            </div>
+            <div class="orbit o3">
+              <span class="orbit-node vue-icon">E</span>
+            </div>
+            <!-- Decorative rings -->
             <div class="ring r1"></div>
             <div class="ring r2"></div>
             <div class="ring r3"></div>
-            <div class="orbit o1"><span class="orbit-node"></span></div>
-            <div class="orbit o2"><span class="orbit-node"></span></div>
-            <svg class="neural" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <!-- 使用连线绘制 'A' 与 'I' -->
-              <g class="edges" stroke-width="1.2" stroke-linecap="round">
-                <!-- A -->
-                <line x1="22" y1="72" x2="35" y2="20" />
-                <line x1="35" y1="20" x2="48" y2="72" />
-                <line x1="27" y1="45" x2="43" y2="45" />
-                <!-- I -->
-                <line x1="62" y1="20" x2="78" y2="20" />
-                <line x1="70" y1="20" x2="70" y2="72" />
-                <line x1="62" y1="72" x2="78" y2="72" />
-              </g>
-              <g class="nodes" fill="currentColor">
-                <!-- A nodes -->
-                <circle cx="22" cy="72" r="1.8" />
-                <circle cx="35" cy="20" r="1.8" />
-                <circle cx="48" cy="72" r="1.8" />
-                <circle cx="27" cy="45" r="1.6" />
-                <circle cx="43" cy="45" r="1.6" />
-                <!-- I nodes -->
-                <circle cx="62" cy="20" r="1.6" />
-                <circle cx="78" cy="20" r="1.6" />
-                <circle cx="70" cy="20" r="1.8" />
-                <circle cx="70" cy="72" r="1.8" />
-                <circle cx="62" cy="72" r="1.6" />
-                <circle cx="78" cy="72" r="1.6" />
-              </g>
-            </svg>
-
+            <!-- Particle effects -->
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+            <div class="particle p5"></div>
+            <div class="particle p6"></div>
           </div>
         </div>
       </div>
@@ -63,34 +61,34 @@
     <section class="features">
       <div class="grid">
         <div class="card">
-          <div class="card-icon">🧭</div>
-          <div class="card-title">学习路径</div>
-          <div class="card-desc">AI 入门 / 数学基础 / 机器学习 / 深度学习 ，打造独属于你的学习计划</div>
+          <div class="card-icon">📖</div>
+          <div class="card-title">理论学习</div>
+          <div class="card-desc">Vue3基础 / Composition API / 响应式原理 / 组件通信，系统化掌握核心概念</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">✏️</div>
+          <div class="card-title">习题练习</div>
+          <div class="card-desc">精选编程题 + 选择题 + 填空题，巩固知识点，实时查看答案与解析</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💻</div>
+          <div class="card-title">实战项目</div>
+          <div class="card-desc">从TodoList到完整SPA，真实项目驱动，在编码中提升Vue3开发技能</div>
         </div>
         <div class="card">
           <div class="card-icon">🤖</div>
-          <div class="card-title">智能助教</div>
-          <div class="card-desc">转为平台打造，难点即时提问，给出思路、示例代码与练习建议</div>
+          <div class="card-title">专家助教</div>
+          <div class="card-desc">Vue 专家助教实时答疑，提供代码诊断与性能优化建议，攻克开发难点</div>
         </div>
         <div class="card">
-          <div class="card-icon">🧠</div>
-          <div class="card-title">代码分析</div>
-          <div class="card-desc">内置多语种代码编译器，输入代码即刻获得解释、优化与调试建议，快速定位问题</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">📚</div>
-          <div class="card-title">课程资源</div>
-          <div class="card-desc">基于全栈的丰富课程资源，告别枯燥学习，找到适合教程，提升学习效率</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🌐</div>
-          <div class="card-title">资源社区</div>
-          <div class="card-desc">整合多方面实用资源，详细汇总，高效查询，告别网上收集零碎资源</div>
+          <div class="card-icon">🛠️</div>
+          <div class="card-title">开发工具</div>
+          <div class="card-desc">在线IDE + Vue DevTools教程 + Vite配置，打造高效开发环境</div>
         </div>
         <div class="card">
           <div class="card-icon">👥</div>
-          <div class="card-title">社区讨论</div>
-          <div class="card-desc">发帖看帖，实时了解最新资讯，交流心得与项目，共建优质资料库。</div>
+          <div class="card-title">学习社区</div>
+          <div class="card-desc">交流学习心得，分享项目经验，参与代码review，共同成长进步</div>
         </div>
       </div>
     </section>
@@ -179,17 +177,17 @@
   justify-content: center;
 }
 
-.ai-visual {
+.vue-visual {
   position: relative;
   width: min(360px, 48vw);
   height: min(360px, 48vw);
 }
 
-.ai-orb {
+.vue-orb {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(60% 60% at 50% 50%, rgba(66, 184, 131, .35), rgba(66, 184, 131, .12) 45%, transparent 60%),
+  background: radial-gradient(60% 60% at 50% 50%, rgba(65, 184, 131, .35), rgba(65, 184, 131, .12) 45%, transparent 60%),
     radial-gradient(120% 120% at 70% 30%, rgba(53, 73, 94, .5), transparent 60%),
     linear-gradient(145deg, #35495e 0%, #41b883 100%);
   filter: blur(1px) drop-shadow(0 20px 60px rgba(0, 0, 0, .25));
@@ -197,6 +195,54 @@
   animation: float 6s ease-in-out infinite;
 }
 
+/* Vue Logo Image */
+.vue-logo-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 150px;
+  filter: drop-shadow(0 0 20px rgba(65, 184, 131, 0.8));
+  animation: logo-pulse 3s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* Vue elements floating around */
+.vue-element {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  background: rgba(65, 184, 131, 0.15);
+  border: 1px solid rgba(65, 184, 131, 0.4);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #41b883;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 14px;
+  backdrop-filter: blur(5px);
+  animation: float-element 8s ease-in-out infinite;
+  box-shadow: 0 4px 15px rgba(65, 184, 131, 0.3);
+}
+
+.vue-element.vue-reactive {
+  animation-delay: 0s;
+}
+
+.vue-element.vue-component {
+  animation-delay: 2s;
+}
+
+.vue-element.v-directive {
+  animation-delay: 4s;
+}
+
+.vue-element.vue-data {
+  animation-delay: 6s;
+}
+
+/* Rings */
 .ring {
   position: absolute;
   inset: 12%;
@@ -214,11 +260,12 @@
   opacity: .4;
 }
 
+/* Orbits with Vue letters */
 .orbit {
   position: absolute;
   inset: 6%;
   border-radius: 50%;
-  border: 1px solid rgba(66, 184, 131, .2);
+  border: 1px solid rgba(65, 184, 131, .2);
   animation: spin 12s linear infinite;
 }
 
@@ -227,32 +274,116 @@
   animation-duration: 18s;
 }
 
+.orbit.o3 {
+  inset: 26%;
+  animation-duration: 24s;
+  border-color: rgba(65, 184, 131, .15);
+}
+
 .orbit-node {
   position: absolute;
-  top: -4px;
+  top: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #41b883;
-  box-shadow: 0 0 10px rgba(65, 184, 131, .9);
+  background: linear-gradient(135deg, #41b883, #35495e);
+  box-shadow: 0 0 20px rgba(65, 184, 131, .9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
 }
 
-.neural {
+.orbit-node.vue-icon {
+  background: linear-gradient(135deg, #41b883, #35495e);
+}
+
+/* Particle effects */
+.particle {
   position: absolute;
-  inset: 10%;
-  color: #cfeee0;
-  opacity: .9;
-  mix-blend-mode: screen;
+  width: 4px;
+  height: 4px;
+  background: #41b883;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(65, 184, 131, 0.8);
 }
 
-.neural .edges {
-  stroke: rgba(65, 184, 131, .45);
+.particle.p1 {
+  top: 20%;
+  left: 10%;
+  animation: twinkle 3s ease-in-out infinite;
 }
 
-.neural .nodes {
-  color: #90dfbf;
+.particle.p2 {
+  top: 30%;
+  right: 15%;
+  animation: twinkle 3s ease-in-out infinite 0.5s;
+}
+
+.particle.p3 {
+  bottom: 25%;
+  right: 20%;
+  animation: twinkle 3s ease-in-out infinite 1s;
+}
+
+.particle.p4 {
+  bottom: 20%;
+  left: 15%;
+  animation: twinkle 3s ease-in-out infinite 1.5s;
+}
+
+.particle.p5 {
+  top: 50%;
+  left: 5%;
+  animation: twinkle 3s ease-in-out infinite 2s;
+}
+
+.particle.p6 {
+  top: 45%;
+  right: 5%;
+  animation: twinkle 3s ease-in-out infinite 2.5s;
+}
+
+/* Animations */
+@keyframes float-element {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: .8;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: .3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes logo-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8))
+            drop-shadow(0 0 40px rgba(65, 184, 131, 0.5))
+            drop-shadow(0 0 60px rgba(65, 184, 131, 0.3));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    filter: drop-shadow(0 0 30px rgb(255, 255, 255))
+            drop-shadow(0 0 60px rgba(65, 184, 131, 0.7))
+            drop-shadow(0 0 90px rgba(65, 184, 131, 0.5));
+  }
 }
 
 @keyframes spin {
@@ -270,7 +401,7 @@
   left: var(--x);
   top: var(--y);
   opacity: .9;
-  box-shadow: 0 0 12px rgba(66, 184, 131, .8);
+  box-shadow: 0 0 12px rgba(65, 184, 131, .8);
 }
 
 .dot::after {
@@ -278,7 +409,7 @@
   position: absolute;
   inset: -10px;
   border-radius: 50%;
-  background: rgba(66, 184, 131, .18);
+  background: rgba(65, 184, 131, .18);
   filter: blur(6px);
 }
 

@@ -4,16 +4,16 @@
       <div class="logo-section">
         <div class="logo" @click="goWelcome">
           <div class="logo-img-container">
-            <img src="@/assets/images/AI-Learning.png" alt="AI Learning Logo" class="logo-img">
+            <img src="@/assets/images/vue-logo.png" alt="Vue Learning Logo" class="logo-img">
           </div>
-          <h1 class="logo-title">AI Learning</h1>
+          <h1 class="logo-title">Vue Learning</h1>
         </div>
       </div>
       <div class="header-container-left">
         <div class="search-section">
           <div class="search-container">
             <div class="search-icon">🔍</div>
-            <input type="text" v-model="searchQuery" placeholder="搜索课程..." class="search-input"
+            <input type="text" v-model="searchQuery" placeholder="搜索 Vue 知识、课程或代码..." class="search-input"
               @keyup.enter="handleSearchEnter" @keydown.arrow-down="handleArrowDown" @keydown.arrow-up="handleArrowUp" 
               @keydown.escape="closeSearchResults" ref="searchInputRef" @input="handleSearchInput" 
               @focus="showSearchSuggestions" @blur="handleSearchBlur" />
@@ -50,7 +50,7 @@
                      class="search-suggestion-item"
                      @click="selectSearchSuggestion(item)">
                   <span class="suggestion-icon">🔥</span>
-                  <span class="suggestion-text">{{ item }}</span>
+                    <span class="suggestion-text">{{ item }}</span>
                 </div>
               </div>
             </div>
@@ -451,7 +451,7 @@ const getResultTypeName = (type: string) => {
 
 // 获取替代建议
 const getAlternativeSuggestions = () => {
-  const suggestions = ['人工智能', '机器学习', '深度学习', 'Python']
+  const suggestions = ['Vue 3', 'Composition API', 'Pinia', 'Vue Router']
   return suggestions.slice(0, 2).join('、')
 }
 
@@ -532,7 +532,7 @@ const toggleTheme = () => {
 // 打开 GitHub 仓库
 const openGitHub = () => {
   // 打开 GitHub 仓库
-  window.open('https://github.com/zyx169644709/ai-learning-platform', '_blank')
+  window.open('https://github.com/zyx169644709/vue-learning-platform', '_blank')
 }
 
 

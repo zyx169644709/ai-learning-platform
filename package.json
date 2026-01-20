@@ -1,5 +1,5 @@
 {
-  "name": "ai-learning-platform",
+  "name": "vue-learning-platform",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -24,12 +24,13 @@
     "jsdom": "^27.0.1",
     "vitest": "^3.2.4"
   },
-  "description": "AI Learning Platform - 前后端分离的全栈学习平台",
+  "description": "Vue.js Learning Platform - 专注于 Vue 3 实战的全栈学习平台",
   "keywords": [
-    "ai",
+    "vue",
+    "vue3",
     "learning",
     "platform",
-    "vue",
+    "frontend",
     "nodejs",
     "prisma",
     "typescript"

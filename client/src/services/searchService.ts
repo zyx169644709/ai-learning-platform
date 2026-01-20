@@ -189,26 +189,27 @@ class SearchService {
     if (!query.trim()) return []
     
     const suggestions = [
-      '人工智能',
-      '机器学习',
-      '深度学习',
-      '神经网络',
-      '自然语言处理',
-      '计算机视觉',
-      '数学基础',
-      'Python编程',
-      '线性代数',
-      '概率统计',
-      '监督学习',
-      '无监督学习',
-      '强化学习',
-      '卷积神经网络',
-      '循环神经网络',
-      'Transformer',
-      'BERT',
-      'GPT',
-      '图像识别',
-      '语音识别'
+      'Vue 3 基础',
+      'Composition API',
+      'Reactive',
+      'Ref',
+      'Computed',
+      'Watch',
+      '生命周期钩子',
+      'Vue Router',
+      'Pinia 状态管理',
+      'Vite 构建工具',
+      'TypeScript',
+      '组件通信',
+      'Props',
+      'Emits',
+      '插槽 Slots',
+      'Teleport',
+      '性能优化',
+      'Vitest 测试',
+      'SFC 单文件组件',
+      '指令 v-if v-for',
+      '双向绑定 v-model'
     ]
     
     // 基于查询过滤和排序建议
@@ -230,14 +231,14 @@ class SearchService {
   // 热门搜索
   async getPopularSearches(): Promise<string[]> {
     return [
-      '人工智能基础',
-      '机器学习入门',
-      '深度学习实战',
-      'Python AI',
-      '神经网络原理',
-      '数学基础',
-      '线性代数',
-      '概率统计'
+      'Vue 3 入门',
+      'Composition API 实战',
+      'Pinia 教程',
+      'Vue Router 配置',
+      'Vite 优化',
+      'TypeScript 在 Vue 中的应用',
+      '响应式原理',
+      '组件化开发'
     ]
   }
 

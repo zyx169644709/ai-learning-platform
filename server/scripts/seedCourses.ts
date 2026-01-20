@@ -9,52 +9,52 @@ async function seedCourses() {
 
   const courses = [
     {
-      title: 'AI 基础入门',
-      description: '零基础友好，快速理解 AI 与机器学习核心概念。',
+      title: 'Vue 3 核心基础',
+      description: '从零开始掌握 Vue 3，包括模板语法、指令、响应式系统等核心概念。',
       level: 'beginner',
       cover: '/assets/images/course-beginner-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['AI', '基础', '视频']
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['Vue3', '基础', '入门']
     },
     {
-      title: 'Prompt 工程与工作流',
-      description: '掌握高质量提示与多步工作流的设计与实现。',
+      title: 'Composition API 深度实践',
+      description: '深入理解组合式 API，掌握 ref, reactive, computed 等高级用法与逻辑复用。',
       level: 'intermediate',
       cover: '/assets/images/course-intermediate-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['Prompt', '工程', '视频']
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['Vue3', 'Composition API', '进阶']
     },
     {
-      title: 'RAG 应用工程实践',
-      description: '从检索到生成，构建企业级检索增强应用。',
+      title: 'Vue Router 4 路由实战',
+      description: '掌握 Vue Router 4 的基础配置、嵌套路由、导航守卫等前端路由核心技术。',
       level: 'intermediate',
       cover: '/assets/images/course-intermediate-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['RAG', '检索增强', '视频']
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['Vue Router', '路由', '视频']
     },
     {
-      title: '深度学习基础',
-      description: '神经网络原理与实现，从感知机到卷积神经网络。',
+      title: 'Pinia 状态管理指南',
+      description: '现代化状态管理工具 Pinia 的深度应用，涵盖 Store 设计、状态持久化等。',
       level: 'beginner',
       cover: '/assets/images/course-beginner-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['深度学习', '神经网络', '视频']
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['Pinia', '状态管理', 'Vue3']
     },
     {
-      title: '计算机视觉实战',
-      description: '图像识别、目标检测、语义分割等CV核心技术。',
+      title: 'Vite 工程化开发实践',
+      description: '基于 Vite 构建高效的 Vue 3 开发环境，涵盖打包优化、插件开发等。',
       level: 'advanced',
       cover: '/assets/images/course-advanced-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['CV', '视觉', '视频']
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['Vite', '工程化', '视频']
     },
     {
-      title: '自然语言处理入门',
-      description: '文本预处理、词向量、情感分析等NLP基础技术。',
-      level: 'beginner',
-      cover: '/assets/images/course-beginner-cover.svg',
-      url: 'https://www.bilibili.com/video/BV1xx411c7mu',
-      tags: ['NLP', '文本', '视频']
+      title: 'Vue 3 + TypeScript 大型项目实战',
+      description: '在 Vue 3 项目中深度应用 TypeScript，提升代码健壮性与开发效率。',
+      level: 'advanced',
+      cover: '/assets/images/course-advanced-cover.svg',
+      url: 'https://www.bilibili.com/video/BV1Zy4y1K7SH',
+      tags: ['TypeScript', '项目实战', 'Vue3']
     }
   ]
 
@@ -76,39 +76,39 @@ async function seedResources() {
 
   const resources = [
     {
-      title: 'Python 机器学习完整教程',
-      description: '从零开始的机器学习路线与代码示例。',
+      title: 'Vue 3 官方文档 (中文版)',
+      description: '最权威的 Vue 3 学习资料，涵盖所有核心概念与 API 参考。',
       cover: '/assets/images/document-cover.svg',
-      url: 'https://scikit-learn.org/stable/',
-      tags: ['机器学习', 'Python', '教程']
+      url: 'https://cn.vuejs.org/',
+      tags: ['Vue3', '官方文档', '中文']
     },
     {
-      title: '深度学习实战项目合集',
-      description: '10 个完整项目覆盖图像与文本任务。',
+      title: 'Vue Router 官方指南',
+      description: '学习如何使用 Vue Router 构建单页面应用。',
       cover: '/assets/images/code-cover.svg',
-      url: 'https://pytorch.org/tutorials/',
-      tags: ['深度学习', 'PyTorch', '项目']
+      url: 'https://router.vuejs.org/zh/',
+      tags: ['Vue Router', '路由', '官方']
     },
     {
-      title: 'NLP 数据集大全',
-      description: '文本分类/情感分析/机器翻译常用数据集汇总。',
+      title: 'Pinia 官方文档',
+      description: '新一代 Vue 状态管理库的详细使用说明。',
       cover: '/assets/images/dataset-cover.svg',
-      url: 'https://huggingface.co/datasets',
-      tags: ['NLP', '数据集', '文本分析']
+      url: 'https://pinia.vuejs.org/zh/',
+      tags: ['Pinia', '状态管理', '官方']
     },
     {
-      title: 'TensorFlow 官方教程',
-      description: 'Google 官方深度学习框架完整教程。',
-      cover: '/assets/images/video-cover.svg',
-      url: 'https://www.tensorflow.org/tutorials',
-      tags: ['TensorFlow', '深度学习', 'Google']
-    },
-    {
-      title: 'Jupyter Notebook 工具集',
-      description: '数据科学必备的交互式开发环境。',
+      title: 'Vue Use 函数库',
+      description: '基于 Composition API 的实用工具函数集合。',
       cover: '/assets/images/tool-cover.svg',
-      url: 'https://jupyter.org/',
-      tags: ['Jupyter', '数据科学', '开发工具']
+      url: 'https://vueuse.org/',
+      tags: ['VueUse', 'Composables', '工具']
+    },
+    {
+      title: 'Element Plus 组件库',
+      description: '一套为开发者、设计师和产品经理准备的基于 Vue 3 的桌面端组件库。',
+      cover: '/assets/images/video-cover.svg',
+      url: 'https://element-plus.org/zh-CN/',
+      tags: ['Element Plus', 'UI组件库', 'Vue3']
     }
   ]
 

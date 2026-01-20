@@ -163,140 +163,112 @@ const outputTabs = ref([
 
 // 默认代码模板
 const codeTemplates = {
-  javascript: `// JavaScript 代码示例
-console.log("Hello, AI Learning!");
+  javascript: `// Vue 3 响应式基础示例
+import { ref, computed } from 'vue';
 
-// 计算斐波那契数列
-function fibonacci(n) {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+export default {
+  setup() {
+    const count = ref(0);
+    const doubleCount = computed(() => count.value * 2);
+
+    const increment = () => {
+      count.value++;
+    };
+
+    return {
+      count,
+      doubleCount,
+      increment
+    };
+  }
+};`,
+
+  typescript: `// Vue 3 + TypeScript 示例
+import { ref, computed, type Ref } from 'vue';
+
+interface State {
+  count: Ref<number>;
+  doubleCount: Ref<number>;
 }
 
-console.log("斐波那契数列前10项:");
-for (let i = 0; i < 10; i++) {
-  console.log(\`F(\${i}) = \${fibonacci(i)}\`);
-}`,
-  
-  python: `# Python 代码示例
-print("Hello, AI Learning!")
+export default {
+  setup(): State {
+    const count = ref<number>(0);
+    const doubleCount = computed<number>(() => count.value * 2);
 
-# 计算斐波那契数列
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
+    return {
+      count,
+      doubleCount
+    };
+  }
+};`,
 
-print("斐波那契数列前10项:")
-for i in range(10):
-    print(f"F({i}) = {fibonacci(i)}")`,
-  
+  vue: `<!-- Vue 3 单文件组件 (SFC) 示例 -->
+<script setup>
+import { ref } from 'vue';
+
+const message = ref('Hello Vue 3!');
+const toggle = ref(true);
+<\/script>
+
+<template>
+  <div class="demo">
+    <h1>{{ message }}</h1>
+    <button @click="toggle = !toggle">
+      切换显示
+    </button>
+    <p v-if="toggle">现在你看到我了！</p>
+  </div>
+</template>
+
+<style scoped>
+.demo {
+  color: #42b883;
+}
+</style>`,
+
+  python: `# 虽然主要学习 Vue，但我们仍支持 Python 等语言
+def hello_vue():
+    print("Vue Learning 平台也支持 Python 运行！")
+
+hello_vue()`,
+
   java: `// Java 代码示例
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, AI Learning!");
-        
-        // 计算斐波那契数列
-        System.out.println("斐波那契数列前10项:");
-        for (int i = 0; i < 10; i++) {
-            System.out.println("F(" + i + ") = " + fibonacci(i));
-        }
-    }
-    
-    public static int fibonacci(int n) {
-        if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
+        System.out.println("Hello, Vue Learning!");
     }
 }`,
-  
+
   cpp: `// C++ 代码示例
 #include <iostream>
 using namespace std;
 
-int fibonacci(int n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
 int main() {
-    cout << "Hello, AI Learning!" << endl;
-    
-    cout << "斐波那契数列前10项:" << endl;
-    for (int i = 0; i < 10; i++) {
-        cout << "F(" << i << ") = " << fibonacci(i) << endl;
-    }
+    cout << "Hello, Vue Learning!" << endl;
     return 0;
 }`,
-  
+
   csharp: `// C# 代码示例
 using System;
 
 class Program {
-    static int Fibonacci(int n) {
-        if (n <= 1) return n;
-        return Fibonacci(n - 1) + Fibonacci(n - 2);
-    }
-    
     static void Main() {
-        Console.WriteLine("Hello, AI Learning!");
-        
-        Console.WriteLine("斐波那契数列前10项:");
-        for (int i = 0; i < 10; i++) {
-            Console.WriteLine($"F({i}) = {Fibonacci(i)}");
-        }
+        Console.WriteLine("Hello, Vue Learning!");
     }
 }`,
-  
+
   go: `// Go 代码示例
 package main
-
-imp${''}ort "fmt"
-
-func fibonacci(n int) int {
-    if n <= 1 {
-        return n
-    }
-    return fibonacci(n-1) + fibonacci(n-2)
-}
+import "fmt"
 
 func main() {
-    fmt.Println("Hello, AI Learning!")
-    
-    fmt.Println("斐波那契数列前10项:")
-    for i := 0; i < 10; i++ {
-        fmt.Printf("F(%d) = %d\\n", i, fibonacci(i))
-    }
+    fmt.Println("Hello, Vue Learning!")
 }`,
-  
+
   rust: `// Rust 代码示例
-fn fibonacci(n: u32) -> u32 {
-    match n {
-        0 => 0,
-        1 => 1,
-        _ => fibonacci(n - 1) + fibonacci(n - 2),
-    }
-}
-
 fn main() {
-    println!("Hello, AI Learning!");
-    
-    println!("斐波那契数列前10项:");
-    for i in 0..10 {
-        println!("F({}) = {}", i, fibonacci(i));
-    }
-}`,
-  
-  typescript: `// TypeScript 代码示例
-console.log("Hello, AI Learning!");
-
-// 计算斐波那契数列
-function fibonacci(n: number): number {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-console.log("斐波那契数列前10项:");
-for (let i = 0; i < 10; i++) {
-    console.log(\`F(\${i}) = \${fibonacci(i)}\`);
+    println!("Hello, Vue Learning!");
 }`
 }
 

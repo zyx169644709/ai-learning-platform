@@ -4,30 +4,29 @@
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
-        <RouterLink to="/api/deepseek">立即试用智能助教</RouterLink>
+        <RouterLink to="/api/deepseek">立即咨询 Vue 专家助教</RouterLink>
       </div>
 
       <p>
-        AI Learning学习平台面向开发者与高校同学，提供"学习目录 + 系统课程 + 项目实战 + 智能助教"的一体化学习体验，帮助你从基础到应用快速掌握大模型时代的核心能力。
+        Vue.js 实战平台面向前端开发者与系统学习者，提供“理论讲解 + 习题练习 + 实操项目 + 智能反馈”的闭环学习体验，帮助你从零基础到进阶，系统化掌握 Vue 3 现代化开发的核心能力。
       </p>
       <p>你可以在这里：</p>
 
       <ul class="features">
-        <li>沿学习路径进阶：AI 入门 / Prompt 工程 / RAG 应用 / 模型微调</li>
-        <li>通过精选课程与项目实践，边学边做快速上手</li>
-        <li>使用智能助教实时解惑，获得思路、示例代码与练习建议</li>
-        <li>使用内置代码编译器高效学习代码</li>
-        <li>体验基于工作流搭建的多种智能体服务</li>
-        <li>实践数据与大模型应用：检索增强（RAG）、知识库与工具调用</li>
-        <li>参与社区讨论，获取高质量学习资料与答疑</li>
-        <li>桌面/移动端自适应的轻量体验</li>
+        <li>系统化学习路径：从 Vue 基础、Composition API 到响应式原理与工程化实践</li>
+        <li>理论与实践结合：每章配套精选习题与实操挑战，即学即练巩固知识</li>
+        <li>智能反馈系统：Vue 专家助教实时答疑，针对你的代码提供优化建议与调试思路</li>
+        <li>在线实操演练：内置集成开发环境，无需配置即可编写、运行 Vue 组件</li>
+        <li>真实项目驱动：参与从 TodoList 到复杂单页面应用（SPA）的完整项目开发</li>
+        <li>社区共建成长：分享学习心得，参与代码评审，获取高质量的前端学习资源</li>
+        <li>全平台适配：支持桌面与移动端访问，随时随地开启你的 Vue 学习之旅</li>
       </ul>
 
-      <!-- 在线代码编辑器 -->
+      <!-- 在线交互演练 -->
       <div class="code-editor-section">
-        <h2 class="section-title">在线代码编辑器</h2>
+        <h2 class="section-title">在线 Vue 代码编辑器</h2>
         <p class="section-description">
-          立即体验我们的在线代码编辑器，支持多种编程语言，实时运行和调试你的代码！
+          立即体验我们的在线代码编辑器，编写并运行 Vue 3 代码片段，实时查看运行效果！
         </p>
 
         <CodeEditor :initial-code="defaultCode" language="javascript" />
@@ -35,12 +34,12 @@
         <div class="editor-features">
           <h3>编辑器特性</h3>
           <ul>
-            <li><strong>多语言支持：</strong>JavaScript、Python、Java、C++、C#、Go、Rust、TypeScript</li>
-            <li><strong>智能语法高亮：</strong>基于 Monaco Editor 的专业代码编辑体验</li>
-            <li><strong>实时运行：</strong>支持 JavaScript 和 TypeScript 的在线执行</li>
-            <li><strong>错误提示：</strong>详细的错误信息和行号定位</li>
-            <li><strong>性能监控：</strong>执行时间和内存使用统计</li>
-            <li><strong>代码模板：</strong>内置常用算法和示例代码</li>
+            <li><strong>Vue 3 核心支持：</strong>完美支持 Composition API 和 SFC 语法</li>
+            <li><strong>智能代码补全：</strong>基于 Monaco Editor 提供专业的 Vue 语法辅助</li>
+            <li><strong>实时预览：</strong>代码修改后即刻在预览窗口查看渲染效果</li>
+            <li><strong>智能诊断：</strong>内置 Vue 专家诊断工具，快速定位语法错误与性能瓶颈</li>
+            <li><strong>组件化模板：</strong>内置常用 Vue 组件模板，加速原型开发</li>
+            <li><strong>性能分析：</strong>监控组件渲染性能，助你编写高效代码</li>
           </ul>
         </div>
       </div>
@@ -53,27 +52,32 @@
 import CodeEditor from '@/components/common/CodeEditor.vue'
 
 // 默认代码示例
-const defaultCode = `// 欢迎使用 AI Learning 在线代码编辑器！
-console.log("🚀 开始你的编程之旅");
+const defaultCode = `// 欢迎使用 Vue Learning 在线代码编辑器！
+// 在这里体验 Vue 3 Composition API 的魅力
 
-// 这是一个简单的计算器函数
-function calculator(operation, a, b) {
-  switch(operation) {
-    case '+': return a + b;
-    case '-': return a - b;
-    case '*': return a * b;
-    case '/': return b !== 0 ? a / b : '错误：除数不能为0';
-    default: return '不支持的运算';
+import { ref, onMounted } from 'vue';
+
+export default {
+  setup() {
+    const count = ref(0);
+    const message = ref("Hello Vue 3!");
+
+    const increment = () => {
+      count.value++;
+      console.log(\`当前计数值: \${count.value}\`);
+    };
+
+    onMounted(() => {
+      console.log("🚀 Vue 组件已挂载，开始你的编程之旅！");
+    });
+
+    return {
+      count,
+      message,
+      increment
+    };
   }
-}
-
-// 测试计算器
-console.log("5 + 3 =", calculator('+', 5, 3));
-console.log("10 - 4 =", calculator('-', 10, 4));
-console.log("6 * 7 =", calculator('*', 6, 7));
-console.log("15 / 3 =", calculator('/', 15, 3));
-
-// 尝试修改上面的代码，然后点击"运行代码"按钮！
+};
 `
 </script>
 

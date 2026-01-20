@@ -54,28 +54,16 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/agent/tarot',
-    name: 'Tarot',
-    component: Tarot,
-    meta: { hideLeftSidebar: true, hideRightSidebar: false }
-  },
-  {
-    path: '/agent/mbti',
-    name: 'MBTI',
-    component: MBTI,
-    meta: { hideLeftSidebar: true, hideRightSidebar: false }
-  },
-  {
     path: '/api/deepseek',
-    name: 'TeachingAssistant',
+    name: 'VueAssistant',
     component: () => import('../pages/api/DeepSeek.vue'),
-    meta: { hideLeftSidebar: true, hideRightSidebar: false }
+    meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 专家助教' }
   },
   {
     path: '/api/kimi',
-    name: 'Kimi',
+    name: 'KimiAssistant',
     component: Kimi,
-    meta: { hideLeftSidebar: true, hideRightSidebar: false }
+    meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 学习助手' }
   },
   {
     path: '/code-editor',

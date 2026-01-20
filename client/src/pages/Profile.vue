@@ -4,9 +4,9 @@
       <div class="profile-decoration">
         <div class="decoration-content">
           <div class="logo-section">
-            <div class="logo-icon">👤</div>
-            <h1 class="platform-name">个人中心</h1>
-            <p class="platform-slogan">管理您的学习账户</p>
+            <div class="logo-icon">💚</div>
+            <h1 class="platform-name">Vue-Learning</h1>
+            <p class="platform-slogan">您的 Vue.js 进阶之路</p>
           </div>
           <div class="feature-list">
             <div class="feature-item">

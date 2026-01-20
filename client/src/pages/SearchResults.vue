@@ -110,10 +110,10 @@
 
         <div v-else class="welcome-state">
           <div class="welcome-icon">🔍</div>
-          <h2>开始搜索</h2>
-          <p>输入关键词搜索课程、资源、社区内容</p>
+          <h2>开启 Vue 探索</h2>
+          <p>输入关键词搜索课程、技术文档或社区讨论</p>
           <div class="popular-searches">
-            <h4>热门搜索：</h4>
+            <h4>热门技术：</h4>
             <div class="popular-tags">
               <button 
                 v-for="popular in popularSearches" 

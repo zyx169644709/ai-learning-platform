@@ -5,22 +5,22 @@
       <div class="login-decoration">
         <div class="decoration-content">
           <div class="logo-section">
-            <div class="logo-icon">🤖</div>
-            <h1 class="platform-name">AI-Learning</h1>
-            <p class="platform-slogan">智能学习，无限可能</p>
+            <div class="logo-icon">💚</div>
+            <h1 class="platform-name">Vue-Learning</h1>
+            <p class="platform-slogan">深度掌握 Vue.js 核心技术</p>
           </div>
           <div class="feature-list">
             <div class="feature-item">
               <el-icon><Monitor /></el-icon>
-              <span>AI驱动的个性化学习</span>
+              <span>Vue 3 全链路实战教学</span>
             </div>
             <div class="feature-item">
               <el-icon><DataAnalysis /></el-icon>
-              <span>智能学习路径规划</span>
+              <span>Composition API 深度解析</span>
             </div>
             <div class="feature-item">
               <el-icon><ChatDotRound /></el-icon>
-              <span>24/7 AI教学助手</span>
+              <span>24/7 Vue 专家在线助教</span>
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@
         <div class="login-form-wrapper">
           <div class="form-header">
             <h2 class="welcome-text">欢迎回来</h2>
-            <p class="login-subtitle">登录您的AI学习平台账户</p>
+            <p class="login-subtitle">登录您的 Vue.js 学习实战平台账户</p>
           </div>
 
           <el-form
@@ -108,7 +108,7 @@
           <div class="form-footer">
             <p class="register-link">
               还没有账号？
-              <el-link type="primary" :underline="false" @click="goToRegister" title="立即注册 - 点击创建新的AI学习平台账户">
+              <el-link type="primary" :underline="false" @click="goToRegister" title="立即注册 - 点击创建新的 Vue 学习平台账户">
                 立即注册
               </el-link>
             </p>

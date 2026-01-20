@@ -4,7 +4,7 @@
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
-        <RouterLink to="/api/deepseek">找不到资料？让智能助教给你推荐</RouterLink>
+        <RouterLink to="/api/deepseek">找不到资料？让 Vue 专家助教给你推荐</RouterLink>
       </div>
 
       <div class="grid">

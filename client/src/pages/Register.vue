@@ -6,8 +6,8 @@
         <div class="decoration-content">
           <div class="logo-section">
             <div class="logo-icon">🚀</div>
-            <h1 class="platform-name">AI-Learning</h1>
-            <p class="platform-slogan">开启您的AI学习之旅</p>
+            <h1 class="platform-name">Vue-Learning</h1>
+            <p class="platform-slogan">开启您的 Vue 3 学习之旅</p>
           </div>
           <div class="feature-list">
             <div class="feature-item">
@@ -35,7 +35,7 @@
         <div class="register-form-wrapper">
           <div class="form-header">
             <h2 class="welcome-text">创建账户</h2>
-            <p class="register-subtitle">加入AI学习平台，开启智能学习新时代</p>
+            <p class="register-subtitle">加入 Vue.js 学习实战平台，掌握现代前端开发核心技术</p>
           </div>
 
           <el-form
@@ -287,7 +287,7 @@ const handleRegister = async () => {
       console.log('注册成功，准备跳转')
       
       // 显示注册成功提示
-      notification.success('注册成功！欢迎加入AI学习平台！')
+      notification.success('注册成功！欢迎加入 Vue.js 学习实战平台！')
       
       // 延迟跳转，让用户看到成功提示
       setTimeout(() => {
