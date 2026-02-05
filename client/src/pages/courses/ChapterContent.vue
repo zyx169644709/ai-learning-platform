@@ -43,7 +43,7 @@ import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 import { chapters, type TocNode } from '@/content/chapters'
-import CodeEditor from '@/components/common/CodeEditor.vue'
+import CodeEditor from '@/components/common/CodeEditorWidget.vue'
 
 const route = useRoute()
 // 捕获当前应用上下文，供动态渲染的子组件继承（路由/Pinia 等）

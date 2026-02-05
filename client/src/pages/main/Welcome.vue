@@ -8,8 +8,7 @@
           <h2 class="headline">掌握 Vue 现代化开发</h2>
           <p class="tagline">理论讲解 + 习题练习 + 实操项目 + 智能反馈，全方位系统掌握 Vue 3 生态系统</p>
           <div class="actions">
-            <RouterLink to="/home" class="btn btn-primary">快速开始 →</RouterLink>
-            <RouterLink to="/api/deepseek" class="btn btn-ghost">咨询 Vue 专家助教</RouterLink>
+            <button class="btn btn-primary" @click="showLevelModal = true">快速开始 →</button>
           </div>
         </div>
         <div class="hero-right">
@@ -92,10 +91,72 @@
         </div>
       </div>
     </section>
+
+    <!-- Vue 水平选择模态框 -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showLevelModal" class="modal-overlay" @click.self="showLevelModal = false">
+          <div class="modal-container">
+            <button class="modal-close" @click="showLevelModal = false">×</button>
+            <div class="modal-header">
+              <h2>选择你的起点</h2>
+              <p>告诉我们你目前的水平，我们为你推荐最适合的学习路径</p>
+            </div>
+            <div class="modal-options">
+              <div class="option-card" @click="handleLevelSelect('beginner')">
+                <div class="option-icon">🌱</div>
+                <div class="option-content">
+                  <h3>我是纯新手</h3>
+                  <p>完全不懂 HTML/CSS/JS，没听过 Vue</p>
+                </div>
+                <div class="option-arrow">→</div>
+              </div>
+              <div class="option-card" @click="handleLevelSelect('basic')">
+                <div class="option-icon">💪</div>
+                <div class="option-content">
+                  <h3>我懂前端基础</h3>
+                  <p>会 HTML/CSS/JS，想直接学 Vue</p>
+                </div>
+                <div class="option-arrow">→</div>
+              </div>
+              <div class="option-card" @click="handleLevelSelect('intermediate')">
+                <div class="option-icon">🚀</div>
+                <div class="option-content">
+                  <h3>我了解一点 Vue</h3>
+                  <p>学过 Vue 但没系统掌握</p>
+                </div>
+                <div class="option-arrow">→</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const showLevelModal = ref(false)
+
+const handleLevelSelect = (level: 'beginner' | 'basic' | 'intermediate') => {
+  showLevelModal.value = false
+  
+  switch (level) {
+    case 'beginner':
+      router.push('/learn/beginner')
+      break
+    case 'basic':
+      router.push('/home')
+      break
+    case 'intermediate':
+      router.push('/guide/review')
+      break
+  }
+}
 </script>
 
 <style scoped>
@@ -166,10 +227,6 @@
 .btn-primary:hover {
   background: var(--accent-hover);
   box-shadow: 0 10px 30px var(--shadow-hover);
-}
-
-.btn-ghost:hover {
-  background: rgba(66, 184, 131, 0.12);
 }
 
 .hero-right {
@@ -492,6 +549,164 @@
 
   .headline {
     font-size: 28px;
+  }
+}
+
+/* 模态框样式 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-tertiary);
+  border-radius: 50%;
+  font-size: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.modal-header p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.option-card:hover {
+  border-color: #41b883;
+  background: rgba(65, 184, 131, 0.08);
+  transform: translateX(4px);
+}
+
+.option-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.option-content {
+  flex: 1;
+}
+
+.option-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.option-content p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.option-arrow {
+  font-size: 20px;
+  color: var(--text-tertiary);
+  transition: all 0.2s ease;
+}
+
+.option-card:hover .option-arrow {
+  color: #41b883;
+  transform: translateX(4px);
+}
+
+/* 模态框动画 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+  transform: scale(0.9) translateY(20px);
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 24px 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 20px;
+  }
+  
+  .option-card {
+    padding: 16px;
+  }
+  
+  .option-icon {
+    font-size: 28px;
+  }
+  
+  .option-content h3 {
+    font-size: 16px;
   }
 }
 </style>

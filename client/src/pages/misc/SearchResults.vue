@@ -206,7 +206,7 @@ const filteredResults = computed(() => {
 
   // 类型筛选
   if (selectedType.value !== 'all') {
-    results = results.filter(result => result.type === selectedType.value)
+    results = results.filter((result: SearchResult) => result.type === selectedType.value)
   }
 
   // 排序

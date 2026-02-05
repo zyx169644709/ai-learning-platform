@@ -1,23 +1,22 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
-import Home from '../pages/Home.vue'
-import Courses from '../pages/Courses.vue'
-import ChapterContent from '../pages/ChapterContent.vue'
-import Login from '../pages/Login.vue'
-import Register from '../pages/Register.vue'
-import Profile from '../pages/Profile.vue'
-import ChangePassword from '../pages/ChangePassword.vue'
-import EditProfile from '../pages/EditProfile.vue'
-import Resources from '../pages/Resources.vue'
-import ResourceDetail from '../pages/ResourceDetail.vue'
-import Community from '../pages/Community.vue'
-import DiscussionDetail from '../pages/DiscussionDetail.vue'
-import Tarot from '../pages/agent/Tarot.vue'
-import MBTI from '../pages/agent/MBTI.vue'
-import CodeEditor from '../pages/CodeEditor.vue'
+import Home from '../pages/main/Home.vue'
+import Courses from '../pages/courses/Courses.vue'
+import ChapterContent from '../pages/courses/ChapterContent.vue'
+import Login from '../pages/auth/Login.vue'
+import Register from '../pages/auth/Register.vue'
+import Profile from '../pages/user/Profile.vue'
+import ChangePassword from '../pages/auth/ChangePassword.vue'
+import EditProfile from '../pages/user/EditProfile.vue'
+import Resources from '../pages/resources/Resources.vue'
+import ResourceDetail from '../pages/resources/ResourceDetail.vue'
+import Community from '../pages/community/Community.vue'
+import DiscussionDetail from '../pages/community/DiscussionDetail.vue'
+import CodeEditor from '../components/common/CodeEditorPage.vue'
+import BeginnerGuide from '../pages/learn/BeginnerGuide.vue'
 import TeachingAssistant from '../pages/api/DeepSeek.vue'
 import Kimi from '../pages/api/Kimi.vue'
-import SearchResults from '../pages/SearchResults.vue'
+import SearchResults from '../pages/misc/SearchResults.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/home', name: 'Home', component: Home },
@@ -32,7 +31,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
      name: 'Welcome', 
-     component: () => import('../pages/Welcome.vue'),
+     component: () => import('../pages/main/Welcome.vue'),
       meta: { topOnly: true, hideLeftSidebar: true, hideRightSidebar: true }
   },
   {
@@ -75,7 +74,73 @@ const routes: RouteRecordRaw[] = [
     path: '/search',
     name: 'SearchResults',
     component: SearchResults
-  }
+  },
+  {
+    path: '/learn/beginner',
+    name: 'BeginnerGuide',
+    component: BeginnerGuide,
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/guide/review',
+    name: 'VueReview',
+    component: () => import('../pages/learn/VueReview.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/stage-1',
+    name: 'LearnStage1',
+    component: () => import('../pages/learn/stage/Stage1.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/stage-2',
+    name: 'LearnStage2',
+    component: () => import('../pages/learn/stage/Stage2.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/stage-3',
+    name: 'LearnStage3',
+    component: () => import('../pages/learn/stage/Stage3.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/stage-4',
+    name: 'LearnStage4',
+    component: () => import('../pages/learn/stage/Stage4.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/completion',
+    name: 'CompletionGuide',
+    component: () => import('../pages/learn/CompletionGuide.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/basics',
+    name: 'BasicsCoreCourse',
+    component: () => import('../pages/learn/basics/BasicsCoreCourse.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/html-basics',
+    name: 'HtmlBasics',
+    component: () => import('../pages/learn/basics/HtmlBasics.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/css-basics',
+    name: 'CssBasics',
+    component: () => import('../pages/learn/basics/CssBasics.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/learn/js-basics',
+    name: 'JsBasics',
+    component: () => import('../pages/learn/basics/JsBasics.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
 ]
 
 const router = createRouter({

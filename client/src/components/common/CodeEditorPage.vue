@@ -83,10 +83,10 @@
       <!-- 可拖拽分隔条 -->
       <div 
         class="resize-handle"
-        @mousedown="startResize"
+        @pointerdown="startResize"
         @mouseenter="showResizeCursor"
         @mouseleave="hideResizeCursor"
-        @dblclick="resetToDefaultRatio"
+        @dblclick="handleResetToDefaultRatio"
         :class="{ 'resizing': isResizing }"
         title="拖拽调整大小，双击重置为 50/50"
       >
@@ -234,10 +234,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, onUnmounted } from 'vue'
+import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { codeExecutionService, type ExecutionResult } from '@/services/codeExecutionService'
 import { useUserPrefs } from '@/stores/userPrefs'
+import { codeExecutionService } from '@/services/codeExecutionService'
+import { useResizableSplit } from '@/composables/useResizableSplit'
 
 const prefs = useUserPrefs()
 
@@ -519,7 +520,7 @@ const runCode = async () => {
     // 处理执行结果
     if (result.success) {
       // 添加控制台输出
-      result.output.forEach(line => {
+      result.output.forEach((line: string) => {
         if (line.startsWith('[警告]')) {
           addOutput('warn', line.replace('[警告] ', ''))
         } else if (line.startsWith('[信息]')) {
@@ -530,7 +531,7 @@ const runCode = async () => {
       })
       
       // 添加错误信息
-      result.errors.forEach(error => addError(error))
+      result.errors.forEach((error: string) => addError(error))
       
       // 更新性能信息
       output.value.executionTime = result.executionTime
@@ -538,9 +539,9 @@ const runCode = async () => {
       
     } else {
       // 执行失败
-      result.errors.forEach(error => addError(error))
+      result.errors.forEach((error: string) => addError(error))
       if (result.output.length > 0) {
-        result.output.forEach(line => addOutput('info', line))
+        result.output.forEach((line: string) => addOutput('info', line))
       }
     }
     
@@ -618,65 +619,31 @@ const handleFullscreenChange = () => {
   isFullscreen.value = !!document.fullscreenElement
 }
 
-// 容器引用与拖拽分隔条相关
-const editorMain = ref<HTMLElement | null>(null)
-const isResizing = ref(false)
-const codePanelWidth = ref(5) // 默认代码面板宽度（一半）
-const outputPanelWidth = ref(5) // 默认输出面板宽度（一半）
+// 使用可拖拽分隔条 composable
+const {
+  editorMain,
+  isResizing,
+  codePanelWidth,
+  outputPanelWidth,
+  startResize,
+  handleResize,
+  stopResize,
+  resetToDefaultRatio,
+  showResizeCursor,
+  hideResizeCursor
+} = useResizableSplit(prefs.codePanelRatio / 100)
 
-const startResize = (e: MouseEvent | TouchEvent) => {
-  isResizing.value = true
-  
-  // 防止拖拽时选中文本
-  e.preventDefault()
-  
-  document.documentElement.addEventListener('mousemove', handleResize)
-  document.documentElement.addEventListener('mouseup', stopResize)
-  document.documentElement.addEventListener('touchmove', handleResize as any)
-  document.documentElement.addEventListener('touchend', stopResize)
-}
-
-const handleResize = (e: MouseEvent | TouchEvent) => {
-  if (!isResizing.value || !editorMain.value) return
-  const rect = editorMain.value.getBoundingClientRect()
-  const isMobile = window.innerWidth <= 1200
-  if (isMobile) {
-    let ratio = (('touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY) - rect.top) / rect.height
-    ratio = Math.min(0.8, Math.max(0.2, ratio))
-    codePanelWidth.value = ratio * 10
-  } else {
-    let ratio = (('touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX) - rect.left) / rect.width
-    ratio = Math.min(0.8, Math.max(0.2, ratio))
-    codePanelWidth.value = ratio * 10
-  }
-  outputPanelWidth.value = 10 - codePanelWidth.value
-}
-
-const stopResize = () => {
-  if (!isResizing.value) return
-  isResizing.value = false
-  document.removeEventListener('mousemove', handleResize as any)
-  document.removeEventListener('mouseup', stopResize)
-  document.removeEventListener('touchmove', handleResize as any)
-  document.removeEventListener('touchend', stopResize)
+// 重写 stopResize 以添加持久化
+const handleStopResize = (e?: PointerEvent) => {
+  stopResize(e)
   // 写入持久化（以百分比 0-100 存储）
   prefs.setCodePanelRatio(Math.round((codePanelWidth.value / 10) * 100))
 }
 
-const showResizeCursor = () => {
-  const isMobile = window.innerWidth <= 1200
-  document.documentElement.style.cursor = isMobile ? 'row-resize' : 'col-resize'
-}
-
-const hideResizeCursor = () => {
-  document.documentElement.style.cursor = 'default'
-}
-
-// 双击恢复默认比例
-const resetToDefaultRatio = () => {
-  codePanelWidth.value = 5
-  outputPanelWidth.value = 5
-  prefs.setCodePanelRatio(50) // 持久化 50%
+// 重写 resetToDefaultRatio 以添加持久化
+const handleResetToDefaultRatio = () => {
+  resetToDefaultRatio()
+  prefs.setCodePanelRatio(50)
 }
 
 // 复制所有控制台输出
@@ -817,6 +784,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  // 清理 composable 的事件监听器已在 useResizableSplit 内部处理
 })
 </script>
 

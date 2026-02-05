@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import CodeEditor from '@/components/common/CodeEditor.vue'
+import CodeEditor from '@/components/common/CodeEditorWidget.vue'
 
 // 默认代码示例
 const defaultCode = `// 欢迎使用 Vue Learning 在线代码编辑器！
