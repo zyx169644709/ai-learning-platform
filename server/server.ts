@@ -18,10 +18,12 @@ const userRoutes = require('./src/routes/userRoutes')
 const communityRoutes = require('./src/routes/communityRoutes')
 const resourceRoutes = require('./src/routes/resourceRoutes')
 const courseRoutes = require('./src/routes/courseRoutes')
+const adminRoutes = require('./src/routes/adminRoutes')
 app.use('/api/user', userRoutes)
 app.use('/api/community', communityRoutes)
 app.use('/api/resources', resourceRoutes)
 app.use('/api/courses', courseRoutes)
+app.use('/api/admin', adminRoutes)
 
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ success: true, message: 'Server is running' })
