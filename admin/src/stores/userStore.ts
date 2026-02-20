@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import request from '@/utils/request'
 
 export const useUserStore = defineStore('user', () => {
   const token = ref(localStorage.getItem('admin_token') || '')
@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
   
   const isLogin = computed(() => !!token.value)
   const isAdmin = computed(() => {
-    return userInfo.value?.role === 'admin' || userInfo.value?.email === 'admin@example.com'
+    return userInfo.value?.role === 'ADMIN' || userInfo.value?.email === 'admin@example.com'
   })
   
   // 设置 token
@@ -26,13 +26,9 @@ export const useUserStore = defineStore('user', () => {
   // 获取用户信息
   const getUserInfo = async () => {
     try {
-      const response = await axios.get('/api/admin/auth/info', {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
-      })
-      userInfo.value = response.data
-      return response.data
+      const response = await request.get('/admin/auth/info')
+      userInfo.value = response.data.data.user
+      return response.data.data.user
     } catch (error) {
       clearToken()
       throw error
@@ -42,12 +38,12 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('/api/admin/auth/login', {
+      const response = await request.post('/admin/auth/login', {
         email,
         password
       })
       
-      const { token: newToken, user } = response.data
+      const { token: newToken, user } = response.data.data
       setToken(newToken)
       userInfo.value = user
       

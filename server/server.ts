@@ -19,11 +19,16 @@ const communityRoutes = require('./src/routes/communityRoutes')
 const resourceRoutes = require('./src/routes/resourceRoutes')
 const courseRoutes = require('./src/routes/courseRoutes')
 const adminRoutes = require('./src/routes/adminRoutes')
+const uploadRoutes = require('./src/routes/uploadRoutes')
 app.use('/api/user', userRoutes)
 app.use('/api/community', communityRoutes)
 app.use('/api/resources', resourceRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/upload', uploadRoutes)
+
+// 静态文件服务 - 提供上传的图片访问
+app.use('/uploads', express.static('uploads'))
 
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ success: true, message: 'Server is running' })

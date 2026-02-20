@@ -1,57 +1,49 @@
 <template>
   <div class="user-management">
     <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>用户管理</h1>
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/admin' }">管理后台</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
+    <PageHeader title="用户管理" />
 
     <!-- 筛选栏 -->
-    <el-card class="filter-card">
-      <el-form :model="filterForm" inline>
-        <el-form-item label="用户角色">
-          <el-select v-model="filterForm.role" placeholder="全部" clearable>
-            <el-option label="学生" value="student" />
-            <el-option label="教师" value="teacher" />
-            <el-option label="管理员" value="admin" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="注册时间">
-          <el-date-picker
-            v-model="filterForm.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="学习状态">
-          <el-select v-model="filterForm.status" placeholder="全部" clearable>
-            <el-option label="学习中" value="learning" />
-            <el-option label="已完成" value="completed" />
-            <el-option label="未开始" value="not_started" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadUsers">查询</el-button>
-          <el-button @click="resetFilter">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <FilterBar 
+      v-model="filterForm" 
+      @search="loadUsers" 
+      @reset="resetFilter"
+    >
+      <el-form-item label="用户名">
+        <el-input 
+          v-model="filterForm.name" 
+          placeholder="请输入用户名" 
+          clearable 
+          @input="debouncedSearch"
+          style="width: 200px;"
+        />
+      </el-form-item>
+      <el-form-item label="邮箱">
+        <el-input 
+          v-model="filterForm.email" 
+          placeholder="请输入邮箱" 
+          clearable 
+          @input="debouncedSearch"
+          style="width: 200px;"
+        />
+      </el-form-item>
+      <el-form-item label="用户角色" style="width: 180px;">
+        <el-select v-model="filterForm.role" placeholder="全部" clearable @change="debouncedSearch">
+          <el-option label="学生" value="USER" />
+          <el-option label="教师" value="MODERATOR" />
+          <el-option label="管理员" value="ADMIN" />
+        </el-select>
+      </el-form-item>
+    </FilterBar>
 
     <!-- 用户列表 -->
     <el-card>
       <el-table :data="users" stripe @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
-        <el-table-column label="用户" min-width="200">
+        <el-table-column label="用户（头像/用户名/邮箱）" min-width="200">
           <template #default="{ row }">
             <div class="user-info">
-              <el-avatar :size="40" :src="row.avatar" />
+              <el-avatar :size="40" :src="row.avatar || defaultAvatar" />
               <div class="user-details">
                 <div class="user-name">{{ row.name }}</div>
                 <div class="user-email">{{ row.email }}</div>
@@ -72,15 +64,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="completedCourses" label="完成课程" width="100" />
-        <el-table-column prop="lastLogin" label="最后登录" width="180" />
-        <el-table-column prop="registeredAt" label="注册时间" width="180" />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="viewUser(row)">查看</el-button>
             <el-button type="warning" link @click="editUser(row)">编辑</el-button>
-            <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)">
-              <el-button type="info" link>
-                更多<el-icon><ArrowDown /></el-icon>
+            <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)" trigger="click">
+              <el-button type="primary" link class="el-dropdown-link">
+                更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -92,6 +82,9 @@
                   </el-dropdown-item>
                   <el-dropdown-item command="enable" v-if="row.status === 'disabled'">
                     启用账号
+                  </el-dropdown-item>
+                  <el-dropdown-item command="delete" divided v-if="row.role !== 'ADMIN'">
+                    删除用户
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -132,10 +125,11 @@
               {{ getRoleLabel(selectedUser.role) }}
             </el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="注册时间">{{ selectedUser.registeredAt }}</el-descriptions-item>
-          <el-descriptions-item label="最后登录">{{ selectedUser.lastLogin }}</el-descriptions-item>
-          <el-descriptions-item label="学习进度">
-            <el-progress :percentage="selectedUser.progress" />
+          <el-descriptions-item label="完成课程">{{ selectedUser.completedCourses || 0 }} 门</el-descriptions-item>
+          <el-descriptions-item label="注册时间">{{ formatRelativeTime(selectedUser.registeredAt) || '暂无数据' }}</el-descriptions-item>
+          <el-descriptions-item label="最后登录">{{ formatRelativeTime(selectedUser.lastLogin) || '暂无数据' }}</el-descriptions-item>
+          <el-descriptions-item label="学习进度" :span="2">
+            <el-progress :percentage="selectedUser.progress || 0" />
           </el-descriptions-item>
         </el-descriptions>
 
@@ -170,9 +164,9 @@
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="editForm.role">
-            <el-option label="学生" value="student" />
-            <el-option label="教师" value="teacher" />
-            <el-option label="管理员" value="admin" />
+            <el-option label="学生" value="USER" />
+            <el-option label="教师" value="MODERATOR" />
+            <el-option label="管理员" value="ADMIN" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -185,64 +179,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { reactive, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormRules } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
+import { useConfirm } from '@/composables/useConfirm'
+import { useCrud } from '@/composables/useCrud'
+import { useTableActions } from '@/composables/useTableActions'
+import { useFilter } from '@/composables/useFilter'
+import { getRoleTagType, getRoleLabel } from '@/utils/enums'
+import { formatRelativeTime } from '@/utils/format'
+import defaultAvatar from '@/assets/images/default.png'
+import PageHeader from '@/components/PageHeader.vue'
+import FilterBar from '@/components/FilterBar.vue'
 
-// 筛选表单
-const filterForm = reactive({
-  role: '',
-  dateRange: [],
-  status: ''
+// 使用分页 composable
+const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
+
+// 使用确认对话框 composable
+const { confirmDelete, confirmDisable, confirmResetPassword } = useConfirm()
+
+// 使用 CRUD composable
+const {
+  items: users,
+  filterForm,
+  showViewDialog: showUserDialog,
+  showEditDialog,
+  selectedItem: selectedUser,
+  saving,
+  loadItems,
+  viewItem: viewUser,
+  editItem,
+  saveItem,
+  deleteItem
+} = useCrud({
+  apiPath: '/admin/users',
+  resourceName: '用户',
+  filterFields: ['name', 'email', 'role']
 })
 
-// 分页
-const pagination = reactive({
-  page: 1,
-  size: 20,
-  total: 0
-})
-
-// 用户列表
-const users = ref([
-  {
-    id: 1,
-    name: '张三',
-    email: 'zhangsan@example.com',
-    avatar: '',
-    role: 'student',
-    progress: 75,
-    completedCourses: 3,
-    lastLogin: '2024-02-08 14:30',
-    registeredAt: '2024-01-15 10:20',
-    courses: [
-      { title: 'Vue 3 基础', progress: 100, status: 'completed', completedAt: '2024-02-01' },
-      { title: 'Vue Router', progress: 60, status: 'learning', completedAt: '' }
-    ]
-  },
-  {
-    id: 2,
-    name: '李四',
-    email: 'lisi@example.com',
-    avatar: '',
-    role: 'teacher',
-    progress: 100,
-    completedCourses: 10,
-    lastLogin: '2024-02-08 09:15',
-    registeredAt: '2023-12-20 14:30',
-    courses: []
-  }
-])
-
-// 选中的用户
-const selectedUsers = ref<any[]>([])
-
-// 对话框状态
-const showUserDialog = ref(false)
-const showEditDialog = ref(false)
-const selectedUser = ref<any>(null)
-const saving = ref(false)
+// 使用表格操作 composable
+const { selectedItems: selectedUsers, handleSelectionChange } = useTableActions()
 
 // 编辑表单
 const editForm = reactive({
@@ -266,80 +244,45 @@ const editRules: FormRules = {
   ]
 }
 
-const editFormRef = ref<FormInstance>()
-
-// 角色标签样式
-const getRoleTagType = (role: string) => {
-  const map: Record<string, string> = {
-    student: 'primary',
-    teacher: 'success',
-    admin: 'danger'
-  }
-  return map[role] || ''
-}
-
-const getRoleLabel = (role: string) => {
-  const map: Record<string, string> = {
-    student: '学生',
-    teacher: '教师',
-    admin: '管理员'
-  }
-  return map[role] || ''
-}
-
 // 加载用户列表
 const loadUsers = async () => {
-  try {
-    // TODO: 调用实际 API
-    // const response = await axios.get('/api/admin/users', {
-    //   params: { ...filterForm, ...pagination }
-    // })
-    // users.value = response.data.items
-    // pagination.total = response.data.total
-  } catch (error) {
-    ElMessage.error('加载用户列表失败')
-  }
+  const result = await loadItems(getPaginationParams())
+  setTotal(result.total)
 }
+
+// 使用筛选 composable
+const { debouncedSearch } = useFilter({
+  onSearch: () => {
+    resetPagination()
+    loadUsers()
+  }
+})
 
 // 重置筛选
 const resetFilter = () => {
+  filterForm.name = ''
+  filterForm.email = ''
   filterForm.role = ''
-  filterForm.dateRange = []
-  filterForm.status = ''
-  pagination.page = 1
+  resetPagination()
   loadUsers()
-}
-
-// 处理选择变化
-const handleSelectionChange = (selection: any[]) => {
-  selectedUsers.value = selection
-}
-
-// 查看用户详情
-const viewUser = (user: any) => {
-  selectedUser.value = user
-  showUserDialog.value = true
 }
 
 // 编辑用户
 const editUser = (user: any) => {
-  Object.assign(editForm, user)
-  showEditDialog.value = true
+  editForm.id = user.id
+  editForm.name = user.name
+  editForm.email = user.email
+  editForm.role = user.role
+  editItem(user, editForm)
 }
 
 // 处理更多操作
 const handleCommand = async (command: string, user: any) => {
   switch (command) {
     case 'resetPassword':
-      try {
-        await ElMessageBox.confirm('确定要重置该用户的密码吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        ElMessage.success('密码重置成功，新密码已发送到用户邮箱')
-      } catch {
-        // 用户取消
+      if (await confirmResetPassword()) {
+        // TODO: 调用重置密码 API
+        ElMessage.success('密码重置成功')
       }
       break
     case 'changeRole':
@@ -349,44 +292,28 @@ const handleCommand = async (command: string, user: any) => {
       ElMessage.info('发送通知功能开发中...')
       break
     case 'disable':
-      try {
-        await ElMessageBox.confirm('确定要禁用该账号吗？', '警告', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
+      if (await confirmDisable('该账号')) {
+        // TODO: 调用禁用 API
         ElMessage.success('账号已禁用')
         loadUsers()
-      } catch {
-        // 用户取消
       }
       break
     case 'enable':
+      // TODO: 调用启用 API
       ElMessage.success('账号已启用')
       loadUsers()
+      break
+    case 'delete':
+      if (await confirmDelete('该用户')) {
+        await deleteItem(user.id, loadUsers)
+      }
       break
   }
 }
 
 // 保存用户
 const saveUser = async () => {
-  if (!editFormRef.value) return
-  
-  try {
-    await editFormRef.value.validate()
-    saving.value = true
-    
-    // TODO: 调用实际 API
-    // await axios.put(`/api/admin/users/${editForm.id}`, editForm)
-    
-    ElMessage.success('保存成功')
-    showEditDialog.value = false
-    loadUsers()
-  } catch (error) {
-    console.error('保存失败:', error)
-  } finally {
-    saving.value = false
-  }
+  await saveItem(editForm, loadUsers)
 }
 
 // 批量发送通知
@@ -469,5 +396,27 @@ onMounted(() => {
 .user-detail {
   max-height: 500px;
   overflow-y: auto;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--el-font-size-base);
+  line-height: var(--el-component-size-small);
+  height: var(--el-component-size-small);
+  padding: 0;
+  margin-left: 10px;
+  vertical-align: baseline;
+  transition: color 0.3s;
+}
+
+.el-dropdown-link:hover {
+  color: var(--el-color-primary-light-3);
+}
+
+.el-dropdown-link .el-icon--right {
+  margin-left: 2px;
 }
 </style>

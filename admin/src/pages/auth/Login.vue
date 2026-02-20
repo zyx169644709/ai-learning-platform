@@ -94,30 +94,17 @@ const handleLogin = async () => {
     await loginFormRef.value.validate()
     loading.value = true
     
-    // 模拟登录（实际应该调用 API）
-    if (loginForm.email === 'admin@example.com' && loginForm.password === '123456') {
-      // 模拟成功响应
-      const mockResponse = {
-        token: 'mock-admin-token-' + Date.now(),
-        user: {
-          id: 1,
-          email: 'admin@example.com',
-          name: '管理员',
-          role: 'admin',
-          avatar: ''
-        }
-      }
-      
-      userStore.setToken(mockResponse.token)
-      userStore.userInfo = mockResponse.user
-      
-      ElMessage.success('登录成功')
-      router.push('/admin')
-    } else {
-      ElMessage.error('邮箱或密码错误')
-    }
-  } catch (error) {
+    // 清除旧的 token
+    userStore.clearToken()
+    
+    // 调用真实的登录 API
+    await userStore.login(loginForm.email, loginForm.password)
+    
+    ElMessage.success('登录成功')
+    router.push('/admin')
+  } catch (error: any) {
     console.error('登录失败:', error)
+    ElMessage.error(error.response?.data?.message || '登录失败，请检查邮箱和密码')
   } finally {
     loading.value = false
   }

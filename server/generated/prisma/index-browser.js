@@ -124,6 +124,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   bio: 'bio',
   avatar: 'avatar',
+  status: 'status',
   lastLoginAt: 'lastLoginAt',
   role: 'role',
   createdAt: 'createdAt',
@@ -171,6 +172,29 @@ exports.Prisma.CourseScalarFieldEnum = {
   level: 'level',
   cover: 'cover',
   url: 'url',
+  status: 'status',
+  duration: 'duration',
+  content: 'content',
+  authorId: 'authorId',
+  viewCount: 'viewCount',
+  studentCount: 'studentCount',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChapterScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  excerpt: 'excerpt',
+  order: 'order',
+  duration: 'duration',
+  videoUrl: 'videoUrl',
+  status: 'status',
+  courseId: 'courseId',
+  authorId: 'authorId',
+  viewCount: 'viewCount',
   tags: 'tags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -181,7 +205,14 @@ exports.Prisma.ResourceScalarFieldEnum = {
   title: 'title',
   description: 'description',
   cover: 'cover',
+  icon: 'icon',
   url: 'url',
+  type: 'type',
+  status: 'status',
+  isOfficial: 'isOfficial',
+  authorId: 'authorId',
+  viewCount: 'viewCount',
+  likeCount: 'likeCount',
   tags: 'tags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -231,6 +262,7 @@ exports.Prisma.ModelName = {
   Discussion: 'Discussion',
   Comment: 'Comment',
   Course: 'Course',
+  Chapter: 'Chapter',
   Resource: 'Resource'
 };
 

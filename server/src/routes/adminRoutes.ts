@@ -1,5 +1,17 @@
 import { Router } from 'express'
-import { login, getAdminInfo } from '../controllers/adminController'
+import { 
+  login, 
+  getAdminInfo, 
+  getUsers, 
+  updateUser, 
+  deleteUser,
+  getCourses,
+  createCourse,
+  updateCourse,
+  deleteCourse,
+  getStats,
+  getAnalytics
+} from '../controllers/adminController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
 
@@ -12,21 +24,21 @@ router.post('/auth/login', login)
 router.get('/auth/info', authMiddleware, requireAdmin, getAdminInfo)
 
 // 用户管理
-router.get('/users', authMiddleware, requireAdmin, require('../controllers/adminController').getUsers)
-router.put('/users/:id', authMiddleware, requireAdmin, require('../controllers/adminController').updateUser)
-router.delete('/users/:id', authMiddleware, requireAdmin, require('../controllers/adminController').deleteUser)
+router.get('/users', authMiddleware, requireAdmin, getUsers)
+router.put('/users/:id', authMiddleware, requireAdmin, updateUser)
+router.delete('/users/:id', authMiddleware, requireAdmin, deleteUser)
 
 // 课程管理
-router.get('/courses', authMiddleware, requireAdmin, require('../controllers/adminController').getCourses)
-router.post('/courses', authMiddleware, requireAdmin, require('../controllers/adminController').createCourse)
-router.put('/courses/:id', authMiddleware, requireAdmin, require('../controllers/adminController').updateCourse)
-router.delete('/courses/:id', authMiddleware, requireAdmin, require('../controllers/adminController').deleteCourse)
+router.get('/courses', authMiddleware, requireAdmin, getCourses)
+router.post('/courses', authMiddleware, requireAdmin, createCourse)
+router.put('/courses/:id', authMiddleware, requireAdmin, updateCourse)
+router.delete('/courses/:id', authMiddleware, requireAdmin, deleteCourse)
 
 // 统计数据
-router.get('/stats', authMiddleware, requireAdmin, require('../controllers/adminController').getStats)
+router.get('/stats', authMiddleware, requireAdmin, getStats)
 
 // 数据分析
-router.get('/analytics', authMiddleware, requireAdmin, require('../controllers/adminController').getAnalytics)
+router.get('/analytics', authMiddleware, requireAdmin, getAnalytics)
 
 export default router
 module.exports = router

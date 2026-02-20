@@ -25,6 +25,7 @@ model User {
   password  String
   bio       String?
   avatar    String?
+  status    String   @default("active")  // active/disabled/banned
   lastLoginAt DateTime? @map("last_login_at")
   role      UserRole @default(USER)
   createdAt DateTime @default(now()) @map("created_at")
@@ -34,7 +35,12 @@ model User {
   userPreferences UserPreferences?
   discussions Discussion[]
   comments Comment[]
+  courses Course[]
+  chapters Chapter[]
+  resources Resource[]
   
+  @@index([email])
+  @@index([username])
   @@map("users")
 }
 
@@ -116,29 +122,78 @@ enum DiscussionCategory {
 
 // 课程模型
 model Course {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  level       String?
-  cover       String?
-  url         String
-  tags        Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  level        String?        // beginner/intermediate/advanced
+  cover        String?        // 封面图片 URL
+  url          String         // B站视频链接
+  status       String  @default("draft") // draft/published/archived
+  duration     String?        // 课程时长
+  content      String?        // 课程简介
+  authorId     String?        @map("author_id")
+  viewCount    Int     @default(0)  // 浏览次数
+  studentCount Int     @default(0)  // 学习人数
+  tags         Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
+  author   User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  chapters Chapter[]
+
+  @@index([authorId])
+  @@index([level])
+  @@index([status])
   @@map("courses")
 }
 
-// 资源模型（后续可从 JSON 迁移至此表）
+// 章节模型
+model Chapter {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?         // Markdown 内容
+  excerpt   String?         // 章节摘要
+  order     Int      @default(0)  // 排序
+  duration  String?         // 章节时长
+  videoUrl  String?         @map("video_url") // 视频链接（可选）
+  status    String  @default("draft") // draft/published
+  courseId  String   @map("course_id")
+  authorId  String?  @map("author_id")
+  viewCount Int     @default(0)  // 浏览次数
+  tags      Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  author User?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([courseId])
+  @@index([order])
+  @@index([status])
+  @@map("chapters")
+}
+
+// 资源模型
 model Resource {
   id          String   @id @default(cuid())
   title       String
   description String?
-  cover       String?
-  url         String
+  cover       String?        // 封面图片
+  icon        String?        // 资源图标
+  url         String         // 官网链接
+  type        String  @default("website") // website/document/tool/tutorial
+  status      String  @default("draft") // draft/published/archived
+  isOfficial  Boolean @default(false) // 是否官方资源
+  authorId    String? @map("author_id")
+  viewCount   Int     @default(0)  // 浏览次数
+  likeCount   Int     @default(0)  // 点赞数
   tags        Json?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([type])
+  @@index([status])
   @@map("resources")
 }

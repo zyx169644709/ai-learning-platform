@@ -107,6 +107,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import request from '@/utils/request'
+import { ElMessage } from 'element-plus'
 import { 
   User, 
   Document, 
@@ -117,12 +119,12 @@ import {
   Setting
 } from '@element-plus/icons-vue'
 
-// 统计数据（模拟数据）
+// 统计数据
 const stats = ref({
-  totalUsers: 1234,
-  totalCourses: 42,
-  completionRate: 78,
-  activeUsers: 234
+  totalUsers: 0,
+  totalCourses: 0,
+  completionRate: 0,
+  activeUsers: 0
 })
 
 // 最近活动（模拟数据）
@@ -150,11 +152,13 @@ const recentActivities = ref([
 // 加载统计数据
 const loadStats = async () => {
   try {
-    // TODO: 调用实际 API
-    // const response = await axios.get('/api/admin/stats')
-    // stats.value = response.data
+    const response = await request.get('/admin/stats')
+    if (response.data.success) {
+      stats.value = response.data.data
+    }
   } catch (error) {
     console.error('Failed to load stats:', error)
+    ElMessage.error('加载统计数据失败')
   }
 }
 

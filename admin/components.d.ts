@@ -41,7 +41,13 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    FilterBar: typeof import('./src/components/FilterBar.vue')['default']
+    ImageUpload: typeof import('./src/components/ImageUpload.vue')['default']
+    MarkdownEditor: typeof import('./src/components/MarkdownEditor.vue')['default']
+    PageHeader: typeof import('./src/components/PageHeader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StatusTag: typeof import('./src/components/StatusTag.vue')['default']
   }
 }

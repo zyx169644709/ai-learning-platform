@@ -1,37 +1,34 @@
 <template>
   <div class="content-management">
     <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>内容管理</h1>
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/admin' }">管理后台</el-breadcrumb-item>
-        <el-breadcrumb-item>内容管理</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
+    <PageHeader title="内容管理" />
 
     <!-- 筛选栏 -->
-    <el-card class="filter-card">
-      <el-form :model="filterForm" inline>
-        <el-form-item label="课程类型">
-          <el-select v-model="filterForm.type" placeholder="全部" clearable>
-            <el-option label="基础课程" value="basic" />
-            <el-option label="进阶课程" value="advanced" />
-            <el-option label="实战项目" value="project" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="filterForm.status" placeholder="全部" clearable>
-            <el-option label="已发布" value="published" />
-            <el-option label="草稿" value="draft" />
-            <el-option label="已归档" value="archived" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadCourses">查询</el-button>
-          <el-button @click="resetFilter">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <FilterBar 
+      v-model="filterForm" 
+      @search="loadCourses" 
+      @reset="resetFilter"
+    >
+      <el-form-item label="课程标题">
+        <el-input 
+          v-model="filterForm.title" 
+          placeholder="请输入课程标题" 
+          clearable 
+          @input="debouncedSearch"
+          style="width: 200px;"
+        />
+      </el-form-item>
+      <el-form-item label="课程类型" style="width: 180px;">
+        <el-select v-model="filterForm.type" placeholder="全部" clearable @change="debouncedSearch">
+          <el-option label="基础课程" value="beginner" />
+          <el-option label="进阶课程" value="intermediate" />
+          <el-option label="高级课程" value="advanced" />
+        </el-select>
+      </el-form-item>
+      <template #extra-buttons>
+        <el-button type="success" @click="createCourse">创建课程</el-button>
+      </template>
+    </FilterBar>
 
     <!-- 课程列表 -->
     <el-card>
@@ -57,14 +54,18 @@
             {{ row.completionRate }}%
           </template>
         </el-table-column>
-        <el-table-column prop="updatedAt" label="更新时间" width="180" />
+        <el-table-column prop="updatedAt" label="更新时间" width="180">
+          <template #default="{ row }">
+            {{ formatRelativeTime(row.updatedAt) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editCourse(row)">编辑</el-button>
             <el-button type="warning" link @click="viewStats(row)">统计</el-button>
-            <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)">
-              <el-button type="info" link>
-                更多<el-icon><ArrowDown /></el-icon>
+            <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)" trigger="click">
+              <el-button type="primary" link class="el-dropdown-link">
+                更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -106,18 +107,16 @@
         </el-form-item>
         <el-form-item label="课程类型" prop="type">
           <el-select v-model="courseForm.type" placeholder="请选择课程类型">
-            <el-option label="基础课程" value="basic" />
-            <el-option label="进阶课程" value="advanced" />
-            <el-option label="实战项目" value="project" />
+            <el-option label="基础课程" value="beginner" />
+            <el-option label="进阶课程" value="intermediate" />
+            <el-option label="高级课程" value="advanced" />
           </el-select>
         </el-form-item>
-        <el-form-item label="课程描述" prop="description">
-          <el-input
-            v-model="courseForm.description"
-            type="textarea"
-            :rows="4"
-            placeholder="请输入课程描述"
-          />
+        <el-form-item label="课程时长" prop="duration">
+          <el-input v-model="courseForm.duration" placeholder="例如：2小时、10周" />
+        </el-form-item>
+        <el-form-item label="课程封面" prop="cover">
+          <ImageUpload v-model="courseForm.cover" />
         </el-form-item>
         <el-form-item label="课程内容" prop="content">
           <el-input
@@ -127,10 +126,10 @@
             placeholder="请输入课程内容（支持 Markdown）"
           />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item label="课程状态" prop="status">
           <el-radio-group v-model="courseForm.status">
-            <el-radio label="draft">草稿</el-radio>
-            <el-radio label="published">发布</el-radio>
+            <el-radio value="draft">草稿</el-radio>
+            <el-radio value="published">发布</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -145,65 +144,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { reactive, onMounted } from 'vue'
+import request from '@/utils/request'
+import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormRules } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
+import { useConfirm } from '@/composables/useConfirm'
+import { useCrud } from '@/composables/useCrud'
+import { useFilter } from '@/composables/useFilter'
+import { getCourseTypeTag, getCourseTypeLabel, getCourseStatusTag, getCourseStatusLabel } from '@/utils/enums'
+import { formatRelativeTime } from '@/utils/format'
+import ImageUpload from '@/components/ImageUpload.vue'
+import PageHeader from '@/components/PageHeader.vue'
+import FilterBar from '@/components/FilterBar.vue'
 
-// 筛选表单
-const filterForm = reactive({
-  type: '',
-  status: ''
+// 使用分页 composable
+const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
+
+// 使用确认对话框 composable
+const { confirmDelete, confirmArchive } = useConfirm()
+
+// 使用 CRUD composable
+const {
+  items: courses,
+  filterForm,
+  showEditDialog: showCreateDialog,
+  editingItem: editingCourse,
+  saving,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  formRef: courseFormRef,
+  loadItems,
+  editItem,
+  saveItem,
+  deleteItem
+} = useCrud({
+  apiPath: '/admin/courses',
+  resourceName: '课程',
+  filterFields: ['title', 'type']
 })
-
-// 分页
-const pagination = reactive({
-  page: 1,
-  size: 20,
-  total: 0
-})
-
-// 课程列表
-const courses = ref([
-  {
-    id: 1,
-    title: 'Vue 3 基础教程',
-    type: 'basic',
-    status: 'published',
-    students: 1234,
-    completionRate: 78,
-    updatedAt: '2024-02-08 14:30'
-  },
-  {
-    id: 2,
-    title: 'Vue Router 进阶',
-    type: 'advanced',
-    status: 'published',
-    students: 567,
-    completionRate: 65,
-    updatedAt: '2024-02-07 16:20'
-  },
-  {
-    id: 3,
-    title: 'Vue 实战项目',
-    type: 'project',
-    status: 'draft',
-    students: 0,
-    completionRate: 0,
-    updatedAt: '2024-02-06 10:15'
-  }
-])
-
-// 对话框状态
-const showCreateDialog = ref(false)
-const editingCourse = ref<any>(null)
-const saving = ref(false)
 
 // 课程表单
 const courseForm = reactive({
   title: '',
   type: '',
-  description: '',
+  duration: '',
+  cover: '',
   content: '',
   status: 'draft'
 })
@@ -216,81 +202,59 @@ const courseRules: FormRules = {
   type: [
     { required: true, message: '请选择课程类型', trigger: 'change' }
   ],
-  description: [
-    { required: true, message: '请输入课程描述', trigger: 'blur' }
-  ],
   content: [
     { required: true, message: '请输入课程内容', trigger: 'blur' }
+  ],
+  status: [
+    { required: true, message: '请选择课程状态', trigger: 'change' }
   ]
 }
 
-const courseFormRef = ref<FormInstance>()
-
-// 类型标签样式
-const getTypeTagType = (type: string) => {
-  const map: Record<string, string> = {
-    basic: 'success',
-    advanced: 'warning',
-    project: 'danger'
-  }
-  return map[type] || ''
-}
-
-const getTypeLabel = (type: string) => {
-  const map: Record<string, string> = {
-    basic: '基础课程',
-    advanced: '进阶课程',
-    project: '实战项目'
-  }
-  return map[type] || ''
-}
-
-// 状态标签样式
-const getStatusTagType = (status: string) => {
-  const map: Record<string, string> = {
-    published: 'success',
-    draft: 'warning',
-    archived: 'info'
-  }
-  return map[status] || ''
-}
-
-const getStatusLabel = (status: string) => {
-  const map: Record<string, string> = {
-    published: '已发布',
-    draft: '草稿',
-    archived: '已归档'
-  }
-  return map[status] || ''
-}
+// 使用枚举工具函数
+const getTypeTagType = getCourseTypeTag
+const getTypeLabel = getCourseTypeLabel
+const getStatusTagType = getCourseStatusTag
+const getStatusLabel = getCourseStatusLabel
 
 // 加载课程列表
 const loadCourses = async () => {
-  try {
-    // TODO: 调用实际 API
-    // const response = await axios.get('/api/admin/courses', {
-    //   params: { ...filterForm, ...pagination }
-    // })
-    // courses.value = response.data.items
-    // pagination.total = response.data.total
-  } catch (error) {
-    ElMessage.error('加载课程列表失败')
-  }
+  const result = await loadItems(getPaginationParams())
+  setTotal(result.total)
 }
+
+// 使用筛选 composable
+const { debouncedSearch } = useFilter({
+  onSearch: () => {
+    resetPagination()
+    loadCourses()
+  }
+})
 
 // 重置筛选
 const resetFilter = () => {
+  filterForm.title = ''
   filterForm.type = ''
-  filterForm.status = ''
-  pagination.page = 1
+  resetPagination()
   loadCourses()
+}
+
+// 创建课程
+const createCourse = () => {
+  editItem(null, courseForm)
 }
 
 // 编辑课程
 const editCourse = (course: any) => {
-  editingCourse.value = course
-  Object.assign(courseForm, course)
-  showCreateDialog.value = true
+  // 先重置表单为默认值
+  courseForm.title = ''
+  courseForm.type = ''
+  courseForm.duration = ''
+  courseForm.cover = ''
+  courseForm.content = ''
+  courseForm.status = 'draft'
+  
+  // 然后用 course 数据填充（只合并有值的字段）
+  editItem(course, courseForm)
 }
 
 // 查看统计
@@ -302,39 +266,42 @@ const viewStats = (course: any) => {
 const handleCommand = async (command: string, course: any) => {
   switch (command) {
     case 'duplicate':
-      ElMessage.success(`复制《${course.title}》成功`)
+      ElMessage.info('复制功能开发中...')
       break
     case 'export':
       ElMessage.info('导出功能开发中...')
       break
     case 'archive':
-      try {
-        await ElMessageBox.confirm('确定要归档该课程吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-        ElMessage.success('归档成功')
-        loadCourses()
-      } catch {
-        // 用户取消
+      if (await confirmArchive(`《${course.title}》`)) {
+        try {
+          const response = await request.put(`/admin/courses/${course.id}`, {
+            status: 'archived'
+          })
+          if (response.data.success) {
+            ElMessage.success('归档成功')
+            loadCourses()
+          }
+        } catch (error: any) {
+          ElMessage.error(error.response?.data?.message || '归档失败')
+        }
       }
       break
     case 'restore':
-      ElMessage.success('恢复成功')
-      loadCourses()
+      try {
+        const response = await request.put(`/admin/courses/${course.id}`, {
+          status: 'published'
+        })
+        if (response.data.success) {
+          ElMessage.success('恢复成功')
+          loadCourses()
+        }
+      } catch (error: any) {
+        ElMessage.error(error.response?.data?.message || '恢复失败')
+      }
       break
     case 'delete':
-      try {
-        await ElMessageBox.confirm('确定要删除该课程吗？此操作不可恢复！', '警告', {
-          confirmButtonText: '删除',
-          cancelButtonText: '取消',
-          type: 'error'
-        })
-        ElMessage.success('删除成功')
-        loadCourses()
-      } catch {
-        // 用户取消
+      if (await confirmDelete(`《${course.title}》`)) {
+        await deleteItem(course.id, loadCourses)
       }
       break
   }
@@ -342,31 +309,7 @@ const handleCommand = async (command: string, course: any) => {
 
 // 保存课程
 const saveCourse = async () => {
-  if (!courseFormRef.value) return
-  
-  try {
-    await courseFormRef.value.validate()
-    saving.value = true
-    
-    // TODO: 调用实际 API
-    // if (editingCourse.value) {
-    //   await axios.put(`/api/admin/courses/${editingCourse.value.id}`, courseForm)
-    // } else {
-    //   await axios.post('/api/admin/courses', courseForm)
-    // }
-    
-    ElMessage.success(editingCourse.value ? '保存成功' : '创建成功')
-    showCreateDialog.value = false
-    loadCourses()
-    
-    // 重置表单
-    courseFormRef.value.resetFields()
-    editingCourse.value = null
-  } catch (error) {
-    console.error('保存失败:', error)
-  } finally {
-    saving.value = false
-  }
+  await saveItem(courseForm, loadCourses)
 }
 
 onMounted(() => {
@@ -398,5 +341,27 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--el-font-size-base);
+  line-height: var(--el-component-size-small);
+  height: var(--el-component-size-small);
+  padding: 0;
+  margin-left: 10px;
+  vertical-align: baseline;
+  transition: color 0.3s;
+}
+
+.el-dropdown-link:hover {
+  color: var(--el-color-primary-light-3);
+}
+
+.el-dropdown-link .el-icon--right {
+  margin-left: 2px;
 }
 </style>
