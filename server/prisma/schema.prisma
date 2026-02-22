@@ -131,6 +131,7 @@ model Course {
   status       String  @default("draft") // draft/published/archived
   duration     String?        // 课程时长
   content      String?        // 课程简介
+  order        Int     @default(0)  // 排序顺序
   authorId     String?        @map("author_id")
   viewCount    Int     @default(0)  // 浏览次数
   studentCount Int     @default(0)  // 学习人数
@@ -139,35 +140,38 @@ model Course {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   author   User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  chapters Chapter[]
 
   @@index([authorId])
   @@index([level])
   @@index([status])
+  @@index([order])
   @@map("courses")
 }
 
-// 章节模型
+// 章节模型（层级结构：章节包含小节）
 model Chapter {
   id        String   @id @default(cuid())
   title     String
-  content   String?         // Markdown 内容
+  content   String?         // Markdown 内容（仅小节有内容）
   excerpt   String?         // 章节摘要
+  type      String  @default("section") // chapter: 章节, section: 小节
   order     Int      @default(0)  // 排序
   duration  String?         // 章节时长
   videoUrl  String?         @map("video_url") // 视频链接（可选）
   status    String  @default("draft") // draft/published
-  courseId  String   @map("course_id")
+  parentId  String?  @map("parent_id") // 父章节 ID（小节指向章节）
   authorId  String?  @map("author_id")
   viewCount Int     @default(0)  // 浏览次数
   tags      Json?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  author User?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  parent   Chapter?  @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children Chapter[] @relation("ChapterHierarchy")
+  author   User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
-  @@index([courseId])
+  @@index([parentId])
+  @@index([type])
   @@index([order])
   @@index([status])
   @@map("chapters")

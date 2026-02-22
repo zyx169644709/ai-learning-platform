@@ -20,14 +20,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import ChapterItem from './ChapterItem.vue'
 import ChapterItemCollapsible from './ChapterItemCollapsible.vue'
-import { chapters as toc } from '@/content/chapters'
 import { useUserPrefs } from '@/stores/userPrefs'
+import { useChaptersStore } from '@/stores/chaptersStore'
 
-const chapters = computed(() => toc)
+const chaptersStore = useChaptersStore()
+const chapters = computed(() => chaptersStore.chapters)
 const prefs = useUserPrefs()
+
+onMounted(() => {
+  chaptersStore.fetchChapters()
+})
 const currentItemComponent = computed(() => prefs.sidebarDefaultExpanded ? ChapterItem : ChapterItemCollapsible)
 const toggleMode = () => prefs.setSidebarDefaultExpanded(!prefs.sidebarDefaultExpanded)
 </script>

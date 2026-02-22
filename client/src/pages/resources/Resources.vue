@@ -32,6 +32,11 @@
             <div class="tags" v-if="r.tags && r.tags.length > 0">
               <span class="tag" v-for="tag in r.tags.slice(0, 3)" :key="tag">{{ tag }}</span>
             </div>
+            <!-- 浏览量和点赞 -->
+            <div class="stats-row">
+              <span class="stat-item">👁 {{ r.viewCount || 0 }}</span>
+              <button class="like-btn" @click="handleLike($event, r)">❤ {{ r.likeCount || 0 }}</button>
+            </div>
           </div>
         </div>
       </div>
@@ -58,6 +63,8 @@ interface ResourceCard {
   size?: string;  // 文件大小
   language?: string;  // 编程语言
   tags?: string[];  // 标签
+  viewCount?: number;
+  likeCount?: number;
 }
 
 const query = ref('')
@@ -83,22 +90,26 @@ const sortOptions = [
 
 const resources = ref<ResourceCard[]>([])
 
-type ApiResource = { id: string; title: string; description?: string; url?: string; cover?: string; tags?: any }
+type ApiResource = { id: string; title: string; description?: string; url?: string; cover?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string }
 
 onMounted(async () => {
   try {
     const res = await fetch('http://localhost:3000/api/resources')
-    const data: ApiResource[] = await res.json()
+    const result = await res.json()
+    // 兼容新 API 格式 { success: true, data: { items: [...] } }
+    const data: ApiResource[] = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = (data || []).map((r) => ({
       id: r.id,
       title: r.title,
       description: r.description || '',
-      type: (Array.isArray(r.tags) && r.tags[0]) === 'video' ? 'video' : 'document',
+      type: (r.type as ResType) || ((Array.isArray(r.tags) && r.tags[0]) === 'video' ? 'video' : 'document'),
       preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
       author: '资源库',
       authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
       externalUrl: r.url,
-      tags: Array.isArray(r.tags) ? r.tags : []
+      tags: Array.isArray(r.tags) ? r.tags : [],
+      viewCount: r.viewCount || 0,
+      likeCount: r.likeCount || 0
     }))
   } catch (e) {
     console.error('加载资源失败', e)
@@ -147,13 +158,25 @@ const typeText = (t: ResType) => ({ document: '文档', video: '视频', code: '
 
 // 处理资源点击事件：优先打开外部链接/下载链接
 const handleResourceClick = (resource: ResourceCard) => {
+  fetch(`/api/resources/${resource.id}/view`, { method: 'POST' }).catch(() => {})
+  resource.viewCount = (resource.viewCount || 0) + 1
   const target = resource.externalUrl || resource.downloadUrl
   if (target) {
     window.open(target, '_blank')
   } else {
-    // 无外链时可降级到站内详情
     window.location.href = `/resource/${resource.id}`
   }
+}
+
+const handleLike = async (event: Event, resource: ResourceCard) => {
+  event.stopPropagation()
+  try {
+    const res = await fetch(`/api/resources/${resource.id}/like`, { method: 'POST' })
+    const json = await res.json()
+    if (json.success) {
+      resource.likeCount = json.data.likeCount
+    }
+  } catch { }
 }
 
 const noop = () => { }
@@ -380,6 +403,38 @@ a:hover {
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 11px;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+}
+
+.like-btn:hover {
+  color: #ef4444;
 }
 
 @media (max-width: 1024px) {

@@ -12,6 +12,20 @@ import {
   getStats,
   getAnalytics
 } from '../controllers/adminController'
+import {
+  getChapters,
+  getChapter,
+  createChapter,
+  updateChapter,
+  deleteChapter
+} from '../controllers/chapterController'
+import {
+  getResources,
+  getResource,
+  createResource,
+  updateResource,
+  deleteResource
+} from '../controllers/resourceController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
 
@@ -39,6 +53,20 @@ router.get('/stats', authMiddleware, requireAdmin, getStats)
 
 // 数据分析
 router.get('/analytics', authMiddleware, requireAdmin, getAnalytics)
+
+// 章节管理
+router.get('/chapters', authMiddleware, requireAdmin, getChapters)
+router.get('/chapters/:id', authMiddleware, requireAdmin, getChapter)
+router.post('/chapters', authMiddleware, requireAdmin, createChapter)
+router.put('/chapters/:id', authMiddleware, requireAdmin, updateChapter)
+router.delete('/chapters/:id', authMiddleware, requireAdmin, deleteChapter)
+
+// 资源管理
+router.get('/resources', authMiddleware, requireAdmin, getResources)
+router.get('/resources/:id', authMiddleware, requireAdmin, getResource)
+router.post('/resources', authMiddleware, requireAdmin, createResource)
+router.put('/resources/:id', authMiddleware, requireAdmin, updateResource)
+router.delete('/resources/:id', authMiddleware, requireAdmin, deleteResource)
 
 export default router
 module.exports = router

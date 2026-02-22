@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { listResources, getResource, createResource, updateResource, deleteResource } from '../controllers/resourceController'
+import { getResources as listResources, getResource, createResource, updateResource, deleteResource, incrementResourceView, likeResource } from '../controllers/resourceController'
 import authMiddleware from '../middleware/authMiddleware'
 import { resourceService } from '../services/resourceService'
 
@@ -7,10 +7,13 @@ const router = Router()
 
 router.get('/', listResources)
 router.get('/:id', getResource)
+router.post('/:id/view', incrementResourceView)
+router.post('/:id/like', likeResource)
 router.post('/', authMiddleware as any, createResource)
 router.put('/:id', authMiddleware as any, updateResource)
 router.delete('/:id', authMiddleware as any, deleteResource)
 
+export default router
 module.exports = router
 
 // 开发便捷：一键写入一些默认资源（课程/资源/社区链接均可作为资源被搜索）

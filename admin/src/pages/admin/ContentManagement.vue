@@ -48,7 +48,9 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="students" label="学习人数" width="120" />
+        <el-table-column prop="duration" label="时长" width="100" />
+        <el-table-column prop="students" label="学习人数" width="100" />
+        <el-table-column prop="viewCount" label="浏览量" width="100" />
         <el-table-column prop="completionRate" label="完成率" width="100">
           <template #default="{ row }">
             {{ row.completionRate }}%

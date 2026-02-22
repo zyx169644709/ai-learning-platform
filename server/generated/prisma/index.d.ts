@@ -1542,32 +1542,32 @@ export namespace Prisma {
 
 
   /**
-   * Count Type CourseCountOutputType
+   * Count Type ChapterCountOutputType
    */
 
-  export type CourseCountOutputType = {
-    chapters: number
+  export type ChapterCountOutputType = {
+    children: number
   }
 
-  export type CourseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    chapters?: boolean | CourseCountOutputTypeCountChaptersArgs
+  export type ChapterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    children?: boolean | ChapterCountOutputTypeCountChildrenArgs
   }
 
   // Custom InputTypes
   /**
-   * CourseCountOutputType without action
+   * ChapterCountOutputType without action
    */
-  export type CourseCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChapterCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the CourseCountOutputType
+     * Select specific fields to fetch from the ChapterCountOutputType
      */
-    select?: CourseCountOutputTypeSelect<ExtArgs> | null
+    select?: ChapterCountOutputTypeSelect<ExtArgs> | null
   }
 
   /**
-   * CourseCountOutputType without action
+   * ChapterCountOutputType without action
    */
-  export type CourseCountOutputTypeCountChaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChapterCountOutputTypeCountChildrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChapterWhereInput
   }
 
@@ -6312,11 +6312,13 @@ export namespace Prisma {
   }
 
   export type CourseAvgAggregateOutputType = {
+    order: number | null
     viewCount: number | null
     studentCount: number | null
   }
 
   export type CourseSumAggregateOutputType = {
+    order: number | null
     viewCount: number | null
     studentCount: number | null
   }
@@ -6331,6 +6333,7 @@ export namespace Prisma {
     status: string | null
     duration: string | null
     content: string | null
+    order: number | null
     authorId: string | null
     viewCount: number | null
     studentCount: number | null
@@ -6348,6 +6351,7 @@ export namespace Prisma {
     status: string | null
     duration: string | null
     content: string | null
+    order: number | null
     authorId: string | null
     viewCount: number | null
     studentCount: number | null
@@ -6365,6 +6369,7 @@ export namespace Prisma {
     status: number
     duration: number
     content: number
+    order: number
     authorId: number
     viewCount: number
     studentCount: number
@@ -6376,11 +6381,13 @@ export namespace Prisma {
 
 
   export type CourseAvgAggregateInputType = {
+    order?: true
     viewCount?: true
     studentCount?: true
   }
 
   export type CourseSumAggregateInputType = {
+    order?: true
     viewCount?: true
     studentCount?: true
   }
@@ -6395,6 +6402,7 @@ export namespace Prisma {
     status?: true
     duration?: true
     content?: true
+    order?: true
     authorId?: true
     viewCount?: true
     studentCount?: true
@@ -6412,6 +6420,7 @@ export namespace Prisma {
     status?: true
     duration?: true
     content?: true
+    order?: true
     authorId?: true
     viewCount?: true
     studentCount?: true
@@ -6429,6 +6438,7 @@ export namespace Prisma {
     status?: true
     duration?: true
     content?: true
+    order?: true
     authorId?: true
     viewCount?: true
     studentCount?: true
@@ -6534,6 +6544,7 @@ export namespace Prisma {
     status: string
     duration: string | null
     content: string | null
+    order: number
     authorId: string | null
     viewCount: number
     studentCount: number
@@ -6571,6 +6582,7 @@ export namespace Prisma {
     status?: boolean
     duration?: boolean
     content?: boolean
+    order?: boolean
     authorId?: boolean
     viewCount?: boolean
     studentCount?: boolean
@@ -6578,8 +6590,6 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | Course$authorArgs<ExtArgs>
-    chapters?: boolean | Course$chaptersArgs<ExtArgs>
-    _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["course"]>
 
   export type CourseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6592,6 +6602,7 @@ export namespace Prisma {
     status?: boolean
     duration?: boolean
     content?: boolean
+    order?: boolean
     authorId?: boolean
     viewCount?: boolean
     studentCount?: boolean
@@ -6611,6 +6622,7 @@ export namespace Prisma {
     status?: boolean
     duration?: boolean
     content?: boolean
+    order?: boolean
     authorId?: boolean
     viewCount?: boolean
     studentCount?: boolean
@@ -6630,6 +6642,7 @@ export namespace Prisma {
     status?: boolean
     duration?: boolean
     content?: boolean
+    order?: boolean
     authorId?: boolean
     viewCount?: boolean
     studentCount?: boolean
@@ -6638,11 +6651,9 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "level" | "cover" | "url" | "status" | "duration" | "content" | "authorId" | "viewCount" | "studentCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "level" | "cover" | "url" | "status" | "duration" | "content" | "order" | "authorId" | "viewCount" | "studentCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
   export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | Course$authorArgs<ExtArgs>
-    chapters?: boolean | Course$chaptersArgs<ExtArgs>
-    _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CourseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | Course$authorArgs<ExtArgs>
@@ -6655,7 +6666,6 @@ export namespace Prisma {
     name: "Course"
     objects: {
       author: Prisma.$UserPayload<ExtArgs> | null
-      chapters: Prisma.$ChapterPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6667,6 +6677,7 @@ export namespace Prisma {
       status: string
       duration: string | null
       content: string | null
+      order: number
       authorId: string | null
       viewCount: number
       studentCount: number
@@ -7068,7 +7079,6 @@ export namespace Prisma {
   export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     author<T extends Course$authorArgs<ExtArgs> = {}>(args?: Subset<T, Course$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    chapters<T extends Course$chaptersArgs<ExtArgs> = {}>(args?: Subset<T, Course$chaptersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7107,6 +7117,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Course", 'String'>
     readonly duration: FieldRef<"Course", 'String'>
     readonly content: FieldRef<"Course", 'String'>
+    readonly order: FieldRef<"Course", 'Int'>
     readonly authorId: FieldRef<"Course", 'String'>
     readonly viewCount: FieldRef<"Course", 'Int'>
     readonly studentCount: FieldRef<"Course", 'Int'>
@@ -7526,30 +7537,6 @@ export namespace Prisma {
   }
 
   /**
-   * Course.chapters
-   */
-  export type Course$chaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Chapter
-     */
-    select?: ChapterSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Chapter
-     */
-    omit?: ChapterOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ChapterInclude<ExtArgs> | null
-    where?: ChapterWhereInput
-    orderBy?: ChapterOrderByWithRelationInput | ChapterOrderByWithRelationInput[]
-    cursor?: ChapterWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ChapterScalarFieldEnum | ChapterScalarFieldEnum[]
-  }
-
-  /**
    * Course without action
    */
   export type CourseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7595,11 +7582,12 @@ export namespace Prisma {
     title: string | null
     content: string | null
     excerpt: string | null
+    type: string | null
     order: number | null
     duration: string | null
     videoUrl: string | null
     status: string | null
-    courseId: string | null
+    parentId: string | null
     authorId: string | null
     viewCount: number | null
     createdAt: Date | null
@@ -7611,11 +7599,12 @@ export namespace Prisma {
     title: string | null
     content: string | null
     excerpt: string | null
+    type: string | null
     order: number | null
     duration: string | null
     videoUrl: string | null
     status: string | null
-    courseId: string | null
+    parentId: string | null
     authorId: string | null
     viewCount: number | null
     createdAt: Date | null
@@ -7627,11 +7616,12 @@ export namespace Prisma {
     title: number
     content: number
     excerpt: number
+    type: number
     order: number
     duration: number
     videoUrl: number
     status: number
-    courseId: number
+    parentId: number
     authorId: number
     viewCount: number
     tags: number
@@ -7656,11 +7646,12 @@ export namespace Prisma {
     title?: true
     content?: true
     excerpt?: true
+    type?: true
     order?: true
     duration?: true
     videoUrl?: true
     status?: true
-    courseId?: true
+    parentId?: true
     authorId?: true
     viewCount?: true
     createdAt?: true
@@ -7672,11 +7663,12 @@ export namespace Prisma {
     title?: true
     content?: true
     excerpt?: true
+    type?: true
     order?: true
     duration?: true
     videoUrl?: true
     status?: true
-    courseId?: true
+    parentId?: true
     authorId?: true
     viewCount?: true
     createdAt?: true
@@ -7688,11 +7680,12 @@ export namespace Prisma {
     title?: true
     content?: true
     excerpt?: true
+    type?: true
     order?: true
     duration?: true
     videoUrl?: true
     status?: true
-    courseId?: true
+    parentId?: true
     authorId?: true
     viewCount?: true
     tags?: true
@@ -7792,11 +7785,12 @@ export namespace Prisma {
     title: string
     content: string | null
     excerpt: string | null
+    type: string
     order: number
     duration: string | null
     videoUrl: string | null
     status: string
-    courseId: string
+    parentId: string | null
     authorId: string | null
     viewCount: number
     tags: JsonValue | null
@@ -7828,18 +7822,21 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     excerpt?: boolean
+    type?: boolean
     order?: boolean
     duration?: boolean
     videoUrl?: boolean
     status?: boolean
-    courseId?: boolean
+    parentId?: boolean
     authorId?: boolean
     viewCount?: boolean
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
+    children?: boolean | Chapter$childrenArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
   export type ChapterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7847,17 +7844,18 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     excerpt?: boolean
+    type?: boolean
     order?: boolean
     duration?: boolean
     videoUrl?: boolean
     status?: boolean
-    courseId?: boolean
+    parentId?: boolean
     authorId?: boolean
     viewCount?: boolean
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
@@ -7866,17 +7864,18 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     excerpt?: boolean
+    type?: boolean
     order?: boolean
     duration?: boolean
     videoUrl?: boolean
     status?: boolean
-    courseId?: boolean
+    parentId?: boolean
     authorId?: boolean
     viewCount?: boolean
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
@@ -7885,11 +7884,12 @@ export namespace Prisma {
     title?: boolean
     content?: boolean
     excerpt?: boolean
+    type?: boolean
     order?: boolean
     duration?: boolean
     videoUrl?: boolean
     status?: boolean
-    courseId?: boolean
+    parentId?: boolean
     authorId?: boolean
     viewCount?: boolean
     tags?: boolean
@@ -7897,24 +7897,27 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "excerpt" | "order" | "duration" | "videoUrl" | "status" | "courseId" | "authorId" | "viewCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["chapter"]>
+  export type ChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "excerpt" | "type" | "order" | "duration" | "videoUrl" | "status" | "parentId" | "authorId" | "viewCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["chapter"]>
   export type ChapterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
+    children?: boolean | Chapter$childrenArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChapterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
   }
   export type ChapterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    course?: boolean | CourseDefaultArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
   }
 
   export type $ChapterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Chapter"
     objects: {
-      course: Prisma.$CoursePayload<ExtArgs>
+      parent: Prisma.$ChapterPayload<ExtArgs> | null
+      children: Prisma.$ChapterPayload<ExtArgs>[]
       author: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -7922,11 +7925,12 @@ export namespace Prisma {
       title: string
       content: string | null
       excerpt: string | null
+      type: string
       order: number
       duration: string | null
       videoUrl: string | null
       status: string
-      courseId: string
+      parentId: string | null
       authorId: string | null
       viewCount: number
       tags: Prisma.JsonValue | null
@@ -8326,7 +8330,8 @@ export namespace Prisma {
    */
   export interface Prisma__ChapterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    course<T extends CourseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CourseDefaultArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends Chapter$parentArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$parentArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    children<T extends Chapter$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     author<T extends Chapter$authorArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8361,11 +8366,12 @@ export namespace Prisma {
     readonly title: FieldRef<"Chapter", 'String'>
     readonly content: FieldRef<"Chapter", 'String'>
     readonly excerpt: FieldRef<"Chapter", 'String'>
+    readonly type: FieldRef<"Chapter", 'String'>
     readonly order: FieldRef<"Chapter", 'Int'>
     readonly duration: FieldRef<"Chapter", 'String'>
     readonly videoUrl: FieldRef<"Chapter", 'String'>
     readonly status: FieldRef<"Chapter", 'String'>
-    readonly courseId: FieldRef<"Chapter", 'String'>
+    readonly parentId: FieldRef<"Chapter", 'String'>
     readonly authorId: FieldRef<"Chapter", 'String'>
     readonly viewCount: FieldRef<"Chapter", 'Int'>
     readonly tags: FieldRef<"Chapter", 'Json'>
@@ -8762,6 +8768,49 @@ export namespace Prisma {
      * Limit how many Chapters to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Chapter.parent
+   */
+  export type Chapter$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Chapter
+     */
+    select?: ChapterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Chapter
+     */
+    omit?: ChapterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterInclude<ExtArgs> | null
+    where?: ChapterWhereInput
+  }
+
+  /**
+   * Chapter.children
+   */
+  export type Chapter$childrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Chapter
+     */
+    select?: ChapterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Chapter
+     */
+    omit?: ChapterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterInclude<ExtArgs> | null
+    where?: ChapterWhereInput
+    orderBy?: ChapterOrderByWithRelationInput | ChapterOrderByWithRelationInput[]
+    cursor?: ChapterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterScalarFieldEnum | ChapterScalarFieldEnum[]
   }
 
   /**
@@ -10122,6 +10171,7 @@ export namespace Prisma {
     status: 'status',
     duration: 'duration',
     content: 'content',
+    order: 'order',
     authorId: 'authorId',
     viewCount: 'viewCount',
     studentCount: 'studentCount',
@@ -10138,11 +10188,12 @@ export namespace Prisma {
     title: 'title',
     content: 'content',
     excerpt: 'excerpt',
+    type: 'type',
     order: 'order',
     duration: 'duration',
     videoUrl: 'videoUrl',
     status: 'status',
-    courseId: 'courseId',
+    parentId: 'parentId',
     authorId: 'authorId',
     viewCount: 'viewCount',
     tags: 'tags',
@@ -10626,6 +10677,7 @@ export namespace Prisma {
     status?: StringFilter<"Course"> | string
     duration?: StringNullableFilter<"Course"> | string | null
     content?: StringNullableFilter<"Course"> | string | null
+    order?: IntFilter<"Course"> | number
     authorId?: StringNullableFilter<"Course"> | string | null
     viewCount?: IntFilter<"Course"> | number
     studentCount?: IntFilter<"Course"> | number
@@ -10633,7 +10685,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
     author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    chapters?: ChapterListRelationFilter
   }
 
   export type CourseOrderByWithRelationInput = {
@@ -10646,6 +10697,7 @@ export namespace Prisma {
     status?: SortOrder
     duration?: SortOrderInput | SortOrder
     content?: SortOrderInput | SortOrder
+    order?: SortOrder
     authorId?: SortOrderInput | SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
@@ -10653,7 +10705,6 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     author?: UserOrderByWithRelationInput
-    chapters?: ChapterOrderByRelationAggregateInput
   }
 
   export type CourseWhereUniqueInput = Prisma.AtLeast<{
@@ -10669,6 +10720,7 @@ export namespace Prisma {
     status?: StringFilter<"Course"> | string
     duration?: StringNullableFilter<"Course"> | string | null
     content?: StringNullableFilter<"Course"> | string | null
+    order?: IntFilter<"Course"> | number
     authorId?: StringNullableFilter<"Course"> | string | null
     viewCount?: IntFilter<"Course"> | number
     studentCount?: IntFilter<"Course"> | number
@@ -10676,7 +10728,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
     author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    chapters?: ChapterListRelationFilter
   }, "id">
 
   export type CourseOrderByWithAggregationInput = {
@@ -10689,6 +10740,7 @@ export namespace Prisma {
     status?: SortOrder
     duration?: SortOrderInput | SortOrder
     content?: SortOrderInput | SortOrder
+    order?: SortOrder
     authorId?: SortOrderInput | SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
@@ -10715,6 +10767,7 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Course"> | string
     duration?: StringNullableWithAggregatesFilter<"Course"> | string | null
     content?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    order?: IntWithAggregatesFilter<"Course"> | number
     authorId?: StringNullableWithAggregatesFilter<"Course"> | string | null
     viewCount?: IntWithAggregatesFilter<"Course"> | number
     studentCount?: IntWithAggregatesFilter<"Course"> | number
@@ -10731,17 +10784,19 @@ export namespace Prisma {
     title?: StringFilter<"Chapter"> | string
     content?: StringNullableFilter<"Chapter"> | string | null
     excerpt?: StringNullableFilter<"Chapter"> | string | null
+    type?: StringFilter<"Chapter"> | string
     order?: IntFilter<"Chapter"> | number
     duration?: StringNullableFilter<"Chapter"> | string | null
     videoUrl?: StringNullableFilter<"Chapter"> | string | null
     status?: StringFilter<"Chapter"> | string
-    courseId?: StringFilter<"Chapter"> | string
+    parentId?: StringNullableFilter<"Chapter"> | string | null
     authorId?: StringNullableFilter<"Chapter"> | string | null
     viewCount?: IntFilter<"Chapter"> | number
     tags?: JsonNullableFilter<"Chapter">
     createdAt?: DateTimeFilter<"Chapter"> | Date | string
     updatedAt?: DateTimeFilter<"Chapter"> | Date | string
-    course?: XOR<CourseScalarRelationFilter, CourseWhereInput>
+    parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    children?: ChapterListRelationFilter
     author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
@@ -10750,17 +10805,19 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrderInput | SortOrder
     excerpt?: SortOrderInput | SortOrder
+    type?: SortOrder
     order?: SortOrder
     duration?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     status?: SortOrder
-    courseId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
     authorId?: SortOrderInput | SortOrder
     viewCount?: SortOrder
     tags?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    course?: CourseOrderByWithRelationInput
+    parent?: ChapterOrderByWithRelationInput
+    children?: ChapterOrderByRelationAggregateInput
     author?: UserOrderByWithRelationInput
   }
 
@@ -10772,17 +10829,19 @@ export namespace Prisma {
     title?: StringFilter<"Chapter"> | string
     content?: StringNullableFilter<"Chapter"> | string | null
     excerpt?: StringNullableFilter<"Chapter"> | string | null
+    type?: StringFilter<"Chapter"> | string
     order?: IntFilter<"Chapter"> | number
     duration?: StringNullableFilter<"Chapter"> | string | null
     videoUrl?: StringNullableFilter<"Chapter"> | string | null
     status?: StringFilter<"Chapter"> | string
-    courseId?: StringFilter<"Chapter"> | string
+    parentId?: StringNullableFilter<"Chapter"> | string | null
     authorId?: StringNullableFilter<"Chapter"> | string | null
     viewCount?: IntFilter<"Chapter"> | number
     tags?: JsonNullableFilter<"Chapter">
     createdAt?: DateTimeFilter<"Chapter"> | Date | string
     updatedAt?: DateTimeFilter<"Chapter"> | Date | string
-    course?: XOR<CourseScalarRelationFilter, CourseWhereInput>
+    parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    children?: ChapterListRelationFilter
     author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
@@ -10791,11 +10850,12 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrderInput | SortOrder
     excerpt?: SortOrderInput | SortOrder
+    type?: SortOrder
     order?: SortOrder
     duration?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     status?: SortOrder
-    courseId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
     authorId?: SortOrderInput | SortOrder
     viewCount?: SortOrder
     tags?: SortOrderInput | SortOrder
@@ -10816,11 +10876,12 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Chapter"> | string
     content?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
     excerpt?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
+    type?: StringWithAggregatesFilter<"Chapter"> | string
     order?: IntWithAggregatesFilter<"Chapter"> | number
     duration?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
     videoUrl?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
     status?: StringWithAggregatesFilter<"Chapter"> | string
-    courseId?: StringWithAggregatesFilter<"Chapter"> | string
+    parentId?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
     authorId?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
     viewCount?: IntWithAggregatesFilter<"Chapter"> | number
     tags?: JsonNullableWithAggregatesFilter<"Chapter">
@@ -11305,13 +11366,13 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     viewCount?: number
     studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author?: UserCreateNestedOneWithoutCoursesInput
-    chapters?: ChapterCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUncheckedCreateInput = {
@@ -11324,13 +11385,13 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     authorId?: string | null
     viewCount?: number
     studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    chapters?: ChapterUncheckedCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUpdateInput = {
@@ -11343,13 +11404,13 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneWithoutCoursesNestedInput
-    chapters?: ChapterUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseUncheckedUpdateInput = {
@@ -11362,13 +11423,13 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     authorId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    chapters?: ChapterUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseCreateManyInput = {
@@ -11381,6 +11442,7 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     authorId?: string | null
     viewCount?: number
     studentCount?: number
@@ -11399,6 +11461,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
@@ -11416,6 +11479,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     authorId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
@@ -11429,6 +11493,7 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
@@ -11437,7 +11502,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    course: CourseCreateNestedOneWithoutChaptersInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    children?: ChapterCreateNestedManyWithoutParentInput
     author?: UserCreateNestedOneWithoutChaptersInput
   }
 
@@ -11446,16 +11512,18 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
     status?: string
-    courseId: string
+    parentId?: string | null
     authorId?: string | null
     viewCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ChapterUpdateInput = {
@@ -11463,6 +11531,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11471,7 +11540,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    course?: CourseUpdateOneRequiredWithoutChaptersNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
     author?: UserUpdateOneWithoutChaptersNestedInput
   }
 
@@ -11480,16 +11550,18 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    courseId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ChapterCreateManyInput = {
@@ -11497,11 +11569,12 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
     status?: string
-    courseId: string
+    parentId?: string | null
     authorId?: string | null
     viewCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
@@ -11514,6 +11587,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11529,11 +11603,12 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    courseId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
@@ -12125,6 +12200,7 @@ export namespace Prisma {
     status?: SortOrder
     duration?: SortOrder
     content?: SortOrder
+    order?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
@@ -12134,6 +12210,7 @@ export namespace Prisma {
   }
 
   export type CourseAvgOrderByAggregateInput = {
+    order?: SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
   }
@@ -12148,6 +12225,7 @@ export namespace Prisma {
     status?: SortOrder
     duration?: SortOrder
     content?: SortOrder
+    order?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
@@ -12165,6 +12243,7 @@ export namespace Prisma {
     status?: SortOrder
     duration?: SortOrder
     content?: SortOrder
+    order?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
@@ -12173,6 +12252,7 @@ export namespace Prisma {
   }
 
   export type CourseSumOrderByAggregateInput = {
+    order?: SortOrder
     viewCount?: SortOrder
     studentCount?: SortOrder
   }
@@ -12198,9 +12278,9 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type CourseScalarRelationFilter = {
-    is?: CourseWhereInput
-    isNot?: CourseWhereInput
+  export type ChapterNullableScalarRelationFilter = {
+    is?: ChapterWhereInput | null
+    isNot?: ChapterWhereInput | null
   }
 
   export type ChapterCountOrderByAggregateInput = {
@@ -12208,11 +12288,12 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     excerpt?: SortOrder
+    type?: SortOrder
     order?: SortOrder
     duration?: SortOrder
     videoUrl?: SortOrder
     status?: SortOrder
-    courseId?: SortOrder
+    parentId?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     tags?: SortOrder
@@ -12230,11 +12311,12 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     excerpt?: SortOrder
+    type?: SortOrder
     order?: SortOrder
     duration?: SortOrder
     videoUrl?: SortOrder
     status?: SortOrder
-    courseId?: SortOrder
+    parentId?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     createdAt?: SortOrder
@@ -12246,11 +12328,12 @@ export namespace Prisma {
     title?: SortOrder
     content?: SortOrder
     excerpt?: SortOrder
+    type?: SortOrder
     order?: SortOrder
     duration?: SortOrder
     videoUrl?: SortOrder
     status?: SortOrder
-    courseId?: SortOrder
+    parentId?: SortOrder
     authorId?: SortOrder
     viewCount?: SortOrder
     createdAt?: SortOrder
@@ -12706,20 +12789,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type ChapterCreateNestedManyWithoutCourseInput = {
-    create?: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput> | ChapterCreateWithoutCourseInput[] | ChapterUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutCourseInput | ChapterCreateOrConnectWithoutCourseInput[]
-    createMany?: ChapterCreateManyCourseInputEnvelope
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-  }
-
-  export type ChapterUncheckedCreateNestedManyWithoutCourseInput = {
-    create?: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput> | ChapterCreateWithoutCourseInput[] | ChapterUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutCourseInput | ChapterCreateOrConnectWithoutCourseInput[]
-    createMany?: ChapterCreateManyCourseInputEnvelope
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-  }
-
   export type UserUpdateOneWithoutCoursesNestedInput = {
     create?: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCoursesInput
@@ -12730,38 +12799,17 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCoursesInput, UserUpdateWithoutCoursesInput>, UserUncheckedUpdateWithoutCoursesInput>
   }
 
-  export type ChapterUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput> | ChapterCreateWithoutCourseInput[] | ChapterUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutCourseInput | ChapterCreateOrConnectWithoutCourseInput[]
-    upsert?: ChapterUpsertWithWhereUniqueWithoutCourseInput | ChapterUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: ChapterCreateManyCourseInputEnvelope
-    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    update?: ChapterUpdateWithWhereUniqueWithoutCourseInput | ChapterUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: ChapterUpdateManyWithWhereWithoutCourseInput | ChapterUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+  export type ChapterCreateNestedOneWithoutChildrenInput = {
+    create?: XOR<ChapterCreateWithoutChildrenInput, ChapterUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutChildrenInput
+    connect?: ChapterWhereUniqueInput
   }
 
-  export type ChapterUncheckedUpdateManyWithoutCourseNestedInput = {
-    create?: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput> | ChapterCreateWithoutCourseInput[] | ChapterUncheckedCreateWithoutCourseInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutCourseInput | ChapterCreateOrConnectWithoutCourseInput[]
-    upsert?: ChapterUpsertWithWhereUniqueWithoutCourseInput | ChapterUpsertWithWhereUniqueWithoutCourseInput[]
-    createMany?: ChapterCreateManyCourseInputEnvelope
-    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+  export type ChapterCreateNestedManyWithoutParentInput = {
+    create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
+    createMany?: ChapterCreateManyParentInputEnvelope
     connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    update?: ChapterUpdateWithWhereUniqueWithoutCourseInput | ChapterUpdateWithWhereUniqueWithoutCourseInput[]
-    updateMany?: ChapterUpdateManyWithWhereWithoutCourseInput | ChapterUpdateManyWithWhereWithoutCourseInput[]
-    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
-  }
-
-  export type CourseCreateNestedOneWithoutChaptersInput = {
-    create?: XOR<CourseCreateWithoutChaptersInput, CourseUncheckedCreateWithoutChaptersInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutChaptersInput
-    connect?: CourseWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutChaptersInput = {
@@ -12770,12 +12818,35 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type CourseUpdateOneRequiredWithoutChaptersNestedInput = {
-    create?: XOR<CourseCreateWithoutChaptersInput, CourseUncheckedCreateWithoutChaptersInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutChaptersInput
-    upsert?: CourseUpsertWithoutChaptersInput
-    connect?: CourseWhereUniqueInput
-    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutChaptersInput, CourseUpdateWithoutChaptersInput>, CourseUncheckedUpdateWithoutChaptersInput>
+  export type ChapterUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
+    createMany?: ChapterCreateManyParentInputEnvelope
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+  }
+
+  export type ChapterUpdateOneWithoutChildrenNestedInput = {
+    create?: XOR<ChapterCreateWithoutChildrenInput, ChapterUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutChildrenInput
+    upsert?: ChapterUpsertWithoutChildrenInput
+    disconnect?: ChapterWhereInput | boolean
+    delete?: ChapterWhereInput | boolean
+    connect?: ChapterWhereUniqueInput
+    update?: XOR<XOR<ChapterUpdateToOneWithWhereWithoutChildrenInput, ChapterUpdateWithoutChildrenInput>, ChapterUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type ChapterUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
+    upsert?: ChapterUpsertWithWhereUniqueWithoutParentInput | ChapterUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ChapterCreateManyParentInputEnvelope
+    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    update?: ChapterUpdateWithWhereUniqueWithoutParentInput | ChapterUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ChapterUpdateManyWithWhereWithoutParentInput | ChapterUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
   }
 
   export type UserUpdateOneWithoutChaptersNestedInput = {
@@ -12786,6 +12857,20 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChaptersInput, UserUpdateWithoutChaptersInput>, UserUncheckedUpdateWithoutChaptersInput>
+  }
+
+  export type ChapterUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
+    upsert?: ChapterUpsertWithWhereUniqueWithoutParentInput | ChapterUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ChapterCreateManyParentInputEnvelope
+    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    update?: ChapterUpdateWithWhereUniqueWithoutParentInput | ChapterUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ChapterUpdateManyWithWhereWithoutParentInput | ChapterUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutResourcesInput = {
@@ -13127,12 +13212,12 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     viewCount?: number
     studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    chapters?: ChapterCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUncheckedCreateWithoutAuthorInput = {
@@ -13145,12 +13230,12 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     viewCount?: number
     studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    chapters?: ChapterUncheckedCreateNestedManyWithoutCourseInput
   }
 
   export type CourseCreateOrConnectWithoutAuthorInput = {
@@ -13167,6 +13252,7 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
@@ -13175,7 +13261,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    course: CourseCreateNestedOneWithoutChaptersInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    children?: ChapterCreateNestedManyWithoutParentInput
   }
 
   export type ChapterUncheckedCreateWithoutAuthorInput = {
@@ -13183,15 +13270,17 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
     status?: string
-    courseId: string
+    parentId?: string | null
     viewCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
   }
 
   export type ChapterCreateOrConnectWithoutAuthorInput = {
@@ -13367,6 +13456,7 @@ export namespace Prisma {
     status?: StringFilter<"Course"> | string
     duration?: StringNullableFilter<"Course"> | string | null
     content?: StringNullableFilter<"Course"> | string | null
+    order?: IntFilter<"Course"> | number
     authorId?: StringNullableFilter<"Course"> | string | null
     viewCount?: IntFilter<"Course"> | number
     studentCount?: IntFilter<"Course"> | number
@@ -13399,11 +13489,12 @@ export namespace Prisma {
     title?: StringFilter<"Chapter"> | string
     content?: StringNullableFilter<"Chapter"> | string | null
     excerpt?: StringNullableFilter<"Chapter"> | string | null
+    type?: StringFilter<"Chapter"> | string
     order?: IntFilter<"Chapter"> | number
     duration?: StringNullableFilter<"Chapter"> | string | null
     videoUrl?: StringNullableFilter<"Chapter"> | string | null
     status?: StringFilter<"Chapter"> | string
-    courseId?: StringFilter<"Chapter"> | string
+    parentId?: StringNullableFilter<"Chapter"> | string | null
     authorId?: StringNullableFilter<"Chapter"> | string | null
     viewCount?: IntFilter<"Chapter"> | number
     tags?: JsonNullableFilter<"Chapter">
@@ -13878,47 +13969,6 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
   }
 
-  export type ChapterCreateWithoutCourseInput = {
-    id?: string
-    title: string
-    content?: string | null
-    excerpt?: string | null
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
-    status?: string
-    viewCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    author?: UserCreateNestedOneWithoutChaptersInput
-  }
-
-  export type ChapterUncheckedCreateWithoutCourseInput = {
-    id?: string
-    title: string
-    content?: string | null
-    excerpt?: string | null
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
-    status?: string
-    authorId?: string | null
-    viewCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ChapterCreateOrConnectWithoutCourseInput = {
-    where: ChapterWhereUniqueInput
-    create: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput>
-  }
-
-  export type ChapterCreateManyCourseInputEnvelope = {
-    data: ChapterCreateManyCourseInput | ChapterCreateManyCourseInput[]
-  }
-
   export type UserUpsertWithoutCoursesInput = {
     update: XOR<UserUpdateWithoutCoursesInput, UserUncheckedUpdateWithoutCoursesInput>
     create: XOR<UserCreateWithoutCoursesInput, UserUncheckedCreateWithoutCoursesInput>
@@ -13968,61 +14018,90 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
-  export type ChapterUpsertWithWhereUniqueWithoutCourseInput = {
-    where: ChapterWhereUniqueInput
-    update: XOR<ChapterUpdateWithoutCourseInput, ChapterUncheckedUpdateWithoutCourseInput>
-    create: XOR<ChapterCreateWithoutCourseInput, ChapterUncheckedCreateWithoutCourseInput>
-  }
-
-  export type ChapterUpdateWithWhereUniqueWithoutCourseInput = {
-    where: ChapterWhereUniqueInput
-    data: XOR<ChapterUpdateWithoutCourseInput, ChapterUncheckedUpdateWithoutCourseInput>
-  }
-
-  export type ChapterUpdateManyWithWhereWithoutCourseInput = {
-    where: ChapterScalarWhereInput
-    data: XOR<ChapterUpdateManyMutationInput, ChapterUncheckedUpdateManyWithoutCourseInput>
-  }
-
-  export type CourseCreateWithoutChaptersInput = {
+  export type ChapterCreateWithoutChildrenInput = {
     id?: string
     title: string
-    description?: string | null
-    level?: string | null
-    cover?: string | null
-    url: string
-    status?: string
-    duration?: string | null
     content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
     viewCount?: number
-    studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    author?: UserCreateNestedOneWithoutCoursesInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    author?: UserCreateNestedOneWithoutChaptersInput
   }
 
-  export type CourseUncheckedCreateWithoutChaptersInput = {
+  export type ChapterUncheckedCreateWithoutChildrenInput = {
     id?: string
     title: string
-    description?: string | null
-    level?: string | null
-    cover?: string | null
-    url: string
-    status?: string
-    duration?: string | null
     content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    parentId?: string | null
     authorId?: string | null
     viewCount?: number
-    studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type CourseCreateOrConnectWithoutChaptersInput = {
-    where: CourseWhereUniqueInput
-    create: XOR<CourseCreateWithoutChaptersInput, CourseUncheckedCreateWithoutChaptersInput>
+  export type ChapterCreateOrConnectWithoutChildrenInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutChildrenInput, ChapterUncheckedCreateWithoutChildrenInput>
+  }
+
+  export type ChapterCreateWithoutParentInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    viewCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: ChapterCreateNestedManyWithoutParentInput
+    author?: UserCreateNestedOneWithoutChaptersInput
+  }
+
+  export type ChapterUncheckedCreateWithoutParentInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    authorId?: string | null
+    viewCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ChapterCreateOrConnectWithoutParentInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput>
+  }
+
+  export type ChapterCreateManyParentInputEnvelope = {
+    data: ChapterCreateManyParentInput | ChapterCreateManyParentInput[]
   }
 
   export type UserCreateWithoutChaptersInput = {
@@ -14068,51 +14147,67 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
   }
 
-  export type CourseUpsertWithoutChaptersInput = {
-    update: XOR<CourseUpdateWithoutChaptersInput, CourseUncheckedUpdateWithoutChaptersInput>
-    create: XOR<CourseCreateWithoutChaptersInput, CourseUncheckedCreateWithoutChaptersInput>
-    where?: CourseWhereInput
+  export type ChapterUpsertWithoutChildrenInput = {
+    update: XOR<ChapterUpdateWithoutChildrenInput, ChapterUncheckedUpdateWithoutChildrenInput>
+    create: XOR<ChapterCreateWithoutChildrenInput, ChapterUncheckedCreateWithoutChildrenInput>
+    where?: ChapterWhereInput
   }
 
-  export type CourseUpdateToOneWithWhereWithoutChaptersInput = {
-    where?: CourseWhereInput
-    data: XOR<CourseUpdateWithoutChaptersInput, CourseUncheckedUpdateWithoutChaptersInput>
+  export type ChapterUpdateToOneWithWhereWithoutChildrenInput = {
+    where?: ChapterWhereInput
+    data: XOR<ChapterUpdateWithoutChildrenInput, ChapterUncheckedUpdateWithoutChildrenInput>
   }
 
-  export type CourseUpdateWithoutChaptersInput = {
+  export type ChapterUpdateWithoutChildrenInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    level?: NullableStringFieldUpdateOperationsInput | string | null
-    cover?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
-    studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneWithoutCoursesNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    author?: UserUpdateOneWithoutChaptersNestedInput
   }
 
-  export type CourseUncheckedUpdateWithoutChaptersInput = {
+  export type ChapterUncheckedUpdateWithoutChildrenInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    level?: NullableStringFieldUpdateOperationsInput | string | null
-    cover?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     authorId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
-    studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterUpsertWithWhereUniqueWithoutParentInput = {
+    where: ChapterWhereUniqueInput
+    update: XOR<ChapterUpdateWithoutParentInput, ChapterUncheckedUpdateWithoutParentInput>
+    create: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput>
+  }
+
+  export type ChapterUpdateWithWhereUniqueWithoutParentInput = {
+    where: ChapterWhereUniqueInput
+    data: XOR<ChapterUpdateWithoutParentInput, ChapterUncheckedUpdateWithoutParentInput>
+  }
+
+  export type ChapterUpdateManyWithWhereWithoutParentInput = {
+    where: ChapterScalarWhereInput
+    data: XOR<ChapterUpdateManyMutationInput, ChapterUncheckedUpdateManyWithoutParentInput>
   }
 
   export type UserUpsertWithoutChaptersInput = {
@@ -14287,6 +14382,7 @@ export namespace Prisma {
     status?: string
     duration?: string | null
     content?: string | null
+    order?: number
     viewCount?: number
     studentCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
@@ -14299,11 +14395,12 @@ export namespace Prisma {
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
     status?: string
-    courseId: string
+    parentId?: string | null
     viewCount?: number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
@@ -14402,12 +14499,12 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    chapters?: ChapterUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseUncheckedUpdateWithoutAuthorInput = {
@@ -14420,12 +14517,12 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    chapters?: ChapterUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseUncheckedUpdateManyWithoutAuthorInput = {
@@ -14438,6 +14535,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     content?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
     viewCount?: IntFieldUpdateOperationsInput | number
     studentCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
@@ -14450,6 +14548,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14458,7 +14557,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    course?: CourseUpdateOneRequiredWithoutChaptersNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutAuthorInput = {
@@ -14466,15 +14566,17 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    courseId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ChapterUncheckedUpdateManyWithoutAuthorInput = {
@@ -14482,11 +14584,12 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    courseId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
     viewCount?: IntFieldUpdateOperationsInput | number
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14580,11 +14683,12 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ChapterCreateManyCourseInput = {
+  export type ChapterCreateManyParentInput = {
     id?: string
     title: string
     content?: string | null
     excerpt?: string | null
+    type?: string
     order?: number
     duration?: string | null
     videoUrl?: string | null
@@ -14596,11 +14700,12 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type ChapterUpdateWithoutCourseInput = {
+  export type ChapterUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14609,14 +14714,16 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUpdateManyWithoutParentNestedInput
     author?: UserUpdateOneWithoutChaptersNestedInput
   }
 
-  export type ChapterUncheckedUpdateWithoutCourseInput = {
+  export type ChapterUncheckedUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14626,13 +14733,15 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
   }
 
-  export type ChapterUncheckedUpdateManyWithoutCourseInput = {
+  export type ChapterUncheckedUpdateManyWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     content?: NullableStringFieldUpdateOperationsInput | string | null
     excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     duration?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null

@@ -138,6 +138,7 @@ export const getUsers = async (req: Request, res: Response) => {
           role: true,
           avatar: true,
           bio: true,
+          status: true,
           lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
@@ -159,11 +160,11 @@ export const getUsers = async (req: Request, res: Response) => {
       email: user.email,
       avatar: user.avatar || '',
       role: user.role,
+      status: user.status || 'active',
       progress: 0, // TODO: 计算实际学习进度
       completedCourses: 0, // TODO: 从学习记录计算
-      lastLogin: user.lastLoginAt?.toISOString() || '',
-      registeredAt: user.createdAt.toISOString(),
-      status: 'active', // TODO: 添加用户状态字段
+      lastLogin: user.lastLoginAt ? formatDate(user.lastLoginAt) : '-',
+      registeredAt: formatDate(user.createdAt),
       courses: [] // TODO: 获取用户课程
     }))
     
@@ -264,6 +265,11 @@ export const getCourses = async (req: Request, res: Response) => {
     // 构建查询条件
     const where: any = {}
     
+    // 排除从 Markdown 导入的课程（ID 以 course- 开头）
+    where.NOT = {
+      id: { startsWith: 'course-' }
+    }
+    
     if (type) {
       where.level = type as string
     }
@@ -291,6 +297,11 @@ export const getCourses = async (req: Request, res: Response) => {
           level: true,
           cover: true,
           url: true,
+          status: true,
+          duration: true,
+          content: true,
+          viewCount: true,
+          studentCount: true,
           tags: true,
           createdAt: true,
           updatedAt: true
@@ -301,16 +312,17 @@ export const getCourses = async (req: Request, res: Response) => {
     
     // 格式化返回数据
     const formattedCourses = courses.map(course => {
-      const tags = (course.tags as any) || {}
       return {
         id: course.id,
         title: course.title,
         type: course.level || 'beginner',
-        duration: tags.duration || '',
+        duration: course.duration || '',
         cover: course.cover || '',
-        content: tags.content || '',
-        status: tags.status || 'published',
-        students: 0, // TODO: 从学习记录统计
+        content: course.content || '',
+        status: course.status || 'draft',
+        viewCount: course.viewCount || 0,
+        studentCount: course.studentCount || 0,
+        students: course.studentCount || 0,
         completionRate: 0, // TODO: 计算完成率
         updatedAt: formatDate(course.updatedAt)
       }

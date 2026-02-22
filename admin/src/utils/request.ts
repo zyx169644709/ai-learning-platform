@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/userStore'
 
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: '/api',
+  baseURL: '',
   timeout: 10000,
   headers: {
     'Cache-Control': 'no-cache',
@@ -20,6 +20,10 @@ request.interceptors.request.use(
     // 如果有 token，添加到请求头
     if (userStore.token) {
       config.headers.Authorization = `Bearer ${userStore.token}`
+    }
+    // 添加 /api 前缀
+    if (config.url && !config.url.startsWith('/api')) {
+      config.url = '/api' + config.url
     }
     return config
   },

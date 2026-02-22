@@ -108,8 +108,8 @@ const onSearch = () => {
 
 // 添加跳转到B站视频的函数
 const goToBilibiliVideo = (course: CourseCard) => {
+  fetch(`/api/courses/${course.id}/view`, { method: 'POST' }).catch(() => {})
   if (course.bilibiliUrl || course.url) {
-    // 在新标签页打开B站视频
     window.open(course.bilibiliUrl || course.url, '_blank')
   } else {
     alert('课程视频正在制作中，敬请期待！')

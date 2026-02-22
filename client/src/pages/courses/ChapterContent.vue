@@ -7,6 +7,9 @@
     <span v-if="section">{{ section?.title }}</span>
   </div>
   <div class="chapter-content">
+    <div v-if="section?.duration" class="section-meta">
+      <span class="reading-time">⏱ 大约阅读时间：{{ section.duration }}</span>
+    </div>
 
     <div v-if="html" class="md" v-html="html" />
     <div v-else class="empty">尚未准备内容</div>
@@ -37,30 +40,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, createVNode, render, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, watch, createVNode, render, getCurrentInstance, nextTick } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
-import { chapters, type TocNode } from '@/content/chapters'
+import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
 import CodeEditor from '@/components/common/CodeEditorWidget.vue'
 
 const route = useRoute()
+const chaptersStore = useChaptersStore()
 // 捕获当前应用上下文，供动态渲染的子组件继承（路由/Pinia 等）
 const appContext = getCurrentInstance()?.appContext
 const chapterSlug = computed(() => String(route.params.chapterSlug || ''))
 const sectionSlug = computed(() => String(route.params.sectionSlug || ''))
 
-const chapter = computed<TocNode | undefined>(() => chapters.find(c => c.slug === chapterSlug.value))
-const section = computed<TocNode | undefined>(() => {
+const chapter = computed<ChapterNode | undefined>(() =>
+  chaptersStore.chapters.find(c => c.slug === chapterSlug.value)
+)
+const section = computed<SectionNode | undefined>(() => {
   if (!chapter.value) return undefined
-
-  // 如果没有指定小节，返回章节本身（用于显示 index.md）
-  if (!sectionSlug.value) {
-    return chapter.value
-  }
-
-  // 否则查找指定的小节
   return chapter.value.children?.find(s => s.slug === sectionSlug.value)
 })
 
@@ -159,22 +158,6 @@ const insertCodeEditors = () => {
   })
 }
 
-// 使用动态导入加载 Markdown 文件
-
-// 安全获取 Markdown 文本：若请求失败或返回 HTML（如 index.html 回退），则返回 null
-const fetchMarkdownSafe = async (path: string): Promise<string | null> => {
-  try {
-    const res = await fetch(path)
-    if (!res.ok) return null
-    const ct = res.headers.get('content-type') || ''
-    // 避免把 index.html 当成内容渲染
-    if (ct.includes('text/html')) return null
-    return await res.text()
-  } catch {
-    return null
-  }
-}
-
 const renderUnderConstruction = () => {
   const placeholder = `# 正在开发中\n\n本节内容正在编写中，敬请期待。\n\n> 如果你是维护者：请在 \`src/content/markdown/${chapter.value?.slug}\` 下添加对应的 \`.md\` 文件。`
   const rawHtml = md.render(placeholder)
@@ -182,52 +165,53 @@ const renderUnderConstruction = () => {
 }
 
 const load = async () => {
+  // 确保章节数据已加载
+  if (!chaptersStore.loaded) {
+    await chaptersStore.fetchChapters()
+  }
+
   if (!chapter.value) {
-    console.warn('No chapter found for slug:', chapterSlug.value)
+    html.value = ''
+    return
+  }
+
+  // 没有指定小节时，显示章节介绍
+  if (!sectionSlug.value) {
+    const placeholder = `# ${chapter.value.title}\n\n请从左侧目录选择一个小节开始学习。`
+    html.value = sanitizeHtml(md.render(placeholder))
+    return
+  }
+
+  if (!section.value) {
+    renderUnderConstruction()
     return
   }
 
   try {
-    let fileType: string
-    let raw: string | null
+    // 从 API 获取小节内容
+    const res = await fetch(`/api/chapters/${chapter.value.id}/sections/${section.value.id}`)
+    const json = await res.json()
 
-    // 判断加载哪个文件
-    if (!sectionSlug.value) {
-      // 访问章节主页，加载 index.md
-      fileType = 'chapter index'
-      console.log('Loading chapter index')
-      raw = await fetchMarkdownSafe(`/src/content/markdown/${chapter.value.slug}/index.md`)
-    } else {
-      // 访问具体小节，加载对应的 md 文件
-      fileType = 'section'
-      console.log('Loading section:', sectionSlug.value)
-      raw = await fetchMarkdownSafe(`/src/content/markdown/${chapter.value.slug}/${sectionSlug.value}.md`)
-    }
-
-    if (!raw) {
-      console.warn('Markdown not found, render under construction placeholder')
+    if (!json.success || !json.data.content) {
       renderUnderConstruction()
       return
     }
 
+    const raw: string = json.data.content
+
     // 解析代码编辑器语法
     const { processedMarkdown, editors } = parseCodeEditors(raw)
     codeEditors.value = editors
-    
-    console.log('🔍 解析到的代码编辑器:', editors)
-    console.log('🔍 处理后的Markdown长度:', processedMarkdown.length)
 
-    // 先渲染 Markdown，然后进行安全清洗
     const rawHtml = md.render(processedMarkdown)
     html.value = sanitizeHtml(rawHtml)
-    console.log(`✅ ${fileType} loaded successfully, content length:`, raw.length, 'editors found:', editors.length)
-    console.log('🔍 渲染后的HTML长度:', rawHtml.length)
-    
-    // 等待DOM更新后插入代码编辑器
+
+    fetch(`/api/chapters/${chapter.value.id}/sections/${section.value.id}/view`, { method: 'POST' }).catch(() => {})
+
     await nextTick()
     insertCodeEditors()
   } catch (error) {
-    console.error('❌ Failed to load markdown:', error)
+    console.error('Failed to load section content:', error)
     renderUnderConstruction()
   }
 }
@@ -248,7 +232,7 @@ const currentIndex = computed(() => siblings.value.findIndex(n => n.slug === sec
 const prev = computed(() => currentIndex.value > 0 ? siblings.value[currentIndex.value - 1] : undefined)
 const next = computed(() => currentIndex.value >= 0 && currentIndex.value < siblings.value.length - 1 ? siblings.value[currentIndex.value + 1] : undefined)
 
-const linkOf = (n: TocNode) => ({ path: `/chapter/${chapterSlug.value}/${n.slug}` })
+const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.slug}` })
 </script>
 
 <style scoped>
@@ -269,15 +253,20 @@ const linkOf = (n: TocNode) => ({ path: `/chapter/${chapterSlug.value}/${n.slug}
   max-width: 860px;
 }
 
-.empty {
-  color: var(--text-secondary);
-  margin: 16px 0;
+.section-meta {
+  margin-bottom: 16px;
 }
 
-.nav {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
+.reading-time {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .code-editors-section {

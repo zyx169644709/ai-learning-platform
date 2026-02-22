@@ -2,6 +2,13 @@ import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
+import userRoutes from './src/routes/userRoutes'
+import communityRoutes from './src/routes/communityRoutes'
+import resourceRoutes from './src/routes/resourceRoutes'
+import courseRoutes from './src/routes/courseRoutes'
+import adminRoutes from './src/routes/adminRoutes'
+import uploadRoutes from './src/routes/uploadRoutes'
+import chapterRoutes from './src/routes/chapterRoutes'
 
 dotenv.config()
 
@@ -13,19 +20,13 @@ app.use(bodyParser.json({ limit: '10mb' }))
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }))
 
 // 路由
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const userRoutes = require('./src/routes/userRoutes')
-const communityRoutes = require('./src/routes/communityRoutes')
-const resourceRoutes = require('./src/routes/resourceRoutes')
-const courseRoutes = require('./src/routes/courseRoutes')
-const adminRoutes = require('./src/routes/adminRoutes')
-const uploadRoutes = require('./src/routes/uploadRoutes')
 app.use('/api/user', userRoutes)
 app.use('/api/community', communityRoutes)
 app.use('/api/resources', resourceRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
+app.use('/api/chapters', chapterRoutes)
 
 // 静态文件服务 - 提供上传的图片访问
 app.use('/uploads', express.static('uploads'))

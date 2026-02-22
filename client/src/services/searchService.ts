@@ -1,5 +1,4 @@
 import MiniSearch from 'minisearch'
-import { chapters } from '@/content/chapters'
 import * as communityApi from '@/services/communityService'
 import axios from 'axios'
 
@@ -22,42 +21,41 @@ export interface SearchOptions {
   offset?: number
 }
 
-// 构建搜索索引数据（静态来源：章节）
-const buildStaticSearchData = (): SearchResult[] => {
-  const data: SearchResult[] = []
-  
-  // 添加章节数据
-  chapters.forEach(chapter => {
-    // 添加章节本身
-    data.push({
-      id: `chapter-${chapter.slug}`,
-      title: chapter.title,
-      description: `${chapter.title} - 完整的章节内容`,
-      type: 'chapter',
-      url: `/chapter/${chapter.slug}`,
-      relevance: 0.9,
-      content: chapter.title,
-      tags: ['章节', '教程']
-    })
-    
-    // 添加章节下的所有小节
-    chapter.children?.forEach(section => {
-      data.push({
-        id: `section-${chapter.slug}-${section.slug}`,
-        title: section.title,
-        description: `${section.title} - ${chapter.title} 的一部分`,
-        type: 'section',
-        url: `/chapter/${chapter.slug}/${section.slug}`,
-        relevance: 0.8,
-        content: `${section.title} ${chapter.title}`,
-        tags: ['小节', '教程', chapter.title]
+// 从 API 获取章节搜索数据
+const fetchChapterSearchData = async (): Promise<SearchResult[]> => {
+  try {
+    const { data } = await axios.get('/api/chapters')
+    const results: SearchResult[] = []
+    const chapters = data?.data || []
+    chapters.forEach((chapter: any) => {
+      results.push({
+        id: `chapter-${chapter.slug}`,
+        title: chapter.title,
+        description: `${chapter.title} - 完整的章节内容`,
+        type: 'chapter',
+        url: `/chapter/${chapter.slug}`,
+        relevance: 0.9,
+        content: chapter.title,
+        tags: ['章节', '教程']
+      })
+      ;(chapter.children || []).forEach((section: any) => {
+        results.push({
+          id: `section-${chapter.slug}-${section.slug}`,
+          title: section.title,
+          description: `${section.title} - ${chapter.title} 的一部分`,
+          type: 'section',
+          url: `/chapter/${chapter.slug}/${section.slug}`,
+          relevance: 0.8,
+          content: `${section.title} ${chapter.title}`,
+          tags: ['小节', '教程', chapter.title]
+        })
       })
     })
-  })
-  
-  // 不再加入前端静态课程/资源，改为仅在初始化阶段从后端拉取
-  
-  return data
+    return results
+  } catch (e) {
+    console.warn('搜索索引加载章节数据失败，已忽略:', e)
+    return []
+  }
 }
 
 // 创建 MiniSearch 实例
@@ -82,8 +80,8 @@ const initializeSearchIndex = async () => {
   if (initializingPromise) return initializingPromise
 
   initializingPromise = (async () => {
-    // 静态数据
-    searchData = buildStaticSearchData()
+    // 从 API 获取章节数据
+    searchData = await fetchChapterSearchData()
 
     // 实时资源数据（后端）
     try {

@@ -58,6 +58,13 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 'active' ? 'success' : row.status === 'disabled' ? 'danger' : 'warning'">
+              {{ row.status === 'active' ? '正常' : row.status === 'disabled' ? '禁用' : '异常' }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="progress" label="学习进度" width="150">
           <template #default="{ row }">
             <el-progress :percentage="row.progress" :stroke-width="6" />

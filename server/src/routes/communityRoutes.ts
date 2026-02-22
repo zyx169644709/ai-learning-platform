@@ -28,4 +28,5 @@ router.post('/:id/like', likeDiscussion)
 // 点赞评论
 router.post('/comments/:id/like', likeComment)
 
+export default router
 module.exports = router
