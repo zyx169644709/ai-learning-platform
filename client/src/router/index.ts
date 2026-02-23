@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { useUserStore } from '@/stores/userStore.ts'
 import Home from '../pages/main/Home.vue'
 import Courses from '../pages/courses/Courses.vue'
+import CourseDetail from '../pages/courses/CourseDetail.vue'
 import ChapterContent from '../pages/courses/ChapterContent.vue'
 import Login from '../pages/auth/Login.vue'
 import Register from '../pages/auth/Register.vue'
@@ -21,6 +22,7 @@ import SearchResults from '../pages/misc/SearchResults.vue'
 const routes: RouteRecordRaw[] = [
   { path: '/home', name: 'Home', component: Home },
   { path: '/courses', name: 'Courses', component: Courses },
+  { path: '/course/:id', name: 'CourseDetail', component: CourseDetail },
   { path: '/chapter/:chapterSlug/:sectionSlug?/:subSlug?', name: 'ChapterContent', component: ChapterContent },
   { path: '/resources', name: 'Resources', component: Resources },
   { path: '/resource/:id', name: 'ResourceDetail', component: ResourceDetail },

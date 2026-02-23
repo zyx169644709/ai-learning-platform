@@ -28,37 +28,14 @@
         </div>
       </div>
     </div>
-
-    <!-- 课程播放模态框 -->
-    <Teleport to="body">
-      <div class="modal-backdrop" v-if="activeModal" @click.self="closeModal">
-        <div class="modal">
-          <div class="modal-header">
-            <span class="modal-title">{{ activeModal.title }}</span>
-            <button class="modal-close" @click="closeModal">✕</button>
-          </div>
-          <div class="modal-body">
-            <iframe
-              v-if="getBvId(activeModal.url)"
-              :src="`https://player.bilibili.com/player.html?bvid=${getBvId(activeModal.url)}&autoplay=0&high_quality=1`"
-              allowfullscreen
-              frameborder="0"
-              scrolling="no"
-              class="bili-player"
-            />
-            <div v-else class="external-tip">
-              <p>该课程为外部链接，无法在页面内嵌入播放。</p>
-              <a :href="activeModal.url" target="_blank" rel="noopener">点击前往外部页面 →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const query = ref('')
 
@@ -82,19 +59,7 @@ const courses = ref<CourseCard[]>([])
 
 type ApiCourse = { id: string; title: string; description?: string; level?: string; cover?: string; url?: string; tags?: any }
 
-const activeModal = ref<CourseCard | null>(null)
-
-const closeModal = () => {
-  activeModal.value = null
-  document.body.style.overflow = ''
-}
-
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape') closeModal()
-}
-
 onMounted(async () => {
-  window.addEventListener('keydown', handleKeydown)
   try {
     const res = await fetch('http://localhost:3000/api/courses')
     const data: ApiCourse[] = await res.json()
@@ -147,21 +112,9 @@ const getBvId = (url?: string): string | null => {
 }
 
 const openCourse = (course: CourseCard) => {
-  fetch(`/api/courses/${course.id}/view`, { method: 'POST' }).catch(() => {})
-  if (getBvId(course.url) || course.url) {
-    activeModal.value = course
-    document.body.style.overflow = 'hidden'
-  } else {
-    alert('课程视频正在制作中，敬请期待！')
-  }
+  router.push({ name: 'CourseDetail', params: { id: course.id } })
 }
 
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
-  document.body.style.overflow = ''
-})
-
- 
 </script>
 
 <style scoped>

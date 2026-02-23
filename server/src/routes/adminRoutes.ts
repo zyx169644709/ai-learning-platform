@@ -9,6 +9,8 @@ import {
   createCourse,
   updateCourse,
   deleteCourse,
+  duplicateCourse,
+  publishAllCourses,
   getStats,
   getAnalytics
 } from '../controllers/adminController'
@@ -45,7 +47,9 @@ router.delete('/users/:id', authMiddleware, requireAdmin, deleteUser)
 // 课程管理
 router.get('/courses', authMiddleware, requireAdmin, getCourses)
 router.post('/courses', authMiddleware, requireAdmin, createCourse)
+router.post('/courses/publish-all', authMiddleware, requireAdmin, publishAllCourses)
 router.put('/courses/:id', authMiddleware, requireAdmin, updateCourse)
+router.post('/courses/:id/duplicate', authMiddleware, requireAdmin, duplicateCourse)
 router.delete('/courses/:id', authMiddleware, requireAdmin, deleteCourse)
 
 // 统计数据

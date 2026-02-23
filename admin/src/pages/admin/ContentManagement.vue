@@ -1,7 +1,7 @@
 <template>
   <div class="content-management">
     <!-- 页面标题 -->
-    <PageHeader title="内容管理" />
+    <PageHeader title="课程管理" />
 
     <!-- 筛选栏 -->
     <FilterBar 
@@ -26,6 +26,7 @@
         </el-select>
       </el-form-item>
       <template #extra-buttons>
+        <el-button type="warning" @click="publishAll" :loading="publishing">一键发布</el-button>
         <el-button type="success" @click="createCourse">创建课程</el-button>
       </template>
     </FilterBar>
@@ -48,12 +49,12 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="duration" label="时长" width="100" />
-        <el-table-column prop="students" label="学习人数" width="100" />
-        <el-table-column prop="viewCount" label="浏览量" width="100" />
-        <el-table-column prop="completionRate" label="完成率" width="100">
+        <el-table-column prop="url" label="URL" min-width="200">
           <template #default="{ row }">
-            {{ row.completionRate }}%
+            <el-link v-if="row.url" :href="row.url" target="_blank" type="primary">
+              {{ row.url.length > 30 ? row.url.substring(0, 30) + '...' : row.url }}
+            </el-link>
+            <span v-else>-</span>
           </template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="180">
@@ -97,6 +98,24 @@
       </div>
     </el-card>
 
+    <!-- 统计弹窗 -->
+    <el-dialog v-model="showStatsDialog" title="课程统计" width="420px">
+      <div class="stats-grid" v-if="statsCourse">
+        <div class="stats-item">
+          <div class="stats-value">{{ statsCourse.students || 0 }}</div>
+          <div class="stats-label">学习人数</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsCourse.viewCount || 0 }}</div>
+          <div class="stats-label">浏览量</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsCourse.completionRate || 0 }}%</div>
+          <div class="stats-label">完成率</div>
+        </div>
+      </div>
+    </el-dialog>
+
     <!-- 创建/编辑课程对话框 -->
     <el-dialog
       v-model="showCreateDialog"
@@ -113,6 +132,9 @@
             <el-option label="进阶课程" value="intermediate" />
             <el-option label="高级课程" value="advanced" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="课程链接" prop="url">
+          <el-input v-model="courseForm.url" placeholder="请输入课程链接（如B站视频链接）" />
         </el-form-item>
         <el-form-item label="课程时长" prop="duration">
           <el-input v-model="courseForm.duration" placeholder="例如：2小时、10周" />
@@ -142,11 +164,19 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <!-- 导出数据弹窗 -->
+    <ExportData
+      v-model="showExportDialog"
+      :data="exportCourse"
+      :item-name="exportCourse?.title || '课程'"
+      :fields="exportFields"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
@@ -160,6 +190,7 @@ import { formatRelativeTime } from '@/utils/format'
 import ImageUpload from '@/components/ImageUpload.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
+import ExportData from '@/components/ExportData.vue'
 
 // 使用分页 composable
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -190,6 +221,7 @@ const {
 const courseForm = reactive({
   title: '',
   type: '',
+  url: '',
   duration: '',
   cover: '',
   content: '',
@@ -250,6 +282,7 @@ const editCourse = (course: any) => {
   // 先重置表单为默认值
   courseForm.title = ''
   courseForm.type = ''
+  courseForm.url = ''
   courseForm.duration = ''
   courseForm.cover = ''
   courseForm.content = ''
@@ -260,18 +293,30 @@ const editCourse = (course: any) => {
 }
 
 // 查看统计
+const showStatsDialog = ref(false)
+const statsCourse = ref<any>(null)
 const viewStats = (course: any) => {
-  ElMessage.info(`查看《${course.title}》的统计数据`)
+  statsCourse.value = course
+  showStatsDialog.value = true
 }
 
 // 处理更多操作
 const handleCommand = async (command: string, course: any) => {
   switch (command) {
     case 'duplicate':
-      ElMessage.info('复制功能开发中...')
+      try {
+        const dupRes = await request.post(`/admin/courses/${course.id}/duplicate`)
+        if (dupRes.data.success) {
+          ElMessage.success(dupRes.data.message || '复制成功')
+          loadCourses()
+        }
+      } catch (error: any) {
+        ElMessage.error(error.response?.data?.message || '复制失败')
+      }
       break
     case 'export':
-      ElMessage.info('导出功能开发中...')
+      exportCourse.value = course
+      showExportDialog.value = true
       break
     case 'archive':
       if (await confirmArchive(`《${course.title}》`)) {
@@ -306,6 +351,39 @@ const handleCommand = async (command: string, course: any) => {
         await deleteItem(course.id, loadCourses)
       }
       break
+  }
+}
+
+// 导出数据
+const showExportDialog = ref(false)
+const exportCourse = ref<any>(null)
+const exportFields = [
+  { label: '课程标题', value: 'title' },
+  { label: '类型', value: 'type' },
+  { label: '状态', value: 'status' },
+  { label: 'URL', value: 'url' },
+  { label: '时长', value: 'duration' },
+  { label: '封面', value: 'cover' },
+  { label: '内容', value: 'content' },
+  { label: '浏览量', value: 'viewCount' },
+  { label: '学习人数', value: 'students' },
+  { label: '更新时间', value: 'updatedAt' }
+]
+
+// 一键发布所有草稿课程
+const publishing = ref(false)
+const publishAll = async () => {
+  try {
+    publishing.value = true
+    const response = await request.post('/admin/courses/publish-all')
+    if (response.data.success) {
+      ElMessage.success(response.data.message || '发布成功')
+      loadCourses()
+    }
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '发布失败')
+  } finally {
+    publishing.value = false
   }
 }
 
@@ -365,5 +443,31 @@ onMounted(() => {
 
 .el-dropdown-link .el-icon--right {
   margin-left: 2px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--el-color-primary);
+}
+
+.stats-label {
+  font-size: 14px;
+  color: #909399;
 }
 </style>

@@ -318,6 +318,7 @@ export const getCourses = async (req: Request, res: Response) => {
         type: course.level || 'beginner',
         duration: course.duration || '',
         cover: course.cover || '',
+        url: course.url || '',
         content: course.content || '',
         status: course.status || 'draft',
         viewCount: course.viewCount || 0,
@@ -346,7 +347,7 @@ export const getCourses = async (req: Request, res: Response) => {
 // 创建课程
 export const createCourse = async (req: Request, res: Response) => {
   try {
-    const { title, type, duration, cover, content, status } = req.body
+    const { title, type, duration, cover, url, content, status } = req.body
     
     // 验证必填字段
     if (!title) {
@@ -358,16 +359,13 @@ export const createCourse = async (req: Request, res: Response) => {
         title,
         level: type || 'beginner',
         cover: cover || '',
-        url: '', // TODO: 生成课程 URL
-        tags: { 
-          duration: duration || '',
-          content: content || '', 
-          status: status || 'draft' 
-        } as any
+        url: url || '',
+        duration: duration || '',
+        content: content || '',
+        status: status || 'draft'
       }
     })
     
-    const tags = (course.tags as any) || {}
     res.json({ 
       success: true, 
       message: '创建成功', 
@@ -376,10 +374,11 @@ export const createCourse = async (req: Request, res: Response) => {
           id: course.id,
           title: course.title,
           type: course.level,
-          duration: tags.duration || '',
+          duration: course.duration || '',
           cover: course.cover || '',
-          content: tags.content || '',
-          status: tags.status || 'draft'
+          url: course.url || '',
+          content: course.content || '',
+          status: course.status || 'draft'
         }
       } 
     })
@@ -393,7 +392,7 @@ export const createCourse = async (req: Request, res: Response) => {
 export const updateCourse = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, type, duration, cover, content, status } = req.body
+    const { title, type, duration, cover, url, content, status } = req.body
     
     const course = await prisma.course.findUnique({ where: { id } })
     if (!course) return res.status(404).json({ success: false, message: '课程不存在' })
@@ -403,22 +402,16 @@ export const updateCourse = async (req: Request, res: Response) => {
     if (title !== undefined) updateData.title = title
     if (type !== undefined) updateData.level = type
     if (cover !== undefined) updateData.cover = cover
-    
-    // 更新 tags 字段（合并现有数据）
-    const existingTags = (course.tags as any) || {}
-    updateData.tags = {
-      ...existingTags,
-      duration: duration !== undefined ? duration : existingTags.duration || '',
-      content: content !== undefined ? content : existingTags.content || '',
-      status: status !== undefined ? status : existingTags.status || 'draft'
-    } as any
+    if (url !== undefined) updateData.url = url
+    if (duration !== undefined) updateData.duration = duration
+    if (content !== undefined) updateData.content = content
+    if (status !== undefined) updateData.status = status
     
     const updatedCourse = await prisma.course.update({
       where: { id },
       data: updateData
     })
     
-    const tags = (updatedCourse.tags as any) || {}
     res.json({ 
       success: true, 
       message: '更新成功', 
@@ -427,15 +420,60 @@ export const updateCourse = async (req: Request, res: Response) => {
           id: updatedCourse.id,
           title: updatedCourse.title,
           type: updatedCourse.level,
-          duration: tags.duration || '',
+          duration: updatedCourse.duration || '',
           cover: updatedCourse.cover || '',
-          content: tags.content || '',
-          status: tags.status || 'draft'
+          url: updatedCourse.url || '',
+          content: updatedCourse.content || '',
+          status: updatedCourse.status || 'draft'
         }
       } 
     })
   } catch (error: any) {
     console.error('更新课程错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 复制课程
+export const duplicateCourse = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    const source = await prisma.course.findUnique({ where: { id } })
+    if (!source) return res.status(404).json({ success: false, message: '课程不存在' })
+
+    const newCourse = await prisma.course.create({
+      data: {
+        title: `${source.title}（副本）`,
+        description: source.description,
+        level: source.level,
+        cover: source.cover,
+        url: source.url,
+        duration: source.duration,
+        content: source.content,
+        status: 'draft',
+        tags: source.tags as any
+      }
+    })
+
+    res.json({
+      success: true,
+      message: '复制成功',
+      data: {
+        course: {
+          id: newCourse.id,
+          title: newCourse.title,
+          type: newCourse.level,
+          duration: newCourse.duration || '',
+          cover: newCourse.cover || '',
+          url: newCourse.url || '',
+          content: newCourse.content || '',
+          status: newCourse.status || 'draft'
+        }
+      }
+    })
+  } catch (error: any) {
+    console.error('复制课程错误:', error)
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
 }
@@ -453,6 +491,28 @@ export const deleteCourse = async (req: Request, res: Response) => {
     res.json({ success: true, message: '删除成功' })
   } catch (error: any) {
     console.error('删除课程错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 一键发布所有草稿课程
+export const publishAllCourses = async (req: Request, res: Response) => {
+  try {
+    const result = await prisma.course.updateMany({
+      where: {
+        status: 'draft',
+        NOT: {
+          id: { startsWith: 'course-' }
+        }
+      },
+      data: {
+        status: 'published'
+      }
+    })
+
+    res.json({ success: true, message: `已将 ${result.count} 个草稿课程发布`, data: { count: result.count } })
+  } catch (error: any) {
+    console.error('一键发布课程错误:', error)
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
 }
@@ -520,6 +580,8 @@ module.exports = {
   createCourse,
   updateCourse,
   deleteCourse,
+  duplicateCourse,
+  publishAllCourses,
   getStats,
   getAnalytics
 }

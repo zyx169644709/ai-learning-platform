@@ -6,6 +6,7 @@ export const courseService = {
   // 排除从 Markdown 导入的课程（ID 以 course- 开头）
   list: async () => prisma.course.findMany({
     where: {
+      status: 'published',
       NOT: {
         id: { startsWith: 'course-' }
       }
