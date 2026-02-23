@@ -7,15 +7,11 @@
         <RouterLink to="/api/deepseek">不知道学什么？让 Vue 专家助教给你推荐</RouterLink>
       </div>
 
-      
-
       <div class="grid">
-        <div class="card" v-for="c in filteredCourses" :key="c.id" @click="goToBilibiliVideo(c)">
+        <div class="card" v-for="c in filteredCourses" :key="c.id" @click="openCourse(c)">
           <div class="thumb">
             <img :src="c.cover" :alt="c.title" />
-            
-            <!-- 添加播放按钮图标 -->
-            <div class="play-overlay" v-if="c.bilibiliUrl">
+            <div class="play-overlay">
               <div class="play-icon">▶</div>
             </div>
           </div>
@@ -25,19 +21,44 @@
             <div class="row">
               <span class="author"><img class="avatar" :src="c.authorAvatar" alt="" /> {{ c.author }}</span>
               <span class="tag" v-if="c.free">免费</span>
-              <span class="video-tag" v-if="c.bilibiliUrl">📺 视频课程</span>
+              <span class="video-tag" v-if="getBvId(c.url)">📺 B站视频</span>
+              <span class="video-tag external" v-else-if="c.url">🔗 外部链接</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 课程播放模态框 -->
+    <Teleport to="body">
+      <div class="modal-backdrop" v-if="activeModal" @click.self="closeModal">
+        <div class="modal">
+          <div class="modal-header">
+            <span class="modal-title">{{ activeModal.title }}</span>
+            <button class="modal-close" @click="closeModal">✕</button>
+          </div>
+          <div class="modal-body">
+            <iframe
+              v-if="getBvId(activeModal.url)"
+              :src="`https://player.bilibili.com/player.html?bvid=${getBvId(activeModal.url)}&autoplay=0&high_quality=1`"
+              allowfullscreen
+              frameborder="0"
+              scrolling="no"
+              class="bili-player"
+            />
+            <div v-else class="external-tip">
+              <p>该课程为外部链接，无法在页面内嵌入播放。</p>
+              <a :href="activeModal.url" target="_blank" rel="noopener">点击前往外部页面 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
-
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const query = ref('')
 
@@ -61,7 +82,19 @@ const courses = ref<CourseCard[]>([])
 
 type ApiCourse = { id: string; title: string; description?: string; level?: string; cover?: string; url?: string; tags?: any }
 
+const activeModal = ref<CourseCard | null>(null)
+
+const closeModal = () => {
+  activeModal.value = null
+  document.body.style.overflow = ''
+}
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') closeModal()
+}
+
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeydown)
   try {
     const res = await fetch('http://localhost:3000/api/courses')
     const data: ApiCourse[] = await res.json()
@@ -106,15 +139,27 @@ const onSearch = () => {
   // 已通过计算属性实时过滤，这里保留以便未来接入后端
 }
 
-// 添加跳转到B站视频的函数
-const goToBilibiliVideo = (course: CourseCard) => {
+// 提取 Bilibili BV 号
+const getBvId = (url?: string): string | null => {
+  if (!url) return null
+  const m = url.match(/BV[a-zA-Z0-9]+/)
+  return m ? m[0] : null
+}
+
+const openCourse = (course: CourseCard) => {
   fetch(`/api/courses/${course.id}/view`, { method: 'POST' }).catch(() => {})
-  if (course.bilibiliUrl || course.url) {
-    window.open(course.bilibiliUrl || course.url, '_blank')
+  if (getBvId(course.url) || course.url) {
+    activeModal.value = course
+    document.body.style.overflow = 'hidden'
   } else {
     alert('课程视频正在制作中，敬请期待！')
   }
 }
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+  document.body.style.overflow = ''
+})
 
  
 </script>
@@ -327,18 +372,101 @@ a:hover {
   font-weight: bold;
 }
 
+/* 模态框 */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 860px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.modal-close:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+}
+
+.bili-player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.external-tip {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-secondary);
+}
+
+.external-tip a {
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
 @media (max-width: 1024px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  
 }
 
 @media (max-width: 640px) {
   .grid {
     grid-template-columns: 1fr;
   }
-  
 }
 </style>
