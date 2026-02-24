@@ -12,7 +12,8 @@ import {
   duplicateCourse,
   publishAllCourses,
   getStats,
-  getAnalytics
+  getAnalytics,
+  publishAllResources
 } from '../controllers/adminController'
 import {
   getChapters,
@@ -69,6 +70,7 @@ router.delete('/chapters/:id', authMiddleware, requireAdmin, deleteChapter)
 router.get('/resources', authMiddleware, requireAdmin, getResources)
 router.get('/resources/:id', authMiddleware, requireAdmin, getResource)
 router.post('/resources', authMiddleware, requireAdmin, createResource)
+router.post('/resources/publish-all', authMiddleware, requireAdmin, publishAllResources)
 router.put('/resources/:id', authMiddleware, requireAdmin, updateResource)
 router.delete('/resources/:id', authMiddleware, requireAdmin, deleteResource)
 

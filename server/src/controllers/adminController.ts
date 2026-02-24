@@ -569,6 +569,25 @@ export const getAnalytics = async (req: Request, res: Response) => {
   }
 }
 
+// 一键发布所有草稿资源
+export const publishAllResources = async (req: Request, res: Response) => {
+  try {
+    const result = await prisma.resource.updateMany({
+      where: { status: 'draft' },
+      data: { status: 'published' }
+    })
+    
+    res.json({ 
+      success: true, 
+      message: `成功发布 ${result.count} 个资源`,
+      data: { publishedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量发布资源错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
 // CommonJS exports for compatibility
 module.exports = {
   login,
@@ -583,5 +602,6 @@ module.exports = {
   duplicateCourse,
   publishAllCourses,
   getStats,
-  getAnalytics
+  getAnalytics,
+  publishAllResources
 }

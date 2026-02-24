@@ -34,6 +34,7 @@
         </el-select>
       </el-form-item>
       <template #extra-buttons>
+        <el-button type="warning" @click="publishAll" :loading="publishing">一键发布</el-button>
         <el-button type="success" @click="createResource">创建资源</el-button>
       </template>
     </FilterBar>
@@ -218,6 +219,7 @@ const resources = ref<any[]>([])
 const showDialog = ref(false)
 const isEdit = ref(false)
 const saving = ref(false)
+const publishing = ref(false)
 const formRef = ref()
 
 // 统计
@@ -375,6 +377,22 @@ const handleDelete = async (row: any) => {
     if (error !== 'cancel') {
       ElMessage.error(error.response?.data?.message || '删除失败')
     }
+  }
+}
+
+// 一键发布所有草稿资源
+const publishAll = async () => {
+  try {
+    publishing.value = true
+    const response = await request.post('/admin/resources/publish-all')
+    if (response.data.success) {
+      ElMessage.success(response.data.message || '发布成功')
+      loadResources()
+    }
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '发布失败')
+  } finally {
+    publishing.value = false
   }
 }
 
