@@ -588,6 +588,315 @@ export const publishAllResources = async (req: Request, res: Response) => {
   }
 }
 
+// 批量删除用户
+export const batchDeleteUsers = async (req: Request, res: Response) => {
+  try {
+    const { userIds } = req.body
+    
+    // 防止删除管理员账号
+    const adminUsers = await prisma.user.findMany({
+      where: {
+        id: { in: userIds },
+        role: 'ADMIN'
+      }
+    })
+    
+    if (adminUsers.length > 0) {
+      return res.status(403).json({ 
+        success: false, 
+        message: '不能删除管理员账号' 
+      })
+    }
+    
+    const result = await prisma.user.deleteMany({
+      where: {
+        id: { in: userIds },
+        role: { not: 'ADMIN' }
+      }
+    })
+    
+    res.json({ 
+      success: true, 
+      message: `成功删除 ${result.count} 个用户`,
+      data: { deletedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量删除用户错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 导出用户Excel
+export const exportUsers = async (req: Request, res: Response) => {
+  try {
+    const { userIds, fields } = req.body
+    
+    const users = await prisma.user.findMany({
+      where: {
+        id: { in: userIds }
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        avatar: true,
+        status: true,
+        lastLoginAt: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            courses: true,
+            chapters: true,
+            resources: true,
+            favorites: true,
+            discussions: true,
+            comments: true
+          }
+        }
+      }
+    })
+    
+    // 字段映射
+    const fieldMap: Record<string, any> = {
+      id: (user: any) => user.id,
+      username: (user: any) => user.username,
+      email: (user: any) => user.email,
+      role: (user: any) => user.role === 'ADMIN' ? '管理员' : user.role === 'MODERATOR' ? '教师' : '学生',
+      status: (user: any) => user.status === 'active' ? '正常' : user.status === 'disabled' ? '禁用' : '封禁',
+      avatar: (user: any) => user.avatar || '',
+      lastLoginAt: (user: any) => user.lastLoginAt ? user.lastLoginAt.toLocaleString('zh-CN') : '从未登录',
+      createdAt: (user: any) => user.createdAt.toLocaleString('zh-CN'),
+      updatedAt: (user: any) => user.updatedAt.toLocaleString('zh-CN'),
+      coursesCount: (user: any) => user._count.courses,
+      chaptersCount: (user: any) => user._count.chapters,
+      resourcesCount: (user: any) => user._count.resources,
+      favoritesCount: (user: any) => user._count.favorites,
+      discussionsCount: (user: any) => user._count.discussions,
+      commentsCount: (user: any) => user._count.comments
+    }
+
+    // 字段标签映射
+    const labelMap: Record<string, string> = {
+      id: '用户ID',
+      username: '用户名',
+      email: '邮箱',
+      role: '角色',
+      status: '状态',
+      avatar: '头像',
+      lastLoginAt: '最后登录',
+      createdAt: '注册时间',
+      updatedAt: '最后更新',
+      coursesCount: '创建课程数',
+      chaptersCount: '创建章节数',
+      resourcesCount: '创建资源数',
+      favoritesCount: '收藏数',
+      discussionsCount: '发帖数',
+      commentsCount: '评论数'
+    }
+
+    // 如果没有指定字段，默认导出所有字段
+    const selectedFields = fields && fields.length > 0 ? fields : Object.keys(fieldMap)
+
+    // 转换数据格式
+    const exportData = users.map(user => {
+      const row: any = {}
+      selectedFields.forEach((field: string) => {
+        if (fieldMap[field]) {
+          row[labelMap[field]] = fieldMap[field](user)
+        }
+      })
+      return row
+    })
+    
+    // 使用 xlsx 库创建 Excel 文件
+    const XLSX = require('xlsx')
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(exportData)
+    
+    // 根据选择的字段设置列宽
+    const colWidths: Record<string, number> = {
+      id: 20,           // 用户ID
+      username: 15,     // 用户名
+      email: 30,        // 邮箱
+      role: 10,         // 角色
+      status: 10,       // 状态
+      avatar: 40,       // 头像
+      lastLoginAt: 20,  // 最后登录
+      createdAt: 20,    // 注册时间
+      updatedAt: 20,    // 最后更新
+      coursesCount: 12, // 创建课程数
+      chaptersCount: 12,// 创建章节数
+      resourcesCount: 12,// 创建资源数
+      favoritesCount: 12,// 收藏数
+      discussionsCount: 12,// 发帖数
+      commentsCount: 12 // 评论数
+    }
+
+    ws['!cols'] = selectedFields.map((field: string) => ({ width: colWidths[field] || 15 }))
+    
+    XLSX.utils.book_append_sheet(wb, ws, '用户数据')
+    const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', `attachment; filename=user_data_${Date.now()}.xlsx`)
+    res.send(excelBuffer)
+  } catch (error: any) {
+    console.error('导出用户错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 批量删除课程
+export const batchDeleteCourses = async (req: Request, res: Response) => {
+  try {
+    const { courseIds } = req.body
+    
+    const result = await prisma.course.deleteMany({
+      where: {
+        id: { in: courseIds }
+      }
+    })
+    
+    res.json({ 
+      success: true, 
+      message: `成功删除 ${result.count} 个课程`,
+      data: { deletedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量删除课程错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 批量发布课程
+export const batchPublishCourses = async (req: Request, res: Response) => {
+  try {
+    const { courseIds } = req.body
+    
+    const result = await prisma.course.updateMany({
+      where: {
+        id: { in: courseIds },
+        status: 'draft'
+      },
+      data: { status: 'published' }
+    })
+    
+    res.json({ 
+      success: true, 
+      message: `成功发布 ${result.count} 个课程`,
+      data: { publishedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量发布课程错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 导出课程Excel
+export const exportCourses = async (req: Request, res: Response) => {
+  try {
+    const { courseIds, fields } = req.body
+    
+    const courses = await prisma.course.findMany({
+      where: {
+        id: { in: courseIds }
+      },
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        status: true,
+        url: true,
+        duration: true,
+        cover: true,
+        content: true,
+        viewCount: true,
+        favoriteCount: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    })
+    
+    // 字段映射
+    const fieldMap: Record<string, any> = {
+      title: (course: any) => course.title,
+      type: (course: any) => course.type,
+      status: (course: any) => course.status,
+      url: (course: any) => course.url || '',
+      duration: (course: any) => course.duration || 0,
+      cover: (course: any) => course.cover || '',
+      content: (course: any) => course.content || '',
+      viewCount: (course: any) => course.viewCount || 0,
+      favoriteCount: (course: any) => course.favoriteCount || 0,
+      createdAt: (course: any) => course.createdAt.toLocaleString('zh-CN'),
+      updatedAt: (course: any) => course.updatedAt.toLocaleString('zh-CN')
+    }
+
+    // 字段标签映射
+    const labelMap: Record<string, string> = {
+      title: '课程标题',
+      type: '类型',
+      status: '状态',
+      url: 'URL',
+      duration: '时长',
+      cover: '封面',
+      content: '内容',
+      viewCount: '浏览量',
+      favoriteCount: '收藏量',
+      createdAt: '创建时间',
+      updatedAt: '更新时间'
+    }
+
+    // 如果没有指定字段，默认导出所有字段
+    const selectedFields = fields && fields.length > 0 ? fields : Object.keys(fieldMap)
+
+    // 转换数据格式
+    const exportData = courses.map(course => {
+      const row: any = {}
+      selectedFields.forEach((field: string) => {
+        if (fieldMap[field]) {
+          row[labelMap[field]] = fieldMap[field](course)
+        }
+      })
+      return row
+    })
+    
+    // 使用 xlsx 库创建 Excel 文件
+    const XLSX = require('xlsx')
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(exportData)
+    
+    // 根据选择的字段设置列宽
+    const colWidths: Record<string, number> = {
+      title: 30,         // 课程标题
+      type: 10,          // 类型
+      status: 10,        // 状态
+      url: 40,           // URL
+      duration: 10,      // 时长
+      cover: 40,         // 封面
+      content: 50,       // 内容
+      viewCount: 12,     // 浏览量
+      favoriteCount: 12, // 收藏量
+      createdAt: 20,     // 创建时间
+      updatedAt: 20      // 更新时间
+    }
+
+    ws['!cols'] = selectedFields.map((field: string) => ({ width: colWidths[field] || 15 }))
+    
+    XLSX.utils.book_append_sheet(wb, ws, '课程数据')
+    const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', `attachment; filename=course_data_${Date.now()}.xlsx`)
+    res.send(excelBuffer)
+  } catch (error: any) {
+    console.error('导出课程错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
 // CommonJS exports for compatibility
 module.exports = {
   login,
@@ -603,5 +912,10 @@ module.exports = {
   publishAllCourses,
   getStats,
   getAnalytics,
-  publishAllResources
+  publishAllResources,
+  batchDeleteUsers,
+  exportUsers,
+  batchDeleteCourses,
+  batchPublishCourses,
+  exportCourses
 }

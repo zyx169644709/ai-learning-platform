@@ -33,36 +33,42 @@
 
     <!-- 课程列表 -->
     <el-card>
-      <el-table :data="courses" stripe>
-        <el-table-column prop="title" label="课程标题" min-width="200" />
-        <el-table-column prop="type" label="类型" width="120">
+      <el-table :data="courses" stripe style="table-layout: auto" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
+        <el-table-column prop="title" label="课程标题" min-width="250" />
+        <el-table-column prop="type" label="类型" width="90" align="center" header-align="center">
           <template #default="{ row }">
             <el-tag :type="getTypeTagType(row.type)">
               {{ getTypeLabel(row.type) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="90" align="center" header-align="center">
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.status)">
               {{ getStatusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="url" label="URL" min-width="200">
+        <el-table-column prop="url" label="URL" width="200" align="center" header-align="center">
           <template #default="{ row }">
-            <el-link v-if="row.url" :href="row.url" target="_blank" type="primary">
+            <el-link v-if="row.url" :href="row.url" target="_blank" type="primary" :title="row.url" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
               {{ row.url.length > 30 ? row.url.substring(0, 30) + '...' : row.url }}
             </el-link>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updatedAt" label="更新时间" width="180">
+        <el-table-column prop="updatedAt" label="更新时间" width="160" align="center" header-align="center">
           <template #default="{ row }">
             {{ formatRelativeTime(row.updatedAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column prop="favoriteCount" label="收藏量" width="90" align="center" header-align="center">
+          <template #default="{ row }">
+            {{ row.favoriteCount }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editCourse(row)">编辑</el-button>
             <el-button type="warning" link @click="viewStats(row)">统计</el-button>
@@ -83,6 +89,14 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 批量操作 -->
+      <div class="batch-actions" v-if="selectedCourses.length > 0">
+        <span class="selected-info">已选择 {{ selectedCourses.length }} 个课程</span>
+        <el-button type="danger" @click="batchDelete">批量删除</el-button>
+        <el-button type="warning" @click="batchExport">批量导出</el-button>
+        <el-button type="success" @click="batchPublish">批量发布</el-button>
+      </div>
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
@@ -182,7 +196,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import request from '@/utils/request'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
@@ -201,6 +215,14 @@ const { pagination, resetPagination, setTotal, getPaginationParams } = usePagina
 
 // 使用确认对话框 composable
 const { confirmDelete, confirmArchive } = useConfirm()
+
+// 选中的课程
+const selectedCourses = ref<any[]>([])
+
+// 处理选择变化
+const handleSelectionChange = (selection: any[]) => {
+  selectedCourses.value = selection
+}
 
 // 使用 CRUD composable
 const {
@@ -397,6 +419,76 @@ const saveCourse = async () => {
   await saveItem(courseForm, loadCourses)
 }
 
+// 批量删除
+const batchDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${selectedCourses.value.length} 个课程吗？此操作不可恢复！`,
+      '批量删除确认',
+      {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消'
+      }
+    )
+    
+    const courseIds = selectedCourses.value.map(course => course.id)
+    const response = await request.post('/admin/courses/batch-delete', { courseIds })
+    
+    if (response.data.success) {
+      ElMessage.success(`成功删除 ${response.data.deletedCount} 个课程`)
+      selectedCourses.value = []
+      loadCourses()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量删除失败')
+    }
+  }
+}
+
+// 批量导出
+const batchExport = () => {
+  if (selectedCourses.value.length === 0) {
+    ElMessage.warning('请先选择要导出的课程')
+    return
+  }
+  exportCourse.value = {
+    type: 'batch',
+    courses: selectedCourses.value,
+    courseIds: selectedCourses.value.map(course => course.id)
+  }
+  showExportDialog.value = true
+}
+
+// 批量发布
+const batchPublish = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要发布选中的 ${selectedCourses.value.length} 个课程吗？`,
+      '批量发布确认',
+      {
+        type: 'warning',
+        confirmButtonText: '确认发布',
+        cancelButtonText: '取消'
+      }
+    )
+    
+    const courseIds = selectedCourses.value.map(course => course.id)
+    const response = await request.post('/admin/courses/batch-publish', { courseIds })
+    
+    if (response.data.success) {
+      ElMessage.success(`成功发布 ${response.data.publishedCount} 个课程`)
+      selectedCourses.value = []
+      loadCourses()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量发布失败')
+    }
+  }
+}
+
 onMounted(() => {
   loadCourses()
 })
@@ -426,6 +518,21 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+.batch-actions {
+  margin-top: 20px;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selected-info {
+  color: #606266;
+  font-size: 14px;
 }
 
 .el-dropdown-link {
@@ -474,5 +581,78 @@ onMounted(() => {
 .stats-label {
   font-size: 14px;
   color: #909399;
+}
+
+/* 表格对齐优化 */
+:deep(.el-table) {
+  --el-table-border-color: #ebeef5;
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: #f5f7fa !important;
+  padding: 12px 8px !important;
+}
+
+:deep(.el-table td.el-table__cell) {
+  padding: 12px 8px !important;
+}
+
+/* 确保文本完全对齐 */
+:deep(.el-table .cell) {
+  padding: 0 4px;
+  word-break: break-word;
+}
+
+/* 选择列居中对齐 */
+:deep(.el-table .el-table__cell:nth-child(1)) {
+  text-align: center !important;
+  padding: 12px 0 !important;
+}
+
+:deep(.el-table th.el-table__cell:nth-child(1)) {
+  text-align: center !important;
+  padding: 12px 0 !important;
+}
+
+/* 标题列左对齐 */
+:deep(.el-table .el-table__cell:nth-child(2)) {
+  text-align: left !important;
+}
+
+:deep(.el-table th.el-table__cell:nth-child(2)) {
+  text-align: left !important;
+}
+
+/* 其他列居中对齐 */
+:deep(.el-table .el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
+  text-align: center !important;
+}
+
+:deep(.el-table th.el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
+  text-align: center !important;
+}
+
+/* 操作列左对齐 */
+:deep(.el-table .el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+:deep(.el-table th.el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+/* 操作列按钮间距 */
+:deep(.el-table .el-table__cell:last-child .el-button) {
+  margin-right: 8px;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-button:last-child) {
+  margin-right: 0;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-dropdown) {
+  margin-left: 0;
 }
 </style>

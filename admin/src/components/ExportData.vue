@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import * as XLSX from 'xlsx'
+import request from '@/utils/request'
 
 interface FieldOption {
   label: string
@@ -74,7 +74,7 @@ const filterData = (data: Record<string, any>) => {
   return filtered
 }
 
-const handleExport = () => {
+const handleExport = async () => {
   if (!props.data) {
     ElMessage.warning('没有可导出的数据')
     return
@@ -83,26 +83,54 @@ const handleExport = () => {
   exporting.value = true
 
   try {
-    const filtered = filterData(props.data)
-    const fileName = props.itemName || 'export'
+    // 判断数据类型，调用不同的 API
+    let apiUrl = ''
+    if (props.data.type === 'batch' || props.data.type === 'single') {
+      // 用户导出
+      apiUrl = '/admin/users/export'
+    } else {
+      // 课程导出（原有逻辑）
+      apiUrl = '/admin/courses/export'
+    }
 
-    // 将 key 映射为中文表头
-    const labelMap: Record<string, string> = {}
-    for (const f of fieldOptions.value) {
-      labelMap[f.value] = f.label
+    // 准备请求数据
+    let requestData: any = {
+      fields: selectedFields.value
     }
-    const row: Record<string, any> = {}
-    for (const [key, val] of Object.entries(filtered)) {
-      row[labelMap[key] || key] = val === null || val === undefined ? '' : val
+    
+    if (props.data.type === 'batch' || props.data.type === 'single') {
+      // 用户导出
+      requestData.userIds = props.data.userIds
+    } else {
+      // 课程导出
+      requestData.courseIds = props.data.id ? [props.data.id] : []
     }
-    const ws = XLSX.utils.json_to_sheet([row])
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, '课程数据')
-    XLSX.writeFile(wb, `${fileName}.xlsx`)
+    
+    const response = await request.post(apiUrl, requestData, {
+      responseType: 'blob'
+    })
+
+    // 创建下载链接
+    const blob = new Blob([response.data], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    
+    // 生成文件名
+    const fileName = props.itemName || 'export'
+    const dateStr = new Date().toISOString().split('T')[0]
+    link.download = `${fileName}_${dateStr}.xlsx`
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
 
     ElMessage.success('导出成功')
     visible.value = false
-  } catch (error) {
+  } catch (error: any) {
     ElMessage.error('导出失败')
   } finally {
     exporting.value = false

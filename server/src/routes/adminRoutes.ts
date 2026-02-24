@@ -13,14 +13,21 @@ import {
   publishAllCourses,
   getStats,
   getAnalytics,
-  publishAllResources
+  publishAllResources,
+  batchDeleteUsers,
+  exportUsers,
+  batchDeleteCourses,
+  batchPublishCourses,
+  exportCourses
 } from '../controllers/adminController'
 import {
   getChapters,
   getChapter,
   createChapter,
   updateChapter,
-  deleteChapter
+  deleteChapter,
+  batchDeleteChapters,
+  batchPublishChapters
 } from '../controllers/chapterController'
 import {
   getResources,
@@ -44,6 +51,8 @@ router.get('/auth/info', authMiddleware, requireAdmin, getAdminInfo)
 router.get('/users', authMiddleware, requireAdmin, getUsers)
 router.put('/users/:id', authMiddleware, requireAdmin, updateUser)
 router.delete('/users/:id', authMiddleware, requireAdmin, deleteUser)
+router.post('/users/batch-delete', authMiddleware, requireAdmin, batchDeleteUsers)
+router.post('/users/export', authMiddleware, requireAdmin, exportUsers)
 
 // 课程管理
 router.get('/courses', authMiddleware, requireAdmin, getCourses)
@@ -52,6 +61,9 @@ router.post('/courses/publish-all', authMiddleware, requireAdmin, publishAllCour
 router.put('/courses/:id', authMiddleware, requireAdmin, updateCourse)
 router.post('/courses/:id/duplicate', authMiddleware, requireAdmin, duplicateCourse)
 router.delete('/courses/:id', authMiddleware, requireAdmin, deleteCourse)
+router.post('/courses/batch-delete', authMiddleware, requireAdmin, batchDeleteCourses)
+router.post('/courses/batch-publish', authMiddleware, requireAdmin, batchPublishCourses)
+router.post('/courses/export', authMiddleware, requireAdmin, exportCourses)
 
 // 统计数据
 router.get('/stats', authMiddleware, requireAdmin, getStats)
@@ -65,6 +77,8 @@ router.get('/chapters/:id', authMiddleware, requireAdmin, getChapter)
 router.post('/chapters', authMiddleware, requireAdmin, createChapter)
 router.put('/chapters/:id', authMiddleware, requireAdmin, updateChapter)
 router.delete('/chapters/:id', authMiddleware, requireAdmin, deleteChapter)
+router.post('/chapters/batch-delete', authMiddleware, requireAdmin, batchDeleteChapters)
+router.post('/chapters/batch-publish', authMiddleware, requireAdmin, batchPublishChapters)
 
 // 资源管理
 router.get('/resources', authMiddleware, requireAdmin, getResources)

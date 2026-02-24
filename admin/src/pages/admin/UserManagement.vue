@@ -38,9 +38,9 @@
 
     <!-- 用户列表 -->
     <el-card>
-      <el-table :data="users" stripe @selection-change="handleSelectionChange">
+      <el-table :data="users" stripe @selection-change="handleSelectionChange" style="table-layout: auto">
         <el-table-column type="selection" width="55" />
-        <el-table-column label="用户（头像/用户名/邮箱）" min-width="200">
+        <el-table-column label="用户（头像/用户名/邮箱）" min-width="250">
           <template #default="{ row }">
             <div class="user-info">
               <el-avatar :size="40" :src="row.avatar || defaultAvatar" />
@@ -51,27 +51,27 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="角色" width="100">
+        <el-table-column prop="role" label="角色" width="90" align="center" header-align="center">
           <template #default="{ row }">
             <el-tag :type="getRoleTagType(row.role)">
               {{ getRoleLabel(row.role) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="90" align="center" header-align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 'active' ? 'success' : row.status === 'disabled' ? 'danger' : 'warning'">
               {{ row.status === 'active' ? '正常' : row.status === 'disabled' ? '禁用' : '异常' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="progress" label="学习进度" width="150">
+        <el-table-column prop="progress" label="学习进度" width="150" align="center" header-align="center">
           <template #default="{ row }">
             <el-progress :percentage="row.progress" :stroke-width="6" />
           </template>
         </el-table-column>
-        <el-table-column prop="completedCourses" label="完成课程" width="100" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column prop="completedCourses" label="完成课程" width="90" align="center" header-align="center" />
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="viewUser(row)">查看</el-button>
             <el-button type="warning" link @click="editUser(row)">编辑</el-button>
@@ -83,7 +83,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item>
                   <el-dropdown-item command="changeRole">修改角色</el-dropdown-item>
-                  <el-dropdown-item command="sendNotification">发送通知</el-dropdown-item>
+                  <el-dropdown-item command="exportUser">导出用户</el-dropdown-item>
                   <el-dropdown-item command="disable" v-if="row.status !== 'disabled'" divided>
                     禁用账号
                   </el-dropdown-item>
@@ -103,7 +103,7 @@
       <!-- 批量操作 -->
       <div class="batch-actions" v-if="selectedUsers.length > 0">
         <span class="selected-info">已选择 {{ selectedUsers.length }} 个用户</span>
-        <el-button type="primary" @click="batchSendNotification">批量发送通知</el-button>
+        <el-button type="danger" @click="batchDelete">批量删除</el-button>
         <el-button type="warning" @click="batchExport">批量导出</el-button>
       </div>
 
@@ -182,12 +182,20 @@
         <el-button type="primary" @click="saveUser" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
+
+    <!-- 导出数据弹窗 -->
+    <ExportData
+      v-model="showExportDialog"
+      :data="exportUser"
+      :item-name="exportUser?.type === 'batch' ? `${exportUser?.users?.length || 0}个用户` : exportUser?.user?.name || '用户'"
+      :fields="exportFields"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { reactive, ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
@@ -197,9 +205,11 @@ import { useTableActions } from '@/composables/useTableActions'
 import { useFilter } from '@/composables/useFilter'
 import { getRoleTagType, getRoleLabel } from '@/utils/enums'
 import { formatRelativeTime } from '@/utils/format'
+import request from '@/utils/request'
 import defaultAvatar from '@/assets/images/default.png'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
+import ExportData from '@/components/ExportData.vue'
 
 // 使用分页 composable
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -295,6 +305,9 @@ const handleCommand = async (command: string, user: any) => {
     case 'changeRole':
       editUser(user)
       break
+    case 'exportUser':
+      exportSingleUser(user)
+      break
     case 'sendNotification':
       ElMessage.info('发送通知功能开发中...')
       break
@@ -323,14 +336,77 @@ const saveUser = async () => {
   await saveItem(editForm, loadUsers)
 }
 
-// 批量发送通知
-const batchSendNotification = () => {
-  ElMessage.info(`给 ${selectedUsers.value.length} 个用户发送通知`)
+// 导出数据
+const showExportDialog = ref(false)
+const exportUser = ref<any>(null)
+const exportFields = [
+  { label: '用户ID', value: 'id' },
+  { label: '用户名', value: 'username' },
+  { label: '邮箱', value: 'email' },
+  { label: '角色', value: 'role' },
+  { label: '状态', value: 'status' },
+  { label: '头像', value: 'avatar' },
+  { label: '最后登录', value: 'lastLoginAt' },
+  { label: '注册时间', value: 'createdAt' },
+  { label: '最后更新', value: 'updatedAt' },
+  { label: '创建课程数', value: 'coursesCount' },
+  { label: '创建章节数', value: 'chaptersCount' },
+  { label: '创建资源数', value: 'resourcesCount' },
+  { label: '收藏数', value: 'favoritesCount' },
+  { label: '发帖数', value: 'discussionsCount' },
+  { label: '评论数', value: 'commentsCount' }
+]
+
+// 批量删除
+const batchDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${selectedUsers.value.length} 个用户吗？此操作不可恢复！`,
+      '批量删除确认',
+      {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消'
+      }
+    )
+    
+    const userIds = selectedUsers.value.map(user => user.id)
+    const response = await request.post('/admin/users/batch-delete', { userIds })
+    
+    if (response.data.success) {
+      ElMessage.success(`成功删除 ${response.data.deletedCount} 个用户`)
+      selectedUsers.value = []
+      loadUsers()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量删除失败')
+    }
+  }
 }
 
-// 批量导出
+// 批量导出Excel
 const batchExport = () => {
-  ElMessage.info(`导出 ${selectedUsers.value.length} 个用户的数据`)
+  if (selectedUsers.value.length === 0) {
+    ElMessage.warning('请先选择要导出的用户')
+    return
+  }
+  exportUser.value = {
+    type: 'batch',
+    users: selectedUsers.value,
+    userIds: selectedUsers.value.map(user => user.id)
+  }
+  showExportDialog.value = true
+}
+
+// 导出单个用户
+const exportSingleUser = (user: any) => {
+  exportUser.value = {
+    type: 'single',
+    user: user,
+    userIds: [user.id]
+  }
+  showExportDialog.value = true
 }
 
 onMounted(() => {
@@ -425,5 +501,76 @@ onMounted(() => {
 
 .el-dropdown-link .el-icon--right {
   margin-left: 2px;
+}
+
+/* 表格对齐优化 */
+:deep(.el-table) {
+  --el-table-border-color: #ebeef5;
+}
+
+:deep(.el-table th.el-table__cell) {
+  background-color: #f5f7fa !important;
+  padding: 12px 8px !important;
+}
+
+:deep(.el-table td.el-table__cell) {
+  padding: 12px 8px !important;
+}
+
+/* 确保文本完全对齐 */
+:deep(.el-table .cell) {
+  padding: 0 4px;
+  word-break: break-word;
+}
+
+/* 选择列居中对齐 */
+:deep(.el-table .el-table__cell:nth-child(1)) {
+  text-align: center !important;
+}
+
+:deep(.el-table th.el-table__cell:nth-child(1)) {
+  text-align: center !important;
+}
+
+/* 用户信息列左对齐 */
+:deep(.el-table .el-table__cell:nth-child(2)) {
+  text-align: left !important;
+}
+
+:deep(.el-table th.el-table__cell:nth-child(2)) {
+  text-align: left !important;
+}
+
+/* 其他列居中对齐 */
+:deep(.el-table .el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
+  text-align: center !important;
+}
+
+:deep(.el-table th.el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
+  text-align: center !important;
+}
+
+/* 操作列左对齐 */
+:deep(.el-table .el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+:deep(.el-table th.el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+/* 操作列按钮间距 */
+:deep(.el-table .el-table__cell:last-child .el-button) {
+  margin-right: 8px;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-button:last-child) {
+  margin-right: 0;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-dropdown) {
+  margin-left: 0;
 }
 </style>

@@ -372,3 +372,66 @@ export const deleteChapter = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
 }
+
+// 批量删除章节
+export const batchDeleteChapters = async (req: Request, res: Response) => {
+  try {
+    const { chapterIds } = req.body
+    
+    // 先删除所有作为子小节的章节
+    await prisma.chapter.deleteMany({
+      where: {
+        id: { in: chapterIds },
+        type: 'section'
+      }
+    })
+    
+    // 再删除作为父章节的章节（会级联删除子小节）
+    const result = await prisma.chapter.deleteMany({
+      where: {
+        id: { in: chapterIds },
+        type: 'chapter'
+      }
+    })
+    
+    const totalDeleted = result.count + (await prisma.chapter.count({
+      where: {
+        id: { in: chapterIds },
+        type: 'section'
+      }
+    }))
+    
+    res.json({ 
+      success: true, 
+      message: `成功删除 ${totalDeleted} 个章节`,
+      data: { deletedCount: totalDeleted }
+    })
+  } catch (error: any) {
+    console.error('批量删除章节错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 批量发布章节
+export const batchPublishChapters = async (req: Request, res: Response) => {
+  try {
+    const { chapterIds } = req.body
+    
+    const result = await prisma.chapter.updateMany({
+      where: {
+        id: { in: chapterIds },
+        status: 'draft'
+      },
+      data: { status: 'published' }
+    })
+    
+    res.json({ 
+      success: true, 
+      message: `成功发布 ${result.count} 个章节`,
+      data: { publishedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量发布章节错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
