@@ -44,6 +44,7 @@ export const getResources = async (req: Request, res: Response) => {
           isOfficial: true,
           viewCount: true,
           likeCount: true,
+          favoriteCount: true,
           tags: true,
           createdAt: true,
           updatedAt: true
@@ -64,6 +65,7 @@ export const getResources = async (req: Request, res: Response) => {
       isOfficial: resource.isOfficial || false,
       viewCount: resource.viewCount || 0,
       likeCount: resource.likeCount || 0,
+      favoriteCount: resource.favoriteCount || 0,
       tags: resource.tags || [],
       updatedAt: formatDate(resource.updatedAt)
     }))

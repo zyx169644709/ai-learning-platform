@@ -9,6 +9,7 @@ import courseRoutes from './src/routes/courseRoutes'
 import adminRoutes from './src/routes/adminRoutes'
 import uploadRoutes from './src/routes/uploadRoutes'
 import chapterRoutes from './src/routes/chapterRoutes'
+import favoriteRoutes from './src/routes/favoriteRoutes'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.use('/api/courses', courseRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/chapters', chapterRoutes)
+app.use('/api/favorites', favoriteRoutes)
 
 // 静态文件服务 - 提供上传的图片访问
 app.use('/uploads', express.static('uploads'))

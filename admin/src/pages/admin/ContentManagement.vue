@@ -49,6 +49,11 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="favoriteCount" label="收藏量" width="100" align="center">
+          <template #default="{ row }">
+            {{ row.favoriteCount || 0 }}
+          </template>
+        </el-table-column>
         <el-table-column prop="url" label="URL" min-width="200">
           <template #default="{ row }">
             <el-link v-if="row.url" :href="row.url" target="_blank" type="primary">

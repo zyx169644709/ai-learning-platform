@@ -293,7 +293,6 @@ export const getCourses = async (req: Request, res: Response) => {
         select: {
           id: true,
           title: true,
-          description: true,
           level: true,
           cover: true,
           url: true,
@@ -302,6 +301,7 @@ export const getCourses = async (req: Request, res: Response) => {
           content: true,
           viewCount: true,
           studentCount: true,
+          favoriteCount: true,
           tags: true,
           createdAt: true,
           updatedAt: true
@@ -323,6 +323,7 @@ export const getCourses = async (req: Request, res: Response) => {
         status: course.status || 'draft',
         viewCount: course.viewCount || 0,
         studentCount: course.studentCount || 0,
+        favoriteCount: course.favoriteCount || 0,
         students: course.studentCount || 0,
         completionRate: 0, // TODO: 计算完成率
         updatedAt: formatDate(course.updatedAt)
@@ -445,7 +446,6 @@ export const duplicateCourse = async (req: Request, res: Response) => {
     const newCourse = await prisma.course.create({
       data: {
         title: `${source.title}（副本）`,
-        description: source.description,
         level: source.level,
         cover: source.cover,
         url: source.url,

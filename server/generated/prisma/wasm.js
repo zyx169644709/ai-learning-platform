@@ -168,7 +168,6 @@ exports.Prisma.CommentScalarFieldEnum = {
 exports.Prisma.CourseScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  description: 'description',
   level: 'level',
   cover: 'cover',
   url: 'url',
@@ -179,6 +178,7 @@ exports.Prisma.CourseScalarFieldEnum = {
   authorId: 'authorId',
   viewCount: 'viewCount',
   studentCount: 'studentCount',
+  favoriteCount: 'favoriteCount',
   tags: 'tags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -197,6 +197,7 @@ exports.Prisma.ChapterScalarFieldEnum = {
   parentId: 'parentId',
   authorId: 'authorId',
   viewCount: 'viewCount',
+  favoriteCount: 'favoriteCount',
   tags: 'tags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -215,9 +216,20 @@ exports.Prisma.ResourceScalarFieldEnum = {
   authorId: 'authorId',
   viewCount: 'viewCount',
   likeCount: 'likeCount',
+  favoriteCount: 'favoriteCount',
   tags: 'tags',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FavoriteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  targetType: 'targetType',
+  courseId: 'courseId',
+  chapterId: 'chapterId',
+  resourceId: 'resourceId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -265,7 +277,8 @@ exports.Prisma.ModelName = {
   Comment: 'Comment',
   Course: 'Course',
   Chapter: 'Chapter',
-  Resource: 'Resource'
+  Resource: 'Resource',
+  Favorite: 'Favorite'
 };
 
 /**

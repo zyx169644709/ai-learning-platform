@@ -38,6 +38,7 @@ model User {
   courses         Course[]
   chapters        Chapter[]
   resources       Resource[]
+  favorites       Favorite[]
 
   @@index([email])
   @@index([username])
@@ -121,24 +122,25 @@ enum DiscussionCategory {
 
 // 课程模型
 model Course {
-  id           String   @id @default(cuid())
-  title        String
-  description  String?
-  level        String? // beginner/intermediate/advanced
-  cover        String? // 封面图片 URL
-  url          String // B站视频链接
-  status       String   @default("draft") // draft/published/archived
-  duration     String? // 课程时长
-  content      String? // 课程简介
-  order        Int      @default(0) // 排序顺序
-  authorId     String?  @map("author_id")
-  viewCount    Int      @default(0) // 浏览次数
-  studentCount Int      @default(0) // 学习人数
-  tags         Json?
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  title         String
+  level         String? // beginner/intermediate/advanced
+  cover         String? // 封面图片 URL
+  url           String // B站视频链接
+  status        String   @default("draft") // draft/published/archived
+  duration      String? // 课程时长
+  content       String? // 课程简介
+  order         Int      @default(0) // 排序顺序
+  authorId      String?  @map("author_id")
+  viewCount     Int      @default(0) // 浏览次数
+  studentCount  Int      @default(0) // 学习人数
+  favoriteCount Int      @default(0) // 收藏量
+  tags          Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  favorites Favorite[]
 
   @@index([authorId])
   @@index([level])
@@ -149,25 +151,27 @@ model Course {
 
 // 章节模型（层级结构：章节包含小节）
 model Chapter {
-  id        String   @id @default(cuid())
-  title     String
-  content   String? // Markdown 内容（仅小节有内容）
-  excerpt   String? // 章节摘要
-  type      String   @default("section") // chapter: 章节, section: 小节
-  order     Int      @default(0) // 排序
-  duration  String? // 章节时长
-  videoUrl  String?  @map("video_url") // 视频链接（可选）
-  status    String   @default("draft") // draft/published
-  parentId  String?  @map("parent_id") // 父章节 ID（小节指向章节）
-  authorId  String?  @map("author_id")
-  viewCount Int      @default(0) // 浏览次数
-  tags      Json?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  title         String
+  content       String? // Markdown 内容（仅小节有内容）
+  excerpt       String? // 章节摘要
+  type          String   @default("section") // chapter: 章节, section: 小节
+  order         Int      @default(0) // 排序
+  duration      String? // 章节时长
+  videoUrl      String?  @map("video_url") // 视频链接（可选）
+  status        String   @default("draft") // draft/published
+  parentId      String?  @map("parent_id") // 父章节 ID（小节指向章节）
+  authorId      String?  @map("author_id")
+  viewCount     Int      @default(0) // 浏览次数
+  favoriteCount Int      @default(0) // 收藏量
+  tags          Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  parent   Chapter?  @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children Chapter[] @relation("ChapterHierarchy")
-  author   User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  parent    Chapter?   @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Chapter[]  @relation("ChapterHierarchy")
+  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  favorites Favorite[]
 
   @@index([parentId])
   @@index([type])
@@ -178,25 +182,50 @@ model Chapter {
 
 // 资源模型
 model Resource {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  cover       String? // 封面图片
-  icon        String? // 资源图标
-  url         String // 官网链接
-  type        String   @default("website") // website/document/tool/tutorial
-  status      String   @default("draft") // draft/published/archived
-  isOfficial  Boolean  @default(false) // 是否官方资源
-  authorId    String?  @map("author_id")
-  viewCount   Int      @default(0) // 浏览次数
-  likeCount   Int      @default(0) // 点赞数
-  tags        Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  cover         String? // 封面图片
+  icon          String? // 资源图标
+  url           String // 官网链接
+  type          String   @default("website") // website/document/tool/tutorial
+  status        String   @default("draft") // draft/published/archived
+  isOfficial    Boolean  @default(false) // 是否官方资源
+  authorId      String?  @map("author_id")
+  viewCount     Int      @default(0) // 浏览次数
+  likeCount     Int      @default(0) // 点赞数
+  favoriteCount Int      @default(0) // 收藏量
+  tags          Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  favorites Favorite[]
 
   @@index([type])
   @@index([status])
   @@map("resources")
+}
+
+// 用户收藏模型
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  targetType String   @map("target_type") // course/chapter/resource
+  courseId   String?  @map("course_id")
+  chapterId  String?  @map("chapter_id")
+  resourceId String?  @map("resource_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course   Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapter  Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  resource Resource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, courseId])
+  @@unique([userId, targetType, chapterId])
+  @@unique([userId, targetType, resourceId])
+  @@index([userId])
+  @@index([targetType])
+  @@map("favorites")
 }

@@ -64,6 +64,11 @@
         </el-table-column>
         <el-table-column prop="viewCount" label="浏览量" width="100" />
         <el-table-column prop="likeCount" label="点赞数" width="100" />
+        <el-table-column prop="favoriteCount" label="收藏量" width="100" align="center">
+          <template #default="{ row }">
+            {{ row.favoriteCount || 0 }}
+          </template>
+        </el-table-column>
         <el-table-column prop="url" label="链接" width="150">
           <template #default="{ row }">
             <el-link :href="row.url" target="_blank" type="primary">
