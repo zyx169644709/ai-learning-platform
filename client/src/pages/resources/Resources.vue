@@ -12,23 +12,11 @@
           <div class="thumb">
             <img :src="r.preview" :alt="r.title" />
             <span class="badge" :class="r.type">{{ typeText(r.type) }}</span>
-            <!-- 添加下载按钮覆盖层 -->
-            <div class="download-overlay" v-if="r.downloadUrl">
-              <div class="download-icon">⬇</div>
-            </div>
           </div>
           <div class="meta">
             <div class="c-title">{{ r.title }}</div>
             <div class="c-desc">{{ r.description }}</div>
-            <div class="row">
-              <span class="author"><img class="avatar" :src="r.authorAvatar" alt="" /> {{ r.author }}</span>
-            </div>
-            <!-- 添加资源信息 -->
-            <div class="resource-info" v-if="r.size || r.language">
-              <span class="size" v-if="r.size">{{ r.size }}</span>
-              <span class="language" v-if="r.language">{{ r.language }}</span>
-            </div>
-            <!-- 添加标签 -->
+            <!-- 标签 -->
             <div class="tags" v-if="r.tags && r.tags.length > 0">
               <span class="tag" v-for="tag in r.tags.slice(0, 3)" :key="tag">{{ tag }}</span>
             </div>
@@ -49,19 +37,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
-type ResType = 'document' | 'video' | 'code' | 'dataset' | 'tool'
+type ResType = 'website' | 'document' | 'tool' | 'tutorial'
 interface ResourceCard { 
   id: string; 
   title: string; 
   description: string; 
   type: ResType; 
   preview: string; 
-  author: string; 
-  authorAvatar: string;
-  downloadUrl?: string;  // 下载链接
-  externalUrl?: string;  // 外部链接
-  size?: string;  // 文件大小
-  language?: string;  // 编程语言
+  url: string;  // 资源链接
+  icon?: string;  // 资源图标
   tags?: string[];  // 标签
   viewCount?: number;
   likeCount?: number;
@@ -74,39 +58,36 @@ const sortBy = ref('title')
 // 筛选类型选项
 const filterTypes = [
   { value: 'all', label: '全部' },
+  { value: 'website', label: '网站' },
   { value: 'document', label: '文档' },
-  { value: 'video', label: '视频' },
-  { value: 'code', label: '代码' },
-  { value: 'dataset', label: '数据集' },
-  { value: 'tool', label: '工具' }
+  { value: 'tool', label: '工具' },
+  { value: 'tutorial', label: '教程' }
 ]
 
 // 排序选项
 const sortOptions = [
   { value: 'title', label: '标题' },
-  { value: 'size', label: '大小' },
-  { value: 'author', label: '作者' }
+  { value: 'viewCount', label: '浏览量' },
+  { value: 'likeCount', label: '点赞数' }
 ]
 
 const resources = ref<ResourceCard[]>([])
 
-type ApiResource = { id: string; title: string; description?: string; url?: string; cover?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string }
+interface ApiResource { id: string; title: string; description?: string; url?: string; cover?: string; icon?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string; status?: string }
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources')
+    const res = await fetch('http://localhost:3000/api/resources?status=published')
     const result = await res.json()
-    // 兼容新 API 格式 { success: true, data: { items: [...] } }
     const data: ApiResource[] = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = (data || []).map((r) => ({
       id: r.id,
       title: r.title,
       description: r.description || '',
-      type: (r.type as ResType) || ((Array.isArray(r.tags) && r.tags[0]) === 'video' ? 'video' : 'document'),
+      type: (r.type as ResType) || 'website',
       preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
-      author: '资源库',
-      authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
-      externalUrl: r.url,
+      url: r.url || '',
+      icon: r.icon || '',
       tags: Array.isArray(r.tags) ? r.tags : [],
       viewCount: r.viewCount || 0,
       likeCount: r.likeCount || 0
@@ -139,13 +120,10 @@ const filtered = computed(() => {
     switch (sortBy.value) {
       case 'title':
         return a.title.localeCompare(b.title)
-      case 'author':
-        return a.author.localeCompare(b.author)
-      case 'size':
-        // 简单的文件大小排序（在线资源排最后）
-        if (a.size === '在线' && b.size !== '在线') return 1
-        if (a.size !== '在线' && b.size === '在线') return -1
-        return a.size?.localeCompare(b.size || '') || 0
+      case 'viewCount':
+        return (b.viewCount || 0) - (a.viewCount || 0)
+      case 'likeCount':
+        return (b.likeCount || 0) - (a.likeCount || 0)
       default:
         return 0
     }
@@ -154,24 +132,21 @@ const filtered = computed(() => {
   return result
 })
 
-const typeText = (t: ResType) => ({ document: '文档', video: '视频', code: '代码', dataset: '数据集', tool: '工具' }[t])
+const typeText = (t: ResType) => ({ website: '网站', document: '文档', tool: '工具', tutorial: '教程' }[t])
 
 // 处理资源点击事件：优先打开外部链接/下载链接
 const handleResourceClick = (resource: ResourceCard) => {
-  fetch(`/api/resources/${resource.id}/view`, { method: 'POST' }).catch(() => {})
+  fetch(`http://localhost:3000/api/resources/${resource.id}/view`, { method: 'POST' }).catch(() => {})
   resource.viewCount = (resource.viewCount || 0) + 1
-  const target = resource.externalUrl || resource.downloadUrl
-  if (target) {
-    window.open(target, '_blank')
-  } else {
-    window.location.href = `/resource/${resource.id}`
+  if (resource.url) {
+    window.open(resource.url, '_blank')
   }
 }
 
 const handleLike = async (event: Event, resource: ResourceCard) => {
   event.stopPropagation()
   try {
-    const res = await fetch(`/api/resources/${resource.id}/like`, { method: 'POST' })
+    const res = await fetch(`http://localhost:3000/api/resources/${resource.id}/like`, { method: 'POST' })
     const json = await res.json()
     if (json.success) {
       resource.likeCount = json.data.likeCount
@@ -285,24 +260,20 @@ a:hover {
   color: #fff;
 }
 
-.badge.document {
+.badge.website {
   background: #3b82f6;
 }
 
-.badge.video {
-  background: #ef4444;
-}
-
-.badge.code {
+.badge.document {
   background: #10b981;
-}
-
-.badge.dataset {
-  background: #8b5cf6;
 }
 
 .badge.tool {
   background: #f59e0b;
+}
+
+.badge.tutorial {
+  background: #8b5cf6;
 }
 
 .meta {
@@ -321,75 +292,6 @@ a:hover {
   margin-bottom: 10px;
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.author {
-  color: var(--text-tertiary);
-  font-size: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.avatar {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-}
-
-/* 下载按钮覆盖层 */
-.download-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover .download-overlay {
-  opacity: 1;
-}
-
-.download-icon {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: #333;
-  font-weight: bold;
-}
-
-/* 资源信息 */
-.resource-info {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.size, .language {
-  background: var(--bg-primary);
-  color: var(--text-secondary);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  border: 1px solid var(--border-color);
-}
-
-/* 标签 */
 .tags {
   display: flex;
   gap: 4px;

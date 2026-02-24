@@ -57,7 +57,7 @@ interface CourseCard {
 
 const courses = ref<CourseCard[]>([])
 
-type ApiCourse = { id: string; title: string; description?: string; level?: string; cover?: string; url?: string; tags?: any }
+type ApiCourse = { id: string; title: string; description?: string; duration?: string; level?: string; cover?: string; url?: string; tags?: any }
 
 onMounted(async () => {
   try {
@@ -66,7 +66,7 @@ onMounted(async () => {
     courses.value = (data || []).map((c) => ({
       id: c.id,
       title: c.title,
-      desc: c.description || '',
+      desc: c.duration || '',
       level: (c.level as Level) || '',
       cover: c.cover ? new URL(c.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/course-beginner-cover.svg', import.meta.url).href,
       author: '课程组',

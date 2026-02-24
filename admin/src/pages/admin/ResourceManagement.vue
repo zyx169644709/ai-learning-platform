@@ -159,6 +159,9 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="资源标签" prop="tags">
+          <el-input v-model="resourceForm.tags" placeholder="请输入标签，用英文逗号分隔，如：AI,机器学习,入门" />
+        </el-form-item>
         <el-form-item label="官方资源" prop="isOfficial">
           <el-switch v-model="resourceForm.isOfficial" />
         </el-form-item>
@@ -210,7 +213,8 @@ const resourceForm = reactive({
   url: '',
   type: 'website',
   status: 'draft',
-  isOfficial: false
+  isOfficial: false,
+  tags: ''
 })
 
 // 验证规则
@@ -264,7 +268,8 @@ const createResource = () => {
     url: '',
     type: 'website',
     status: 'draft',
-    isOfficial: false
+    isOfficial: false,
+    tags: ''
   })
   showDialog.value = true
 }
@@ -286,7 +291,8 @@ const editResource = async (row: any) => {
         url: data.url,
         type: data.type || 'website',
         status: data.status || 'draft',
-        isOfficial: data.isOfficial || false
+        isOfficial: data.isOfficial || false,
+        tags: Array.isArray(data.tags) ? data.tags.join(',') : (data.tags || '')
       })
       showDialog.value = true
     }
@@ -305,7 +311,13 @@ const handleSave = async () => {
     const url = isEdit.value ? `/admin/resources/${resourceForm.id}` : '/admin/resources'
     const method = isEdit.value ? 'put' : 'post'
     
-    const response = await request[method](url, resourceForm)
+    const formData = {
+      ...resourceForm,
+      tags: resourceForm.tags
+        ? resourceForm.tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+        : []
+    }
+    const response = await request[method](url, formData)
     
     if (response.data.success) {
       ElMessage.success(response.data.message)
