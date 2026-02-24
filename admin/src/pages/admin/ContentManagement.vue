@@ -49,11 +49,6 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="favoriteCount" label="收藏量" width="100" align="center">
-          <template #default="{ row }">
-            {{ row.favoriteCount || 0 }}
-          </template>
-        </el-table-column>
         <el-table-column prop="url" label="URL" min-width="200">
           <template #default="{ row }">
             <el-link v-if="row.url" :href="row.url" target="_blank" type="primary">
@@ -104,7 +99,7 @@
     </el-card>
 
     <!-- 统计弹窗 -->
-    <el-dialog v-model="showStatsDialog" title="课程统计" width="420px">
+    <el-dialog v-model="showStatsDialog" title="课程统计" width="520px">
       <div class="stats-grid" v-if="statsCourse">
         <div class="stats-item">
           <div class="stats-value">{{ statsCourse.students || 0 }}</div>
@@ -113,6 +108,10 @@
         <div class="stats-item">
           <div class="stats-value">{{ statsCourse.viewCount || 0 }}</div>
           <div class="stats-label">浏览量</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsCourse.favoriteCount || 0 }}</div>
+          <div class="stats-label">收藏量</div>
         </div>
         <div class="stats-item">
           <div class="stats-value">{{ statsCourse.completionRate || 0 }}%</div>
@@ -372,6 +371,7 @@ const exportFields = [
   { label: '内容', value: 'content' },
   { label: '浏览量', value: 'viewCount' },
   { label: '学习人数', value: 'students' },
+  { label: '收藏量', value: 'favoriteCount' },
   { label: '更新时间', value: 'updatedAt' }
 ]
 

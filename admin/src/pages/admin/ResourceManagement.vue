@@ -62,13 +62,6 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="viewCount" label="浏览量" width="100" />
-        <el-table-column prop="likeCount" label="点赞数" width="100" />
-        <el-table-column prop="favoriteCount" label="收藏量" width="100" align="center">
-          <template #default="{ row }">
-            {{ row.favoriteCount || 0 }}
-          </template>
-        </el-table-column>
         <el-table-column prop="url" label="链接" width="150">
           <template #default="{ row }">
             <el-link :href="row.url" target="_blank" type="primary">
@@ -84,6 +77,7 @@
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editResource(row)">编辑</el-button>
+            <el-button type="warning" link @click="viewStats(row)">统计</el-button>
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -102,6 +96,24 @@
         />
       </div>
     </el-card>
+
+    <!-- 统计弹窗 -->
+    <el-dialog v-model="showStatsDialog" title="资源统计" width="420px">
+      <div class="stats-grid" v-if="statsResource">
+        <div class="stats-item">
+          <div class="stats-value">{{ statsResource.viewCount || 0 }}</div>
+          <div class="stats-label">浏览量</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsResource.likeCount || 0 }}</div>
+          <div class="stats-label">点赞数</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsResource.favoriteCount || 0 }}</div>
+          <div class="stats-label">收藏量</div>
+        </div>
+      </div>
+    </el-dialog>
 
     <!-- 创建/编辑资源对话框 -->
     <el-dialog 
@@ -208,6 +220,10 @@ const isEdit = ref(false)
 const saving = ref(false)
 const formRef = ref()
 
+// 统计
+const showStatsDialog = ref(false)
+const statsResource = ref<any>(null)
+
 // 表单
 const resourceForm = reactive({
   id: '',
@@ -304,6 +320,12 @@ const editResource = async (row: any) => {
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '获取资源详情失败')
   }
+}
+
+// 查看统计
+const viewStats = (resource: any) => {
+  statsResource.value = resource
+  showStatsDialog.value = true
 }
 
 // 保存资源
@@ -415,5 +437,31 @@ onMounted(() => {
 
 .el-card {
   margin-top: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.stats-item {
+  text-align: center;
+  padding: 20px;
+  background: var(--el-fill-color-lighter);
+  border-radius: 8px;
+}
+
+.stats-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--el-color-primary);
+  margin-bottom: 8px;
+}
+
+.stats-label {
+  font-size: 14px;
+  color: var(--el-text-color-regular);
 }
 </style>
