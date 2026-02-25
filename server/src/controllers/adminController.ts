@@ -30,9 +30,10 @@ export const login = async (req: Request, res: Response) => {
     
     if (!user) return res.status(400).json({ success: false, message: '邮箱或密码错误' })
 
-    // 验证密码（暂时使用简单的密码验证）
-    // TODO: 在生产环境中，应该使用 bcrypt 验证加密密码
-    if (password !== '123456') {
+    // 验证密码
+    const bcrypt = require('bcryptjs')
+    const passwordValid = await bcrypt.compare(password, user.password)
+    if (!passwordValid) {
       return res.status(400).json({ success: false, message: '邮箱或密码错误' })
     }
 
@@ -231,6 +232,28 @@ export const updateUser = async (req: Request, res: Response) => {
     })
   } catch (error: any) {
     console.error('更新用户错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 重置用户密码
+export const resetUserPassword = async (req: Request, res: Response) => {
+  try {
+    const bcrypt = require('bcryptjs')
+    const { id } = req.params
+    const user = await prisma.user.findUnique({ where: { id } })
+    if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
+    if (user.role === 'ADMIN') {
+      return res.status(403).json({ success: false, message: '不能重置管理员密码' })
+    }
+    const hashedPassword = await bcrypt.hash('123456', 10)
+    await prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword }
+    })
+    res.json({ success: true, message: '密码已重置为 123456' })
+  } catch (error: any) {
+    console.error('重置密码错误:', error)
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
 }
@@ -910,6 +933,7 @@ module.exports = {
   getAdminInfo,
   getUsers,
   updateUser,
+  resetUserPassword,
   deleteUser,
   getCourses,
   createCourse,

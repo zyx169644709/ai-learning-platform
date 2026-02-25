@@ -214,7 +214,7 @@ import ExportData from '@/components/ExportData.vue'
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
 
 // 使用确认对话框 composable
-const { confirmDelete, confirmDisable, confirmResetPassword } = useConfirm()
+const { confirmDelete, confirmDisable } = useConfirm()
 
 // 使用 CRUD composable
 const {
@@ -295,19 +295,24 @@ const editUser = (user: any) => {
 const handleCommand = async (command: string, user: any) => {
   switch (command) {
     case 'resetPassword':
-      if (await confirmResetPassword()) {
-        // TODO: 调用重置密码 API
-        ElMessage.success('密码重置成功')
+      try {
+        await ElMessageBox.confirm(
+          `确定要将用户 「${user.name}」 的密码重置为 123456 吗？`,
+          '重置密码确认',
+          { type: 'warning', confirmButtonText: '确认重置', cancelButtonText: '取消' }
+        )
+        const res = await request.post(`/admin/users/${user.id}/reset-password`)
+        if (res.data.success) {
+          ElMessage.success(res.data.message || '密码重置成功')
+        }
+      } catch (error: any) {
+        if (error !== 'cancel') {
+          ElMessage.error(error.response?.data?.message || '密码重置失败')
+        }
       }
-      break
-    case 'changeRole':
-      editUser(user)
       break
     case 'exportUser':
       exportSingleUser(user)
-      break
-    case 'sendNotification':
-      ElMessage.info('发送通知功能开发中...')
       break
     case 'disable':
       if (await confirmDisable('该账号')) {

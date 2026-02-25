@@ -3,7 +3,8 @@ import {
   login, 
   getAdminInfo, 
   getUsers, 
-  updateUser, 
+  updateUser,
+  resetUserPassword,
   deleteUser,
   getCourses,
   createCourse,
@@ -52,6 +53,7 @@ router.get('/auth/info', authMiddleware, requireAdmin, getAdminInfo)
 // 用户管理
 router.get('/users', authMiddleware, requireAdmin, getUsers)
 router.put('/users/:id', authMiddleware, requireAdmin, updateUser)
+router.post('/users/:id/reset-password', authMiddleware, requireAdmin, resetUserPassword)
 router.delete('/users/:id', authMiddleware, requireAdmin, deleteUser)
 router.post('/users/batch-delete', authMiddleware, requireAdmin, batchDeleteUsers)
 router.post('/users/export', authMiddleware, requireAdmin, exportUsers)
