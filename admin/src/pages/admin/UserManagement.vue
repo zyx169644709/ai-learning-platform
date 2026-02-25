@@ -82,7 +82,6 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="resetPassword">重置密码</el-dropdown-item>
-                  <el-dropdown-item command="changeRole">修改角色</el-dropdown-item>
                   <el-dropdown-item command="exportUser">导出用户</el-dropdown-item>
                   <el-dropdown-item command="disable" v-if="row.status !== 'disabled'" divided>
                     禁用账号
@@ -228,7 +227,6 @@ const {
   loadItems,
   viewItem: viewUser,
   editItem,
-  saveItem,
   deleteItem
 } = useCrud({
   apiPath: '/admin/users',
@@ -331,9 +329,28 @@ const handleCommand = async (command: string, user: any) => {
   }
 }
 
+// editFormRef 用于用户编辑表单验证
+const editFormRef = ref()
+
 // 保存用户
 const saveUser = async () => {
-  await saveItem(editForm, loadUsers)
+  if (!editFormRef.value) return
+  await editFormRef.value.validate(async (valid: boolean) => {
+    if (!valid) return
+    saving.value = true
+    try {
+      const response = await request.put(`/admin/users/${editForm.id}`, editForm)
+      if (response.data.success) {
+        ElMessage.success('更新成功')
+        showEditDialog.value = false
+        loadUsers()
+      }
+    } catch (error: any) {
+      ElMessage.error(error.response?.data?.message || '保存用户失败')
+    } finally {
+      saving.value = false
+    }
+  })
 }
 
 // 导出数据
