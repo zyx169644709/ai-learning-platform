@@ -61,9 +61,10 @@
             {{ formatRelativeTime(row.updatedAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="240" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editItem(row)">编辑</el-button>
+            <el-button type="warning" link @click="showStats(row)">统计</el-button>
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -150,6 +151,28 @@
         <el-button type="primary" @click="handleSave" :loading="saving">保存</el-button>
       </template>
     </el-dialog>
+
+    <!-- 统计弹窗 -->
+    <el-dialog v-model="showStatsDialog" title="章节统计" width="520px">
+      <div class="stats-grid" v-if="statsChapter">
+        <div class="stats-item">
+          <div class="stats-value">{{ statsChapter.viewCount || 0 }}</div>
+          <div class="stats-label">浏览量</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-value">{{ statsChapter.favoriteCount || 0 }}</div>
+          <div class="stats-label">收藏量</div>
+        </div>
+        <div class="stats-item" v-if="statsChapter.type === 'chapter'">
+          <div class="stats-value">{{ statsChapter.childrenCount || 0 }}</div>
+          <div class="stats-label">小节数</div>
+        </div>
+        <div class="stats-item" v-if="statsChapter.type === 'section'">
+          <div class="stats-value">{{ statsChapter.duration || '未知' }}</div>
+          <div class="stats-label">时长</div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -166,6 +189,16 @@ import request from '@/utils/request'
 
 // 选中的章节
 const selectedChapters = ref<any[]>([])
+
+// 统计相关
+const showStatsDialog = ref(false)
+const statsChapter = ref<any>(null)
+
+// 显示统计
+const showStats = (chapter: any) => {
+  statsChapter.value = chapter
+  showStatsDialog.value = true
+}
 
 // 处理选择变化
 const handleSelectionChange = (selection: any[]) => {
@@ -495,7 +528,7 @@ const batchDelete = async () => {
     const response = await request.post('/admin/chapters/batch-delete', { chapterIds })
     
     if (response.data.success) {
-      ElMessage.success(`成功删除 ${response.data.deletedCount} 个章节`)
+      ElMessage.success(`成功删除 ${response.data.data?.deletedCount} 个章节`)
       selectedChapters.value = []
       loadChapters()
       loadParentChapters()
@@ -524,7 +557,7 @@ const batchPublish = async () => {
     const response = await request.post('/admin/chapters/batch-publish', { chapterIds })
     
     if (response.data.success) {
-      ElMessage.success(`成功发布 ${response.data.publishedCount} 个章节`)
+      ElMessage.success(`成功发布 ${response.data.data?.publishedCount} 个章节`)
       selectedChapters.value = []
       loadChapters()
     }
@@ -570,6 +603,32 @@ onMounted(() => {
 .selected-info {
   color: #606266;
   font-size: 14px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--el-color-primary);
+}
+
+.stats-label {
+  font-size: 14px;
+  color: #909399;
 }
 
 /* 表格对齐优化 */

@@ -238,6 +238,46 @@ export const likeResource = async (req: Request, res: Response) => {
   }
 }
 
+// 批量删除资源
+export const batchDeleteResources = async (req: Request, res: Response) => {
+  try {
+    const { resourceIds } = req.body
+    const result = await prisma.resource.deleteMany({
+      where: { id: { in: resourceIds } }
+    })
+    res.json({ 
+      success: true, 
+      message: `成功删除 ${result.count} 个资源`,
+      data: { deletedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量删除资源错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 批量发布资源
+export const batchPublishResources = async (req: Request, res: Response) => {
+  try {
+    const { resourceIds } = req.body
+    const result = await prisma.resource.updateMany({
+      where: {
+        id: { in: resourceIds },
+        status: 'draft'
+      },
+      data: { status: 'published' }
+    })
+    res.json({ 
+      success: true, 
+      message: `成功发布 ${result.count} 个资源`,
+      data: { publishedCount: result.count }
+    })
+  } catch (error: any) {
+    console.error('批量发布资源错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
 // CommonJS exports for compatibility
 module.exports = {
   getResources,
@@ -246,7 +286,9 @@ module.exports = {
   updateResource,
   deleteResource,
   incrementResourceView,
-  likeResource
+  likeResource,
+  batchDeleteResources,
+  batchPublishResources
 }
 
 

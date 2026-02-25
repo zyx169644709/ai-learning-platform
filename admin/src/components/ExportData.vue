@@ -65,15 +65,6 @@ watch(() => props.modelValue, (val) => {
   if (val) initFields()
 })
 
-const filterData = (data: Record<string, any>) => {
-  if (selectedFields.value.length === 0 || fieldOptions.value.length === 0) return data
-  const filtered: Record<string, any> = {}
-  for (const key of selectedFields.value) {
-    if (key in data) filtered[key] = data[key]
-  }
-  return filtered
-}
-
 const handleExport = async () => {
   if (!props.data) {
     ElMessage.warning('没有可导出的数据')
@@ -85,24 +76,19 @@ const handleExport = async () => {
   try {
     // 判断数据类型，调用不同的 API
     let apiUrl = ''
-    if (props.data.type === 'batch' || props.data.type === 'single') {
+    let requestData: any = { fields: selectedFields.value }
+
+    if (props.data.exportType === 'user' || props.data.type === 'batch' || props.data.type === 'single') {
       // 用户导出
       apiUrl = '/admin/users/export'
-    } else {
-      // 课程导出（原有逻辑）
-      apiUrl = '/admin/courses/export'
-    }
-
-    // 准备请求数据
-    let requestData: any = {
-      fields: selectedFields.value
-    }
-    
-    if (props.data.type === 'batch' || props.data.type === 'single') {
-      // 用户导出
       requestData.userIds = props.data.userIds
+    } else if (props.data.exportType === 'course-batch') {
+      // 批量课程导出
+      apiUrl = '/admin/courses/export'
+      requestData.courseIds = props.data.courseIds
     } else {
-      // 课程导出
+      // 单个课程导出（data 直接是课程对象）
+      apiUrl = '/admin/courses/export'
       requestData.courseIds = props.data.id ? [props.data.id] : []
     }
     

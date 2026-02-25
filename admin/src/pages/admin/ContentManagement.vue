@@ -26,7 +26,6 @@
         </el-select>
       </el-form-item>
       <template #extra-buttons>
-        <el-button type="warning" @click="publishAll" :loading="publishing">一键发布</el-button>
         <el-button type="success" @click="createCourse">创建课程</el-button>
       </template>
     </FilterBar>
@@ -385,7 +384,7 @@ const showExportDialog = ref(false)
 const exportCourse = ref<any>(null)
 const exportFields = [
   { label: '课程标题', value: 'title' },
-  { label: '类型', value: 'type' },
+  { label: '难度等级', value: 'level' },
   { label: '状态', value: 'status' },
   { label: 'URL', value: 'url' },
   { label: '时长', value: 'duration' },
@@ -394,25 +393,10 @@ const exportFields = [
   { label: '浏览量', value: 'viewCount' },
   { label: '学习人数', value: 'students' },
   { label: '收藏量', value: 'favoriteCount' },
+  { label: '完成率', value: 'completionRate' },
+  { label: '创建时间', value: 'createdAt' },
   { label: '更新时间', value: 'updatedAt' }
 ]
-
-// 一键发布所有草稿课程
-const publishing = ref(false)
-const publishAll = async () => {
-  try {
-    publishing.value = true
-    const response = await request.post('/admin/courses/publish-all')
-    if (response.data.success) {
-      ElMessage.success(response.data.message || '发布成功')
-      loadCourses()
-    }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '发布失败')
-  } finally {
-    publishing.value = false
-  }
-}
 
 // 保存课程
 const saveCourse = async () => {
@@ -436,7 +420,7 @@ const batchDelete = async () => {
     const response = await request.post('/admin/courses/batch-delete', { courseIds })
     
     if (response.data.success) {
-      ElMessage.success(`成功删除 ${response.data.deletedCount} 个课程`)
+      ElMessage.success(`成功删除 ${response.data.data?.deletedCount} 个课程`)
       selectedCourses.value = []
       loadCourses()
     }
@@ -454,7 +438,7 @@ const batchExport = () => {
     return
   }
   exportCourse.value = {
-    type: 'batch',
+    exportType: 'course-batch',
     courses: selectedCourses.value,
     courseIds: selectedCourses.value.map(course => course.id)
   }
@@ -478,7 +462,7 @@ const batchPublish = async () => {
     const response = await request.post('/admin/courses/batch-publish', { courseIds })
     
     if (response.data.success) {
-      ElMessage.success(`成功发布 ${response.data.publishedCount} 个课程`)
+      ElMessage.success(`成功发布 ${response.data.data?.publishedCount} 个课程`)
       selectedCourses.value = []
       loadCourses()
     }

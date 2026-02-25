@@ -41,7 +41,8 @@
 
     <!-- 资源列表 -->
     <el-card>
-      <el-table :data="resources" stripe>
+      <el-table :data="resources" stripe style="table-layout: auto" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
         <el-table-column prop="title" label="资源标题" min-width="250" />
         <el-table-column prop="type" label="类型" width="90" align="center" header-align="center">
           <template #default="{ row }">
@@ -83,6 +84,13 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 批量操作 -->
+      <div class="batch-actions" v-if="selectedResources.length > 0">
+        <span class="selected-info">已选择 {{ selectedResources.length }} 个资源</span>
+        <el-button type="danger" @click="batchDelete">批量删除</el-button>
+        <el-button type="success" @click="batchPublish">批量发布</el-button>
+      </div>
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
@@ -221,6 +229,65 @@ const isEdit = ref(false)
 const saving = ref(false)
 const publishing = ref(false)
 const formRef = ref()
+
+// 选中的资源
+const selectedResources = ref<any[]>([])
+
+const handleSelectionChange = (selection: any[]) => {
+  selectedResources.value = selection
+}
+
+// 批量删除
+const batchDelete = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${selectedResources.value.length} 个资源吗？此操作不可恢复！`,
+      '批量删除确认',
+      {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消'
+      }
+    )
+    const resourceIds = selectedResources.value.map(r => r.id)
+    const response = await request.post('/admin/resources/batch-delete', { resourceIds })
+    if (response.data.success) {
+      ElMessage.success(`成功删除 ${response.data.data?.deletedCount} 个资源`)
+      selectedResources.value = []
+      loadResources()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量删除失败')
+    }
+  }
+}
+
+// 批量发布
+const batchPublish = async () => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要发布选中的 ${selectedResources.value.length} 个资源吗？`,
+      '批量发布确认',
+      {
+        type: 'warning',
+        confirmButtonText: '确认发布',
+        cancelButtonText: '取消'
+      }
+    )
+    const resourceIds = selectedResources.value.map(r => r.id)
+    const response = await request.post('/admin/resources/batch-publish', { resourceIds })
+    if (response.data.success) {
+      ElMessage.success(`成功发布 ${response.data.data?.publishedCount} 个资源`)
+      selectedResources.value = []
+      loadResources()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量发布失败')
+    }
+  }
+}
 
 // 统计
 const showStatsDialog = ref(false)
@@ -453,6 +520,21 @@ onMounted(() => {
   margin-top: 20px;
 }
 
+.batch-actions {
+  margin-top: 20px;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selected-info {
+  color: #606266;
+  font-size: 14px;
+}
+
 .el-card {
   margin-top: 20px;
   overflow-x: auto;
@@ -470,7 +552,6 @@ onMounted(() => {
 /* 表格对齐优化 */
 :deep(.el-table) {
   --el-table-border-color: #ebeef5;
-  width: 100% !important;
 }
 
 /* 确保 fixed 列正常工作 */
@@ -493,21 +574,30 @@ onMounted(() => {
   word-break: break-word;
 }
 
-/* 资源标题列左对齐 */
+/* 选择列居中对齐 */
 :deep(.el-table .el-table__cell:nth-child(1)) {
-  text-align: left !important;
+  text-align: center !important;
 }
 
 :deep(.el-table th.el-table__cell:nth-child(1)) {
+  text-align: center !important;
+}
+
+/* 资源标题列左对齐 */
+:deep(.el-table .el-table__cell:nth-child(2)) {
+  text-align: left !important;
+}
+
+:deep(.el-table th.el-table__cell:nth-child(2)) {
   text-align: left !important;
 }
 
 /* 其他列居中对齐 */
-:deep(.el-table .el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:last-child)) {
+:deep(.el-table .el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
   text-align: center !important;
 }
 
-:deep(.el-table th.el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:last-child)) {
+:deep(.el-table th.el-table__cell:not(:nth-child(1)):not(:nth-child(2)):not(:last-child)) {
   text-align: center !important;
 }
 

@@ -379,7 +379,7 @@ export const batchDeleteChapters = async (req: Request, res: Response) => {
     const { chapterIds } = req.body
     
     // 先删除所有作为子小节的章节
-    await prisma.chapter.deleteMany({
+    const sectionResult = await prisma.chapter.deleteMany({
       where: {
         id: { in: chapterIds },
         type: 'section'
@@ -387,19 +387,14 @@ export const batchDeleteChapters = async (req: Request, res: Response) => {
     })
     
     // 再删除作为父章节的章节（会级联删除子小节）
-    const result = await prisma.chapter.deleteMany({
+    const chapterResult = await prisma.chapter.deleteMany({
       where: {
         id: { in: chapterIds },
         type: 'chapter'
       }
     })
     
-    const totalDeleted = result.count + (await prisma.chapter.count({
-      where: {
-        id: { in: chapterIds },
-        type: 'section'
-      }
-    }))
+    const totalDeleted = sectionResult.count + chapterResult.count
     
     res.json({ 
       success: true, 

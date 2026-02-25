@@ -34,7 +34,9 @@ import {
   getResource,
   createResource,
   updateResource,
-  deleteResource
+  deleteResource,
+  batchDeleteResources,
+  batchPublishResources
 } from '../controllers/resourceController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
@@ -87,6 +89,8 @@ router.post('/resources', authMiddleware, requireAdmin, createResource)
 router.post('/resources/publish-all', authMiddleware, requireAdmin, publishAllResources)
 router.put('/resources/:id', authMiddleware, requireAdmin, updateResource)
 router.delete('/resources/:id', authMiddleware, requireAdmin, deleteResource)
+router.post('/resources/batch-delete', authMiddleware, requireAdmin, batchDeleteResources)
+router.post('/resources/batch-publish', authMiddleware, requireAdmin, batchPublishResources)
 
 export default router
 module.exports = router

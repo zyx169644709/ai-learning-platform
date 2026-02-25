@@ -806,13 +806,14 @@ export const exportCourses = async (req: Request, res: Response) => {
       select: {
         id: true,
         title: true,
-        type: true,
+        level: true,
         status: true,
         url: true,
         duration: true,
         cover: true,
         content: true,
         viewCount: true,
+        studentCount: true,
         favoriteCount: true,
         createdAt: true,
         updatedAt: true
@@ -822,14 +823,16 @@ export const exportCourses = async (req: Request, res: Response) => {
     // 字段映射
     const fieldMap: Record<string, any> = {
       title: (course: any) => course.title,
-      type: (course: any) => course.type,
+      level: (course: any) => course.level || '',
       status: (course: any) => course.status,
       url: (course: any) => course.url || '',
       duration: (course: any) => course.duration || 0,
       cover: (course: any) => course.cover || '',
       content: (course: any) => course.content || '',
       viewCount: (course: any) => course.viewCount || 0,
+      students: (course: any) => course.studentCount || 0,
       favoriteCount: (course: any) => course.favoriteCount || 0,
+      completionRate: (course: any) => 0, // 暂时返回0，后续可以通过计算获得
       createdAt: (course: any) => course.createdAt.toLocaleString('zh-CN'),
       updatedAt: (course: any) => course.updatedAt.toLocaleString('zh-CN')
     }
@@ -837,14 +840,16 @@ export const exportCourses = async (req: Request, res: Response) => {
     // 字段标签映射
     const labelMap: Record<string, string> = {
       title: '课程标题',
-      type: '类型',
+      level: '难度等级',
       status: '状态',
       url: 'URL',
       duration: '时长',
       cover: '封面',
       content: '内容',
       viewCount: '浏览量',
+      students: '学习人数',
       favoriteCount: '收藏量',
+      completionRate: '完成率',
       createdAt: '创建时间',
       updatedAt: '更新时间'
     }
@@ -870,17 +875,19 @@ export const exportCourses = async (req: Request, res: Response) => {
     
     // 根据选择的字段设置列宽
     const colWidths: Record<string, number> = {
-      title: 30,         // 课程标题
-      type: 10,          // 类型
-      status: 10,        // 状态
-      url: 40,           // URL
-      duration: 10,      // 时长
-      cover: 40,         // 封面
-      content: 50,       // 内容
-      viewCount: 12,     // 浏览量
-      favoriteCount: 12, // 收藏量
-      createdAt: 20,     // 创建时间
-      updatedAt: 20      // 更新时间
+      title: 30,           // 课程标题
+      level: 12,           // 难度等级
+      status: 10,          // 状态
+      url: 40,             // URL
+      duration: 10,        // 时长
+      cover: 40,           // 封面
+      content: 50,         // 内容
+      viewCount: 12,       // 浏览量
+      students: 12,        // 学习人数
+      favoriteCount: 12,   // 收藏量
+      completionRate: 12,  // 完成率
+      createdAt: 20,       // 创建时间
+      updatedAt: 20        // 更新时间
     }
 
     ws['!cols'] = selectedFields.map((field: string) => ({ width: colWidths[field] || 15 }))

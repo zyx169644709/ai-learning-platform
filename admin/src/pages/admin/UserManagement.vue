@@ -374,7 +374,7 @@ const batchDelete = async () => {
     const response = await request.post('/admin/users/batch-delete', { userIds })
     
     if (response.data.success) {
-      ElMessage.success(`成功删除 ${response.data.deletedCount} 个用户`)
+      ElMessage.success(`成功删除 ${response.data.data?.deletedCount} 个用户`)
       selectedUsers.value = []
       loadUsers()
     }
