@@ -316,15 +316,34 @@ const handleCommand = async (command: string, user: any) => {
       break
     case 'disable':
       if (await confirmDisable('该账号')) {
-        // TODO: 调用禁用 API
-        ElMessage.success('账号已禁用')
-        loadUsers()
+        try {
+          const res = await request.post(`/admin/users/${user.id}/disable`)
+          if (res.data.success) {
+            ElMessage.success(res.data.message || '账号已禁用')
+            loadUsers()
+          }
+        } catch (error: any) {
+          ElMessage.error(error.response?.data?.message || '禁用账号失败')
+        }
       }
       break
     case 'enable':
-      // TODO: 调用启用 API
-      ElMessage.success('账号已启用')
-      loadUsers()
+      try {
+        await ElMessageBox.confirm(
+          `确定要启用用户 「${user.name}」 的账号吗？`,
+          '启用账号确认',
+          { type: 'info', confirmButtonText: '确认启用', cancelButtonText: '取消' }
+        )
+        const res = await request.post(`/admin/users/${user.id}/enable`)
+        if (res.data.success) {
+          ElMessage.success(res.data.message || '账号已启用')
+          loadUsers()
+        }
+      } catch (error: any) {
+        if (error !== 'cancel') {
+          ElMessage.error(error.response?.data?.message || '启用账号失败')
+        }
+      }
       break
     case 'delete':
       if (await confirmDelete('该用户')) {

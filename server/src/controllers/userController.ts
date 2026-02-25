@@ -51,6 +51,10 @@ export const login = async (req: Request, res: Response) => {
     const isValidPassword = await user.validatePassword(password)
     if (!isValidPassword) return res.status(400).json({ success: false, message: '用户名或密码错误' })
 
+    if (user.status === 'disabled') {
+      return res.status(403).json({ success: false, message: '该账号已被禁用，请联系管理员' })
+    }
+
     await user.update({ lastLoginAt: new Date() })
 
     // 生成 access token (短期，1小时)

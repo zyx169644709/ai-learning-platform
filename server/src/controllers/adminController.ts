@@ -258,6 +258,37 @@ export const resetUserPassword = async (req: Request, res: Response) => {
   }
 }
 
+// 禁用用户账号
+export const disableUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const user = await prisma.user.findUnique({ where: { id } })
+    if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
+    if (user.role === 'ADMIN') {
+      return res.status(403).json({ success: false, message: '不能禁用管理员账号' })
+    }
+    await prisma.user.update({ where: { id }, data: { status: 'disabled' } })
+    res.json({ success: true, message: '账号已禁用' })
+  } catch (error: any) {
+    console.error('禁用用户错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
+// 启用用户账号
+export const enableUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const user = await prisma.user.findUnique({ where: { id } })
+    if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
+    await prisma.user.update({ where: { id }, data: { status: 'active' } })
+    res.json({ success: true, message: '账号已启用' })
+  } catch (error: any) {
+    console.error('启用用户错误:', error)
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message })
+  }
+}
+
 // 删除用户
 export const deleteUser = async (req: Request, res: Response) => {
   try {
@@ -934,6 +965,8 @@ module.exports = {
   getUsers,
   updateUser,
   resetUserPassword,
+  disableUser,
+  enableUser,
   deleteUser,
   getCourses,
   createCourse,
