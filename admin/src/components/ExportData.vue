@@ -117,7 +117,17 @@ const handleExport = async () => {
     ElMessage.success('导出成功')
     visible.value = false
   } catch (error: any) {
-    ElMessage.error('导出失败')
+    if (error.response?.data instanceof Blob) {
+      try {
+        const text = await error.response.data.text()
+        const json = JSON.parse(text)
+        ElMessage.error(json.message || '导出失败')
+      } catch {
+        ElMessage.error('导出失败')
+      }
+    } else {
+      ElMessage.error(error.response?.data?.message || '导出失败')
+    }
   } finally {
     exporting.value = false
   }

@@ -653,6 +653,9 @@ export const batchDeleteUsers = async (req: Request, res: Response) => {
 export const exportUsers = async (req: Request, res: Response) => {
   try {
     const { userIds, fields } = req.body
+    if (!userIds || userIds.length === 0) {
+      return res.status(400).json({ success: false, message: '未提供用户ID' })
+    }
     
     const users = await prisma.user.findMany({
       where: {
@@ -663,7 +666,6 @@ export const exportUsers = async (req: Request, res: Response) => {
         username: true,
         email: true,
         role: true,
-        avatar: true,
         status: true,
         lastLoginAt: true,
         createdAt: true,
@@ -688,7 +690,6 @@ export const exportUsers = async (req: Request, res: Response) => {
       email: (user: any) => user.email,
       role: (user: any) => user.role === 'ADMIN' ? '管理员' : user.role === 'MODERATOR' ? '教师' : '学生',
       status: (user: any) => user.status === 'active' ? '正常' : user.status === 'disabled' ? '禁用' : '封禁',
-      avatar: (user: any) => user.avatar || '',
       lastLoginAt: (user: any) => user.lastLoginAt ? user.lastLoginAt.toLocaleString('zh-CN') : '从未登录',
       createdAt: (user: any) => user.createdAt.toLocaleString('zh-CN'),
       updatedAt: (user: any) => user.updatedAt.toLocaleString('zh-CN'),
@@ -707,7 +708,6 @@ export const exportUsers = async (req: Request, res: Response) => {
       email: '邮箱',
       role: '角色',
       status: '状态',
-      avatar: '头像',
       lastLoginAt: '最后登录',
       createdAt: '注册时间',
       updatedAt: '最后更新',

@@ -367,7 +367,6 @@ const exportFields = [
   { label: '邮箱', value: 'email' },
   { label: '角色', value: 'role' },
   { label: '状态', value: 'status' },
-  { label: '头像', value: 'avatar' },
   { label: '最后登录', value: 'lastLoginAt' },
   { label: '注册时间', value: 'createdAt' },
   { label: '最后更新', value: 'updatedAt' },
