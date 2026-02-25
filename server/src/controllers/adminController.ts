@@ -864,7 +864,6 @@ export const exportCourses = async (req: Request, res: Response) => {
         status: true,
         url: true,
         duration: true,
-        cover: true,
         content: true,
         viewCount: true,
         studentCount: true,
@@ -881,8 +880,10 @@ export const exportCourses = async (req: Request, res: Response) => {
       status: (course: any) => course.status,
       url: (course: any) => course.url || '',
       duration: (course: any) => course.duration || 0,
-      cover: (course: any) => course.cover || '',
-      content: (course: any) => course.content || '',
+      content: (course: any) => {
+        const c = course.content || ''
+        return c.length > 5000 ? c.substring(0, 5000) + '...(已截断)' : c
+      },
       viewCount: (course: any) => course.viewCount || 0,
       students: (course: any) => course.studentCount || 0,
       favoriteCount: (course: any) => course.favoriteCount || 0,
@@ -898,7 +899,6 @@ export const exportCourses = async (req: Request, res: Response) => {
       status: '状态',
       url: 'URL',
       duration: '时长',
-      cover: '封面',
       content: '内容',
       viewCount: '浏览量',
       students: '学习人数',

@@ -230,8 +230,6 @@ const {
   showEditDialog: showCreateDialog,
   editingItem: editingCourse,
   saving,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  formRef: courseFormRef,
   loadItems,
   editItem,
   saveItem,
@@ -388,7 +386,6 @@ const exportFields = [
   { label: '状态', value: 'status' },
   { label: 'URL', value: 'url' },
   { label: '时长', value: 'duration' },
-  { label: '封面', value: 'cover' },
   { label: '内容', value: 'content' },
   { label: '浏览量', value: 'viewCount' },
   { label: '学习人数', value: 'students' },
