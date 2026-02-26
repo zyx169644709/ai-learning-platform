@@ -1,3 +1,4 @@
+<!-- 已拆分为 DiscussionManagement.vue 和 CommentManagement.vue -->
 <template>
   <div class="community-management">
     <PageHeader title="社区管理" />
@@ -182,6 +183,9 @@ import { useFilter } from '@/composables/useFilter'
 const activeTab = ref('discussions')
 const handleTabChange = (tab: string) => {
   activeTab.value = tab
+  if (tab === 'comments' && comments.value.length === 0) {
+    loadComments()
+  }
 }
 
 // ==================== 帖子管理 ====================

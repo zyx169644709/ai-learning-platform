@@ -41,10 +41,14 @@
           <span>数据分析</span>
         </el-menu-item>
         
-        <el-menu-item index="/admin/community">
-          <el-icon><ChatDotRound /></el-icon>
-          <span>社区管理</span>
-        </el-menu-item>
+        <el-sub-menu index="community">
+          <template #title>
+            <el-icon><ChatDotRound /></el-icon>
+            <span>社区管理</span>
+          </template>
+          <el-menu-item index="/admin/community/discussions">帖子管理</el-menu-item>
+          <el-menu-item index="/admin/community/comments">评论管理</el-menu-item>
+        </el-sub-menu>
         
         <el-sub-menu index="system">
           <template #title>

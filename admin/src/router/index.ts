@@ -9,7 +9,8 @@ const ContentManagement = () => import('@/pages/admin/ContentManagement.vue')
 const UserManagement = () => import('@/pages/admin/UserManagement.vue')
 const ChapterManagement = () => import('@/pages/admin/ChapterManagement.vue')
 const ResourceManagement = () => import('@/pages/admin/ResourceManagement.vue')
-const CommunityManagement = () => import('@/pages/admin/CommunityManagement.vue')
+const DiscussionManagement = () => import('@/pages/admin/DiscussionManagement.vue')
+const CommentManagement = () => import('@/pages/admin/CommentManagement.vue')
 const Login = () => import('@/pages/auth/Login.vue')
 const NotFound = () => import('@/pages/admin/NotFound.vue')
 
@@ -55,9 +56,14 @@ const routes: RouteRecordRaw[] = [
         component: ResourceManagement
       },
       {
-        path: 'community',
-        name: 'CommunityManagement',
-        component: CommunityManagement
+        path: 'community/discussions',
+        name: 'DiscussionManagement',
+        component: DiscussionManagement
+      },
+      {
+        path: 'community/comments',
+        name: 'CommentManagement',
+        component: CommentManagement
       }
     ]
   },
