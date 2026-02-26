@@ -61,16 +61,15 @@
             <el-button :type="row.status === 'hidden' ? 'success' : 'warning'" link @click="toggleStatus(row)">
               {{ row.status === 'hidden' ? '显示' : '隐藏' }}
             </el-button>
-            <el-popover placement="top" :width="160" trigger="click">
-              <template #reference>
-                <el-button type="info" link>统计</el-button>
-              </template>
-              <div class="stats-popover">
-                <div class="stat-item"><span>浏览</span><strong>{{ row.views ?? 0 }}</strong></div>
-                <div class="stat-item"><span>点赞</span><strong>{{ row.likes ?? 0 }}</strong></div>
-                <div class="stat-item"><span>评论</span><strong>{{ row.commentCount ?? 0 }}</strong></div>
-              </div>
-            </el-popover>
+            <StatsDisplay
+              mode="dialog"
+              title="帖子统计"
+              :items="[
+                { label: '浏览量', value: row.views },
+                { label: '点赞数', value: row.likes },
+                { label: '评论数', value: row.commentCount }
+              ]"
+            />
             <el-button type="danger" link @click="deleteDiscussion(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -97,6 +96,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import StatsDisplay from '@/components/StatsDisplay.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatRelativeTime } from '@/utils/format'
 import request from '@/utils/request'
@@ -238,24 +238,5 @@ onMounted(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-}
-
-.stats-popover {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: #606266;
-}
-
-.stat-item strong {
-  color: #303133;
-  font-size: 15px;
 }
 </style>

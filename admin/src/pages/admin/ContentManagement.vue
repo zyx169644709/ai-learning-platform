@@ -72,7 +72,16 @@
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editCourse(row)">编辑</el-button>
-            <el-button type="warning" link @click="viewStats(row)">统计</el-button>
+            <StatsDisplay
+              mode="dialog"
+              title="课程统计"
+              :items="[
+                { label: '学习人数', value: row.students },
+                { label: '浏览量', value: row.viewCount },
+                { label: '收藏量', value: row.favoriteCount },
+                { label: '完成率', value: (row.completionRate ?? 0) + '%' }
+              ]"
+            />
             <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)" trigger="click">
               <el-button type="primary" link class="el-dropdown-link">
                 更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
@@ -111,27 +120,6 @@
       </div>
     </el-card>
 
-    <!-- 统计弹窗 -->
-    <el-dialog v-model="showStatsDialog" title="课程统计" width="520px">
-      <div class="stats-grid" v-if="statsCourse">
-        <div class="stats-item">
-          <div class="stats-value">{{ statsCourse.students || 0 }}</div>
-          <div class="stats-label">学习人数</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsCourse.viewCount || 0 }}</div>
-          <div class="stats-label">浏览量</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsCourse.favoriteCount || 0 }}</div>
-          <div class="stats-label">收藏量</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsCourse.completionRate || 0 }}%</div>
-          <div class="stats-label">完成率</div>
-        </div>
-      </div>
-    </el-dialog>
 
     <!-- 创建/编辑课程对话框 -->
     <el-dialog
@@ -209,6 +197,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
 import ExportData from '@/components/ExportData.vue'
+import StatsDisplay from '@/components/StatsDisplay.vue'
 
 // 使用分页 composable
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -317,13 +306,6 @@ const editCourse = (course: any) => {
   editItem(course, courseForm)
 }
 
-// 查看统计
-const showStatsDialog = ref(false)
-const statsCourse = ref<any>(null)
-const viewStats = (course: any) => {
-  statsCourse.value = course
-  showStatsDialog.value = true
-}
 
 // 处理更多操作
 const handleCommand = async (command: string, course: any) => {
@@ -524,32 +506,6 @@ onMounted(() => {
 
 .el-dropdown-link .el-icon--right {
   margin-left: 2px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  text-align: center;
-  padding: 20px 0;
-}
-
-.stats-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.stats-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--el-color-primary);
-}
-
-.stats-label {
-  font-size: 14px;
-  color: #909399;
 }
 
 /* 表格对齐优化 */

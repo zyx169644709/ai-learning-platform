@@ -61,10 +61,21 @@
             {{ formatRelativeTime(row.updatedAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editItem(row)">编辑</el-button>
-            <el-button type="warning" link @click="showStats(row)">统计</el-button>
+            <StatsDisplay
+              mode="dialog"
+              title="统计信息"
+              :items="row.type === 'chapter' ? [
+                { label: '浏览量', value: row.viewCount },
+                { label: '收藏量', value: row.favoriteCount },
+                { label: '小节数', value: row.childrenCount }
+              ] : [
+                { label: '浏览量', value: row.viewCount },
+                { label: '收藏量', value: row.favoriteCount },
+              ]"
+            />
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -151,27 +162,6 @@
       </template>
     </el-dialog>
 
-    <!-- 统计弹窗 -->
-    <el-dialog v-model="showStatsDialog" title="章节统计" width="520px">
-      <div class="stats-grid" v-if="statsChapter">
-        <div class="stats-item">
-          <div class="stats-value">{{ statsChapter.viewCount || 0 }}</div>
-          <div class="stats-label">浏览量</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsChapter.favoriteCount || 0 }}</div>
-          <div class="stats-label">收藏量</div>
-        </div>
-        <div class="stats-item" v-if="statsChapter.type === 'chapter'">
-          <div class="stats-value">{{ statsChapter.childrenCount || 0 }}</div>
-          <div class="stats-label">小节数</div>
-        </div>
-        <div class="stats-item" v-if="statsChapter.type === 'section'">
-          <div class="stats-value">{{ statsChapter.duration || '未知' }}</div>
-          <div class="stats-label">时长</div>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -185,20 +175,12 @@ import { formatRelativeTime } from '@/utils/format'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
+import StatsDisplay from '@/components/StatsDisplay.vue'
 import request from '@/utils/request'
 
 // 选中的章节
 const selectedChapters = ref<any[]>([])
 
-// 统计相关
-const showStatsDialog = ref(false)
-const statsChapter = ref<any>(null)
-
-// 显示统计
-const showStats = (chapter: any) => {
-  statsChapter.value = chapter
-  showStatsDialog.value = true
-}
 
 // 处理选择变化
 const handleSelectionChange = (selection: any[]) => {
@@ -612,32 +594,6 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  text-align: center;
-  padding: 20px 0;
-}
-
-.stats-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.stats-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--el-color-primary);
-}
-
-.stats-label {
-  font-size: 14px;
-  color: #909399;
-}
 
 /* 表格对齐优化 */
 :deep(.el-table) {

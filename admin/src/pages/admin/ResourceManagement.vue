@@ -73,7 +73,15 @@
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editResource(row)">编辑</el-button>
-            <el-button type="warning" link @click="viewStats(row)">统计</el-button>
+            <StatsDisplay
+              mode="dialog"
+              title="资源统计"
+              :items="[
+                { label: '浏览量', value: row.viewCount },
+                { label: '点赞数', value: row.likeCount },
+                { label: '收藏量', value: row.favoriteCount }
+              ]"
+            />
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -98,23 +106,6 @@
       </div>
     </el-card>
 
-    <!-- 统计弹窗 -->
-    <el-dialog v-model="showStatsDialog" title="资源统计" width="420px">
-      <div class="stats-grid" v-if="statsResource">
-        <div class="stats-item">
-          <div class="stats-value">{{ statsResource.viewCount || 0 }}</div>
-          <div class="stats-label">浏览量</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsResource.likeCount || 0 }}</div>
-          <div class="stats-label">点赞数</div>
-        </div>
-        <div class="stats-item">
-          <div class="stats-value">{{ statsResource.favoriteCount || 0 }}</div>
-          <div class="stats-label">收藏量</div>
-        </div>
-      </div>
-    </el-dialog>
 
     <!-- 创建/编辑资源对话框 -->
     <el-dialog 
@@ -180,9 +171,6 @@
         <el-form-item label="资源标签" prop="tags">
           <el-input v-model="resourceForm.tags" placeholder="请输入标签，用英文逗号分隔，如：AI,机器学习,入门" />
         </el-form-item>
-        <el-form-item label="官方资源" prop="isOfficial">
-          <el-switch v-model="resourceForm.isOfficial" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="showDialog = false">取消</el-button>
@@ -204,6 +192,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import ImageUpload from '@/components/ImageUpload.vue'
 import request from '@/utils/request'
+import StatsDisplay from '@/components/StatsDisplay.vue'
 
 // 分页
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -282,10 +271,6 @@ const batchPublish = async () => {
   }
 }
 
-// 统计
-const showStatsDialog = ref(false)
-const statsResource = ref<any>(null)
-
 // 表单
 const resourceForm = reactive({
   id: '',
@@ -296,7 +281,6 @@ const resourceForm = reactive({
   url: '',
   type: 'website',
   status: 'draft',
-  isOfficial: false,
   tags: ''
 })
 
@@ -351,7 +335,6 @@ const createResource = () => {
     url: '',
     type: 'website',
     status: 'draft',
-    isOfficial: false,
     tags: ''
   })
   showDialog.value = true
@@ -374,7 +357,6 @@ const editResource = async (row: any) => {
         url: data.url,
         type: data.type || 'website',
         status: data.status || 'draft',
-        isOfficial: data.isOfficial || false,
         tags: Array.isArray(data.tags) ? data.tags.join(',') : (data.tags || '')
       })
       showDialog.value = true
@@ -382,12 +364,6 @@ const editResource = async (row: any) => {
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '获取资源详情失败')
   }
-}
-
-// 查看统计
-const viewStats = (resource: any) => {
-  statsResource.value = resource
-  showStatsDialog.value = true
 }
 
 // 保存资源
@@ -598,31 +574,5 @@ onMounted(() => {
 
 :deep(.el-table .el-table__cell:last-child .el-button:last-child) {
   margin-right: 0;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 20px 0;
-}
-
-.stats-item {
-  text-align: center;
-  padding: 20px;
-  background: var(--el-fill-color-lighter);
-  border-radius: 8px;
-}
-
-.stats-value {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--el-color-primary);
-  margin-bottom: 8px;
-}
-
-.stats-label {
-  font-size: 14px;
-  color: var(--el-text-color-regular);
 }
 </style>

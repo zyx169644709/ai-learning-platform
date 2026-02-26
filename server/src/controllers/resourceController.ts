@@ -41,7 +41,6 @@ export const getResources = async (req: Request, res: Response) => {
           url: true,
           type: true,
           status: true,
-          isOfficial: true,
           viewCount: true,
           likeCount: true,
           favoriteCount: true,
@@ -62,7 +61,6 @@ export const getResources = async (req: Request, res: Response) => {
       url: resource.url,
       type: resource.type || 'website',
       status: resource.status || 'draft',
-      isOfficial: resource.isOfficial || false,
       viewCount: resource.viewCount || 0,
       likeCount: resource.likeCount || 0,
       favoriteCount: resource.favoriteCount || 0,
@@ -111,7 +109,7 @@ export const getResource = async (req: Request, res: Response) => {
 // 创建资源
 export const createResource = async (req: Request, res: Response) => {
   try {
-    const { title, description, cover, icon, url, type, status, isOfficial, tags } = req.body
+    const { title, description, cover, icon, url, type, status, tags } = req.body
     
     if (!title || !url) {
       return res.status(400).json({ success: false, message: '标题和链接不能为空' })
@@ -126,7 +124,6 @@ export const createResource = async (req: Request, res: Response) => {
         url,
         type: type || 'website',
         status: status || 'draft',
-        isOfficial: isOfficial || false,
         tags: tags || []
       }
     })
@@ -146,7 +143,7 @@ export const createResource = async (req: Request, res: Response) => {
 export const updateResource = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, description, cover, icon, url, type, status, isOfficial, tags } = req.body
+    const { title, description, cover, icon, url, type, status, tags } = req.body
     
     const resource = await prisma.resource.findUnique({
       where: { id }
@@ -166,7 +163,6 @@ export const updateResource = async (req: Request, res: Response) => {
         url: url || resource.url,
         type: type || resource.type,
         status: status || resource.status,
-        isOfficial: isOfficial !== undefined ? isOfficial : resource.isOfficial,
         tags: tags !== undefined ? tags : resource.tags
       }
     })
