@@ -27,7 +27,7 @@
       <div v-else class="upload-placeholder">
         <el-icon><Plus /></el-icon>
         <span>点击上传图片</span>
-        <p class="upload-tip">支持 JPG、PNG、GIF 格式，大小不超过 2MB</p>
+        <p class="upload-tip">支持 JPG、PNG、GIF 格式，大小不超过 5MB</p>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
-  maxSize: 2
+  maxSize: 5
 })
 
 const emit = defineEmits<{
