@@ -70,12 +70,10 @@
         </el-table-column>
       </el-table>
 
-      <!-- 批量操作 -->
-      <div class="batch-actions" v-if="selectedChapters.length > 0">
-        <span class="selected-info">已选择 {{ selectedChapters.length }} 个章节</span>
-        <el-button type="danger" @click="batchDelete">批量删除</el-button>
-        <el-button type="success" @click="batchPublish">批量发布</el-button>
-      </div>
+    <BatchActionBar :count="selectedChapters.length" label="章节">
+      <el-button @click="batchPublish">批量发布</el-button>
+      <el-button type="danger" @click="batchDelete">批量删除</el-button>
+    </BatchActionBar>
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
@@ -186,6 +184,7 @@ import { useFilter } from '@/composables/useFilter'
 import { formatRelativeTime } from '@/utils/format'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
+import BatchActionBar from '@/components/BatchActionBar.vue'
 import request from '@/utils/request'
 
 // 选中的章节
@@ -600,20 +599,6 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-.batch-actions {
-  margin-top: 20px;
-  padding: 12px;
-  background: #f5f7fa;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selected-info {
-  color: #606266;
-  font-size: 14px;
-}
 
 .stats-grid {
   display: grid;

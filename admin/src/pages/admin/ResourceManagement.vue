@@ -58,12 +58,6 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="isOfficial" label="官方" width="70" align="center" header-align="center">
-          <template #default="{ row }">
-            <el-tag v-if="row.isOfficial" type="primary" size="small">官方</el-tag>
-            <span v-else>-</span>
-          </template>
-        </el-table-column>
         <el-table-column prop="url" label="链接" width="200" align="center" header-align="center">
           <template #default="{ row }">
             <el-link :href="row.url" target="_blank" type="primary" :title="row.url" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
@@ -85,12 +79,10 @@
         </el-table-column>
       </el-table>
 
-      <!-- 批量操作 -->
-      <div class="batch-actions" v-if="selectedResources.length > 0">
-        <span class="selected-info">已选择 {{ selectedResources.length }} 个资源</span>
-        <el-button type="danger" @click="batchDelete">批量删除</el-button>
-        <el-button type="success" @click="batchPublish">批量发布</el-button>
-      </div>
+    <BatchActionBar :count="selectedResources.length" label="资源">
+      <el-button @click="batchPublish">批量发布</el-button>
+      <el-button type="danger" @click="batchDelete">批量删除</el-button>
+    </BatchActionBar>
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
@@ -203,6 +195,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import BatchActionBar from '@/components/BatchActionBar.vue'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useFilter } from '@/composables/useFilter'
@@ -520,20 +513,6 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-.batch-actions {
-  margin-top: 20px;
-  padding: 12px;
-  background: #f5f7fa;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selected-info {
-  color: #606266;
-  font-size: 14px;
-}
 
 .el-card {
   margin-top: 20px;

@@ -314,7 +314,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 // 获取课程列表
 export const getCourses = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, type, title } = req.query
+    const { page = 1, limit = 20, type, title, status } = req.query
     
     // 构建查询条件
     const where: any = {}
@@ -331,6 +331,9 @@ export const getCourses = async (req: Request, res: Response) => {
       where.title = {
         contains: title.toString().trim()
       }
+    }
+    if (status && status.toString().trim()) {
+      where.status = status.toString().trim()
     }
     
     // 计算分页

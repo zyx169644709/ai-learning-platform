@@ -25,6 +25,13 @@
           <el-option label="高级课程" value="advanced" />
         </el-select>
       </el-form-item>
+      <el-form-item label="课程状态" style="width: 180px;">
+        <el-select v-model="filterForm.status" placeholder="全部" clearable @change="debouncedSearch">
+          <el-option label="草稿" value="draft" />
+          <el-option label="已发布" value="published" />
+          <el-option label="已归档" value="archived" />
+        </el-select>
+      </el-form-item>
       <template #extra-buttons>
         <el-button type="success" @click="createCourse">创建课程</el-button>
       </template>
@@ -62,11 +69,6 @@
             {{ formatRelativeTime(row.updatedAt) }}
           </template>
         </el-table-column>
-        <el-table-column prop="favoriteCount" label="收藏量" width="90" align="center" header-align="center">
-          <template #default="{ row }">
-            {{ row.favoriteCount }}
-          </template>
-        </el-table-column>
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editCourse(row)">编辑</el-button>
@@ -89,13 +91,11 @@
         </el-table-column>
       </el-table>
 
-      <!-- 批量操作 -->
-      <div class="batch-actions" v-if="selectedCourses.length > 0">
-        <span class="selected-info">已选择 {{ selectedCourses.length }} 个课程</span>
-        <el-button type="danger" @click="batchDelete">批量删除</el-button>
-        <el-button type="warning" @click="batchExport">批量导出</el-button>
-        <el-button type="success" @click="batchPublish">批量发布</el-button>
-      </div>
+    <BatchActionBar :count="selectedCourses.length" label="课程">
+      <el-button @click="batchPublish">批量发布</el-button>
+      <el-button @click="batchExport">批量导出</el-button>
+      <el-button type="danger" @click="batchDelete">批量删除</el-button>
+    </BatchActionBar>
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
@@ -207,6 +207,7 @@ import { formatRelativeTime } from '@/utils/format'
 import ImageUpload from '@/components/ImageUpload.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
+import BatchActionBar from '@/components/BatchActionBar.vue'
 import ExportData from '@/components/ExportData.vue'
 
 // 使用分页 composable
@@ -237,7 +238,7 @@ const {
 } = useCrud({
   apiPath: '/admin/courses',
   resourceName: '课程',
-  filterFields: ['title', 'type']
+  filterFields: ['title', 'type', 'status']
 })
 
 // 课程表单
@@ -291,6 +292,7 @@ const { debouncedSearch } = useFilter({
 const resetFilter = () => {
   filterForm.title = ''
   filterForm.type = ''
+  filterForm.status = ''
   resetPagination()
   loadCourses()
 }
@@ -501,20 +503,6 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
-.batch-actions {
-  margin-top: 20px;
-  padding: 12px;
-  background: #f5f7fa;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selected-info {
-  color: #606266;
-  font-size: 14px;
-}
 
 .el-dropdown-link {
   cursor: pointer;
