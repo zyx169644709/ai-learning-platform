@@ -122,7 +122,7 @@ export const getChapters = async (req: Request, res: Response) => {
       ]
     }
 
-    const [chapters, total] = await Promise.all([
+    const [chapters, chapterCount] = await Promise.all([
       prisma.chapter.findMany({
         where: chapterWhere,
         orderBy: { order: 'asc' },
@@ -152,6 +152,19 @@ export const getChapters = async (req: Request, res: Response) => {
       }),
       prisma.chapter.count({ where: chapterWhere })
     ])
+
+    // total = 章节数 + 所有匹配章节下的小节数之和
+    const allMatchingChapterIds = await prisma.chapter.findMany({
+      where: chapterWhere,
+      select: { id: true }
+    })
+    const sectionCountResult = await prisma.chapter.count({
+      where: {
+        type: 'section',
+        parentId: { in: allMatchingChapterIds.map((c: { id: string }) => c.id) }
+      }
+    })
+    const total = chapterCount + sectionCountResult
 
     const formattedChapters = chapters.map((chapter) => {
       const chapterNo = chapter.order || 0
@@ -191,6 +204,7 @@ export const getChapters = async (req: Request, res: Response) => {
       data: {
         items: formattedChapters,
         total,
+        chapterCount,
         page: Number(page),
         limit: Number(limit)
       }

@@ -79,12 +79,13 @@
 
       <!-- 分页 -->
       <div class="pagination-wrapper">
+        <span class="total-info">共 {{ displayTotal }} 条（含章节与小节）</span>
         <el-pagination
           v-model:current-page="pagination.page"
           v-model:page-size="pagination.size"
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           @size-change="loadChapters"
           @current-change="loadChapters"
         />
@@ -207,6 +208,7 @@ const handleSelectionChange = (selection: any[]) => {
 
 // 分页
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
+const displayTotal = ref(0)
 
 // 筛选表单
 const filterForm = reactive({
@@ -315,8 +317,8 @@ const loadChapters = async () => {
     
     if (response.data.success) {
       chapters.value = response.data.data.items
-      setTotal(response.data.data.total)
-
+      displayTotal.value = response.data.data.total
+      setTotal(response.data.data.chapterCount ?? response.data.data.total)
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '加载章节列表失败')
@@ -582,8 +584,16 @@ onMounted(() => {
 
 .pagination-wrapper {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   margin-top: 20px;
+  gap: 12px;
+}
+
+.total-info {
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  white-space: nowrap;
 }
 
 .el-card {

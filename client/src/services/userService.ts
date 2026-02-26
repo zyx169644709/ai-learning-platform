@@ -30,6 +30,50 @@ api.interceptors.request.use(
   }
 )
 
+// 全屏登录过期弹窗（只创建一次）
+let sessionExpiredModalShown = false
+const showSessionExpiredModal = () => {
+  if (sessionExpiredModalShown) return
+  sessionExpiredModalShown = true
+
+  const overlay = document.createElement('div')
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+  `
+
+  overlay.innerHTML = `
+    <div style="
+      background: #fff; border-radius: 16px; padding: 40px 48px;
+      text-align: center; max-width: 380px; width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    ">
+      <div style="font-size: 52px; margin-bottom: 16px;">⏰</div>
+      <h2 style="margin: 0 0 12px; font-size: 20px; color: #1a1a1a;">登录已过期</h2>
+      <p style="margin: 0 0 28px; font-size: 14px; color: #666; line-height: 1.6;">
+        您的登录状态已过期，请重新登录后继续使用。
+      </p>
+      <button id="session-expired-btn" style="
+        width: 100%; padding: 12px; border: none; border-radius: 8px;
+        background: #4f46e5; color: #fff; font-size: 15px; font-weight: 600;
+        cursor: pointer; transition: background 0.2s;
+      ">重新登录</button>
+    </div>
+  `
+
+  document.body.appendChild(overlay)
+
+  const btn = overlay.querySelector('#session-expired-btn') as HTMLButtonElement
+  btn.addEventListener('mouseenter', () => { btn.style.background = '#4338ca' })
+  btn.addEventListener('mouseleave', () => { btn.style.background = '#4f46e5' })
+  btn.addEventListener('click', () => {
+    document.body.removeChild(overlay)
+    sessionExpiredModalShown = false
+    window.location.href = '/login'
+  })
+}
+
 // 是否正在刷新 token 的标志
 let isRefreshing = false
 // 存储等待刷新的请求
@@ -100,7 +144,7 @@ api.interceptors.response.use(
           throw new Error('刷新 token 失败')
         }
       } catch (refreshError) {
-        // 刷新失败，清除本地存储并跳转到登录页
+        // 刷新失败，清除本地存储
         console.error('Token 刷新失败:', refreshError)
         localStorage.removeItem('token')
         localStorage.removeItem('refreshToken')
@@ -109,13 +153,11 @@ api.interceptors.response.use(
         // 处理等待队列
         processQueue(refreshError, null)
         
-        // 显示友好的提示信息
-        notification.warning('登录已过期，请重新登录', 2000)
+        // 派发事件，通知 store 清除状态
+        window.dispatchEvent(new CustomEvent('auth:expired'))
         
-        // 延迟跳转，让用户看到提示
-        setTimeout(() => {
-          window.location.href = '/login'
-        }, 2000)
+        // 显示全屏醒目弹窗
+        showSessionExpiredModal()
         
         return Promise.reject(refreshError)
       } finally {
