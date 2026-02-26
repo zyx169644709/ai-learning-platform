@@ -130,6 +130,9 @@
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="完成课程">{{ selectedUser.completedCourses || 0 }} 门</el-descriptions-item>
+          <el-descriptions-item label="收藏数">{{ selectedUser.favoritesCount || 0 }} 个</el-descriptions-item>
+          <el-descriptions-item label="发帖数">{{ selectedUser.discussionsCount || 0 }} 篇</el-descriptions-item>
+          <el-descriptions-item label="评论数">{{ selectedUser.commentsCount || 0 }} 条</el-descriptions-item>
           <el-descriptions-item label="注册时间">{{ formatRelativeTime(selectedUser.registeredAt) || '暂无数据' }}</el-descriptions-item>
           <el-descriptions-item label="最后登录">{{ formatRelativeTime(selectedUser.lastLogin) || '暂无数据' }}</el-descriptions-item>
           <el-descriptions-item label="学习进度" :span="2">
@@ -388,9 +391,6 @@ const exportFields = [
   { label: '最后登录', value: 'lastLoginAt' },
   { label: '注册时间', value: 'createdAt' },
   { label: '最后更新', value: 'updatedAt' },
-  { label: '创建课程数', value: 'coursesCount' },
-  { label: '创建章节数', value: 'chaptersCount' },
-  { label: '创建资源数', value: 'resourcesCount' },
   { label: '收藏数', value: 'favoritesCount' },
   { label: '发帖数', value: 'discussionsCount' },
   { label: '评论数', value: 'commentsCount' }

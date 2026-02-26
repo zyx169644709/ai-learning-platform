@@ -146,7 +146,8 @@ export const getUsers = async (req: Request, res: Response) => {
           _count: {
             select: {
               discussions: true,
-              comments: true
+              comments: true,
+              favorites: true
             }
           }
         }
@@ -166,7 +167,10 @@ export const getUsers = async (req: Request, res: Response) => {
       completedCourses: 0, // TODO: 从学习记录计算
       lastLogin: user.lastLoginAt ? formatDate(user.lastLoginAt) : '-',
       registeredAt: formatDate(user.createdAt),
-      courses: [] // TODO: 获取用户课程
+      courses: [], // TODO: 获取用户课程
+      favoritesCount: user._count.favorites,
+      discussionsCount: user._count.discussions,
+      commentsCount: user._count.comments
     }))
     
     res.json({

@@ -39,6 +39,8 @@ model User {
   chapters Chapter[]
   resources Resource[]
   favorites Favorite[]
+  discussionLikes DiscussionLike[]
+  commentLikes CommentLike[]
   
   @@index([email])
   @@index([username])
@@ -68,8 +70,9 @@ model Discussion {
   id          String      @id @default(cuid())
   title       String
   content     String
-  excerpt     String
   category    DiscussionCategory
+  status      String      @default("published") // published/hidden
+  isPinned    Boolean     @default(false) @map("is_pinned")
   views       Int         @default(0)
   likes       Int         @default(0)
   authorId    String      @map("author_id")
@@ -79,7 +82,10 @@ model Discussion {
   // 关联关系
   author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments    Comment[]
+  discussionLikes DiscussionLike[]
   
+  @@index([status])
+  @@index([isPinned])
   @@map("discussions")
 }
 
@@ -87,6 +93,7 @@ model Discussion {
 model Comment {
   id          String   @id @default(cuid())
   content     String
+  status      String   @default("visible") // visible/hidden
   likes       Int      @default(0)
   authorId    String   @map("author_id")
   discussionId String  @map("discussion_id")
@@ -96,8 +103,40 @@ model Comment {
   // 关联关系
   author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
   discussion  Discussion  @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  commentLikes CommentLike[]
   
+  @@index([status])
   @@map("comments")
+}
+
+// 帖子点赞去重表
+model DiscussionLike {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  discussionId String   @map("discussion_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, discussionId])
+  @@index([discussionId])
+  @@map("discussion_likes")
+}
+
+// 评论点赞去重表
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  commentId String   @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@index([commentId])
+  @@map("comment_likes")
 }
 
 // 枚举类型
@@ -191,7 +230,6 @@ model Resource {
   url         String         // 官网链接
   type        String  @default("website") // website/document/tool/tutorial
   status      String  @default("draft") // draft/published/archived
-  isOfficial  Boolean @default(false) // 是否官方资源
   authorId    String? @map("author_id")
   viewCount   Int     @default(0)  // 浏览次数
   likeCount   Int     @default(0)  // 点赞数

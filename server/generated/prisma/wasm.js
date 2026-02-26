@@ -146,8 +146,9 @@ exports.Prisma.DiscussionScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  excerpt: 'excerpt',
   category: 'category',
+  status: 'status',
+  isPinned: 'isPinned',
   views: 'views',
   likes: 'likes',
   authorId: 'authorId',
@@ -158,11 +159,26 @@ exports.Prisma.DiscussionScalarFieldEnum = {
 exports.Prisma.CommentScalarFieldEnum = {
   id: 'id',
   content: 'content',
+  status: 'status',
   likes: 'likes',
   authorId: 'authorId',
   discussionId: 'discussionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DiscussionLikeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  discussionId: 'discussionId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommentLikeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  commentId: 'commentId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.CourseScalarFieldEnum = {
@@ -212,7 +228,6 @@ exports.Prisma.ResourceScalarFieldEnum = {
   url: 'url',
   type: 'type',
   status: 'status',
-  isOfficial: 'isOfficial',
   authorId: 'authorId',
   viewCount: 'viewCount',
   likeCount: 'likeCount',
@@ -275,6 +290,8 @@ exports.Prisma.ModelName = {
   UserPreferences: 'UserPreferences',
   Discussion: 'Discussion',
   Comment: 'Comment',
+  DiscussionLike: 'DiscussionLike',
+  CommentLike: 'CommentLike',
   Course: 'Course',
   Chapter: 'Chapter',
   Resource: 'Resource',

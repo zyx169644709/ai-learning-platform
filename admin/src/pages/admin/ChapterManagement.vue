@@ -41,7 +41,7 @@
 
     <!-- 章节列表（树形表格）-->
     <el-card>
-      <el-table :data="filteredChapters" stripe row-key="id" :tree-props="{ children: 'children' }" default-expand-all style="table-layout: auto" @selection-change="handleSelectionChange">
+      <el-table :data="filteredChapters" stripe row-key="id" :tree-props="{ children: 'children' }" style="table-layout: auto" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column prop="title" label="名称" min-width="250">
           <template #default="{ row }">
@@ -70,7 +70,7 @@
         </el-table-column>
       </el-table>
 
-    <BatchActionBar :count="selectedChapters.length" label="章节">
+    <BatchActionBar :count="selectedChapters.length" :description="selectedDescription">
       <el-button @click="batchPublish">批量发布</el-button>
       <el-button type="danger" @click="batchDelete">批量删除</el-button>
     </BatchActionBar>
@@ -204,6 +204,19 @@ const showStats = (chapter: any) => {
 const handleSelectionChange = (selection: any[]) => {
   selectedChapters.value = selection
 }
+
+// 选中数量描述
+const selectedDescription = computed(() => {
+  const chapterCount = selectedChapters.value.filter((r: any) => r.type === 'chapter').length
+  const sectionCount = selectedChapters.value.filter((r: any) => r.type === 'section').length
+  if (chapterCount > 0 && sectionCount > 0) {
+    return `已选择 ${chapterCount} 个章节、${sectionCount} 个小节`
+  } else if (chapterCount > 0) {
+    return `已选择 ${chapterCount} 个章节`
+  } else {
+    return `已选择 ${sectionCount} 个小节`
+  }
+})
 
 // 分页
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -516,7 +529,7 @@ const handleDelete = async (row: any) => {
 const batchDelete = async () => {
   try {
     await ElMessageBox.confirm(
-      `确定要删除选中的 ${selectedChapters.value.length} 个章节吗？此操作不可恢复！`,
+      `确定要删除选中的 ${selectedChapters.value.length} 个内容吗？此操作不可恢复！`,
       '批量删除确认',
       {
         type: 'warning',

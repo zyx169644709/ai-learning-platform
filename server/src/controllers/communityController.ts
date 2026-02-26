@@ -37,9 +37,8 @@ export const getDiscussions = async (req: Request, res: Response) => {
     // 按搜索关键词筛选
     if (search && typeof search === 'string') {
       whereClause.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { content: { contains: search, mode: 'insensitive' } },
-        { excerpt: { contains: search, mode: 'insensitive' } }
+        { title: { contains: search } },
+        { content: { contains: search } }
       ]
     }
     
@@ -78,7 +77,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
     const formattedDiscussions = discussions.map(discussion => ({
       id: discussion.id,
       title: discussion.title,
-      excerpt: discussion.excerpt,
+      excerpt: discussion.content.length > 100 ? discussion.content.substring(0, 100) + '...' : discussion.content,
       content: discussion.content,
       category: discussion.category.toLowerCase(),
       views: discussion.views,
@@ -130,8 +129,6 @@ export const createDiscussion = async (req: Request, res: Response) => {
     }
     
     // 生成摘要（取内容前100个字符）
-    const excerpt = content.length > 100 ? content.substring(0, 100) + '...' : content
-    
     // 严格从 JWT 获取 userId，不信任 body
     const finalAuthorId = getUserIdFromRequest(req)
     if (!finalAuthorId) {
@@ -142,7 +139,6 @@ export const createDiscussion = async (req: Request, res: Response) => {
       data: {
         title,
         content,
-        excerpt,
         category: (category as string).toUpperCase() as any,
         authorId: finalAuthorId,
         views: 0,
@@ -178,7 +174,7 @@ export const createDiscussion = async (req: Request, res: Response) => {
     const formattedDiscussion = {
       id: discussion.id,
       title: discussion.title,
-      excerpt: discussion.excerpt,
+      excerpt: discussion.content.length > 100 ? discussion.content.substring(0, 100) + '...' : discussion.content,
       content: discussion.content,
       category: discussion.category.toLowerCase(),
       views: discussion.views,
@@ -252,7 +248,7 @@ export const getDiscussionById = async (req: Request, res: Response) => {
     const formattedDiscussion = {
       id: discussion.id,
       title: discussion.title,
-      excerpt: discussion.excerpt,
+      excerpt: discussion.content.length > 100 ? discussion.content.substring(0, 100) + '...' : discussion.content,
       content: discussion.content,
       category: discussion.category.toLowerCase(),
       views: discussion.views + 1,
@@ -413,6 +409,215 @@ export const likeComment = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('点赞评论失败:', error)
     res.status(500).json({ error: '点赞评论失败' })
+  }
+}
+
+// ==================== 管理员专用接口 ====================
+
+// 管理员获取帖子列表（带分页、筛选）
+export const adminGetDiscussions = async (req: Request, res: Response) => {
+  try {
+    const { page = 1, limit = 20, category, status, keyword } = req.query
+    const skip = (Number(page) - 1) * Number(limit)
+    const take = Number(limit)
+
+    const where: any = {}
+    if (category && category !== 'all') where.category = (category as string).toUpperCase()
+    if (status && status !== 'all') where.status = status as string
+    if (keyword) where.OR = [{ title: { contains: keyword as string } }, { content: { contains: keyword as string } }]
+
+    const [discussions, total] = await Promise.all([
+      prisma.discussion.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+        include: {
+          author: { select: { id: true, username: true, avatar: true } },
+          _count: { select: { comments: true } }
+        }
+      }),
+      prisma.discussion.count({ where })
+    ])
+
+    res.json({
+      success: true,
+      data: {
+        items: discussions.map(d => ({
+          id: d.id,
+          title: d.title,
+          category: d.category,
+          status: d.status,
+          isPinned: d.isPinned,
+          views: d.views,
+          likes: d.likes,
+          commentCount: d._count.comments,
+          author: d.author?.username || '匿名用户',
+          authorId: d.author?.id,
+          authorAvatar: d.author?.avatar,
+          createdAt: d.createdAt,
+          updatedAt: d.updatedAt
+        })),
+        total,
+        page: Number(page),
+        limit: Number(limit)
+      }
+    })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '获取帖子列表失败', error: error.message })
+  }
+}
+
+// 管理员获取评论列表（带分页、筛选）
+export const adminGetComments = async (req: Request, res: Response) => {
+  try {
+    const { page = 1, limit = 20, status, keyword, discussionId } = req.query
+    const skip = (Number(page) - 1) * Number(limit)
+    const take = Number(limit)
+
+    const where: any = {}
+    if (status && status !== 'all') where.status = status as string
+    if (discussionId) where.discussionId = discussionId as string
+    if (keyword) where.content = { contains: keyword as string }
+
+    const [comments, total] = await Promise.all([
+      prisma.comment.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          author: { select: { id: true, username: true, avatar: true } },
+          discussion: { select: { id: true, title: true } }
+        }
+      }),
+      prisma.comment.count({ where })
+    ])
+
+    res.json({
+      success: true,
+      data: {
+        items: comments.map(c => ({
+          id: c.id,
+          content: c.content,
+          status: c.status,
+          likes: c.likes,
+          author: c.author?.username || '匿名用户',
+          authorId: c.author?.id,
+          authorAvatar: c.author?.avatar,
+          discussionId: c.discussionId,
+          discussionTitle: c.discussion?.title || '-',
+          createdAt: c.createdAt,
+          updatedAt: c.updatedAt
+        })),
+        total,
+        page: Number(page),
+        limit: Number(limit)
+      }
+    })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '获取评论列表失败', error: error.message })
+  }
+}
+
+// 隐藏/显示帖子
+export const toggleDiscussionStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    const newStatus = discussion.status === 'published' ? 'hidden' : 'published'
+    await prisma.discussion.update({ where: { id }, data: { status: newStatus } })
+    res.json({ success: true, message: newStatus === 'hidden' ? '帖子已隐藏' : '帖子已显示', data: { status: newStatus } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '操作失败', error: error.message })
+  }
+}
+
+// 置顶/取消置顶帖子
+export const toggleDiscussionPin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    const newPinned = !discussion.isPinned
+    await prisma.discussion.update({ where: { id }, data: { isPinned: newPinned } })
+    res.json({ success: true, message: newPinned ? '帖子已置顶' : '已取消置顶', data: { isPinned: newPinned } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '操作失败', error: error.message })
+  }
+}
+
+// 删除帖子（管理员）
+export const adminDeleteDiscussion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    await prisma.discussion.delete({ where: { id } })
+    res.json({ success: true, message: '帖子已删除' })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '删除失败', error: error.message })
+  }
+}
+
+// 批量删除帖子
+export const batchDeleteDiscussions = async (req: Request, res: Response) => {
+  try {
+    const { ids } = req.body
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: '请提供要删除的帖子ID列表' })
+    }
+    const result = await prisma.discussion.deleteMany({ where: { id: { in: ids } } })
+    res.json({ success: true, message: `成功删除 ${result.count} 篇帖子`, data: { deletedCount: result.count } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '批量删除失败', error: error.message })
+  }
+}
+
+// 隐藏/显示评论
+export const toggleCommentStatus = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const comment = await prisma.comment.findUnique({ where: { id } })
+    if (!comment) return res.status(404).json({ success: false, message: '评论不存在' })
+
+    const newStatus = comment.status === 'visible' ? 'hidden' : 'visible'
+    await prisma.comment.update({ where: { id }, data: { status: newStatus } })
+    res.json({ success: true, message: newStatus === 'hidden' ? '评论已隐藏' : '评论已显示', data: { status: newStatus } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '操作失败', error: error.message })
+  }
+}
+
+// 删除评论（管理员）
+export const adminDeleteComment = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const comment = await prisma.comment.findUnique({ where: { id } })
+    if (!comment) return res.status(404).json({ success: false, message: '评论不存在' })
+
+    await prisma.comment.delete({ where: { id } })
+    res.json({ success: true, message: '评论已删除' })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '删除失败', error: error.message })
+  }
+}
+
+// 批量删除评论
+export const batchDeleteComments = async (req: Request, res: Response) => {
+  try {
+    const { ids } = req.body
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: '请提供要删除的评论ID列表' })
+    }
+    const result = await prisma.comment.deleteMany({ where: { id: { in: ids } } })
+    res.json({ success: true, message: `成功删除 ${result.count} 条评论`, data: { deletedCount: result.count } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '批量删除失败', error: error.message })
   }
 }
 

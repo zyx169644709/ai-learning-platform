@@ -41,6 +41,17 @@ import {
   batchDeleteResources,
   batchPublishResources
 } from '../controllers/resourceController'
+import {
+  adminGetDiscussions,
+  adminGetComments,
+  toggleDiscussionStatus,
+  toggleDiscussionPin,
+  adminDeleteDiscussion,
+  batchDeleteDiscussions,
+  toggleCommentStatus,
+  adminDeleteComment,
+  batchDeleteComments
+} from '../controllers/communityController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
 
@@ -97,6 +108,17 @@ router.put('/resources/:id', authMiddleware, requireAdmin, updateResource)
 router.delete('/resources/:id', authMiddleware, requireAdmin, deleteResource)
 router.post('/resources/batch-delete', authMiddleware, requireAdmin, batchDeleteResources)
 router.post('/resources/batch-publish', authMiddleware, requireAdmin, batchPublishResources)
+
+// 社区管理
+router.get('/community/discussions', authMiddleware, requireAdmin, adminGetDiscussions)
+router.get('/community/comments', authMiddleware, requireAdmin, adminGetComments)
+router.post('/community/discussions/:id/toggle-status', authMiddleware, requireAdmin, toggleDiscussionStatus)
+router.post('/community/discussions/:id/toggle-pin', authMiddleware, requireAdmin, toggleDiscussionPin)
+router.delete('/community/discussions/:id', authMiddleware, requireAdmin, adminDeleteDiscussion)
+router.post('/community/discussions/batch-delete', authMiddleware, requireAdmin, batchDeleteDiscussions)
+router.post('/community/comments/:id/toggle-status', authMiddleware, requireAdmin, toggleCommentStatus)
+router.delete('/community/comments/:id', authMiddleware, requireAdmin, adminDeleteComment)
+router.post('/community/comments/batch-delete', authMiddleware, requireAdmin, batchDeleteComments)
 
 export default router
 module.exports = router
