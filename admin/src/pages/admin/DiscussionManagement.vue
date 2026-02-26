@@ -48,15 +48,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="author" label="作者" width="120" />
-        <el-table-column prop="views" label="浏览" width="75" align="center" header-align="center" />
-        <el-table-column prop="likes" label="点赞" width="75" align="center" header-align="center" />
-        <el-table-column prop="commentCount" label="评论" width="75" align="center" header-align="center" />
         <el-table-column prop="createdAt" label="发布时间" width="160" align="center" header-align="center">
           <template #default="{ row }">
             {{ formatRelativeTime(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="210" fixed="right">
+        <el-table-column label="操作" width="260" fixed="right">
           <template #default="{ row }">
             <el-button type="warning" link @click="togglePin(row)">
               {{ row.isPinned ? '取消置顶' : '置顶' }}
@@ -64,6 +61,16 @@
             <el-button :type="row.status === 'hidden' ? 'success' : 'warning'" link @click="toggleStatus(row)">
               {{ row.status === 'hidden' ? '显示' : '隐藏' }}
             </el-button>
+            <el-popover placement="top" :width="160" trigger="click">
+              <template #reference>
+                <el-button type="info" link>统计</el-button>
+              </template>
+              <div class="stats-popover">
+                <div class="stat-item"><span>浏览</span><strong>{{ row.views ?? 0 }}</strong></div>
+                <div class="stat-item"><span>点赞</span><strong>{{ row.likes ?? 0 }}</strong></div>
+                <div class="stat-item"><span>评论</span><strong>{{ row.commentCount ?? 0 }}</strong></div>
+              </div>
+            </el-popover>
             <el-button type="danger" link @click="deleteDiscussion(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -231,5 +238,24 @@ onMounted(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+.stats-popover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #606266;
+}
+
+.stat-item strong {
+  color: #303133;
+  font-size: 15px;
 }
 </style>
