@@ -54,17 +54,9 @@ export const getDiscussions = async (req: Request, res: Response) => {
             createdAt: true
           }
         },
-        comments: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
-                bio: true,
-                createdAt: true
-              }
-            }
+        _count: {
+          select: {
+            comments: { where: { status: 'visible' } }
           }
         }
       },
@@ -83,7 +75,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
       category: discussion.category.toLowerCase(),
       isPinned: discussion.isPinned,
       views: discussion.views,
-      replies: discussion.comments.length,
+      replies: (discussion as any)._count?.comments ?? 0,
       likes: discussion.likes,
       author: discussion.author?.username || '匿名用户',
       authorAvatar: discussion.author?.avatar || null,
@@ -95,23 +87,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
         joinDate: discussion.author?.createdAt ? formatTimeAgo(discussion.author.createdAt) : '未知时间'
       },
       time: formatTimeAgo(discussion.createdAt),
-      isLiked: false, // 这里可以后续添加用户点赞状态
-      comments: discussion.comments.map(comment => ({
-        id: comment.id,
-        content: comment.content,
-        author: comment.author?.username || '匿名用户',
-        authorAvatar: comment.author?.avatar || null,
-        authorInfo: {
-          id: comment.author?.id || 'temp-id',
-          username: comment.author?.username || '匿名用户',
-          avatar: comment.author?.avatar || null,
-          bio: comment.author?.bio || '这是一个活跃的社区成员',
-          joinDate: comment.author?.createdAt ? formatTimeAgo(comment.author.createdAt) : '未知时间'
-        },
-        time: formatTimeAgo(comment.createdAt),
-        likes: comment.likes,
-        isLiked: false
-      }))
+      isLiked: false
     }))
     
     res.json(formattedDiscussions)
@@ -221,6 +197,7 @@ export const getDiscussionById = async (req: Request, res: Response) => {
           }
         },
         comments: {
+          where: { status: 'visible' },
           include: {
             author: {
               select: {

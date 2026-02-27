@@ -28,9 +28,9 @@
         <el-table-column type="selection" width="55" />
         <el-table-column prop="content" label="评论内容" min-width="280">
           <template #default="{ row }">
-            <div class="comment-content">
-              <el-tag v-if="row.status === 'hidden'" type="danger" size="small" style="margin-right: 6px;">隐藏</el-tag>
-              <span>{{ row.content }}</span>
+            <div class="comment-content" @click.stop="viewContent(row)">
+              <el-tag v-if="row.status === 'hidden'" type="danger" size="small" style="flex-shrink: 0; margin-right: 6px;">隐藏</el-tag>
+              <span class="content-text">{{ row.content }}</span>
             </div>
           </template>
         </el-table-column>
@@ -72,6 +72,14 @@
         />
       </div>
     </el-card>
+
+    <!-- 评论内容预览弹窗 -->
+    <el-dialog v-model="showContentDialog" title="评论内容" width="500px">
+      <div class="content-preview">{{ previewContent }}</div>
+      <template #footer>
+        <el-button @click="showContentDialog = false">关闭</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 创建评论对话框 -->
     <el-dialog v-model="showDialog" title="创建评论" width="600px">
@@ -129,6 +137,13 @@ const pagination = reactive({ page: 1, size: 20, total: 0 })
 
 const showDialog = ref(false)
 const saving = ref(false)
+const showContentDialog = ref(false)
+const previewContent = ref('')
+
+const viewContent = (row: any) => {
+  previewContent.value = row.content
+  showContentDialog.value = true
+}
 const formRef = ref<FormInstance>()
 const commentForm = reactive({ discussionId: '', content: '' })
 const discussionOptions = ref<any[]>([])
@@ -218,7 +233,8 @@ const toggleStatus = async (row: any) => {
     const res = await request.post(`/admin/community/comments/${row.id}/toggle-status`)
     if (res.data.success) {
       ElMessage.success(res.data.message)
-      row.status = res.data.data.status
+      const idx = comments.value.findIndex(c => c.id === row.id)
+      if (idx !== -1) comments.value[idx].status = res.data.data.status
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '操作失败')
@@ -280,8 +296,24 @@ onMounted(() => {
 
 .comment-content {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 4px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.content-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.content-preview {
+  white-space: pre-wrap;
   word-break: break-all;
+  line-height: 1.8;
+  color: var(--el-text-color-primary);
 }
 </style>
