@@ -18,6 +18,9 @@
           <el-option label="已隐藏" value="hidden" />
         </el-select>
       </el-form-item>
+      <template #extra-buttons>
+        <el-button type="success" @click="createComment">创建评论</el-button>
+      </template>
     </FilterBar>
 
     <el-card>
@@ -69,12 +72,49 @@
         />
       </div>
     </el-card>
+
+    <!-- 创建评论对话框 -->
+    <el-dialog v-model="showDialog" title="创建评论" width="600px">
+      <el-form :model="commentForm" :rules="formRules" ref="formRef" label-width="90px">
+        <el-form-item label="所属帖子" prop="discussionId">
+          <el-select
+            v-model="commentForm.discussionId"
+            placeholder="搜索并选择帖子"
+            filterable
+            remote
+            :remote-method="searchDiscussions"
+            :loading="discussionSearchLoading"
+            style="width: 100%;"
+          >
+            <el-option
+              v-for="d in discussionOptions"
+              :key="d.id"
+              :label="d.title"
+              :value="d.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="评论内容" prop="content">
+          <el-input
+            v-model="commentForm.content"
+            type="textarea"
+            :rows="6"
+            placeholder="请输入评论内容"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveComment" :loading="saving">创建</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { formatRelativeTime } from '@/utils/format'
 import request from '@/utils/request'
 import PageHeader from '@/components/PageHeader.vue'
@@ -86,6 +126,58 @@ const comments = ref<any[]>([])
 const selectedItems = ref<any[]>([])
 const filterForm = reactive({ keyword: '', status: '' })
 const pagination = reactive({ page: 1, size: 20, total: 0 })
+
+const showDialog = ref(false)
+const saving = ref(false)
+const formRef = ref<FormInstance>()
+const commentForm = reactive({ discussionId: '', content: '' })
+const discussionOptions = ref<any[]>([])
+const discussionSearchLoading = ref(false)
+
+const formRules: FormRules = {
+  discussionId: [{ required: true, message: '请选择所属帖子', trigger: 'change' }],
+  content: [{ required: true, message: '请输入评论内容', trigger: 'blur' }]
+}
+
+const createComment = async () => {
+  commentForm.discussionId = ''
+  commentForm.content = ''
+  discussionOptions.value = []
+  await searchDiscussions('')
+  showDialog.value = true
+}
+
+const searchDiscussions = async (keyword: string) => {
+  discussionSearchLoading.value = true
+  try {
+    const res = await request.get('/admin/community/discussions', { params: { keyword, limit: 20 } })
+    if (res.data.success) discussionOptions.value = res.data.data.items
+  } catch {
+    // ignore
+  } finally {
+    discussionSearchLoading.value = false
+  }
+}
+
+const saveComment = async () => {
+  if (!formRef.value) return
+  await formRef.value.validate(async (valid) => {
+    if (!valid) return
+    saving.value = true
+    try {
+      const res = await request.post('/admin/community/comments', commentForm)
+      if (res.data.success) {
+        ElMessage.success('评论创建成功')
+        showDialog.value = false
+        loadComments()
+      }
+    } catch (error: any) {
+      ElMessage.error(error.response?.data?.message || '创建失败')
+    } finally {
+      saving.value = false
+    }
+  })
+}
 
 const loadComments = async () => {
   try {

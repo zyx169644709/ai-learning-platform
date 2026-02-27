@@ -621,6 +621,122 @@ export const batchDeleteComments = async (req: Request, res: Response) => {
   }
 }
 
+// 管理员创建帖子
+export const adminCreateDiscussion = async (req: Request, res: Response) => {
+  try {
+    const { title, content, category } = req.body
+    if (!title || !content || !category) {
+      return res.status(400).json({ success: false, message: '标题、内容和分类不能为空' })
+    }
+    const authorId = getUserIdFromRequest(req)
+    if (!authorId) return res.status(401).json({ success: false, message: '未授权' })
+
+    const discussion = await prisma.discussion.create({
+      data: {
+        title,
+        content,
+        category: (category as string).toUpperCase() as any,
+        authorId,
+        views: 0,
+        likes: 0
+      },
+      include: { author: { select: { id: true, username: true, avatar: true } } }
+    })
+    res.status(201).json({
+      success: true,
+      message: '帖子创建成功',
+      data: {
+        id: discussion.id,
+        title: discussion.title,
+        category: discussion.category,
+        author: discussion.author?.username || '管理员',
+        createdAt: discussion.createdAt,
+        views: 0,
+        likes: 0,
+        commentCount: 0,
+        status: 'published',
+        isPinned: false
+      }
+    })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '创建帖子失败', error: error.message })
+  }
+}
+
+// 管理员编辑帖子
+export const adminUpdateDiscussion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const { title, content, category } = req.body
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    const updateData: any = {}
+    if (title !== undefined) updateData.title = title
+    if (content !== undefined) updateData.content = content
+    if (category !== undefined) updateData.category = (category as string).toUpperCase() as any
+
+    const updated = await prisma.discussion.update({
+      where: { id },
+      data: updateData,
+      include: { author: { select: { id: true, username: true, avatar: true } } }
+    })
+    res.json({
+      success: true,
+      message: '帖子更新成功',
+      data: {
+        id: updated.id,
+        title: updated.title,
+        category: updated.category,
+        author: updated.author?.username || '管理员',
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt
+      }
+    })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '更新帖子失败', error: error.message })
+  }
+}
+
+// 管理员创建评论
+export const adminCreateComment = async (req: Request, res: Response) => {
+  try {
+    const { discussionId, content } = req.body
+    if (!discussionId || !content) {
+      return res.status(400).json({ success: false, message: '所属帖子和评论内容不能为空' })
+    }
+    const discussion = await prisma.discussion.findUnique({ where: { id: discussionId } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    const authorId = getUserIdFromRequest(req)
+    if (!authorId) return res.status(401).json({ success: false, message: '未授权' })
+
+    const comment = await prisma.comment.create({
+      data: { content, authorId, discussionId, likes: 0 },
+      include: {
+        author: { select: { id: true, username: true, avatar: true } },
+        discussion: { select: { id: true, title: true } }
+      }
+    })
+    res.status(201).json({
+      success: true,
+      message: '评论创建成功',
+      data: {
+        id: comment.id,
+        content: comment.content,
+        author: comment.author?.username || '管理员',
+        discussionTitle: comment.discussion?.title || '',
+        discussionId: comment.discussionId,
+        likes: 0,
+        createdAt: comment.createdAt,
+        status: 'visible'
+      }
+    })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '创建评论失败', error: error.message })
+  }
+}
+
 // 格式化时间显示
 function formatTimeAgo(date: Date): string {
   const now = new Date()

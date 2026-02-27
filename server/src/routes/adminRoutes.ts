@@ -50,7 +50,10 @@ import {
   batchDeleteDiscussions,
   toggleCommentStatus,
   adminDeleteComment,
-  batchDeleteComments
+  batchDeleteComments,
+  adminCreateDiscussion,
+  adminUpdateDiscussion,
+  adminCreateComment
 } from '../controllers/communityController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
@@ -111,9 +114,12 @@ router.post('/resources/batch-publish', authMiddleware, requireAdmin, batchPubli
 
 // 社区管理
 router.get('/community/discussions', authMiddleware, requireAdmin, adminGetDiscussions)
+router.post('/community/discussions', authMiddleware, requireAdmin, adminCreateDiscussion)
 router.get('/community/comments', authMiddleware, requireAdmin, adminGetComments)
+router.post('/community/comments', authMiddleware, requireAdmin, adminCreateComment)
 router.post('/community/discussions/:id/toggle-status', authMiddleware, requireAdmin, toggleDiscussionStatus)
 router.post('/community/discussions/:id/toggle-pin', authMiddleware, requireAdmin, toggleDiscussionPin)
+router.put('/community/discussions/:id', authMiddleware, requireAdmin, adminUpdateDiscussion)
 router.delete('/community/discussions/:id', authMiddleware, requireAdmin, adminDeleteDiscussion)
 router.post('/community/discussions/batch-delete', authMiddleware, requireAdmin, batchDeleteDiscussions)
 router.post('/community/comments/:id/toggle-status', authMiddleware, requireAdmin, toggleCommentStatus)

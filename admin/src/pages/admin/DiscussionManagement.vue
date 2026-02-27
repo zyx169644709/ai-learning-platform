@@ -1,5 +1,6 @@
 <template>
   <div class="discussion-management">
+    <!-- 页面标题 -->
     <PageHeader title="帖子管理" />
 
     <FilterBar v-model="filterForm" @search="loadDiscussions" @reset="resetFilter">
@@ -26,6 +27,9 @@
           <el-option label="已隐藏" value="hidden" />
         </el-select>
       </el-form-item>
+      <template #extra-buttons>
+        <el-button type="success" @click="createDiscussion">创建帖子</el-button>
+      </template>
     </FilterBar>
 
     <el-card>
@@ -70,6 +74,7 @@
                 { label: '评论数', value: row.commentCount }
               ]"
             />
+            <el-button type="primary" link @click="editDiscussion(row)">编辑</el-button>
             <el-button type="danger" link @click="deleteDiscussion(row)">删除</el-button>
           </template>
         </el-table-column>
@@ -91,12 +96,43 @@
         />
       </div>
     </el-card>
+    <!-- 创建/编辑帖子对话框 -->
+    <el-dialog v-model="showDialog" :title="editingDiscussion ? '编辑帖子' : '创建帖子'" width="700px">
+      <el-form :model="discussionForm" :rules="formRules" ref="formRef" label-width="80px">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="discussionForm.title" placeholder="请输入帖子标题" />
+        </el-form-item>
+        <el-form-item label="分类" prop="category">
+          <el-select v-model="discussionForm.category" placeholder="请选择分类" style="width: 100%;">
+            <el-option label="技术讨论" value="TECH" />
+            <el-option label="学习经验" value="EXPERIENCE" />
+            <el-option label="项目分享" value="PROJECT" />
+            <el-option label="问题求助" value="HELP" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="内容" prop="content">
+          <el-input
+            v-model="discussionForm.content"
+            type="textarea"
+            :rows="8"
+            placeholder="请输入帖子内容（支持 Markdown）"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="showDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveDiscussion" :loading="saving">
+          {{ editingDiscussion ? '保存' : '创建' }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import StatsDisplay from '@/components/StatsDisplay.vue'
+import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatRelativeTime } from '@/utils/format'
 import request from '@/utils/request'
@@ -109,6 +145,63 @@ const discussions = ref<any[]>([])
 const selectedItems = ref<any[]>([])
 const filterForm = reactive({ keyword: '', category: '', status: '' })
 const pagination = reactive({ page: 1, size: 20, total: 0 })
+
+const showDialog = ref(false)
+const saving = ref(false)
+const editingDiscussion = ref<any>(null)
+const formRef = ref<FormInstance>()
+const discussionForm = reactive({ title: '', category: '', content: '' })
+
+const formRules: FormRules = {
+  title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+  category: [{ required: true, message: '请选择分类', trigger: 'change' }],
+  content: [{ required: true, message: '请输入内容', trigger: 'blur' }]
+}
+
+const createDiscussion = () => {
+  editingDiscussion.value = null
+  discussionForm.title = ''
+  discussionForm.category = ''
+  discussionForm.content = ''
+  showDialog.value = true
+}
+
+const editDiscussion = (row: any) => {
+  editingDiscussion.value = row
+  discussionForm.title = row.title
+  discussionForm.category = row.category
+  discussionForm.content = row.content || ''
+  showDialog.value = true
+}
+
+const saveDiscussion = async () => {
+  if (!formRef.value) return
+  await formRef.value.validate(async (valid) => {
+    if (!valid) return
+    saving.value = true
+    try {
+      if (editingDiscussion.value) {
+        const res = await request.put(`/admin/community/discussions/${editingDiscussion.value.id}`, discussionForm)
+        if (res.data.success) {
+          ElMessage.success('帖子更新成功')
+          Object.assign(editingDiscussion.value, { title: discussionForm.title, category: discussionForm.category })
+          showDialog.value = false
+        }
+      } else {
+        const res = await request.post('/admin/community/discussions', discussionForm)
+        if (res.data.success) {
+          ElMessage.success('帖子创建成功')
+          showDialog.value = false
+          loadDiscussions()
+        }
+      }
+    } catch (error: any) {
+      ElMessage.error(error.response?.data?.message || '操作失败')
+    } finally {
+      saving.value = false
+    }
+  })
+}
 
 const loadDiscussions = async () => {
   try {
