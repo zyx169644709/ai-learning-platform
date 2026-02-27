@@ -57,14 +57,9 @@
             {{ formatRelativeTime(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="warning" link @click="togglePin(row)">
-              {{ row.isPinned ? '取消置顶' : '置顶' }}
-            </el-button>
-            <el-button :type="row.status === 'hidden' ? 'success' : 'warning'" link @click="toggleStatus(row)">
-              {{ row.status === 'hidden' ? '显示' : '隐藏' }}
-            </el-button>
+            <el-button type="primary" link @click="editDiscussion(row)">编辑</el-button>
             <StatsDisplay
               mode="dialog"
               title="帖子统计"
@@ -74,8 +69,22 @@
                 { label: '评论数', value: row.commentCount }
               ]"
             />
-            <el-button type="primary" link @click="editDiscussion(row)">编辑</el-button>
-            <el-button type="danger" link @click="deleteDiscussion(row)">删除</el-button>
+            <el-dropdown @command="(cmd: string) => handleCommand(cmd, row)" trigger="click">
+              <el-button type="primary" link class="el-dropdown-link">
+                更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="pin">
+                    {{ row.isPinned ? '取消置顶' : '置顶' }}
+                  </el-dropdown-item>
+                  <el-dropdown-item command="status">
+                    {{ row.status === 'hidden' ? '显示' : '隐藏' }}
+                  </el-dropdown-item>
+                  <el-dropdown-item command="delete" divided>删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -140,6 +149,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
 import { useFilter } from '@/composables/useFilter'
+import { ArrowDown } from '@element-plus/icons-vue'
 
 const discussions = ref<any[]>([])
 const selectedItems = ref<any[]>([])
@@ -239,44 +249,42 @@ const { debouncedSearch } = useFilter({
   }
 })
 
-const togglePin = async (row: any) => {
-  try {
-    const res = await request.post(`/admin/community/discussions/${row.id}/toggle-pin`)
-    if (res.data.success) {
-      ElMessage.success(res.data.message)
-      row.isPinned = res.data.data.isPinned
+const handleCommand = async (cmd: string, row: any) => {
+  if (cmd === 'pin') {
+    try {
+      const res = await request.post(`/admin/community/discussions/${row.id}/toggle-pin`)
+      if (res.data.success) {
+        ElMessage.success(res.data.message)
+        row.isPinned = res.data.data.isPinned
+      }
+    } catch (error: any) {
+      ElMessage.error(error.response?.data?.message || '操作失败')
     }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '操作失败')
-  }
-}
-
-const toggleStatus = async (row: any) => {
-  try {
-    const res = await request.post(`/admin/community/discussions/${row.id}/toggle-status`)
-    if (res.data.success) {
-      ElMessage.success(res.data.message)
-      row.status = res.data.data.status
+  } else if (cmd === 'status') {
+    try {
+      const res = await request.post(`/admin/community/discussions/${row.id}/toggle-status`)
+      if (res.data.success) {
+        ElMessage.success(res.data.message)
+        row.status = res.data.data.status
+      }
+    } catch (error: any) {
+      ElMessage.error(error.response?.data?.message || '操作失败')
     }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.message || '操作失败')
-  }
-}
-
-const deleteDiscussion = async (row: any) => {
-  try {
-    await ElMessageBox.confirm(`确定要删除帖子「${row.title}」吗？此操作不可恢复！`, '删除确认', {
-      type: 'warning',
-      confirmButtonText: '确认删除',
-      cancelButtonText: '取消'
-    })
-    const res = await request.delete(`/admin/community/discussions/${row.id}`)
-    if (res.data.success) {
-      ElMessage.success(res.data.message)
-      loadDiscussions()
+  } else if (cmd === 'delete') {
+    try {
+      await ElMessageBox.confirm(`确定要删除帖子「${row.title}」吗？此操作不可恢复！`, '删除确认', {
+        type: 'warning',
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消'
+      })
+      const res = await request.delete(`/admin/community/discussions/${row.id}`)
+      if (res.data.success) {
+        ElMessage.success(res.data.message)
+        loadDiscussions()
+      }
+    } catch (error: any) {
+      if (error !== 'cancel') ElMessage.error(error.response?.data?.message || '删除失败')
     }
-  } catch (error: any) {
-    if (error !== 'cancel') ElMessage.error(error.response?.data?.message || '删除失败')
   }
 }
 
@@ -331,5 +339,35 @@ onMounted(() => {
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+/* 操作列左对齐 */
+:deep(.el-table .el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+:deep(.el-table th.el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+/* 操作列按钮间距 */
+:deep(.el-table .el-table__cell:last-child .el-button) {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-button:last-child) {
+  margin-right: 0;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-dropdown) {
+  margin-left: 0;
+  vertical-align: middle;
+}
+
+:deep(.el-table .el-table__cell:last-child .el-dropdown .el-tooltip__trigger) {
+  vertical-align: middle;
 }
 </style>
