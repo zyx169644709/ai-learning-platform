@@ -42,6 +42,7 @@
 
       <div v-else class="grid">
         <div class="card" v-for="d in filtered" :key="d.id" @click="viewDiscussion(d)">
+          <span v-if="d.isPinned" class="pin-badge">📌 置顶</span>
           <div class="meta">
             <div class="row top">
 
@@ -367,6 +368,21 @@ a:hover {
   border-bottom: 1px solid var(--border-color);
   padding: 16px 8px;
   transition: background .15s ease;
+  position: relative;
+}
+
+.pin-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 0 0 0 8px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
 }
 
 .card:hover {

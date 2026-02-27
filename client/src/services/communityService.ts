@@ -28,6 +28,7 @@ export interface Discussion {
   excerpt: string
   content: string
   category: 'tech' | 'experience' | 'project' | 'help'
+  isPinned?: boolean
   views: number
   replies: number
   likes: number

@@ -27,7 +27,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
   try {
     const { category, search } = req.query
     
-    let whereClause: any = {}
+    let whereClause: any = { status: 'published' }
     
     // 按分类筛选
     if (category && category !== 'all' && typeof category === 'string') {
@@ -68,9 +68,10 @@ export const getDiscussions = async (req: Request, res: Response) => {
           }
         }
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: [
+        { isPinned: 'desc' },
+        { createdAt: 'desc' }
+      ]
     })
     
     // 转换数据格式以匹配前端
@@ -80,6 +81,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
       excerpt: discussion.content.length > 100 ? discussion.content.substring(0, 100) + '...' : discussion.content,
       content: discussion.content,
       category: discussion.category.toLowerCase(),
+      isPinned: discussion.isPinned,
       views: discussion.views,
       replies: discussion.comments.length,
       likes: discussion.likes,
@@ -446,6 +448,7 @@ export const adminGetDiscussions = async (req: Request, res: Response) => {
         items: discussions.map(d => ({
           id: d.id,
           title: d.title,
+          content: d.content,
           category: d.category,
           status: d.status,
           isPinned: d.isPinned,

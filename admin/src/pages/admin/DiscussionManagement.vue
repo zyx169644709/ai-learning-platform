@@ -255,7 +255,8 @@ const handleCommand = async (cmd: string, row: any) => {
       const res = await request.post(`/admin/community/discussions/${row.id}/toggle-pin`)
       if (res.data.success) {
         ElMessage.success(res.data.message)
-        row.isPinned = res.data.data.isPinned
+        const idx = discussions.value.findIndex(d => d.id === row.id)
+        if (idx !== -1) discussions.value[idx].isPinned = res.data.data.isPinned
       }
     } catch (error: any) {
       ElMessage.error(error.response?.data?.message || '操作失败')
@@ -265,7 +266,8 @@ const handleCommand = async (cmd: string, row: any) => {
       const res = await request.post(`/admin/community/discussions/${row.id}/toggle-status`)
       if (res.data.success) {
         ElMessage.success(res.data.message)
-        row.status = res.data.data.status
+        const idx = discussions.value.findIndex(d => d.id === row.id)
+        if (idx !== -1) discussions.value[idx].status = res.data.data.status
       }
     } catch (error: any) {
       ElMessage.error(error.response?.data?.message || '操作失败')
