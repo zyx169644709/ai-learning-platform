@@ -138,4 +138,10 @@ const toggleMode = () => prefs.setSidebarDefaultExpanded(!prefs.sidebarDefaultEx
   padding: 16px 24px;
   margin: 0;
 }
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}
 </style>

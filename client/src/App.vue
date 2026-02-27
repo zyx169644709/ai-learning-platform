@@ -53,22 +53,23 @@ const showSidebars = computed(() => !route.meta?.topOnly && !route.meta?.fullScr
 .main-content.no-left { left: 0; }
 .main-content.no-right { right: 0; }
 
-/* 响应式设计 */
+/* 响应式设计：中间内容优先，小屏幕隐藏两侧 */
 @media (max-width: 1200px) {
   .main-content {
-    right: 280px;
+    right: 0;
+  }
+  .ai-panel {
+    display: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .main-content {
-    right: 240px;
+    left: 0;
+    right: 0;
   }
-}
-
-@media (max-width: 600px) {
-  .main-content {
-    right: 200px;
+  #app > aside.sidebar {
+    display: none !important;
   }
 }
 
