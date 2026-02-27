@@ -26,7 +26,7 @@
             <el-icon><Document /></el-icon>
             <span>内容管理</span>
           </template>
-          <el-menu-item index="/admin/content">课程管理</el-menu-item>
+          <el-menu-item index="/admin/courses">课程管理</el-menu-item>
           <el-menu-item index="/admin/chapters">章节管理</el-menu-item>
           <el-menu-item index="/admin/resources">资源管理</el-menu-item>
         </el-sub-menu>

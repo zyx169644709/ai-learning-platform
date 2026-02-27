@@ -66,7 +66,7 @@
       <div class="quick-actions">
         <el-card header="快速操作">
           <div class="action-grid">
-            <el-button type="primary" @click="$router.push('/admin/content')">
+            <el-button type="primary" @click="$router.push('/admin/courses')">
               <el-icon><Plus /></el-icon>
               创建课程
             </el-button>

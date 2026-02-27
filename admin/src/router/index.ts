@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
         component: Dashboard
       },
       {
-        path: 'content',
+        path: 'courses',
         name: 'CourseManagement',
         component: CourseManagement
       },

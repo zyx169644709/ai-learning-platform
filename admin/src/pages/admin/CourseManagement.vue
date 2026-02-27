@@ -1,5 +1,5 @@
 <template>
-  <div class="content-management">
+  <div class="course-management">
     <!-- 页面标题 -->
     <PageHeader title="课程管理" />
 
@@ -460,7 +460,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.content-management {
+.course-management {
   padding: 20px;
 }
 
