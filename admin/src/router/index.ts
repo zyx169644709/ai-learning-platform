@@ -5,7 +5,7 @@ import AdminLayout from '@/layouts/AdminLayout.vue'
 
 // 懒加载页面组件
 const Dashboard = () => import('@/pages/admin/Dashboard.vue')
-const ContentManagement = () => import('@/pages/admin/ContentManagement.vue')
+const CourseManagement = () => import('@/pages/admin/CourseManagement.vue')
 const UserManagement = () => import('@/pages/admin/UserManagement.vue')
 const ChapterManagement = () => import('@/pages/admin/ChapterManagement.vue')
 const ResourceManagement = () => import('@/pages/admin/ResourceManagement.vue')
@@ -37,8 +37,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'content',
-        name: 'ContentManagement',
-        component: ContentManagement
+        name: 'CourseManagement',
+        component: CourseManagement
       },
       {
         path: 'users',
