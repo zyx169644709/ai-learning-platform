@@ -68,19 +68,23 @@
             <div style="display: flex; gap: 12px;">
               <el-select 
                 v-model="trendPeriod" 
-                size="small" 
-                style="width: 120px;"
+                class="trend-select" 
                 @change="handleTrendPeriodChange"
               >
                 <el-option label="本周" value="week" />
                 <el-option label="近一个月" value="month" />
                 <el-option label="近六个月" value="halfYear" />
               </el-select>
-              <el-segmented 
+              <el-select 
                 v-model="trendChartType" 
-                :options="['新增用户', '新增课程', '新增讨论']"
-                size="small"
-              />
+                class="trend-select"
+              >
+                <el-option label="新增用户" value="新增用户" />
+                <el-option label="新增课程" value="新增课程" />
+                <el-option label="新增讨论" value="新增讨论" />
+                <el-option label="新增章节" value="新增章节" />
+                <el-option label="新增评论" value="新增评论" />
+              </el-select>
             </div>
           </div>
         </template>
@@ -286,7 +290,7 @@ const statsCards = ref([
     subtext: '本周新增 0'
   },
   {
-    title: '总章节',
+    title: '总章节（含小节）',
     value: 0,
     trend: '+0%',
     icon: markRaw(Document),
@@ -307,7 +311,9 @@ const statsCards = ref([
 const trendData = ref<{ [key: string]: number[] }>({
   '新增用户': [],
   '新增课程': [],
-  '新增讨论': []
+  '新增讨论': [],
+  '新增章节': [],
+  '新增评论': []
 })
 
 const trendDates = ref<string[]>([])
@@ -638,7 +644,7 @@ const loadAllData = async () => {
     const filteredCourses = filterByTimeRange(allCourses, 'updatedAt')
     const filteredResources = filterByTimeRange(allResources, 'updatedAt')
     const filteredDiscussions = filterByTimeRange(allDiscussions, 'createdAt')
-    const filteredChapters = filterByTimeRange(allChapters, 'createdAt')
+    const filteredChapters = filterByTimeRange(allChapters, 'updatedAt')
     const filteredComments = filterByTimeRange(allComments, 'createdAt')
     
     // 更新统计卡片
@@ -684,8 +690,8 @@ const loadAllData = async () => {
     // 生成排行榜数据（使用所有数据，不过滤时间）
     generateRankData(allCourses, allResources, allUsers, allDiscussions)
     
-    // 生成趋势数据（最近7天）
-    generateTrendData(allUsers, allCourses, allDiscussions)
+    // 生成趋势数据
+    generateTrendData(allUsers, allCourses, allDiscussions, allChapters, allComments)
     
   } catch (error) {
     console.error('Failed to load analytics data:', error)
@@ -696,11 +702,13 @@ const loadAllData = async () => {
 }
 
 // 生成趋势数据
-const generateTrendData = (users: any[], courses: any[], discussions: any[]) => {
+const generateTrendData = (users: any[], courses: any[], discussions: any[], chapters: any[], comments: any[]) => {
   const dates: string[] = []
   const userCounts: number[] = []
   const courseCounts: number[] = []
   const discussionCounts: number[] = []
+  const chapterCounts: number[] = []
+  const commentCounts: number[] = []
   const now = new Date()
   
   if (trendPeriod.value === 'week') {
@@ -727,6 +735,16 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[]) => 
       discussionCounts.push(discussions.filter(d => {
         const date = new Date(d.createdAt)
         return date >= startDate && date <= endDate
+      }).length)
+      
+      chapterCounts.push(chapters.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= startDate && d <= endDate
+      }).length)
+      
+      commentCounts.push(comments.filter(c => {
+        const d = new Date(c.createdAt)
+        return d >= startDate && d <= endDate
       }).length)
     }
   } else if (trendPeriod.value === 'month') {
@@ -757,6 +775,16 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[]) => 
         const date = new Date(d.createdAt)
         return date >= weekStart && date <= weekEnd
       }).length)
+      
+      chapterCounts.push(chapters.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= weekStart && d <= weekEnd
+      }).length)
+      
+      commentCounts.push(comments.filter(c => {
+        const d = new Date(c.createdAt)
+        return d >= weekStart && d <= weekEnd
+      }).length)
     }
   } else {
     // 近六个月：最近6个月
@@ -781,6 +809,16 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[]) => 
         const date = new Date(d.createdAt)
         return date >= monthStart && date <= monthEnd
       }).length)
+      
+      chapterCounts.push(chapters.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= monthStart && d <= monthEnd
+      }).length)
+      
+      commentCounts.push(comments.filter(c => {
+        const d = new Date(c.createdAt)
+        return d >= monthStart && d <= monthEnd
+      }).length)
     }
   }
   
@@ -788,7 +826,9 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[]) => 
   trendData.value = {
     '新增用户': userCounts,
     '新增课程': courseCounts,
-    '新增讨论': discussionCounts
+    '新增讨论': discussionCounts,
+    '新增章节': chapterCounts,
+    '新增评论': commentCounts
   }
 }
 
@@ -929,7 +969,7 @@ const generateRankData = (courses: any[], resources: any[], users: any[], discus
 
 // 时间周期变化
 const handlePeriodChange = () => {
-  ElMessage.info(`已切换到${timePeriod.value}数据`)
+  ElMessage.success(`已切换到${timePeriod.value}数据`)
   loadAllData()
 }
 
@@ -977,7 +1017,7 @@ const exportReport = async () => {
     // 添加统计数据工作表
     const ws1 = XLSX.utils.json_to_sheet(statsData)
     ws1['!cols'] = [
-      { width: 15 },  // 指标
+      { width: 16 },  // 指标
       { width: 12 },  // 总数
       { width: 18 },  // 新增（动态列名）
       { width: 12 }   // 增长率
@@ -1208,6 +1248,22 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* 趋势图表选择框样式 */
+.trend-select {
+  width: 140px;
+}
+
+.trend-select :deep(.el-input__wrapper) {
+  font-size: 14px;
+  padding: 6px 12px;
+  min-height: 36px;
+}
+
+.trend-select :deep(.el-input__inner) {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /* 排行榜 */
