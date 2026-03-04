@@ -78,10 +78,6 @@
               <el-icon><DataAnalysis /></el-icon>
               数据分析
             </el-button>
-            <el-button type="info" @click="$router.push('/admin/settings')">
-              <el-icon><Setting /></el-icon>
-              系统设置
-            </el-button>
           </div>
         </el-card>
       </div>
@@ -115,8 +111,7 @@ import {
   TrendCharts, 
   Timer,
   Plus,
-  DataAnalysis,
-  Setting
+  DataAnalysis
 } from '@element-plus/icons-vue'
 
 // 统计数据

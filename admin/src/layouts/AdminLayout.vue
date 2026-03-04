@@ -50,15 +50,6 @@
           <el-menu-item index="/admin/community/comments">评论管理</el-menu-item>
         </el-sub-menu>
         
-        <el-sub-menu index="system">
-          <template #title>
-            <el-icon><Setting /></el-icon>
-            <span>系统设置</span>
-          </template>
-          <el-menu-item index="/admin/settings">基本设置</el-menu-item>
-          <el-menu-item index="/admin/settings/permissions">权限管理</el-menu-item>
-          <el-menu-item index="/admin/settings/logs">系统日志</el-menu-item>
-        </el-sub-menu>
       </el-menu>
     </div>
 
@@ -79,7 +70,6 @@ import {
   User,
   TrendCharts,
   ChatDotRound,
-  Setting
 } from '@element-plus/icons-vue'
 
 const sidebarCollapsed = ref(false)
