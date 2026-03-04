@@ -58,7 +58,6 @@
             </div>
             <div class="row bottom">
               <div class="stats">
-                <span class="stat">👁 {{ d.views }}</span>
                 <span class="stat">💬 {{ d.replies }}</span>
                 <span class="stat">👍 {{ d.likes }}</span>
                 <span class="badge" :class="d.category">{{ categoryText(d.category) }}</span>

@@ -17,7 +17,7 @@ model User {
   avatar          String?
   status          String           @default("active")
   lastLoginAt     DateTime?        @map("last_login_at")
-  role            UserRole         @default("USER")
+  role            UserRole         @default(USER)
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
   chapters        Chapter[]
