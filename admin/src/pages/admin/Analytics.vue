@@ -508,53 +508,84 @@ const formatNumber = (num: number) => {
   return num.toString()
 }
 
+// 计算时间范围
+const getTimeRange = () => {
+  const now = new Date()
+  let startDate: Date
+  
+  switch (timePeriod.value) {
+    case '今日':
+      // 今天 00:00 到现在
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      break
+    case '本周':
+      // 最近7天
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      break
+    case '本月':
+      // 最近30天
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      break
+    default:
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  }
+  
+  return { startDate, endDate: now }
+}
+
+// 过滤时间范围内的数据
+const filterByTimeRange = (items: any[], dateField: string = 'createdAt') => {
+  const { startDate } = getTimeRange()
+  return items.filter(item => {
+    const itemDate = new Date(item[dateField])
+    return itemDate >= startDate
+  })
+}
+
 // 加载所有数据
 const loadAllData = async () => {
   loading.value = true
   try {
     const [usersRes, coursesRes, resourcesRes, discussionsRes] = await Promise.all([
-      request.get('/admin/users?page=1&limit=100'),
-      request.get('/admin/courses?page=1&limit=100'),
-      request.get('/admin/resources?page=1&limit=100'),
-      request.get('/admin/community/discussions?page=1&limit=100')
+      request.get('/admin/users?page=1&limit=1000'),
+      request.get('/admin/courses?page=1&limit=1000'),
+      request.get('/admin/resources?page=1&limit=1000'),
+      request.get('/admin/community/discussions?page=1&limit=1000')
     ])
     
+    // 获取所有数据
+    const allUsers = usersRes.data?.data?.items || []
+    const allCourses = coursesRes.data?.data?.items || []
+    const allResources = resourcesRes.data?.data?.items || []
+    const allDiscussions = discussionsRes.data?.data?.items || []
+    
+    // 根据时间周期筛选数据（使用正确的日期字段）
+    const filteredUsers = filterByTimeRange(allUsers, 'registeredAt')
+    const filteredCourses = filterByTimeRange(allCourses, 'updatedAt')
+    const filteredResources = filterByTimeRange(allResources, 'updatedAt')
+    const filteredDiscussions = filterByTimeRange(allDiscussions, 'createdAt')
+    
     // 更新统计卡片
-    if (usersRes.data?.success) {
-      const total = usersRes.data.data?.total || 0
-      statsCards.value[0].value = total
-      statsCards.value[0].subtext = `本周新增 ${Math.floor(total * 0.026)}`
-      statsCards.value[0].trend = '+12%'
-    }
+    const periodText = timePeriod.value === '今日' ? '今日' : timePeriod.value === '本周' ? '本周' : '本月'
     
-    if (coursesRes.data?.success) {
-      const total = coursesRes.data.data?.total || 0
-      statsCards.value[1].value = total
-      statsCards.value[1].subtext = `本月新增 ${Math.floor(total * 0.054)}`
-      statsCards.value[1].trend = '+8%'
-    }
+    statsCards.value[0].value = usersRes.data?.data?.total || 0
+    statsCards.value[0].subtext = `${periodText}新增 ${filteredUsers.length}`
+    statsCards.value[0].trend = filteredUsers.length > 0 ? `+${filteredUsers.length}` : '0'
     
-    if (resourcesRes.data?.success) {
-      const total = resourcesRes.data.data?.total || 0
-      statsCards.value[2].value = total
-      statsCards.value[2].subtext = `本周新增 ${Math.floor(total * 0.034)}`
-      statsCards.value[2].trend = '+15%'
-    }
+    statsCards.value[1].value = coursesRes.data?.data?.total || 0
+    statsCards.value[1].subtext = `${periodText}新增 ${filteredCourses.length}`
+    statsCards.value[1].trend = filteredCourses.length > 0 ? `+${filteredCourses.length}` : '0'
     
-    if (discussionsRes.data?.success) {
-      const total = discussionsRes.data.data?.total || 0
-      statsCards.value[3].value = total
-      statsCards.value[3].subtext = `本周新增 ${Math.floor(total * 0.044)}`
-      statsCards.value[3].trend = '+22%'
-    }
+    statsCards.value[2].value = resourcesRes.data?.data?.total || 0
+    statsCards.value[2].subtext = `${periodText}新增 ${filteredResources.length}`
+    statsCards.value[2].trend = filteredResources.length > 0 ? `+${filteredResources.length}` : '0'
     
-    // 生成排行榜数据
-    generateRankData(
-      coursesRes.data?.data?.items || [], 
-      resourcesRes.data?.data?.items || [], 
-      usersRes.data?.data?.items || [], 
-      discussionsRes.data?.data?.items || []
-    )
+    statsCards.value[3].value = discussionsRes.data?.data?.total || 0
+    statsCards.value[3].subtext = `${periodText}新增 ${filteredDiscussions.length}`
+    statsCards.value[3].trend = filteredDiscussions.length > 0 ? `+${filteredDiscussions.length}` : '0'
+    
+    // 生成排行榜数据（使用所有数据，不过滤时间）
+    generateRankData(allCourses, allResources, allUsers, allDiscussions)
     
   } catch (error) {
     console.error('Failed to load analytics data:', error)
@@ -697,7 +728,7 @@ const generateRankData = (courses: any[], resources: any[], users: any[], discus
 // 时间周期变化
 const handlePeriodChange = () => {
   ElMessage.info(`已切换到${timePeriod.value}数据`)
-  // 可以根据时间周期重新加载数据
+  loadAllData()
 }
 
 // 刷新数据
