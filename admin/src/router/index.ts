@@ -5,6 +5,7 @@ import AdminLayout from '@/layouts/AdminLayout.vue'
 
 // 懒加载页面组件
 const Dashboard = () => import('@/pages/admin/Dashboard.vue')
+const Analytics = () => import('@/pages/admin/Analytics.vue')
 const CourseManagement = () => import('@/pages/admin/CourseManagement.vue')
 const UserManagement = () => import('@/pages/admin/UserManagement.vue')
 const ChapterManagement = () => import('@/pages/admin/ChapterManagement.vue')
@@ -34,6 +35,11 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'Dashboard',
         component: Dashboard
+      },
+      {
+        path: 'analytics',
+        name: 'Analytics',
+        component: Analytics
       },
       {
         path: 'courses',
