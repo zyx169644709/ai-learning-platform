@@ -260,7 +260,7 @@ class Program {
 
   go: `// Go 代码示例
 package main
-import "fmt"
+${'import'} "fmt"
 
 func main() {
     fmt.Println("Hello, Vue Learning!")

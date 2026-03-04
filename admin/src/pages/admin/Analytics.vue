@@ -17,26 +17,45 @@
     </div>
 
     <!-- 统计卡片区域 -->
-    <div class="stats-cards">
-      <div 
-        v-for="(card, index) in statsCards" 
-        :key="index"
-        class="stat-card"
-        :style="{ background: card.color }"
-      >
-        <div class="card-icon">
-          <el-icon :size="32"><component :is="card.icon" /></el-icon>
-        </div>
-        <div class="card-content">
-          <div class="card-value">{{ card.value }}</div>
-          <div class="card-title">{{ card.title }}</div>
-          <div class="card-subtext">{{ card.subtext }}</div>
-          <div class="card-trend" :class="{ positive: card.trend.startsWith('+') }">
-            <el-icon><TrendCharts /></el-icon>
-            <span>{{ card.trend }}</span>
+    <div class="stats-cards-container">
+      <!-- 左侧按钮 -->
+      <el-button 
+        :icon="ArrowLeft" 
+        circle 
+        class="nav-btn nav-left"
+        @click="prevCards"
+      />
+      
+      <!-- 卡片网格 -->
+      <transition-group name="card-slide" tag="div" class="stats-cards">
+        <div 
+          v-for="card in visibleCards" 
+          :key="card.title"
+          class="stat-card"
+          :style="{ background: card.color }"
+        >
+          <div class="card-icon">
+            <el-icon :size="32"><component :is="card.icon" /></el-icon>
+          </div>
+          <div class="card-content">
+            <div class="card-value">{{ card.value }}</div>
+            <div class="card-title">{{ card.title }}</div>
+            <div class="card-subtext">{{ card.subtext }}</div>
+            <div class="card-trend" :class="{ positive: card.trend.startsWith('+') }">
+              <el-icon><TrendCharts /></el-icon>
+              <span>{{ card.trend }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </transition-group>
+      
+      <!-- 右侧按钮 -->
+      <el-button 
+        :icon="ArrowRight" 
+        circle 
+        class="nav-btn nav-right"
+        @click="nextCards"
+      />
     </div>
 
     <!-- 图表区域第一行 -->
@@ -46,11 +65,23 @@
         <template #header>
           <div class="card-header">
             <span>数据增长趋势</span>
-            <el-segmented 
-              v-model="trendChartType" 
-              :options="['新增用户', '新增课程', '新增讨论']"
-              size="small"
-            />
+            <div style="display: flex; gap: 12px;">
+              <el-select 
+                v-model="trendPeriod" 
+                size="small" 
+                style="width: 120px;"
+                @change="handleTrendPeriodChange"
+              >
+                <el-option label="本周" value="week" />
+                <el-option label="近一个月" value="month" />
+                <el-option label="近六个月" value="halfYear" />
+              </el-select>
+              <el-segmented 
+                v-model="trendChartType" 
+                :options="['新增用户', '新增课程', '新增讨论']"
+                size="small"
+              />
+            </div>
           </div>
         </template>
         <v-chart :option="trendChartOption" :autoresize="true" style="height: 300px;" />
@@ -159,7 +190,9 @@ import {
   Files, 
   ChatDotRound, 
   Refresh,
-  TrendCharts
+  TrendCharts,
+  ArrowLeft,
+  ArrowRight
 } from '@element-plus/icons-vue'
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
@@ -191,10 +224,32 @@ use([
 
 const loading = ref(false)
 const timePeriod = ref('本周')
+const trendPeriod = ref('week') // 趋势图表时间周期
 const trendChartType = ref('新增用户')
 const pieChartType = ref('数量统计')
 const rankType = ref('课程浏览榜')
 const rankPeriod = ref('周榜')
+
+// 卡片循环轮播
+const currentStartIndex = ref(0)
+const cardsPerPage = 4
+
+const visibleCards = computed(() => {
+  const result = []
+  for (let i = 0; i < cardsPerPage; i++) {
+    const index = (currentStartIndex.value + i) % statsCards.value.length
+    result.push(statsCards.value[index])
+  }
+  return result
+})
+
+const nextCards = () => {
+  currentStartIndex.value = (currentStartIndex.value + 1) % statsCards.value.length
+}
+
+const prevCards = () => {
+  currentStartIndex.value = (currentStartIndex.value - 1 + statsCards.value.length) % statsCards.value.length
+}
 
 // 统计卡片数据
 const statsCards = ref([
@@ -229,16 +284,38 @@ const statsCards = ref([
     icon: markRaw(ChatDotRound),
     color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
     subtext: '本周新增 0'
+  },
+  {
+    title: '总章节',
+    value: 0,
+    trend: '+0%',
+    icon: markRaw(Document),
+    color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    subtext: '本周新增 0'
+  },
+  {
+    title: '总评论',
+    value: 0,
+    trend: '+0%',
+    icon: markRaw(ChatDotRound),
+    color: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+    subtext: '本周新增 0'
   }
 ])
 
+// 趋势数据存储
+const trendData = ref<{ [key: string]: number[] }>({
+  '新增用户': [],
+  '新增课程': [],
+  '新增讨论': []
+})
+
+const trendDates = ref<string[]>([])
+
 // 趋势图表配置
 const trendChartOption = computed(() => {
-  const dataMap: { [key: string]: number[] } = {
-    '新增用户': [12, 15, 10, 18, 22, 16, 20],
-    '新增课程': [1, 0, 2, 1, 0, 1, 1],
-    '新增讨论': [5, 8, 6, 9, 12, 7, 10]
-  }
+  const currentData = trendData.value[trendChartType.value] || []
+  const maxValue = Math.max(...currentData, 0)
   
   return {
     tooltip: {
@@ -246,36 +323,29 @@ const trendChartOption = computed(() => {
     },
     xAxis: {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-      boundaryGap: false
+      data: trendDates.value
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      minInterval: 1, // 最小刻度间隔为1，避免出现小数
+      splitNumber: maxValue <= 5 ? maxValue : undefined // 如果最大值<=5，按实际值分割
     },
     series: [{
-      data: dataMap[trendChartType.value],
+      data: currentData,
       type: 'line',
       smooth: true,
+      itemStyle: {
+        color: '#667eea'
+      },
       areaStyle: {
         color: {
           type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [{
-            offset: 0, color: 'rgba(102, 126, 234, 0.5)'
-          }, {
-            offset: 1, color: 'rgba(102, 126, 234, 0.1)'
-          }]
+          x: 0, y: 0, x2: 0, y2: 1,
+          colorStops: [
+            { offset: 0, color: 'rgba(102, 126, 234, 0.3)' },
+            { offset: 1, color: 'rgba(102, 126, 234, 0.05)' }
+          ]
         }
-      },
-      lineStyle: {
-        color: '#667eea',
-        width: 3
-      },
-      itemStyle: {
-        color: '#667eea'
       }
     }]
   }
@@ -546,11 +616,13 @@ const filterByTimeRange = (items: any[], dateField: string = 'createdAt') => {
 const loadAllData = async () => {
   loading.value = true
   try {
-    const [usersRes, coursesRes, resourcesRes, discussionsRes] = await Promise.all([
+    const [usersRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, commentsRes] = await Promise.all([
       request.get('/admin/users?page=1&limit=1000'),
       request.get('/admin/courses?page=1&limit=1000'),
       request.get('/admin/resources?page=1&limit=1000'),
-      request.get('/admin/community/discussions?page=1&limit=1000')
+      request.get('/admin/community/discussions?page=1&limit=1000'),
+      request.get('/admin/chapters?page=1&limit=1000'),
+      request.get('/admin/community/comments?page=1&limit=1000')
     ])
     
     // 获取所有数据
@@ -558,12 +630,16 @@ const loadAllData = async () => {
     const allCourses = coursesRes.data?.data?.items || []
     const allResources = resourcesRes.data?.data?.items || []
     const allDiscussions = discussionsRes.data?.data?.items || []
+    const allChapters = chaptersRes.data?.data?.items || []
+    const allComments = commentsRes.data?.data?.items || []
     
     // 根据时间周期筛选数据（使用正确的日期字段）
     const filteredUsers = filterByTimeRange(allUsers, 'registeredAt')
     const filteredCourses = filterByTimeRange(allCourses, 'updatedAt')
     const filteredResources = filterByTimeRange(allResources, 'updatedAt')
     const filteredDiscussions = filterByTimeRange(allDiscussions, 'createdAt')
+    const filteredChapters = filterByTimeRange(allChapters, 'createdAt')
+    const filteredComments = filterByTimeRange(allComments, 'createdAt')
     
     // 更新统计卡片
     const periodText = timePeriod.value === '今日' ? '今日' : timePeriod.value === '本周' ? '本周' : '本月'
@@ -595,8 +671,21 @@ const loadAllData = async () => {
     statsCards.value[3].subtext = `${periodText}新增 ${filteredDiscussions.length}`
     statsCards.value[3].trend = calculateGrowthRate(filteredDiscussions.length, totalDiscussions)
     
+    const totalChapters = chaptersRes.data?.data?.total || 0
+    statsCards.value[4].value = totalChapters
+    statsCards.value[4].subtext = `${periodText}新增 ${filteredChapters.length}`
+    statsCards.value[4].trend = calculateGrowthRate(filteredChapters.length, totalChapters)
+    
+    const totalComments = commentsRes.data?.data?.total || 0
+    statsCards.value[5].value = totalComments
+    statsCards.value[5].subtext = `${periodText}新增 ${filteredComments.length}`
+    statsCards.value[5].trend = calculateGrowthRate(filteredComments.length, totalComments)
+    
     // 生成排行榜数据（使用所有数据，不过滤时间）
     generateRankData(allCourses, allResources, allUsers, allDiscussions)
+    
+    // 生成趋势数据（最近7天）
+    generateTrendData(allUsers, allCourses, allDiscussions)
     
   } catch (error) {
     console.error('Failed to load analytics data:', error)
@@ -604,6 +693,108 @@ const loadAllData = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 生成趋势数据
+const generateTrendData = (users: any[], courses: any[], discussions: any[]) => {
+  const dates: string[] = []
+  const userCounts: number[] = []
+  const courseCounts: number[] = []
+  const discussionCounts: number[] = []
+  const now = new Date()
+  
+  if (trendPeriod.value === 'week') {
+    // 本周：最近7天
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+      dates.push(`${date.getMonth() + 1}/${date.getDate()}`)
+      
+      const startDate = new Date(date)
+      startDate.setHours(0, 0, 0, 0)
+      const endDate = new Date(startDate)
+      endDate.setHours(23, 59, 59, 999)
+      
+      userCounts.push(users.filter(u => {
+        const d = new Date(u.registeredAt || u.createdAt)
+        return d >= startDate && d <= endDate
+      }).length)
+      
+      courseCounts.push(courses.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= startDate && d <= endDate
+      }).length)
+      
+      discussionCounts.push(discussions.filter(d => {
+        const date = new Date(d.createdAt)
+        return date >= startDate && date <= endDate
+      }).length)
+    }
+  } else if (trendPeriod.value === 'month') {
+    // 近一个月：最近30天，每7天一个数据点（总共5个点）
+    for (let i = 4; i >= 0; i--) {
+      const weekEnd = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000)
+      const weekStart = new Date(weekEnd.getTime() - 6 * 24 * 60 * 60 * 1000)
+      
+      // 显示日期范围（开始日期换行结束日期）
+      const startStr = `${weekStart.getMonth() + 1}/${weekStart.getDate()}`
+      const endStr = `${weekEnd.getMonth() + 1}/${weekEnd.getDate()}`
+      dates.push(`${startStr}\n-${endStr}`)
+      
+      weekStart.setHours(0, 0, 0, 0)
+      weekEnd.setHours(23, 59, 59, 999)
+      
+      userCounts.push(users.filter(u => {
+        const d = new Date(u.registeredAt || u.createdAt)
+        return d >= weekStart && d <= weekEnd
+      }).length)
+      
+      courseCounts.push(courses.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= weekStart && d <= weekEnd
+      }).length)
+      
+      discussionCounts.push(discussions.filter(d => {
+        const date = new Date(d.createdAt)
+        return date >= weekStart && date <= weekEnd
+      }).length)
+    }
+  } else {
+    // 近六个月：最近6个月
+    for (let i = 5; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      dates.push(`${monthDate.getMonth() + 1}月`)
+      
+      const monthStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
+      const monthEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0, 23, 59, 59, 999)
+      
+      userCounts.push(users.filter(u => {
+        const d = new Date(u.registeredAt || u.createdAt)
+        return d >= monthStart && d <= monthEnd
+      }).length)
+      
+      courseCounts.push(courses.filter(c => {
+        const d = new Date(c.updatedAt || c.createdAt)
+        return d >= monthStart && d <= monthEnd
+      }).length)
+      
+      discussionCounts.push(discussions.filter(d => {
+        const date = new Date(d.createdAt)
+        return date >= monthStart && date <= monthEnd
+      }).length)
+    }
+  }
+  
+  trendDates.value = dates
+  trendData.value = {
+    '新增用户': userCounts,
+    '新增课程': courseCounts,
+    '新增讨论': discussionCounts
+  }
+}
+
+// 趋势周期变化
+const handleTrendPeriodChange = () => {
+  loadAllData()
 }
 
 // 生成排行榜数据
@@ -859,12 +1050,85 @@ onMounted(() => {
   align-items: center;
 }
 
-/* 统计卡片 */
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+/* 统计卡片容器 */
+.stats-cards-container {
+  position: relative;
+  display: flex;
+  align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
+}
+
+.stats-cards {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+}
+
+.nav-btn {
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.nav-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 卡片滑动动画 */
+.card-slide-move {
+  transition: all 0.5s ease;
+}
+
+.card-slide-enter-active {
+  transition: all 0.5s ease;
+}
+
+.card-slide-leave-active {
+  transition: all 0.5s ease;
+  position: absolute;
+  z-index: 0;
+}
+
+.card-slide-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.card-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+@media (max-width: 1400px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-cards-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .stats-cards {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  
+  .nav-btn {
+    display: none;
+  }
+  
 }
 
 .stat-card {
