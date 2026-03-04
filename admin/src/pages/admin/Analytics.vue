@@ -568,21 +568,32 @@ const loadAllData = async () => {
     // 更新统计卡片
     const periodText = timePeriod.value === '今日' ? '今日' : timePeriod.value === '本周' ? '本周' : '本月'
     
-    statsCards.value[0].value = usersRes.data?.data?.total || 0
+    // 计算增长率的辅助函数
+    const calculateGrowthRate = (newCount: number, total: number): string => {
+      if (total === 0) return '0%'
+      const rate = (newCount / total * 100).toFixed(1)
+      return newCount > 0 ? `+${rate}%` : '0%'
+    }
+    
+    const totalUsers = usersRes.data?.data?.total || 0
+    statsCards.value[0].value = totalUsers
     statsCards.value[0].subtext = `${periodText}新增 ${filteredUsers.length}`
-    statsCards.value[0].trend = filteredUsers.length > 0 ? `+${filteredUsers.length}` : '0'
+    statsCards.value[0].trend = calculateGrowthRate(filteredUsers.length, totalUsers)
     
-    statsCards.value[1].value = coursesRes.data?.data?.total || 0
+    const totalCourses = coursesRes.data?.data?.total || 0
+    statsCards.value[1].value = totalCourses
     statsCards.value[1].subtext = `${periodText}新增 ${filteredCourses.length}`
-    statsCards.value[1].trend = filteredCourses.length > 0 ? `+${filteredCourses.length}` : '0'
+    statsCards.value[1].trend = calculateGrowthRate(filteredCourses.length, totalCourses)
     
-    statsCards.value[2].value = resourcesRes.data?.data?.total || 0
+    const totalResources = resourcesRes.data?.data?.total || 0
+    statsCards.value[2].value = totalResources
     statsCards.value[2].subtext = `${periodText}新增 ${filteredResources.length}`
-    statsCards.value[2].trend = filteredResources.length > 0 ? `+${filteredResources.length}` : '0'
+    statsCards.value[2].trend = calculateGrowthRate(filteredResources.length, totalResources)
     
-    statsCards.value[3].value = discussionsRes.data?.data?.total || 0
+    const totalDiscussions = discussionsRes.data?.data?.total || 0
+    statsCards.value[3].value = totalDiscussions
     statsCards.value[3].subtext = `${periodText}新增 ${filteredDiscussions.length}`
-    statsCards.value[3].trend = filteredDiscussions.length > 0 ? `+${filteredDiscussions.length}` : '0'
+    statsCards.value[3].trend = calculateGrowthRate(filteredDiscussions.length, totalDiscussions)
     
     // 生成排行榜数据（使用所有数据，不过滤时间）
     generateRankData(allCourses, allResources, allUsers, allDiscussions)
@@ -737,8 +748,78 @@ const refreshData = () => {
 }
 
 // 导出报表
-const exportReport = () => {
-  ElMessage.success('报表导出功能开发中...')
+const exportReport = async () => {
+  try {
+    // 动态导入 xlsx 库
+    const XLSX = await import('xlsx')
+    
+    // 根据时间周期生成列名
+    const periodColumnName = timePeriod.value === '今日' ? '今日新增' 
+                           : timePeriod.value === '本周' ? '近一周新增' 
+                           : '近一月新增'
+    
+    // 准备统计数据（使用动态列名）
+    const statsData = statsCards.value.map(card => {
+      const newCount = card.subtext.replace(/.*新增 /, '')
+      return {
+        '指标': card.title,
+        '总数': card.value,
+        [periodColumnName]: newCount,
+        '增长率': card.trend
+      }
+    })
+    
+    // 准备排行榜数据
+    const currentRank = rankLists.value[rankType.value][rankPeriod.value]
+    const rankData = currentRank.map((item, index) => ({
+      '排名': index + 1,
+      '名称': item.title,
+      '分类': item.category,
+      '作者': item.author,
+      '数值': item.value,
+      '占比': item.percentage + '%'
+    }))
+    
+    // 创建工作簿
+    const wb = XLSX.utils.book_new()
+    
+    // 添加统计数据工作表
+    const ws1 = XLSX.utils.json_to_sheet(statsData)
+    ws1['!cols'] = [
+      { width: 15 },  // 指标
+      { width: 12 },  // 总数
+      { width: 18 },  // 新增（动态列名）
+      { width: 12 }   // 增长率
+    ]
+    XLSX.utils.book_append_sheet(wb, ws1, '统计数据')
+    
+    // 添加排行榜工作表
+    const ws2 = XLSX.utils.json_to_sheet(rankData)
+    ws2['!cols'] = [
+      { width: 8 },   // 排名
+      { width: 30 },  // 名称
+      { width: 12 },  // 分类
+      { width: 15 },  // 作者
+      { width: 12 },  // 数值
+      { width: 10 }   // 占比
+    ]
+    XLSX.utils.book_append_sheet(wb, ws2, rankType.value)
+    
+    // 生成文件名
+    const periodText = timePeriod.value === '今日' ? 'daily' 
+                     : timePeriod.value === '本周' ? 'weekly' 
+                     : 'monthly'
+    const dateStr = new Date().toISOString().split('T')[0]
+    const fileName = `数据分析报表_${periodText}_${dateStr}.xlsx`
+    
+    // 导出文件
+    XLSX.writeFile(wb, fileName)
+    
+    ElMessage.success('报表导出成功')
+  } catch (error) {
+    console.error('导出失败:', error)
+    ElMessage.error('报表导出失败，请确保已安装 xlsx 依赖')
+  }
 }
 
 // 查看详情
