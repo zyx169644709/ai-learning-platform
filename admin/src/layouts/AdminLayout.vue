@@ -12,6 +12,7 @@
       
       <el-menu
         :default-active="$route.path"
+        :default-openeds="['content', 'community']"
         class="sidebar-menu"
         :collapse="sidebarCollapsed"
         router
@@ -19,6 +20,16 @@
         <el-menu-item index="/admin">
           <el-icon><Odometer /></el-icon>
           <span>仪表盘</span>
+        </el-menu-item>
+
+        <el-menu-item index="/admin/analytics">
+          <el-icon><TrendCharts /></el-icon>
+          <span>数据分析</span>
+        </el-menu-item>
+
+        <el-menu-item index="/admin/users">
+          <el-icon><User /></el-icon>
+          <span>用户管理</span>
         </el-menu-item>
         
         <el-sub-menu index="content">
@@ -30,16 +41,6 @@
           <el-menu-item index="/admin/chapters">章节管理</el-menu-item>
           <el-menu-item index="/admin/resources">资源管理</el-menu-item>
         </el-sub-menu>
-        
-        <el-menu-item index="/admin/users">
-          <el-icon><User /></el-icon>
-          <span>用户管理</span>
-        </el-menu-item>
-        
-        <el-menu-item index="/admin/analytics">
-          <el-icon><TrendCharts /></el-icon>
-          <span>数据分析</span>
-        </el-menu-item>
         
         <el-sub-menu index="community">
           <template #title>
