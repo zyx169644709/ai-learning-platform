@@ -96,37 +96,17 @@
         <template #header>
           <div class="card-header">
             <span>内容分布情况</span>
-            <el-segmented 
+            <el-select 
               v-model="pieChartType" 
-              :options="['数量统计', '浏览量', '收藏量']"
-              size="small"
-            />
+              class="trend-select"
+            >
+              <el-option label="数量统计" value="数量统计" />
+              <el-option label="浏览量" value="浏览量" />
+              <el-option label="收藏量" value="收藏量" />
+            </el-select>
           </div>
         </template>
         <v-chart :option="pieChartOption" :autoresize="true" style="height: 300px;" />
-      </el-card>
-    </div>
-
-    <!-- 图表区域第二行 -->
-    <div class="charts-row">
-      <!-- 用户活跃度 -->
-      <el-card class="chart-card">
-        <template #header>
-          <div class="card-header">
-            <span>用户活跃度分析</span>
-          </div>
-        </template>
-        <v-chart :option="activeChartOption" :autoresize="true" style="height: 300px;" />
-      </el-card>
-
-      <!-- 学习进度分布 -->
-      <el-card class="chart-card">
-        <template #header>
-          <div class="card-header">
-            <span>用户学习进度分布</span>
-          </div>
-        </template>
-        <v-chart :option="progressChartOption" :autoresize="true" style="height: 300px;" />
       </el-card>
     </div>
 
@@ -136,16 +116,24 @@
         <div class="card-header">
           <span>🔥 热门排行榜</span>
           <div class="rank-controls">
-            <el-segmented 
-              v-model="rankType" 
-              :options="['课程浏览榜', '资源下载榜', '用户学习榜', '讨论热度榜', '章节收藏榜']"
-              size="small"
-            />
-            <el-segmented 
-              v-model="rankPeriod" 
-              :options="['日榜', '周榜', '月榜']"
-              size="small"
-            />
+            <el-select
+              v-model="rankContentType"
+              class="rank-select"
+              placeholder="选择内容类型"
+            >
+              <el-option label="课程" value="课程" />
+              <el-option label="小节" value="小节" />
+              <el-option label="资源" value="资源" />
+              <el-option label="帖子" value="帖子" />
+            </el-select>
+            <el-select
+              v-model="rankMetric"
+              class="rank-select"
+              placeholder="选择统计维度"
+            >
+              <el-option label="浏览量" value="浏览量" />
+              <el-option label="收藏量" value="收藏量" />
+            </el-select>
           </div>
         </div>
       </template>
@@ -231,8 +219,6 @@ const timePeriod = ref('本周')
 const trendPeriod = ref('week') // 趋势图表时间周期
 const trendChartType = ref('新增用户')
 const pieChartType = ref('数量统计')
-const rankType = ref('课程浏览榜')
-const rankPeriod = ref('周榜')
 
 // 卡片循环轮播
 const currentStartIndex = ref(0)
@@ -357,28 +343,30 @@ const trendChartOption = computed(() => {
   }
 })
 
+// 饼图数据存储
+const pieChartData = ref<{ [key: string]: Array<{ name: string; value: number }> }>({
+  '数量统计': [
+    { name: '课程', value: 0 },
+    { name: '资源', value: 0 },
+    { name: '讨论', value: 0 },
+    { name: '章节（含小节）', value: 0 }
+  ],
+  '浏览量': [
+    { name: '课程', value: 0 },
+    { name: '资源', value: 0 },
+    { name: '讨论', value: 0 },
+    { name: '章节（含小节）', value: 0 }
+  ],
+  '收藏量': [
+    { name: '课程', value: 0 },
+    { name: '资源', value: 0 },
+    { name: '讨论', value: 0 },
+    { name: '章节（含小节）', value: 0 }
+  ]
+})
+
 // 饼图配置
 const pieChartOption = computed(() => {
-  const dataMap: { [key: string]: Array<{ name: string; value: number }> } = {
-    '数量统计': [
-      { name: '课程', value: 56 },
-      { name: '资源', value: 234 },
-      { name: '章节', value: 189 },
-      { name: '讨论', value: 567 }
-    ],
-    '浏览量': [
-      { name: '课程', value: 12340 },
-      { name: '资源', value: 8900 },
-      { name: '章节', value: 15600 },
-      { name: '讨论', value: 23450 }
-    ],
-    '收藏量': [
-      { name: '课程', value: 456 },
-      { name: '资源', value: 789 },
-      { name: '章节', value: 612 },
-      { name: '讨论', value: 890 }
-    ]
-  }
   
   return {
     tooltip: {
@@ -408,111 +396,15 @@ const pieChartOption = computed(() => {
           fontWeight: 'bold'
         }
       },
-      data: dataMap[pieChartType.value],
+      data: pieChartData.value[pieChartType.value],
       color: ['#5470c6', '#91cc75', '#fac858', '#ee6666']
     }]
   }
 })
 
-// 活跃度柱状图配置
-const activeChartOption = ref({
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'shadow'
-    }
-  },
-  legend: {
-    data: ['活跃用户', '学习用户']
-  },
-  xAxis: {
-    type: 'category',
-    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-    {
-      name: '活跃用户',
-      type: 'bar',
-      data: [45, 52, 48, 60, 68, 55, 50],
-      itemStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [{
-            offset: 0, color: '#83bff6'
-          }, {
-            offset: 1, color: '#188df0'
-          }]
-        }
-      }
-    },
-    {
-      name: '学习用户',
-      type: 'bar',
-      data: [30, 38, 35, 45, 50, 40, 38],
-      itemStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [{
-            offset: 0, color: '#91cc75'
-          }, {
-            offset: 1, color: '#5daf34'
-          }]
-        }
-      }
-    }
-  ]
-})
-
-// 学习进度环形图配置
-const progressChartOption = ref({
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}: {c} 人 ({d}%)'
-  },
-  legend: {
-    bottom: '5%',
-    left: 'center'
-  },
-  series: [{
-    type: 'pie',
-    radius: ['40%', '70%'],
-    avoidLabelOverlap: false,
-    itemStyle: {
-      borderRadius: 10,
-      borderColor: '#fff',
-      borderWidth: 2
-    },
-    label: {
-      show: false
-    },
-    emphasis: {
-      label: {
-        show: true,
-        fontSize: 14,
-        fontWeight: 'bold'
-      }
-    },
-    data: [
-      { name: '0-20%', value: 156 },
-      { name: '21-40%', value: 234 },
-      { name: '41-60%', value: 345 },
-      { name: '61-80%', value: 278 },
-      { name: '81-100%', value: 221 }
-    ],
-    color: ['#ee6666', '#fac858', '#91cc75', '#73c0de', '#5470c6']
-  }]
-})
+// 排行榜选择器
+const rankContentType = ref('课程')
+const rankMetric = ref('浏览量')
 
 // 排行榜项类型
 interface RankItem {
@@ -523,42 +415,33 @@ interface RankItem {
   percentage: number
 }
 
-// 排行榜数据
-const rankLists = ref<{
+// 排行榜数据存储
+const rankData = ref<{
   [key: string]: {
     [key: string]: RankItem[]
   }
 }>({
-  '课程浏览榜': {
-    '日榜': [],
-    '周榜': [],
-    '月榜': []
+  '课程': {
+    '浏览量': [],
+    '收藏量': []
   },
-  '资源下载榜': {
-    '日榜': [],
-    '周榜': [],
-    '月榜': []
+  '小节': {
+    '浏览量': [],
+    '收藏量': []
   },
-  '用户学习榜': {
-    '日榜': [],
-    '周榜': [],
-    '月榜': []
+  '资源': {
+    '浏览量': [],
+    '收藏量': []
   },
-  '讨论热度榜': {
-    '日榜': [],
-    '周榜': [],
-    '月榜': []
-  },
-  '章节收藏榜': {
-    '日榜': [],
-    '周榜': [],
-    '月榜': []
+  '帖子': {
+    '浏览量': [],
+    '收藏量': []
   }
 })
 
 // 当前排行榜数据
 const currentRankList = computed(() => {
-  return rankLists.value[rankType.value]?.[rankPeriod.value] || []
+  return rankData.value[rankContentType.value]?.[rankMetric.value] || []
 })
 
 // 获取排行榜颜色
@@ -622,12 +505,13 @@ const filterByTimeRange = (items: any[], dateField: string = 'createdAt') => {
 const loadAllData = async () => {
   loading.value = true
   try {
-    const [usersRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, commentsRes] = await Promise.all([
+    const [usersRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, sectionsRes, commentsRes] = await Promise.all([
       request.get('/admin/users?page=1&limit=1000'),
       request.get('/admin/courses?page=1&limit=1000'),
       request.get('/admin/resources?page=1&limit=1000'),
       request.get('/admin/community/discussions?page=1&limit=1000'),
-      request.get('/admin/chapters?page=1&limit=1000'),
+      request.get('/admin/chapters?page=1&limit=1000&type=chapter'),
+      request.get('/admin/chapters?page=1&limit=1000&type=section'),
       request.get('/admin/community/comments?page=1&limit=1000')
     ])
     
@@ -637,6 +521,7 @@ const loadAllData = async () => {
     const allResources = resourcesRes.data?.data?.items || []
     const allDiscussions = discussionsRes.data?.data?.items || []
     const allChapters = chaptersRes.data?.data?.items || []
+    const allSections = sectionsRes.data?.data?.items || []
     const allComments = commentsRes.data?.data?.items || []
     
     // 根据时间周期筛选数据（使用正确的日期字段）
@@ -677,18 +562,24 @@ const loadAllData = async () => {
     statsCards.value[3].subtext = `${periodText}新增 ${filteredDiscussions.length}`
     statsCards.value[3].trend = calculateGrowthRate(filteredDiscussions.length, totalDiscussions)
     
-    const totalChapters = chaptersRes.data?.data?.total || 0
-    statsCards.value[4].value = totalChapters
-    statsCards.value[4].subtext = `${periodText}新增 ${filteredChapters.length}`
-    statsCards.value[4].trend = calculateGrowthRate(filteredChapters.length, totalChapters)
+    // 章节（含小节）统计
+    const filteredSections = filterByTimeRange(allSections, 'updatedAt')
+    const totalChaptersAndSections = allChapters.length + allSections.length
+    const newChaptersAndSections = filteredChapters.length + filteredSections.length
+    statsCards.value[4].value = totalChaptersAndSections
+    statsCards.value[4].subtext = `${periodText}新增 ${newChaptersAndSections}`
+    statsCards.value[4].trend = calculateGrowthRate(newChaptersAndSections, totalChaptersAndSections)
     
     const totalComments = commentsRes.data?.data?.total || 0
     statsCards.value[5].value = totalComments
     statsCards.value[5].subtext = `${periodText}新增 ${filteredComments.length}`
     statsCards.value[5].trend = calculateGrowthRate(filteredComments.length, totalComments)
     
+    // 生成饼图数据
+    generatePieChartData(allCourses, allResources, allChapters, allSections, allDiscussions)
+    
     // 生成排行榜数据（使用所有数据，不过滤时间）
-    generateRankData(allCourses, allResources, allUsers, allDiscussions)
+    generateRankData(allCourses, allResources, allSections, allDiscussions)
     
     // 生成趋势数据
     generateTrendData(allUsers, allCourses, allDiscussions, allChapters, allComments)
@@ -837,11 +728,48 @@ const handleTrendPeriodChange = () => {
   loadAllData()
 }
 
+// 生成饼图数据
+const generatePieChartData = (courses: any[], resources: any[], chapters: any[], sections: any[], discussions: any[]) => {
+  // 数量统计（章节含小节）
+  pieChartData.value['数量统计'] = [
+    { name: '课程', value: courses.length },
+    { name: '资源', value: resources.length },
+    { name: '讨论', value: discussions.length },
+    { name: '章节（含小节）', value: chapters.length + sections.length }
+  ]
+  
+  // 浏览量统计（章节使用小节浏览量，讨论使用views字段）
+  const courseViews = courses.reduce((sum, c) => sum + (c.viewCount || 0), 0)
+  const resourceViews = resources.reduce((sum, r) => sum + (r.viewCount || 0), 0)
+  const sectionViews = sections.reduce((sum, s) => sum + (s.viewCount || 0), 0)
+  const discussionViews = discussions.reduce((sum, d) => sum + (d.views || 0), 0)
+  
+  pieChartData.value['浏览量'] = [
+    { name: '课程', value: courseViews },
+    { name: '资源', value: resourceViews },
+    { name: '讨论', value: discussionViews },
+    { name: '章节（含小节）', value: sectionViews }
+  ]
+  
+  // 收藏量统计（章节使用小节收藏量）
+  const courseFavorites = courses.reduce((sum, c) => sum + (c.favoriteCount || 0), 0)
+  const resourceFavorites = resources.reduce((sum, r) => sum + (r.favoriteCount || 0), 0)
+  const sectionFavorites = sections.reduce((sum, s) => sum + (s.favoriteCount || 0), 0)
+  const discussionFavorites = discussions.reduce((sum, d) => sum + (d.favoriteCount || 0), 0)
+  
+  pieChartData.value['收藏量'] = [
+    { name: '课程', value: courseFavorites },
+    { name: '资源', value: resourceFavorites },
+    { name: '讨论', value: discussionFavorites },
+    { name: '章节（含小节）', value: sectionFavorites }
+  ]
+}
+
 // 生成排行榜数据
-const generateRankData = (courses: any[], resources: any[], users: any[], discussions: any[]) => {
-  // 课程浏览榜
+const generateRankData = (courses: any[], resources: any[], sections: any[], discussions: any[]) => {
+  // 课程浏览量排行
   if (courses && courses.length > 0) {
-    const courseRanks = courses
+    const courseViewRanks = courses
       .map((c: any) => ({
         title: c.title,
         category: c.type === 'beginner' ? '基础' : c.type === 'intermediate' ? '进阶' : c.type === 'advanced' ? '高级' : '基础',
@@ -853,118 +781,148 @@ const generateRankData = (courses: any[], resources: any[], users: any[], discus
       .sort((a: any, b: any) => b.value - a.value)
       .slice(0, 10)
     
-    const maxValue = courseRanks[0]?.value || 1
-    courseRanks.forEach((item: any) => {
+    const maxValue = courseViewRanks[0]?.value || 1
+    courseViewRanks.forEach((item: any) => {
       item.percentage = Math.floor((item.value / maxValue) * 100)
     })
+    rankData.value['课程']['浏览量'] = courseViewRanks
     
-    rankLists.value['课程浏览榜']['周榜'] = courseRanks
-    rankLists.value['课程浏览榜']['日榜'] = courseRanks
-    rankLists.value['课程浏览榜']['月榜'] = courseRanks
+    // 课程收藏量排行
+    const courseFavRanks = courses
+      .map((c: any) => ({
+        title: c.title,
+        category: c.type === 'beginner' ? '基础' : c.type === 'intermediate' ? '进阶' : c.type === 'advanced' ? '高级' : '基础',
+        author: '管理员',
+        value: c.favoriteCount || 0,
+        percentage: 0
+      }))
+      .filter((c: any) => c.value > 0)
+      .sort((a: any, b: any) => b.value - a.value)
+      .slice(0, 10)
+    
+    const maxFavValue = courseFavRanks[0]?.value || 1
+    courseFavRanks.forEach((item: any) => {
+      item.percentage = Math.floor((item.value / maxFavValue) * 100)
+    })
+    rankData.value['课程']['收藏量'] = courseFavRanks
   }
   
-  // 资源下载榜
+  // 小节浏览量和收藏量排行
+  if (sections && sections.length > 0) {
+    const sectionViewRanks = sections
+      .map((s: any) => ({
+        title: s.title,
+        category: '小节',
+        author: '管理员',
+        value: s.viewCount || 0,
+        percentage: 0
+      }))
+      .filter((s: any) => s.value > 0)
+      .sort((a: any, b: any) => b.value - a.value)
+      .slice(0, 10)
+    
+    const maxValue = sectionViewRanks[0]?.value || 1
+    sectionViewRanks.forEach((item: any) => {
+      item.percentage = Math.floor((item.value / maxValue) * 100)
+    })
+    rankData.value['小节']['浏览量'] = sectionViewRanks
+    
+    const sectionFavRanks = sections
+      .map((s: any) => ({
+        title: s.title,
+        category: '小节',
+        author: '管理员',
+        value: s.favoriteCount || 0,
+        percentage: 0
+      }))
+      .filter((s: any) => s.value > 0)
+      .sort((a: any, b: any) => b.value - a.value)
+      .slice(0, 10)
+    
+    const maxFavValue = sectionFavRanks[0]?.value || 1
+    sectionFavRanks.forEach((item: any) => {
+      item.percentage = Math.floor((item.value / maxFavValue) * 100)
+    })
+    rankData.value['小节']['收藏量'] = sectionFavRanks
+  }
+  
+  // 资源浏览量和收藏量排行
   if (resources && resources.length > 0) {
-    const resourceRanks = resources
+    const resourceViewRanks = resources
       .map((r: any) => ({
         title: r.title,
         category: r.type === 'website' ? '网站' : r.type === 'document' ? '文档' : r.type === 'tool' ? '工具' : r.type === 'tutorial' ? '教程' : '其他',
         author: '管理员',
-        value: r.viewCount || r.likeCount || 0,
+        value: r.viewCount || 0,
         percentage: 0
       }))
       .filter((r: any) => r.value > 0)
       .sort((a: any, b: any) => b.value - a.value)
       .slice(0, 10)
     
-    const maxValue = resourceRanks[0]?.value || 1
-    resourceRanks.forEach((item: any) => {
+    const maxValue = resourceViewRanks[0]?.value || 1
+    resourceViewRanks.forEach((item: any) => {
       item.percentage = Math.floor((item.value / maxValue) * 100)
     })
+    rankData.value['资源']['浏览量'] = resourceViewRanks
     
-    rankLists.value['资源下载榜']['周榜'] = resourceRanks
-    rankLists.value['资源下载榜']['日榜'] = resourceRanks
-    rankLists.value['资源下载榜']['月榜'] = resourceRanks
-  }
-  
-  // 用户学习榜
-  if (users && users.length > 0) {
-    const userRanks = users
-      .map((u: any) => ({
-        title: u.name,
-        category: '用户',
-        author: u.role === 'ADMIN' ? '管理员' : u.role === 'MODERATOR' ? '教师' : '学生',
-        value: u.completedCourses || u.favoritesCount || 0,
+    const resourceFavRanks = resources
+      .map((r: any) => ({
+        title: r.title,
+        category: r.type === 'website' ? '网站' : r.type === 'document' ? '文档' : r.type === 'tool' ? '工具' : r.type === 'tutorial' ? '教程' : '其他',
+        author: '管理员',
+        value: r.favoriteCount || 0,
         percentage: 0
       }))
-      .filter((u: any) => u.value > 0)
+      .filter((r: any) => r.value > 0)
       .sort((a: any, b: any) => b.value - a.value)
       .slice(0, 10)
     
-    const maxValue = userRanks[0]?.value || 1
-    userRanks.forEach((item: any) => {
-      item.percentage = Math.floor((item.value / maxValue) * 100)
+    const maxFavValue = resourceFavRanks[0]?.value || 1
+    resourceFavRanks.forEach((item: any) => {
+      item.percentage = Math.floor((item.value / maxFavValue) * 100)
     })
-    
-    rankLists.value['用户学习榜']['周榜'] = userRanks
-    rankLists.value['用户学习榜']['日榜'] = userRanks
-    rankLists.value['用户学习榜']['月榜'] = userRanks
+    rankData.value['资源']['收藏量'] = resourceFavRanks
   }
   
-  // 讨论热度榜
+  // 帖子浏览量和收藏量排行
   if (discussions && discussions.length > 0) {
-    const discussionRanks = discussions
+    const discussionViewRanks = discussions
       .map((d: any) => ({
         title: d.title,
         category: d.category === 'TECH' ? '技术' : d.category === 'EXPERIENCE' ? '经验' : d.category === 'PROJECT' ? '项目' : d.category === 'HELP' ? '求助' : '其他',
         author: d.author || '用户',
-        value: d.views || d.likes || 0,
+        value: d.views || 0,
         percentage: 0
       }))
       .filter((d: any) => d.value > 0)
       .sort((a: any, b: any) => b.value - a.value)
       .slice(0, 10)
     
-    const maxValue = discussionRanks[0]?.value || 1
-    discussionRanks.forEach((item: any) => {
+    const maxValue = discussionViewRanks[0]?.value || 1
+    discussionViewRanks.forEach((item: any) => {
       item.percentage = Math.floor((item.value / maxValue) * 100)
     })
+    rankData.value['帖子']['浏览量'] = discussionViewRanks
     
-    rankLists.value['讨论热度榜']['周榜'] = discussionRanks
-    rankLists.value['讨论热度榜']['日榜'] = discussionRanks
-    rankLists.value['讨论热度榜']['月榜'] = discussionRanks
-  }
-  
-  // 章节收藏榜（模拟数据）
-  rankLists.value['章节收藏榜']['周榜'] = [
-    { title: 'Vue 3 组合式 API', category: '基础课程', author: '管理员', value: 1234, percentage: 100 },
-    { title: 'React Hooks 详解', category: '进阶课程', author: '管理员', value: 987, percentage: 80 },
-    { title: 'TypeScript 类型系统', category: '高级课程', author: '管理员', value: 856, percentage: 69 },
-    { title: 'Pinia 状态管理', category: '进阶课程', author: '管理员', value: 745, percentage: 60 },
-    { title: 'Vue Router 路由', category: '基础课程', author: '管理员', value: 632, percentage: 51 },
-    { title: 'Vite 构建工具', category: '进阶课程', author: '管理员', value: 521, percentage: 42 },
-    { title: 'Element Plus 组件', category: '基础课程', author: '管理员', value: 456, percentage: 37 },
-    { title: 'ECharts 数据可视化', category: '进阶课程', author: '管理员', value: 398, percentage: 32 },
-    { title: 'Axios 网络请求', category: '基础课程', author: '管理员', value: 312, percentage: 25 },
-    { title: 'CSS 响应式布局', category: '基础课程', author: '管理员', value: 267, percentage: 22 }
-  ]
-  rankLists.value['章节收藏榜']['日榜'] = rankLists.value['章节收藏榜']['周榜']
-  rankLists.value['章节收藏榜']['月榜'] = rankLists.value['章节收藏榜']['周榜']
-  
-  // 如果没有数据，提供默认提示
-  Object.keys(rankLists.value).forEach(rankType => {
-    Object.keys(rankLists.value[rankType]).forEach(period => {
-      if (rankLists.value[rankType][period].length === 0) {
-        rankLists.value[rankType][period] = [{
-          title: '暂无数据',
-          category: '-',
-          author: '-',
-          value: 0,
-          percentage: 0
-        }]
-      }
+    const discussionFavRanks = discussions
+      .map((d: any) => ({
+        title: d.title,
+        category: d.category === 'TECH' ? '技术' : d.category === 'EXPERIENCE' ? '经验' : d.category === 'PROJECT' ? '项目' : d.category === 'HELP' ? '求助' : '其他',
+        author: d.author || '用户',
+        value: d.favoriteCount || 0,
+        percentage: 0
+      }))
+      .filter((d: any) => d.value > 0)
+      .sort((a: any, b: any) => b.value - a.value)
+      .slice(0, 10)
+    
+    const maxFavValue = discussionFavRanks[0]?.value || 1
+    discussionFavRanks.forEach((item: any) => {
+      item.percentage = Math.floor((item.value / maxFavValue) * 100)
     })
-  })
+    rankData.value['帖子']['收藏量'] = discussionFavRanks
+  }
 }
 
 // 时间周期变化
@@ -1001,14 +959,13 @@ const exportReport = async () => {
     })
     
     // 准备排行榜数据
-    const currentRank = rankLists.value[rankType.value][rankPeriod.value]
-    const rankData = currentRank.map((item, index) => ({
+    const currentRank = currentRankList.value
+    const metricColumnName = rankMetric.value // "浏览量" 或 "收藏量"
+    const rankExportData = currentRank.map((item: any, index: number) => ({
       '排名': index + 1,
       '名称': item.title,
       '分类': item.category,
-      '作者': item.author,
-      '数值': item.value,
-      '占比': item.percentage + '%'
+      [metricColumnName]: item.value
     }))
     
     // 创建工作簿
@@ -1025,16 +982,14 @@ const exportReport = async () => {
     XLSX.utils.book_append_sheet(wb, ws1, '统计数据')
     
     // 添加排行榜工作表
-    const ws2 = XLSX.utils.json_to_sheet(rankData)
+    const ws2 = XLSX.utils.json_to_sheet(rankExportData)
     ws2['!cols'] = [
       { width: 8 },   // 排名
       { width: 30 },  // 名称
       { width: 12 },  // 分类
-      { width: 15 },  // 作者
-      { width: 12 },  // 数值
-      { width: 10 }   // 占比
+      { width: 12 }   // 数值
     ]
-    XLSX.utils.book_append_sheet(wb, ws2, rankType.value)
+    XLSX.utils.book_append_sheet(wb, ws2, `${rankContentType.value}${rankMetric.value}排行`)
     
     // 生成文件名
     const periodText = timePeriod.value === '今日' ? 'daily' 
@@ -1285,6 +1240,21 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
+.rank-select {
+  width: 140px;
+}
+
+.rank-select :deep(.el-input__wrapper) {
+  font-size: 14px;
+  padding: 6px 12px;
+  min-height: 36px;
+}
+
+.rank-select :deep(.el-input__inner) {
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .rank-list {
   display: grid;
   gap: 12px;
@@ -1399,7 +1369,7 @@ onMounted(() => {
     width: 100%;
   }
   
-  .rank-controls .el-segmented {
+  .rank-select {
     width: 100%;
   }
 }
