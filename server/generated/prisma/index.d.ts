@@ -1721,25 +1721,25 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    discussions: number
+    chapters: number
+    commentLikes: number
     comments: number
     courses: number
-    chapters: number
-    resources: number
-    favorites: number
     discussionLikes: number
-    commentLikes: number
+    discussions: number
+    favorites: number
+    resources: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    discussions?: boolean | UserCountOutputTypeCountDiscussionsArgs
+    chapters?: boolean | UserCountOutputTypeCountChaptersArgs
+    commentLikes?: boolean | UserCountOutputTypeCountCommentLikesArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
     courses?: boolean | UserCountOutputTypeCountCoursesArgs
-    chapters?: boolean | UserCountOutputTypeCountChaptersArgs
-    resources?: boolean | UserCountOutputTypeCountResourcesArgs
-    favorites?: boolean | UserCountOutputTypeCountFavoritesArgs
     discussionLikes?: boolean | UserCountOutputTypeCountDiscussionLikesArgs
-    commentLikes?: boolean | UserCountOutputTypeCountCommentLikesArgs
+    discussions?: boolean | UserCountOutputTypeCountDiscussionsArgs
+    favorites?: boolean | UserCountOutputTypeCountFavoritesArgs
+    resources?: boolean | UserCountOutputTypeCountResourcesArgs
   }
 
   // Custom InputTypes
@@ -1756,8 +1756,15 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountDiscussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DiscussionWhereInput
+  export type UserCountOutputTypeCountChaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCommentLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentLikeWhereInput
   }
 
   /**
@@ -1777,15 +1784,15 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountChaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ChapterWhereInput
+  export type UserCountOutputTypeCountDiscussionLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DiscussionLikeWhereInput
   }
 
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountResourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ResourceWhereInput
+  export type UserCountOutputTypeCountDiscussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DiscussionWhereInput
   }
 
   /**
@@ -1798,15 +1805,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountDiscussionLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DiscussionLikeWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountCommentLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CommentLikeWhereInput
+  export type UserCountOutputTypeCountResourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ResourceWhereInput
   }
 
 
@@ -2199,15 +2199,15 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
-    discussions?: boolean | User$discussionsArgs<ExtArgs>
+    chapters?: boolean | User$chaptersArgs<ExtArgs>
+    commentLikes?: boolean | User$commentLikesArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     courses?: boolean | User$coursesArgs<ExtArgs>
-    chapters?: boolean | User$chaptersArgs<ExtArgs>
-    resources?: boolean | User$resourcesArgs<ExtArgs>
-    favorites?: boolean | User$favoritesArgs<ExtArgs>
     discussionLikes?: boolean | User$discussionLikesArgs<ExtArgs>
-    commentLikes?: boolean | User$commentLikesArgs<ExtArgs>
+    discussions?: boolean | User$discussionsArgs<ExtArgs>
+    favorites?: boolean | User$favoritesArgs<ExtArgs>
+    resources?: boolean | User$resourcesArgs<ExtArgs>
+    userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2255,15 +2255,15 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "bio" | "avatar" | "status" | "lastLoginAt" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
-    discussions?: boolean | User$discussionsArgs<ExtArgs>
+    chapters?: boolean | User$chaptersArgs<ExtArgs>
+    commentLikes?: boolean | User$commentLikesArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     courses?: boolean | User$coursesArgs<ExtArgs>
-    chapters?: boolean | User$chaptersArgs<ExtArgs>
-    resources?: boolean | User$resourcesArgs<ExtArgs>
-    favorites?: boolean | User$favoritesArgs<ExtArgs>
     discussionLikes?: boolean | User$discussionLikesArgs<ExtArgs>
-    commentLikes?: boolean | User$commentLikesArgs<ExtArgs>
+    discussions?: boolean | User$discussionsArgs<ExtArgs>
+    favorites?: boolean | User$favoritesArgs<ExtArgs>
+    resources?: boolean | User$resourcesArgs<ExtArgs>
+    userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2272,15 +2272,15 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      userPreferences: Prisma.$UserPreferencesPayload<ExtArgs> | null
-      discussions: Prisma.$DiscussionPayload<ExtArgs>[]
+      chapters: Prisma.$ChapterPayload<ExtArgs>[]
+      commentLikes: Prisma.$CommentLikePayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       courses: Prisma.$CoursePayload<ExtArgs>[]
-      chapters: Prisma.$ChapterPayload<ExtArgs>[]
-      resources: Prisma.$ResourcePayload<ExtArgs>[]
-      favorites: Prisma.$FavoritePayload<ExtArgs>[]
       discussionLikes: Prisma.$DiscussionLikePayload<ExtArgs>[]
-      commentLikes: Prisma.$CommentLikePayload<ExtArgs>[]
+      discussions: Prisma.$DiscussionPayload<ExtArgs>[]
+      favorites: Prisma.$FavoritePayload<ExtArgs>[]
+      resources: Prisma.$ResourcePayload<ExtArgs>[]
+      userPreferences: Prisma.$UserPreferencesPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2688,15 +2688,15 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    userPreferences<T extends User$userPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$userPreferencesArgs<ExtArgs>>): Prisma__UserPreferencesClient<$Result.GetResult<Prisma.$UserPreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    discussions<T extends User$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    chapters<T extends User$chaptersArgs<ExtArgs> = {}>(args?: Subset<T, User$chaptersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    commentLikes<T extends User$commentLikesArgs<ExtArgs> = {}>(args?: Subset<T, User$commentLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     courses<T extends User$coursesArgs<ExtArgs> = {}>(args?: Subset<T, User$coursesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    chapters<T extends User$chaptersArgs<ExtArgs> = {}>(args?: Subset<T, User$chaptersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    resources<T extends User$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, User$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    favorites<T extends User$favoritesArgs<ExtArgs> = {}>(args?: Subset<T, User$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discussionLikes<T extends User$discussionLikesArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    commentLikes<T extends User$commentLikesArgs<ExtArgs> = {}>(args?: Subset<T, User$commentLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    discussions<T extends User$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    favorites<T extends User$favoritesArgs<ExtArgs> = {}>(args?: Subset<T, User$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    resources<T extends User$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, User$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userPreferences<T extends User$userPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$userPreferencesArgs<ExtArgs>>): Prisma__UserPreferencesClient<$Result.GetResult<Prisma.$UserPreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3123,46 +3123,51 @@ export namespace Prisma {
   }
 
   /**
-   * User.userPreferences
+   * User.chapters
    */
-  export type User$userPreferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$chaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the UserPreferences
+     * Select specific fields to fetch from the Chapter
      */
-    select?: UserPreferencesSelect<ExtArgs> | null
+    select?: ChapterSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the UserPreferences
+     * Omit specific fields from the Chapter
      */
-    omit?: UserPreferencesOmit<ExtArgs> | null
+    omit?: ChapterOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserPreferencesInclude<ExtArgs> | null
-    where?: UserPreferencesWhereInput
+    include?: ChapterInclude<ExtArgs> | null
+    where?: ChapterWhereInput
+    orderBy?: ChapterOrderByWithRelationInput | ChapterOrderByWithRelationInput[]
+    cursor?: ChapterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterScalarFieldEnum | ChapterScalarFieldEnum[]
   }
 
   /**
-   * User.discussions
+   * User.commentLikes
    */
-  export type User$discussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$commentLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Discussion
+     * Select specific fields to fetch from the CommentLike
      */
-    select?: DiscussionSelect<ExtArgs> | null
+    select?: CommentLikeSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Discussion
+     * Omit specific fields from the CommentLike
      */
-    omit?: DiscussionOmit<ExtArgs> | null
+    omit?: CommentLikeOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: DiscussionInclude<ExtArgs> | null
-    where?: DiscussionWhereInput
-    orderBy?: DiscussionOrderByWithRelationInput | DiscussionOrderByWithRelationInput[]
-    cursor?: DiscussionWhereUniqueInput
+    include?: CommentLikeInclude<ExtArgs> | null
+    where?: CommentLikeWhereInput
+    orderBy?: CommentLikeOrderByWithRelationInput | CommentLikeOrderByWithRelationInput[]
+    cursor?: CommentLikeWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: DiscussionScalarFieldEnum | DiscussionScalarFieldEnum[]
+    distinct?: CommentLikeScalarFieldEnum | CommentLikeScalarFieldEnum[]
   }
 
   /**
@@ -3214,51 +3219,51 @@ export namespace Prisma {
   }
 
   /**
-   * User.chapters
+   * User.discussionLikes
    */
-  export type User$chaptersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$discussionLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Chapter
+     * Select specific fields to fetch from the DiscussionLike
      */
-    select?: ChapterSelect<ExtArgs> | null
+    select?: DiscussionLikeSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Chapter
+     * Omit specific fields from the DiscussionLike
      */
-    omit?: ChapterOmit<ExtArgs> | null
+    omit?: DiscussionLikeOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ChapterInclude<ExtArgs> | null
-    where?: ChapterWhereInput
-    orderBy?: ChapterOrderByWithRelationInput | ChapterOrderByWithRelationInput[]
-    cursor?: ChapterWhereUniqueInput
+    include?: DiscussionLikeInclude<ExtArgs> | null
+    where?: DiscussionLikeWhereInput
+    orderBy?: DiscussionLikeOrderByWithRelationInput | DiscussionLikeOrderByWithRelationInput[]
+    cursor?: DiscussionLikeWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ChapterScalarFieldEnum | ChapterScalarFieldEnum[]
+    distinct?: DiscussionLikeScalarFieldEnum | DiscussionLikeScalarFieldEnum[]
   }
 
   /**
-   * User.resources
+   * User.discussions
    */
-  export type User$resourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$discussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Resource
+     * Select specific fields to fetch from the Discussion
      */
-    select?: ResourceSelect<ExtArgs> | null
+    select?: DiscussionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Resource
+     * Omit specific fields from the Discussion
      */
-    omit?: ResourceOmit<ExtArgs> | null
+    omit?: DiscussionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ResourceInclude<ExtArgs> | null
-    where?: ResourceWhereInput
-    orderBy?: ResourceOrderByWithRelationInput | ResourceOrderByWithRelationInput[]
-    cursor?: ResourceWhereUniqueInput
+    include?: DiscussionInclude<ExtArgs> | null
+    where?: DiscussionWhereInput
+    orderBy?: DiscussionOrderByWithRelationInput | DiscussionOrderByWithRelationInput[]
+    cursor?: DiscussionWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ResourceScalarFieldEnum | ResourceScalarFieldEnum[]
+    distinct?: DiscussionScalarFieldEnum | DiscussionScalarFieldEnum[]
   }
 
   /**
@@ -3286,51 +3291,46 @@ export namespace Prisma {
   }
 
   /**
-   * User.discussionLikes
+   * User.resources
    */
-  export type User$discussionLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$resourcesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the DiscussionLike
+     * Select specific fields to fetch from the Resource
      */
-    select?: DiscussionLikeSelect<ExtArgs> | null
+    select?: ResourceSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the DiscussionLike
+     * Omit specific fields from the Resource
      */
-    omit?: DiscussionLikeOmit<ExtArgs> | null
+    omit?: ResourceOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: DiscussionLikeInclude<ExtArgs> | null
-    where?: DiscussionLikeWhereInput
-    orderBy?: DiscussionLikeOrderByWithRelationInput | DiscussionLikeOrderByWithRelationInput[]
-    cursor?: DiscussionLikeWhereUniqueInput
+    include?: ResourceInclude<ExtArgs> | null
+    where?: ResourceWhereInput
+    orderBy?: ResourceOrderByWithRelationInput | ResourceOrderByWithRelationInput[]
+    cursor?: ResourceWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: DiscussionLikeScalarFieldEnum | DiscussionLikeScalarFieldEnum[]
+    distinct?: ResourceScalarFieldEnum | ResourceScalarFieldEnum[]
   }
 
   /**
-   * User.commentLikes
+   * User.userPreferences
    */
-  export type User$commentLikesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$userPreferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the CommentLike
+     * Select specific fields to fetch from the UserPreferences
      */
-    select?: CommentLikeSelect<ExtArgs> | null
+    select?: UserPreferencesSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the CommentLike
+     * Omit specific fields from the UserPreferences
      */
-    omit?: CommentLikeOmit<ExtArgs> | null
+    omit?: UserPreferencesOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CommentLikeInclude<ExtArgs> | null
-    where?: CommentLikeWhereInput
-    orderBy?: CommentLikeOrderByWithRelationInput | CommentLikeOrderByWithRelationInput[]
-    cursor?: CommentLikeWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CommentLikeScalarFieldEnum | CommentLikeScalarFieldEnum[]
+    include?: UserPreferencesInclude<ExtArgs> | null
+    where?: UserPreferencesWhereInput
   }
 
   /**
@@ -4731,9 +4731,9 @@ export namespace Prisma {
     authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    author?: boolean | UserDefaultArgs<ExtArgs>
     comments?: boolean | Discussion$commentsArgs<ExtArgs>
     discussionLikes?: boolean | Discussion$discussionLikesArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | DiscussionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["discussion"]>
 
@@ -4783,9 +4783,9 @@ export namespace Prisma {
 
   export type DiscussionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "category" | "status" | "isPinned" | "views" | "likes" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["discussion"]>
   export type DiscussionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | UserDefaultArgs<ExtArgs>
     comments?: boolean | Discussion$commentsArgs<ExtArgs>
     discussionLikes?: boolean | Discussion$discussionLikesArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | DiscussionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DiscussionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4798,9 +4798,9 @@ export namespace Prisma {
   export type $DiscussionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Discussion"
     objects: {
-      author: Prisma.$UserPayload<ExtArgs>
       comments: Prisma.$CommentPayload<ExtArgs>[]
       discussionLikes: Prisma.$DiscussionLikePayload<ExtArgs>[]
+      author: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5208,9 +5208,9 @@ export namespace Prisma {
    */
   export interface Prisma__DiscussionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     comments<T extends Discussion$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Discussion$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discussionLikes<T extends Discussion$discussionLikesArgs<ExtArgs> = {}>(args?: Subset<T, Discussion$discussionLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DiscussionLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5933,9 +5933,9 @@ export namespace Prisma {
     discussionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    author?: boolean | UserDefaultArgs<ExtArgs>
-    discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
     commentLikes?: boolean | Comment$commentLikesArgs<ExtArgs>
+    discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | CommentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
@@ -5948,8 +5948,8 @@ export namespace Prisma {
     discussionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    author?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
   export type CommentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5961,8 +5961,8 @@ export namespace Prisma {
     discussionId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    author?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
   export type CommentSelectScalar = {
@@ -5978,26 +5978,26 @@ export namespace Prisma {
 
   export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "status" | "likes" | "authorId" | "discussionId" | "createdAt" | "updatedAt", ExtArgs["result"]["comment"]>
   export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | UserDefaultArgs<ExtArgs>
-    discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
     commentLikes?: boolean | Comment$commentLikesArgs<ExtArgs>
+    discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | CommentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CommentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type CommentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $CommentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Comment"
     objects: {
-      author: Prisma.$UserPayload<ExtArgs>
-      discussion: Prisma.$DiscussionPayload<ExtArgs>
       commentLikes: Prisma.$CommentLikePayload<ExtArgs>[]
+      discussion: Prisma.$DiscussionPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6402,9 +6402,9 @@ export namespace Prisma {
    */
   export interface Prisma__CommentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    discussion<T extends DiscussionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DiscussionDefaultArgs<ExtArgs>>): Prisma__DiscussionClient<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     commentLikes<T extends Comment$commentLikesArgs<ExtArgs> = {}>(args?: Subset<T, Comment$commentLikesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    discussion<T extends DiscussionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DiscussionDefaultArgs<ExtArgs>>): Prisma__DiscussionClient<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7034,8 +7034,8 @@ export namespace Prisma {
     userId?: boolean
     discussionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["discussionLike"]>
 
   export type DiscussionLikeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7043,8 +7043,8 @@ export namespace Prisma {
     userId?: boolean
     discussionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["discussionLike"]>
 
   export type DiscussionLikeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7052,8 +7052,8 @@ export namespace Prisma {
     userId?: boolean
     discussionId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["discussionLike"]>
 
   export type DiscussionLikeSelectScalar = {
@@ -7065,23 +7065,23 @@ export namespace Prisma {
 
   export type DiscussionLikeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "discussionId" | "createdAt", ExtArgs["result"]["discussionLike"]>
   export type DiscussionLikeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type DiscussionLikeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type DiscussionLikeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     discussion?: boolean | DiscussionDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $DiscussionLikePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "DiscussionLike"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       discussion: Prisma.$DiscussionPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7482,8 +7482,8 @@ export namespace Prisma {
    */
   export interface Prisma__DiscussionLikeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     discussion<T extends DiscussionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DiscussionDefaultArgs<ExtArgs>>): Prisma__DiscussionClient<$Result.GetResult<Prisma.$DiscussionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8085,8 +8085,8 @@ export namespace Prisma {
     userId?: boolean
     commentId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["commentLike"]>
 
   export type CommentLikeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8094,8 +8094,8 @@ export namespace Prisma {
     userId?: boolean
     commentId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["commentLike"]>
 
   export type CommentLikeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8103,8 +8103,8 @@ export namespace Prisma {
     userId?: boolean
     commentId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["commentLike"]>
 
   export type CommentLikeSelectScalar = {
@@ -8116,23 +8116,23 @@ export namespace Prisma {
 
   export type CommentLikeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "commentId" | "createdAt", ExtArgs["result"]["commentLike"]>
   export type CommentLikeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type CommentLikeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type CommentLikeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     comment?: boolean | CommentDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $CommentLikePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CommentLike"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       comment: Prisma.$CommentPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -8533,8 +8533,8 @@ export namespace Prisma {
    */
   export interface Prisma__CommentLikeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     comment<T extends CommentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CommentDefaultArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10560,9 +10560,9 @@ export namespace Prisma {
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    author?: boolean | Chapter$authorArgs<ExtArgs>
     parent?: boolean | Chapter$parentArgs<ExtArgs>
     children?: boolean | Chapter$childrenArgs<ExtArgs>
-    author?: boolean | Chapter$authorArgs<ExtArgs>
     favorites?: boolean | Chapter$favoritesArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
@@ -10584,8 +10584,8 @@ export namespace Prisma {
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
   export type ChapterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10605,8 +10605,8 @@ export namespace Prisma {
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
   export type ChapterSelectScalar = {
@@ -10630,27 +10630,27 @@ export namespace Prisma {
 
   export type ChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "excerpt" | "type" | "order" | "duration" | "videoUrl" | "status" | "parentId" | "authorId" | "viewCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["chapter"]>
   export type ChapterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | Chapter$authorArgs<ExtArgs>
     parent?: boolean | Chapter$parentArgs<ExtArgs>
     children?: boolean | Chapter$childrenArgs<ExtArgs>
-    author?: boolean | Chapter$authorArgs<ExtArgs>
     favorites?: boolean | Chapter$favoritesArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChapterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
   }
   export type ChapterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    parent?: boolean | Chapter$parentArgs<ExtArgs>
     author?: boolean | Chapter$authorArgs<ExtArgs>
+    parent?: boolean | Chapter$parentArgs<ExtArgs>
   }
 
   export type $ChapterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Chapter"
     objects: {
+      author: Prisma.$UserPayload<ExtArgs> | null
       parent: Prisma.$ChapterPayload<ExtArgs> | null
       children: Prisma.$ChapterPayload<ExtArgs>[]
-      author: Prisma.$UserPayload<ExtArgs> | null
       favorites: Prisma.$FavoritePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -11064,9 +11064,9 @@ export namespace Prisma {
    */
   export interface Prisma__ChapterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends Chapter$authorArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     parent<T extends Chapter$parentArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$parentArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     children<T extends Chapter$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    author<T extends Chapter$authorArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     favorites<T extends Chapter$favoritesArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -11507,6 +11507,25 @@ export namespace Prisma {
   }
 
   /**
+   * Chapter.author
+   */
+  export type Chapter$authorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Chapter.parent
    */
   export type Chapter$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11547,25 +11566,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChapterScalarFieldEnum | ChapterScalarFieldEnum[]
-  }
-
-  /**
-   * Chapter.author
-   */
-  export type Chapter$authorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
   }
 
   /**
@@ -11893,8 +11893,8 @@ export namespace Prisma {
     tags?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    author?: boolean | Resource$authorArgs<ExtArgs>
     favorites?: boolean | Resource$favoritesArgs<ExtArgs>
+    author?: boolean | Resource$authorArgs<ExtArgs>
     _count?: boolean | ResourceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["resource"]>
 
@@ -11956,8 +11956,8 @@ export namespace Prisma {
 
   export type ResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "cover" | "icon" | "url" | "type" | "status" | "authorId" | "viewCount" | "likeCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["resource"]>
   export type ResourceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    author?: boolean | Resource$authorArgs<ExtArgs>
     favorites?: boolean | Resource$favoritesArgs<ExtArgs>
+    author?: boolean | Resource$authorArgs<ExtArgs>
     _count?: boolean | ResourceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ResourceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11970,8 +11970,8 @@ export namespace Prisma {
   export type $ResourcePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Resource"
     objects: {
-      author: Prisma.$UserPayload<ExtArgs> | null
       favorites: Prisma.$FavoritePayload<ExtArgs>[]
+      author: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12383,8 +12383,8 @@ export namespace Prisma {
    */
   export interface Prisma__ResourceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    author<T extends Resource$authorArgs<ExtArgs> = {}>(args?: Subset<T, Resource$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     favorites<T extends Resource$favoritesArgs<ExtArgs> = {}>(args?: Subset<T, Resource$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    author<T extends Resource$authorArgs<ExtArgs> = {}>(args?: Subset<T, Resource$authorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12823,25 +12823,6 @@ export namespace Prisma {
   }
 
   /**
-   * Resource.author
-   */
-  export type Resource$authorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-  }
-
-  /**
    * Resource.favorites
    */
   export type Resource$favoritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12863,6 +12844,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FavoriteScalarFieldEnum | FavoriteScalarFieldEnum[]
+  }
+
+  /**
+   * Resource.author
+   */
+  export type Resource$authorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -13064,10 +13064,10 @@ export namespace Prisma {
     chapterId?: boolean
     resourceId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorite"]>
 
   export type FavoriteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13078,10 +13078,10 @@ export namespace Prisma {
     chapterId?: boolean
     resourceId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorite"]>
 
   export type FavoriteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13092,10 +13092,10 @@ export namespace Prisma {
     chapterId?: boolean
     resourceId?: boolean
     createdAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["favorite"]>
 
   export type FavoriteSelectScalar = {
@@ -13110,31 +13110,31 @@ export namespace Prisma {
 
   export type FavoriteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "targetType" | "courseId" | "chapterId" | "resourceId" | "createdAt", ExtArgs["result"]["favorite"]>
   export type FavoriteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type FavoriteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type FavoriteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    course?: boolean | Favorite$courseArgs<ExtArgs>
-    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
     resource?: boolean | Favorite$resourceArgs<ExtArgs>
+    chapter?: boolean | Favorite$chapterArgs<ExtArgs>
+    course?: boolean | Favorite$courseArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $FavoritePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Favorite"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      course: Prisma.$CoursePayload<ExtArgs> | null
-      chapter: Prisma.$ChapterPayload<ExtArgs> | null
       resource: Prisma.$ResourcePayload<ExtArgs> | null
+      chapter: Prisma.$ChapterPayload<ExtArgs> | null
+      course: Prisma.$CoursePayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13538,10 +13538,10 @@ export namespace Prisma {
    */
   export interface Prisma__FavoriteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    course<T extends Favorite$courseArgs<ExtArgs> = {}>(args?: Subset<T, Favorite$courseArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    chapter<T extends Favorite$chapterArgs<ExtArgs> = {}>(args?: Subset<T, Favorite$chapterArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     resource<T extends Favorite$resourceArgs<ExtArgs> = {}>(args?: Subset<T, Favorite$resourceArgs<ExtArgs>>): Prisma__ResourceClient<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    chapter<T extends Favorite$chapterArgs<ExtArgs> = {}>(args?: Subset<T, Favorite$chapterArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    course<T extends Favorite$courseArgs<ExtArgs> = {}>(args?: Subset<T, Favorite$courseArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13972,22 +13972,22 @@ export namespace Prisma {
   }
 
   /**
-   * Favorite.course
+   * Favorite.resource
    */
-  export type Favorite$courseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Favorite$resourceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Course
+     * Select specific fields to fetch from the Resource
      */
-    select?: CourseSelect<ExtArgs> | null
+    select?: ResourceSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Course
+     * Omit specific fields from the Resource
      */
-    omit?: CourseOmit<ExtArgs> | null
+    omit?: ResourceOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CourseInclude<ExtArgs> | null
-    where?: CourseWhereInput
+    include?: ResourceInclude<ExtArgs> | null
+    where?: ResourceWhereInput
   }
 
   /**
@@ -14010,22 +14010,22 @@ export namespace Prisma {
   }
 
   /**
-   * Favorite.resource
+   * Favorite.course
    */
-  export type Favorite$resourceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Favorite$courseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Resource
+     * Select specific fields to fetch from the Course
      */
-    select?: ResourceSelect<ExtArgs> | null
+    select?: CourseSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Resource
+     * Omit specific fields from the Course
      */
-    omit?: ResourceOmit<ExtArgs> | null
+    omit?: CourseOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ResourceInclude<ExtArgs> | null
-    where?: ResourceWhereInput
+    include?: CourseInclude<ExtArgs> | null
+    where?: CourseWhereInput
   }
 
   /**
@@ -14345,15 +14345,15 @@ export namespace Prisma {
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
-    discussions?: DiscussionListRelationFilter
+    chapters?: ChapterListRelationFilter
+    commentLikes?: CommentLikeListRelationFilter
     comments?: CommentListRelationFilter
     courses?: CourseListRelationFilter
-    chapters?: ChapterListRelationFilter
-    resources?: ResourceListRelationFilter
-    favorites?: FavoriteListRelationFilter
     discussionLikes?: DiscussionLikeListRelationFilter
-    commentLikes?: CommentLikeListRelationFilter
+    discussions?: DiscussionListRelationFilter
+    favorites?: FavoriteListRelationFilter
+    resources?: ResourceListRelationFilter
+    userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -14368,15 +14368,15 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    userPreferences?: UserPreferencesOrderByWithRelationInput
-    discussions?: DiscussionOrderByRelationAggregateInput
+    chapters?: ChapterOrderByRelationAggregateInput
+    commentLikes?: CommentLikeOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     courses?: CourseOrderByRelationAggregateInput
-    chapters?: ChapterOrderByRelationAggregateInput
-    resources?: ResourceOrderByRelationAggregateInput
-    favorites?: FavoriteOrderByRelationAggregateInput
     discussionLikes?: DiscussionLikeOrderByRelationAggregateInput
-    commentLikes?: CommentLikeOrderByRelationAggregateInput
+    discussions?: DiscussionOrderByRelationAggregateInput
+    favorites?: FavoriteOrderByRelationAggregateInput
+    resources?: ResourceOrderByRelationAggregateInput
+    userPreferences?: UserPreferencesOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -14394,15 +14394,15 @@ export namespace Prisma {
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
-    discussions?: DiscussionListRelationFilter
+    chapters?: ChapterListRelationFilter
+    commentLikes?: CommentLikeListRelationFilter
     comments?: CommentListRelationFilter
     courses?: CourseListRelationFilter
-    chapters?: ChapterListRelationFilter
-    resources?: ResourceListRelationFilter
-    favorites?: FavoriteListRelationFilter
     discussionLikes?: DiscussionLikeListRelationFilter
-    commentLikes?: CommentLikeListRelationFilter
+    discussions?: DiscussionListRelationFilter
+    favorites?: FavoriteListRelationFilter
+    resources?: ResourceListRelationFilter
+    userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -14526,9 +14526,9 @@ export namespace Prisma {
     authorId?: StringFilter<"Discussion"> | string
     createdAt?: DateTimeFilter<"Discussion"> | Date | string
     updatedAt?: DateTimeFilter<"Discussion"> | Date | string
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
     comments?: CommentListRelationFilter
     discussionLikes?: DiscussionLikeListRelationFilter
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type DiscussionOrderByWithRelationInput = {
@@ -14543,9 +14543,9 @@ export namespace Prisma {
     authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    author?: UserOrderByWithRelationInput
     comments?: CommentOrderByRelationAggregateInput
     discussionLikes?: DiscussionLikeOrderByRelationAggregateInput
+    author?: UserOrderByWithRelationInput
   }
 
   export type DiscussionWhereUniqueInput = Prisma.AtLeast<{
@@ -14563,9 +14563,9 @@ export namespace Prisma {
     authorId?: StringFilter<"Discussion"> | string
     createdAt?: DateTimeFilter<"Discussion"> | Date | string
     updatedAt?: DateTimeFilter<"Discussion"> | Date | string
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
     comments?: CommentListRelationFilter
     discussionLikes?: DiscussionLikeListRelationFilter
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type DiscussionOrderByWithAggregationInput = {
@@ -14616,9 +14616,9 @@ export namespace Prisma {
     discussionId?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
     updatedAt?: DateTimeFilter<"Comment"> | Date | string
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
-    discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
     commentLikes?: CommentLikeListRelationFilter
+    discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type CommentOrderByWithRelationInput = {
@@ -14630,9 +14630,9 @@ export namespace Prisma {
     discussionId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    author?: UserOrderByWithRelationInput
-    discussion?: DiscussionOrderByWithRelationInput
     commentLikes?: CommentLikeOrderByRelationAggregateInput
+    discussion?: DiscussionOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
   }
 
   export type CommentWhereUniqueInput = Prisma.AtLeast<{
@@ -14647,9 +14647,9 @@ export namespace Prisma {
     discussionId?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
     updatedAt?: DateTimeFilter<"Comment"> | Date | string
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
-    discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
     commentLikes?: CommentLikeListRelationFilter
+    discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type CommentOrderByWithAggregationInput = {
@@ -14690,8 +14690,8 @@ export namespace Prisma {
     userId?: StringFilter<"DiscussionLike"> | string
     discussionId?: StringFilter<"DiscussionLike"> | string
     createdAt?: DateTimeFilter<"DiscussionLike"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type DiscussionLikeOrderByWithRelationInput = {
@@ -14699,8 +14699,8 @@ export namespace Prisma {
     userId?: SortOrder
     discussionId?: SortOrder
     createdAt?: SortOrder
-    user?: UserOrderByWithRelationInput
     discussion?: DiscussionOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type DiscussionLikeWhereUniqueInput = Prisma.AtLeast<{
@@ -14712,8 +14712,8 @@ export namespace Prisma {
     userId?: StringFilter<"DiscussionLike"> | string
     discussionId?: StringFilter<"DiscussionLike"> | string
     createdAt?: DateTimeFilter<"DiscussionLike"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     discussion?: XOR<DiscussionScalarRelationFilter, DiscussionWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId_discussionId">
 
   export type DiscussionLikeOrderByWithAggregationInput = {
@@ -14744,8 +14744,8 @@ export namespace Prisma {
     userId?: StringFilter<"CommentLike"> | string
     commentId?: StringFilter<"CommentLike"> | string
     createdAt?: DateTimeFilter<"CommentLike"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     comment?: XOR<CommentScalarRelationFilter, CommentWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type CommentLikeOrderByWithRelationInput = {
@@ -14753,8 +14753,8 @@ export namespace Prisma {
     userId?: SortOrder
     commentId?: SortOrder
     createdAt?: SortOrder
-    user?: UserOrderByWithRelationInput
     comment?: CommentOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type CommentLikeWhereUniqueInput = Prisma.AtLeast<{
@@ -14766,8 +14766,8 @@ export namespace Prisma {
     userId?: StringFilter<"CommentLike"> | string
     commentId?: StringFilter<"CommentLike"> | string
     createdAt?: DateTimeFilter<"CommentLike"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     comment?: XOR<CommentScalarRelationFilter, CommentWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId_commentId">
 
   export type CommentLikeOrderByWithAggregationInput = {
@@ -14925,9 +14925,9 @@ export namespace Prisma {
     tags?: JsonNullableFilter<"Chapter">
     createdAt?: DateTimeFilter<"Chapter"> | Date | string
     updatedAt?: DateTimeFilter<"Chapter"> | Date | string
+    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     children?: ChapterListRelationFilter
-    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     favorites?: FavoriteListRelationFilter
   }
 
@@ -14948,9 +14948,9 @@ export namespace Prisma {
     tags?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    author?: UserOrderByWithRelationInput
     parent?: ChapterOrderByWithRelationInput
     children?: ChapterOrderByRelationAggregateInput
-    author?: UserOrderByWithRelationInput
     favorites?: FavoriteOrderByRelationAggregateInput
   }
 
@@ -14974,9 +14974,9 @@ export namespace Prisma {
     tags?: JsonNullableFilter<"Chapter">
     createdAt?: DateTimeFilter<"Chapter"> | Date | string
     updatedAt?: DateTimeFilter<"Chapter"> | Date | string
+    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     children?: ChapterListRelationFilter
-    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     favorites?: FavoriteListRelationFilter
   }, "id">
 
@@ -15045,8 +15045,8 @@ export namespace Prisma {
     tags?: JsonNullableFilter<"Resource">
     createdAt?: DateTimeFilter<"Resource"> | Date | string
     updatedAt?: DateTimeFilter<"Resource"> | Date | string
-    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     favorites?: FavoriteListRelationFilter
+    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type ResourceOrderByWithRelationInput = {
@@ -15065,8 +15065,8 @@ export namespace Prisma {
     tags?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    author?: UserOrderByWithRelationInput
     favorites?: FavoriteOrderByRelationAggregateInput
+    author?: UserOrderByWithRelationInput
   }
 
   export type ResourceWhereUniqueInput = Prisma.AtLeast<{
@@ -15088,8 +15088,8 @@ export namespace Prisma {
     tags?: JsonNullableFilter<"Resource">
     createdAt?: DateTimeFilter<"Resource"> | Date | string
     updatedAt?: DateTimeFilter<"Resource"> | Date | string
-    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     favorites?: FavoriteListRelationFilter
+    author?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type ResourceOrderByWithAggregationInput = {
@@ -15147,10 +15147,10 @@ export namespace Prisma {
     chapterId?: StringNullableFilter<"Favorite"> | string | null
     resourceId?: StringNullableFilter<"Favorite"> | string | null
     createdAt?: DateTimeFilter<"Favorite"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
-    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     resource?: XOR<ResourceNullableScalarRelationFilter, ResourceWhereInput> | null
+    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type FavoriteOrderByWithRelationInput = {
@@ -15161,10 +15161,10 @@ export namespace Prisma {
     chapterId?: SortOrderInput | SortOrder
     resourceId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    user?: UserOrderByWithRelationInput
-    course?: CourseOrderByWithRelationInput
-    chapter?: ChapterOrderByWithRelationInput
     resource?: ResourceOrderByWithRelationInput
+    chapter?: ChapterOrderByWithRelationInput
+    course?: CourseOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type FavoriteWhereUniqueInput = Prisma.AtLeast<{
@@ -15181,10 +15181,10 @@ export namespace Prisma {
     chapterId?: StringNullableFilter<"Favorite"> | string | null
     resourceId?: StringNullableFilter<"Favorite"> | string | null
     createdAt?: DateTimeFilter<"Favorite"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
-    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     resource?: XOR<ResourceNullableScalarRelationFilter, ResourceWhereInput> | null
+    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    course?: XOR<CourseNullableScalarRelationFilter, CourseWhereInput> | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId_targetType_courseId" | "userId_targetType_chapterId" | "userId_targetType_resourceId">
 
   export type FavoriteOrderByWithAggregationInput = {
@@ -15225,15 +15225,15 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
     discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -15248,15 +15248,15 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
     discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -15271,15 +15271,15 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -15294,15 +15294,15 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15434,9 +15434,9 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutDiscussionsInput
     comments?: CommentCreateNestedManyWithoutDiscussionInput
     discussionLikes?: DiscussionLikeCreateNestedManyWithoutDiscussionInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
   }
 
   export type DiscussionUncheckedCreateInput = {
@@ -15466,9 +15466,9 @@ export namespace Prisma {
     likes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
     comments?: CommentUpdateManyWithoutDiscussionNestedInput
     discussionLikes?: DiscussionLikeUpdateManyWithoutDiscussionNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
   }
 
   export type DiscussionUncheckedUpdateInput = {
@@ -15535,9 +15535,9 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutCommentsInput
-    discussion: DiscussionCreateNestedOneWithoutCommentsInput
     commentLikes?: CommentLikeCreateNestedManyWithoutCommentInput
+    discussion: DiscussionCreateNestedOneWithoutCommentsInput
+    author: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateInput = {
@@ -15559,9 +15559,9 @@ export namespace Prisma {
     likes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
-    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
     commentLikes?: CommentLikeUpdateManyWithoutCommentNestedInput
+    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateInput = {
@@ -15610,8 +15610,8 @@ export namespace Prisma {
   export type DiscussionLikeCreateInput = {
     id?: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutDiscussionLikesInput
     discussion: DiscussionCreateNestedOneWithoutDiscussionLikesInput
+    user: UserCreateNestedOneWithoutDiscussionLikesInput
   }
 
   export type DiscussionLikeUncheckedCreateInput = {
@@ -15624,8 +15624,8 @@ export namespace Prisma {
   export type DiscussionLikeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutDiscussionLikesNestedInput
     discussion?: DiscussionUpdateOneRequiredWithoutDiscussionLikesNestedInput
+    user?: UserUpdateOneRequiredWithoutDiscussionLikesNestedInput
   }
 
   export type DiscussionLikeUncheckedUpdateInput = {
@@ -15657,8 +15657,8 @@ export namespace Prisma {
   export type CommentLikeCreateInput = {
     id?: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutCommentLikesInput
     comment: CommentCreateNestedOneWithoutCommentLikesInput
+    user: UserCreateNestedOneWithoutCommentLikesInput
   }
 
   export type CommentLikeUncheckedCreateInput = {
@@ -15671,8 +15671,8 @@ export namespace Prisma {
   export type CommentLikeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutCommentLikesNestedInput
     comment?: CommentUpdateOneRequiredWithoutCommentLikesNestedInput
+    user?: UserUpdateOneRequiredWithoutCommentLikesNestedInput
   }
 
   export type CommentLikeUncheckedUpdateInput = {
@@ -15852,9 +15852,9 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    author?: UserCreateNestedOneWithoutChaptersInput
     parent?: ChapterCreateNestedOneWithoutChildrenInput
     children?: ChapterCreateNestedManyWithoutParentInput
-    author?: UserCreateNestedOneWithoutChaptersInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
   }
 
@@ -15894,9 +15894,9 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneWithoutChaptersNestedInput
     parent?: ChapterUpdateOneWithoutChildrenNestedInput
     children?: ChapterUpdateManyWithoutParentNestedInput
-    author?: UserUpdateOneWithoutChaptersNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
   }
 
@@ -15991,8 +15991,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    author?: UserCreateNestedOneWithoutResourcesInput
     favorites?: FavoriteCreateNestedManyWithoutResourceInput
+    author?: UserCreateNestedOneWithoutResourcesInput
   }
 
   export type ResourceUncheckedCreateInput = {
@@ -16029,8 +16029,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneWithoutResourcesNestedInput
     favorites?: FavoriteUpdateManyWithoutResourceNestedInput
+    author?: UserUpdateOneWithoutResourcesNestedInput
   }
 
   export type ResourceUncheckedUpdateInput = {
@@ -16109,10 +16109,10 @@ export namespace Prisma {
     id?: string
     targetType: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutFavoritesInput
-    course?: CourseCreateNestedOneWithoutFavoritesInput
-    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
     resource?: ResourceCreateNestedOneWithoutFavoritesInput
+    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
+    course?: CourseCreateNestedOneWithoutFavoritesInput
+    user: UserCreateNestedOneWithoutFavoritesInput
   }
 
   export type FavoriteUncheckedCreateInput = {
@@ -16129,10 +16129,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
-    course?: CourseUpdateOneWithoutFavoritesNestedInput
-    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
     resource?: ResourceUpdateOneWithoutFavoritesNestedInput
+    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
+    course?: CourseUpdateOneWithoutFavoritesNestedInput
+    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
   }
 
   export type FavoriteUncheckedUpdateInput = {
@@ -16228,15 +16228,16 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type UserPreferencesNullableScalarRelationFilter = {
-    is?: UserPreferencesWhereInput | null
-    isNot?: UserPreferencesWhereInput | null
+  export type ChapterListRelationFilter = {
+    every?: ChapterWhereInput
+    some?: ChapterWhereInput
+    none?: ChapterWhereInput
   }
 
-  export type DiscussionListRelationFilter = {
-    every?: DiscussionWhereInput
-    some?: DiscussionWhereInput
-    none?: DiscussionWhereInput
+  export type CommentLikeListRelationFilter = {
+    every?: CommentLikeWhereInput
+    some?: CommentLikeWhereInput
+    none?: CommentLikeWhereInput
   }
 
   export type CommentListRelationFilter = {
@@ -16251,16 +16252,16 @@ export namespace Prisma {
     none?: CourseWhereInput
   }
 
-  export type ChapterListRelationFilter = {
-    every?: ChapterWhereInput
-    some?: ChapterWhereInput
-    none?: ChapterWhereInput
+  export type DiscussionLikeListRelationFilter = {
+    every?: DiscussionLikeWhereInput
+    some?: DiscussionLikeWhereInput
+    none?: DiscussionLikeWhereInput
   }
 
-  export type ResourceListRelationFilter = {
-    every?: ResourceWhereInput
-    some?: ResourceWhereInput
-    none?: ResourceWhereInput
+  export type DiscussionListRelationFilter = {
+    every?: DiscussionWhereInput
+    some?: DiscussionWhereInput
+    none?: DiscussionWhereInput
   }
 
   export type FavoriteListRelationFilter = {
@@ -16269,16 +16270,15 @@ export namespace Prisma {
     none?: FavoriteWhereInput
   }
 
-  export type DiscussionLikeListRelationFilter = {
-    every?: DiscussionLikeWhereInput
-    some?: DiscussionLikeWhereInput
-    none?: DiscussionLikeWhereInput
+  export type ResourceListRelationFilter = {
+    every?: ResourceWhereInput
+    some?: ResourceWhereInput
+    none?: ResourceWhereInput
   }
 
-  export type CommentLikeListRelationFilter = {
-    every?: CommentLikeWhereInput
-    some?: CommentLikeWhereInput
-    none?: CommentLikeWhereInput
+  export type UserPreferencesNullableScalarRelationFilter = {
+    is?: UserPreferencesWhereInput | null
+    isNot?: UserPreferencesWhereInput | null
   }
 
   export type SortOrderInput = {
@@ -16286,7 +16286,11 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type DiscussionOrderByRelationAggregateInput = {
+  export type ChapterOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommentLikeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16298,11 +16302,11 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ChapterOrderByRelationAggregateInput = {
+  export type DiscussionLikeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ResourceOrderByRelationAggregateInput = {
+  export type DiscussionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16310,11 +16314,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type DiscussionLikeOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CommentLikeOrderByRelationAggregateInput = {
+  export type ResourceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16939,14 +16939,14 @@ export namespace Prisma {
     favoriteCount?: SortOrder
   }
 
-  export type CourseNullableScalarRelationFilter = {
-    is?: CourseWhereInput | null
-    isNot?: CourseWhereInput | null
-  }
-
   export type ResourceNullableScalarRelationFilter = {
     is?: ResourceWhereInput | null
     isNot?: ResourceWhereInput | null
+  }
+
+  export type CourseNullableScalarRelationFilter = {
+    is?: CourseWhereInput | null
+    isNot?: CourseWhereInput | null
   }
 
   export type FavoriteUserIdTargetTypeCourseIdCompoundUniqueInput = {
@@ -16997,17 +16997,18 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type UserPreferencesCreateNestedOneWithoutUserInput = {
-    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
-    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
-    connect?: UserPreferencesWhereUniqueInput
+  export type ChapterCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
+    createMany?: ChapterCreateManyAuthorInputEnvelope
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
   }
 
-  export type DiscussionCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
-    createMany?: DiscussionCreateManyAuthorInputEnvelope
-    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+  export type CommentLikeCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
+    createMany?: CommentLikeCreateManyUserInputEnvelope
+    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
   }
 
   export type CommentCreateNestedManyWithoutAuthorInput = {
@@ -17024,18 +17025,18 @@ export namespace Prisma {
     connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
   }
 
-  export type ChapterCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
-    createMany?: ChapterCreateManyAuthorInputEnvelope
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+  export type DiscussionLikeCreateNestedManyWithoutUserInput = {
+    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
+    createMany?: DiscussionLikeCreateManyUserInputEnvelope
+    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
   }
 
-  export type ResourceCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
-    createMany?: ResourceCreateManyAuthorInputEnvelope
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+  export type DiscussionCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
+    createMany?: DiscussionCreateManyAuthorInputEnvelope
+    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
   }
 
   export type FavoriteCreateNestedManyWithoutUserInput = {
@@ -17045,31 +17046,31 @@ export namespace Prisma {
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
   }
 
-  export type DiscussionLikeCreateNestedManyWithoutUserInput = {
-    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
-    createMany?: DiscussionLikeCreateManyUserInputEnvelope
-    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+  export type ResourceCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
+    createMany?: ResourceCreateManyAuthorInputEnvelope
+    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
   }
 
-  export type CommentLikeCreateNestedManyWithoutUserInput = {
-    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
-    createMany?: CommentLikeCreateManyUserInputEnvelope
-    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-  }
-
-  export type UserPreferencesUncheckedCreateNestedOneWithoutUserInput = {
+  export type UserPreferencesCreateNestedOneWithoutUserInput = {
     create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
     connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
     connect?: UserPreferencesWhereUniqueInput
   }
 
-  export type DiscussionUncheckedCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
-    createMany?: DiscussionCreateManyAuthorInputEnvelope
-    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+  export type ChapterUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
+    createMany?: ChapterCreateManyAuthorInputEnvelope
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+  }
+
+  export type CommentLikeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
+    createMany?: CommentLikeCreateManyUserInputEnvelope
+    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
   }
 
   export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
@@ -17086,18 +17087,18 @@ export namespace Prisma {
     connect?: CourseWhereUniqueInput | CourseWhereUniqueInput[]
   }
 
-  export type ChapterUncheckedCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
-    createMany?: ChapterCreateManyAuthorInputEnvelope
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+  export type DiscussionLikeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
+    createMany?: DiscussionLikeCreateManyUserInputEnvelope
+    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
   }
 
-  export type ResourceUncheckedCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
-    createMany?: ResourceCreateManyAuthorInputEnvelope
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+  export type DiscussionUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
+    createMany?: DiscussionCreateManyAuthorInputEnvelope
+    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
   }
 
   export type FavoriteUncheckedCreateNestedManyWithoutUserInput = {
@@ -17107,18 +17108,17 @@ export namespace Prisma {
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
   }
 
-  export type DiscussionLikeUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
-    createMany?: DiscussionLikeCreateManyUserInputEnvelope
-    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+  export type ResourceUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
+    createMany?: ResourceCreateManyAuthorInputEnvelope
+    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
   }
 
-  export type CommentLikeUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
-    createMany?: CommentLikeCreateManyUserInputEnvelope
-    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+  export type UserPreferencesUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
+    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
+    connect?: UserPreferencesWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -17141,28 +17141,32 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type UserPreferencesUpdateOneWithoutUserNestedInput = {
-    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
-    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
-    upsert?: UserPreferencesUpsertWithoutUserInput
-    disconnect?: UserPreferencesWhereInput | boolean
-    delete?: UserPreferencesWhereInput | boolean
-    connect?: UserPreferencesWhereUniqueInput
-    update?: XOR<XOR<UserPreferencesUpdateToOneWithWhereWithoutUserInput, UserPreferencesUpdateWithoutUserInput>, UserPreferencesUncheckedUpdateWithoutUserInput>
+  export type ChapterUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
+    upsert?: ChapterUpsertWithWhereUniqueWithoutAuthorInput | ChapterUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ChapterCreateManyAuthorInputEnvelope
+    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    update?: ChapterUpdateWithWhereUniqueWithoutAuthorInput | ChapterUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ChapterUpdateManyWithWhereWithoutAuthorInput | ChapterUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
   }
 
-  export type DiscussionUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
-    upsert?: DiscussionUpsertWithWhereUniqueWithoutAuthorInput | DiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: DiscussionCreateManyAuthorInputEnvelope
-    set?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    disconnect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    delete?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    update?: DiscussionUpdateWithWhereUniqueWithoutAuthorInput | DiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: DiscussionUpdateManyWithWhereWithoutAuthorInput | DiscussionUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
+  export type CommentLikeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
+    upsert?: CommentLikeUpsertWithWhereUniqueWithoutUserInput | CommentLikeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: CommentLikeCreateManyUserInputEnvelope
+    set?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+    disconnect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+    delete?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+    update?: CommentLikeUpdateWithWhereUniqueWithoutUserInput | CommentLikeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: CommentLikeUpdateManyWithWhereWithoutUserInput | CommentLikeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
   }
 
   export type CommentUpdateManyWithoutAuthorNestedInput = {
@@ -17193,32 +17197,32 @@ export namespace Prisma {
     deleteMany?: CourseScalarWhereInput | CourseScalarWhereInput[]
   }
 
-  export type ChapterUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
-    upsert?: ChapterUpsertWithWhereUniqueWithoutAuthorInput | ChapterUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: ChapterCreateManyAuthorInputEnvelope
-    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    update?: ChapterUpdateWithWhereUniqueWithoutAuthorInput | ChapterUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: ChapterUpdateManyWithWhereWithoutAuthorInput | ChapterUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+  export type DiscussionLikeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
+    upsert?: DiscussionLikeUpsertWithWhereUniqueWithoutUserInput | DiscussionLikeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DiscussionLikeCreateManyUserInputEnvelope
+    set?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    disconnect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    delete?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    update?: DiscussionLikeUpdateWithWhereUniqueWithoutUserInput | DiscussionLikeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DiscussionLikeUpdateManyWithWhereWithoutUserInput | DiscussionLikeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
   }
 
-  export type ResourceUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
-    upsert?: ResourceUpsertWithWhereUniqueWithoutAuthorInput | ResourceUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: ResourceCreateManyAuthorInputEnvelope
-    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    update?: ResourceUpdateWithWhereUniqueWithoutAuthorInput | ResourceUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: ResourceUpdateManyWithWhereWithoutAuthorInput | ResourceUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
+  export type DiscussionUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
+    upsert?: DiscussionUpsertWithWhereUniqueWithoutAuthorInput | DiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: DiscussionCreateManyAuthorInputEnvelope
+    set?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    disconnect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    delete?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    update?: DiscussionUpdateWithWhereUniqueWithoutAuthorInput | DiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: DiscussionUpdateManyWithWhereWithoutAuthorInput | DiscussionUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
   }
 
   export type FavoriteUpdateManyWithoutUserNestedInput = {
@@ -17235,21 +17239,45 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
-  export type DiscussionLikeUpdateManyWithoutUserNestedInput = {
-    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
-    upsert?: DiscussionLikeUpsertWithWhereUniqueWithoutUserInput | DiscussionLikeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: DiscussionLikeCreateManyUserInputEnvelope
-    set?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    disconnect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    delete?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    update?: DiscussionLikeUpdateWithWhereUniqueWithoutUserInput | DiscussionLikeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: DiscussionLikeUpdateManyWithWhereWithoutUserInput | DiscussionLikeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
+  export type ResourceUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
+    upsert?: ResourceUpsertWithWhereUniqueWithoutAuthorInput | ResourceUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ResourceCreateManyAuthorInputEnvelope
+    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    update?: ResourceUpdateWithWhereUniqueWithoutAuthorInput | ResourceUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ResourceUpdateManyWithWhereWithoutAuthorInput | ResourceUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
   }
 
-  export type CommentLikeUpdateManyWithoutUserNestedInput = {
+  export type UserPreferencesUpdateOneWithoutUserNestedInput = {
+    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
+    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
+    upsert?: UserPreferencesUpsertWithoutUserInput
+    disconnect?: UserPreferencesWhereInput | boolean
+    delete?: UserPreferencesWhereInput | boolean
+    connect?: UserPreferencesWhereUniqueInput
+    update?: XOR<XOR<UserPreferencesUpdateToOneWithWhereWithoutUserInput, UserPreferencesUpdateWithoutUserInput>, UserPreferencesUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ChapterUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
+    upsert?: ChapterUpsertWithWhereUniqueWithoutAuthorInput | ChapterUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ChapterCreateManyAuthorInputEnvelope
+    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
+    update?: ChapterUpdateWithWhereUniqueWithoutAuthorInput | ChapterUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ChapterUpdateManyWithWhereWithoutAuthorInput | ChapterUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+  }
+
+  export type CommentLikeUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
     upsert?: CommentLikeUpsertWithWhereUniqueWithoutUserInput | CommentLikeUpsertWithWhereUniqueWithoutUserInput[]
@@ -17261,30 +17289,6 @@ export namespace Prisma {
     update?: CommentLikeUpdateWithWhereUniqueWithoutUserInput | CommentLikeUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: CommentLikeUpdateManyWithWhereWithoutUserInput | CommentLikeUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
-  }
-
-  export type UserPreferencesUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
-    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
-    upsert?: UserPreferencesUpsertWithoutUserInput
-    disconnect?: UserPreferencesWhereInput | boolean
-    delete?: UserPreferencesWhereInput | boolean
-    connect?: UserPreferencesWhereUniqueInput
-    update?: XOR<XOR<UserPreferencesUpdateToOneWithWhereWithoutUserInput, UserPreferencesUpdateWithoutUserInput>, UserPreferencesUncheckedUpdateWithoutUserInput>
-  }
-
-  export type DiscussionUncheckedUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
-    upsert?: DiscussionUpsertWithWhereUniqueWithoutAuthorInput | DiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: DiscussionCreateManyAuthorInputEnvelope
-    set?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    disconnect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    delete?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
-    update?: DiscussionUpdateWithWhereUniqueWithoutAuthorInput | DiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: DiscussionUpdateManyWithWhereWithoutAuthorInput | DiscussionUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
   }
 
   export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
@@ -17315,32 +17319,32 @@ export namespace Prisma {
     deleteMany?: CourseScalarWhereInput | CourseScalarWhereInput[]
   }
 
-  export type ChapterUncheckedUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
-    upsert?: ChapterUpsertWithWhereUniqueWithoutAuthorInput | ChapterUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: ChapterCreateManyAuthorInputEnvelope
-    set?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    disconnect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    delete?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-    update?: ChapterUpdateWithWhereUniqueWithoutAuthorInput | ChapterUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: ChapterUpdateManyWithWhereWithoutAuthorInput | ChapterUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+  export type DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
+    upsert?: DiscussionLikeUpsertWithWhereUniqueWithoutUserInput | DiscussionLikeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DiscussionLikeCreateManyUserInputEnvelope
+    set?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    disconnect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    delete?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+    update?: DiscussionLikeUpdateWithWhereUniqueWithoutUserInput | DiscussionLikeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DiscussionLikeUpdateManyWithWhereWithoutUserInput | DiscussionLikeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
   }
 
-  export type ResourceUncheckedUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
-    upsert?: ResourceUpsertWithWhereUniqueWithoutAuthorInput | ResourceUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: ResourceCreateManyAuthorInputEnvelope
-    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
-    update?: ResourceUpdateWithWhereUniqueWithoutAuthorInput | ResourceUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: ResourceUpdateManyWithWhereWithoutAuthorInput | ResourceUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
+  export type DiscussionUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput> | DiscussionCreateWithoutAuthorInput[] | DiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: DiscussionCreateOrConnectWithoutAuthorInput | DiscussionCreateOrConnectWithoutAuthorInput[]
+    upsert?: DiscussionUpsertWithWhereUniqueWithoutAuthorInput | DiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: DiscussionCreateManyAuthorInputEnvelope
+    set?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    disconnect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    delete?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    connect?: DiscussionWhereUniqueInput | DiscussionWhereUniqueInput[]
+    update?: DiscussionUpdateWithWhereUniqueWithoutAuthorInput | DiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: DiscussionUpdateManyWithWhereWithoutAuthorInput | DiscussionUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
   }
 
   export type FavoriteUncheckedUpdateManyWithoutUserNestedInput = {
@@ -17357,32 +17361,28 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
-  export type DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput> | DiscussionLikeCreateWithoutUserInput[] | DiscussionLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: DiscussionLikeCreateOrConnectWithoutUserInput | DiscussionLikeCreateOrConnectWithoutUserInput[]
-    upsert?: DiscussionLikeUpsertWithWhereUniqueWithoutUserInput | DiscussionLikeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: DiscussionLikeCreateManyUserInputEnvelope
-    set?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    disconnect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    delete?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
-    update?: DiscussionLikeUpdateWithWhereUniqueWithoutUserInput | DiscussionLikeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: DiscussionLikeUpdateManyWithWhereWithoutUserInput | DiscussionLikeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
+  export type ResourceUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ResourceCreateWithoutAuthorInput, ResourceUncheckedCreateWithoutAuthorInput> | ResourceCreateWithoutAuthorInput[] | ResourceUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ResourceCreateOrConnectWithoutAuthorInput | ResourceCreateOrConnectWithoutAuthorInput[]
+    upsert?: ResourceUpsertWithWhereUniqueWithoutAuthorInput | ResourceUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ResourceCreateManyAuthorInputEnvelope
+    set?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    disconnect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    delete?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    connect?: ResourceWhereUniqueInput | ResourceWhereUniqueInput[]
+    update?: ResourceUpdateWithWhereUniqueWithoutAuthorInput | ResourceUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ResourceUpdateManyWithWhereWithoutAuthorInput | ResourceUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ResourceScalarWhereInput | ResourceScalarWhereInput[]
   }
 
-  export type CommentLikeUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput> | CommentLikeCreateWithoutUserInput[] | CommentLikeUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: CommentLikeCreateOrConnectWithoutUserInput | CommentLikeCreateOrConnectWithoutUserInput[]
-    upsert?: CommentLikeUpsertWithWhereUniqueWithoutUserInput | CommentLikeUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: CommentLikeCreateManyUserInputEnvelope
-    set?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-    disconnect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-    delete?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-    update?: CommentLikeUpdateWithWhereUniqueWithoutUserInput | CommentLikeUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: CommentLikeUpdateManyWithWhereWithoutUserInput | CommentLikeUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
+  export type UserPreferencesUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
+    connectOrCreate?: UserPreferencesCreateOrConnectWithoutUserInput
+    upsert?: UserPreferencesUpsertWithoutUserInput
+    disconnect?: UserPreferencesWhereInput | boolean
+    delete?: UserPreferencesWhereInput | boolean
+    connect?: UserPreferencesWhereUniqueInput
+    update?: XOR<XOR<UserPreferencesUpdateToOneWithWhereWithoutUserInput, UserPreferencesUpdateWithoutUserInput>, UserPreferencesUncheckedUpdateWithoutUserInput>
   }
 
   export type UserCreateNestedOneWithoutUserPreferencesInput = {
@@ -17411,12 +17411,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserPreferencesInput, UserUpdateWithoutUserPreferencesInput>, UserUncheckedUpdateWithoutUserPreferencesInput>
   }
 
-  export type UserCreateNestedOneWithoutDiscussionsInput = {
-    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type CommentCreateNestedManyWithoutDiscussionInput = {
     create?: XOR<CommentCreateWithoutDiscussionInput, CommentUncheckedCreateWithoutDiscussionInput> | CommentCreateWithoutDiscussionInput[] | CommentUncheckedCreateWithoutDiscussionInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutDiscussionInput | CommentCreateOrConnectWithoutDiscussionInput[]
@@ -17429,6 +17423,12 @@ export namespace Prisma {
     connectOrCreate?: DiscussionLikeCreateOrConnectWithoutDiscussionInput | DiscussionLikeCreateOrConnectWithoutDiscussionInput[]
     createMany?: DiscussionLikeCreateManyDiscussionInputEnvelope
     connect?: DiscussionLikeWhereUniqueInput | DiscussionLikeWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedOneWithoutDiscussionsInput = {
+    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type CommentUncheckedCreateNestedManyWithoutDiscussionInput = {
@@ -17447,14 +17447,6 @@ export namespace Prisma {
 
   export type EnumDiscussionCategoryFieldUpdateOperationsInput = {
     set?: $Enums.DiscussionCategory
-  }
-
-  export type UserUpdateOneRequiredWithoutDiscussionsNestedInput = {
-    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
-    upsert?: UserUpsertWithoutDiscussionsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDiscussionsInput, UserUpdateWithoutDiscussionsInput>, UserUncheckedUpdateWithoutDiscussionsInput>
   }
 
   export type CommentUpdateManyWithoutDiscussionNestedInput = {
@@ -17485,6 +17477,14 @@ export namespace Prisma {
     deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
   }
 
+  export type UserUpdateOneRequiredWithoutDiscussionsNestedInput = {
+    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
+    upsert?: UserUpsertWithoutDiscussionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDiscussionsInput, UserUpdateWithoutDiscussionsInput>, UserUncheckedUpdateWithoutDiscussionsInput>
+  }
+
   export type CommentUncheckedUpdateManyWithoutDiscussionNestedInput = {
     create?: XOR<CommentCreateWithoutDiscussionInput, CommentUncheckedCreateWithoutDiscussionInput> | CommentCreateWithoutDiscussionInput[] | CommentUncheckedCreateWithoutDiscussionInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutDiscussionInput | CommentCreateOrConnectWithoutDiscussionInput[]
@@ -17513,10 +17513,11 @@ export namespace Prisma {
     deleteMany?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutCommentsInput = {
-    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
-    connect?: UserWhereUniqueInput
+  export type CommentLikeCreateNestedManyWithoutCommentInput = {
+    create?: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput> | CommentLikeCreateWithoutCommentInput[] | CommentLikeUncheckedCreateWithoutCommentInput[]
+    connectOrCreate?: CommentLikeCreateOrConnectWithoutCommentInput | CommentLikeCreateOrConnectWithoutCommentInput[]
+    createMany?: CommentLikeCreateManyCommentInputEnvelope
+    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
   }
 
   export type DiscussionCreateNestedOneWithoutCommentsInput = {
@@ -17525,11 +17526,10 @@ export namespace Prisma {
     connect?: DiscussionWhereUniqueInput
   }
 
-  export type CommentLikeCreateNestedManyWithoutCommentInput = {
-    create?: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput> | CommentLikeCreateWithoutCommentInput[] | CommentLikeUncheckedCreateWithoutCommentInput[]
-    connectOrCreate?: CommentLikeCreateOrConnectWithoutCommentInput | CommentLikeCreateOrConnectWithoutCommentInput[]
-    createMany?: CommentLikeCreateManyCommentInputEnvelope
-    connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
+  export type UserCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type CommentLikeUncheckedCreateNestedManyWithoutCommentInput = {
@@ -17537,22 +17537,6 @@ export namespace Prisma {
     connectOrCreate?: CommentLikeCreateOrConnectWithoutCommentInput | CommentLikeCreateOrConnectWithoutCommentInput[]
     createMany?: CommentLikeCreateManyCommentInputEnvelope
     connect?: CommentLikeWhereUniqueInput | CommentLikeWhereUniqueInput[]
-  }
-
-  export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
-    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
-    upsert?: UserUpsertWithoutCommentsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
-  }
-
-  export type DiscussionUpdateOneRequiredWithoutCommentsNestedInput = {
-    create?: XOR<DiscussionCreateWithoutCommentsInput, DiscussionUncheckedCreateWithoutCommentsInput>
-    connectOrCreate?: DiscussionCreateOrConnectWithoutCommentsInput
-    upsert?: DiscussionUpsertWithoutCommentsInput
-    connect?: DiscussionWhereUniqueInput
-    update?: XOR<XOR<DiscussionUpdateToOneWithWhereWithoutCommentsInput, DiscussionUpdateWithoutCommentsInput>, DiscussionUncheckedUpdateWithoutCommentsInput>
   }
 
   export type CommentLikeUpdateManyWithoutCommentNestedInput = {
@@ -17569,6 +17553,22 @@ export namespace Prisma {
     deleteMany?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
   }
 
+  export type DiscussionUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<DiscussionCreateWithoutCommentsInput, DiscussionUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: DiscussionCreateOrConnectWithoutCommentsInput
+    upsert?: DiscussionUpsertWithoutCommentsInput
+    connect?: DiscussionWhereUniqueInput
+    update?: XOR<XOR<DiscussionUpdateToOneWithWhereWithoutCommentsInput, DiscussionUpdateWithoutCommentsInput>, DiscussionUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    upsert?: UserUpsertWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
   export type CommentLikeUncheckedUpdateManyWithoutCommentNestedInput = {
     create?: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput> | CommentLikeCreateWithoutCommentInput[] | CommentLikeUncheckedCreateWithoutCommentInput[]
     connectOrCreate?: CommentLikeCreateOrConnectWithoutCommentInput | CommentLikeCreateOrConnectWithoutCommentInput[]
@@ -17583,24 +17583,16 @@ export namespace Prisma {
     deleteMany?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutDiscussionLikesInput = {
-    create?: XOR<UserCreateWithoutDiscussionLikesInput, UserUncheckedCreateWithoutDiscussionLikesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDiscussionLikesInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type DiscussionCreateNestedOneWithoutDiscussionLikesInput = {
     create?: XOR<DiscussionCreateWithoutDiscussionLikesInput, DiscussionUncheckedCreateWithoutDiscussionLikesInput>
     connectOrCreate?: DiscussionCreateOrConnectWithoutDiscussionLikesInput
     connect?: DiscussionWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutDiscussionLikesNestedInput = {
+  export type UserCreateNestedOneWithoutDiscussionLikesInput = {
     create?: XOR<UserCreateWithoutDiscussionLikesInput, UserUncheckedCreateWithoutDiscussionLikesInput>
     connectOrCreate?: UserCreateOrConnectWithoutDiscussionLikesInput
-    upsert?: UserUpsertWithoutDiscussionLikesInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDiscussionLikesInput, UserUpdateWithoutDiscussionLikesInput>, UserUncheckedUpdateWithoutDiscussionLikesInput>
   }
 
   export type DiscussionUpdateOneRequiredWithoutDiscussionLikesNestedInput = {
@@ -17611,10 +17603,12 @@ export namespace Prisma {
     update?: XOR<XOR<DiscussionUpdateToOneWithWhereWithoutDiscussionLikesInput, DiscussionUpdateWithoutDiscussionLikesInput>, DiscussionUncheckedUpdateWithoutDiscussionLikesInput>
   }
 
-  export type UserCreateNestedOneWithoutCommentLikesInput = {
-    create?: XOR<UserCreateWithoutCommentLikesInput, UserUncheckedCreateWithoutCommentLikesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCommentLikesInput
+  export type UserUpdateOneRequiredWithoutDiscussionLikesNestedInput = {
+    create?: XOR<UserCreateWithoutDiscussionLikesInput, UserUncheckedCreateWithoutDiscussionLikesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDiscussionLikesInput
+    upsert?: UserUpsertWithoutDiscussionLikesInput
     connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDiscussionLikesInput, UserUpdateWithoutDiscussionLikesInput>, UserUncheckedUpdateWithoutDiscussionLikesInput>
   }
 
   export type CommentCreateNestedOneWithoutCommentLikesInput = {
@@ -17623,12 +17617,10 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutCommentLikesNestedInput = {
+  export type UserCreateNestedOneWithoutCommentLikesInput = {
     create?: XOR<UserCreateWithoutCommentLikesInput, UserUncheckedCreateWithoutCommentLikesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCommentLikesInput
-    upsert?: UserUpsertWithoutCommentLikesInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentLikesInput, UserUpdateWithoutCommentLikesInput>, UserUncheckedUpdateWithoutCommentLikesInput>
   }
 
   export type CommentUpdateOneRequiredWithoutCommentLikesNestedInput = {
@@ -17637,6 +17629,14 @@ export namespace Prisma {
     upsert?: CommentUpsertWithoutCommentLikesInput
     connect?: CommentWhereUniqueInput
     update?: XOR<XOR<CommentUpdateToOneWithWhereWithoutCommentLikesInput, CommentUpdateWithoutCommentLikesInput>, CommentUncheckedUpdateWithoutCommentLikesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCommentLikesNestedInput = {
+    create?: XOR<UserCreateWithoutCommentLikesInput, UserUncheckedCreateWithoutCommentLikesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentLikesInput
+    upsert?: UserUpsertWithoutCommentLikesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentLikesInput, UserUpdateWithoutCommentLikesInput>, UserUncheckedUpdateWithoutCommentLikesInput>
   }
 
   export type UserCreateNestedOneWithoutCoursesInput = {
@@ -17697,6 +17697,12 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutChaptersInput = {
+    create?: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChaptersInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ChapterCreateNestedOneWithoutChildrenInput = {
     create?: XOR<ChapterCreateWithoutChildrenInput, ChapterUncheckedCreateWithoutChildrenInput>
     connectOrCreate?: ChapterCreateOrConnectWithoutChildrenInput
@@ -17708,12 +17714,6 @@ export namespace Prisma {
     connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
     createMany?: ChapterCreateManyParentInputEnvelope
     connect?: ChapterWhereUniqueInput | ChapterWhereUniqueInput[]
-  }
-
-  export type UserCreateNestedOneWithoutChaptersInput = {
-    create?: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutChaptersInput
-    connect?: UserWhereUniqueInput
   }
 
   export type FavoriteCreateNestedManyWithoutChapterInput = {
@@ -17735,6 +17735,16 @@ export namespace Prisma {
     connectOrCreate?: FavoriteCreateOrConnectWithoutChapterInput | FavoriteCreateOrConnectWithoutChapterInput[]
     createMany?: FavoriteCreateManyChapterInputEnvelope
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneWithoutChaptersNestedInput = {
+    create?: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChaptersInput
+    upsert?: UserUpsertWithoutChaptersInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChaptersInput, UserUpdateWithoutChaptersInput>, UserUncheckedUpdateWithoutChaptersInput>
   }
 
   export type ChapterUpdateOneWithoutChildrenNestedInput = {
@@ -17759,16 +17769,6 @@ export namespace Prisma {
     update?: ChapterUpdateWithWhereUniqueWithoutParentInput | ChapterUpdateWithWhereUniqueWithoutParentInput[]
     updateMany?: ChapterUpdateManyWithWhereWithoutParentInput | ChapterUpdateManyWithWhereWithoutParentInput[]
     deleteMany?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
-  }
-
-  export type UserUpdateOneWithoutChaptersNestedInput = {
-    create?: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
-    connectOrCreate?: UserCreateOrConnectWithoutChaptersInput
-    upsert?: UserUpsertWithoutChaptersInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChaptersInput, UserUpdateWithoutChaptersInput>, UserUncheckedUpdateWithoutChaptersInput>
   }
 
   export type FavoriteUpdateManyWithoutChapterNestedInput = {
@@ -17813,12 +17813,6 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutResourcesInput = {
-    create?: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutResourcesInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type FavoriteCreateNestedManyWithoutResourceInput = {
     create?: XOR<FavoriteCreateWithoutResourceInput, FavoriteUncheckedCreateWithoutResourceInput> | FavoriteCreateWithoutResourceInput[] | FavoriteUncheckedCreateWithoutResourceInput[]
     connectOrCreate?: FavoriteCreateOrConnectWithoutResourceInput | FavoriteCreateOrConnectWithoutResourceInput[]
@@ -17826,21 +17820,17 @@ export namespace Prisma {
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
   }
 
+  export type UserCreateNestedOneWithoutResourcesInput = {
+    create?: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutResourcesInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type FavoriteUncheckedCreateNestedManyWithoutResourceInput = {
     create?: XOR<FavoriteCreateWithoutResourceInput, FavoriteUncheckedCreateWithoutResourceInput> | FavoriteCreateWithoutResourceInput[] | FavoriteUncheckedCreateWithoutResourceInput[]
     connectOrCreate?: FavoriteCreateOrConnectWithoutResourceInput | FavoriteCreateOrConnectWithoutResourceInput[]
     createMany?: FavoriteCreateManyResourceInputEnvelope
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
-  }
-
-  export type UserUpdateOneWithoutResourcesNestedInput = {
-    create?: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutResourcesInput
-    upsert?: UserUpsertWithoutResourcesInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutResourcesInput, UserUpdateWithoutResourcesInput>, UserUncheckedUpdateWithoutResourcesInput>
   }
 
   export type FavoriteUpdateManyWithoutResourceNestedInput = {
@@ -17857,6 +17847,16 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
+  export type UserUpdateOneWithoutResourcesNestedInput = {
+    create?: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutResourcesInput
+    upsert?: UserUpsertWithoutResourcesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutResourcesInput, UserUpdateWithoutResourcesInput>, UserUncheckedUpdateWithoutResourcesInput>
+  }
+
   export type FavoriteUncheckedUpdateManyWithoutResourceNestedInput = {
     create?: XOR<FavoriteCreateWithoutResourceInput, FavoriteUncheckedCreateWithoutResourceInput> | FavoriteCreateWithoutResourceInput[] | FavoriteUncheckedCreateWithoutResourceInput[]
     connectOrCreate?: FavoriteCreateOrConnectWithoutResourceInput | FavoriteCreateOrConnectWithoutResourceInput[]
@@ -17871,16 +17871,10 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutFavoritesInput = {
-    create?: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFavoritesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type CourseCreateNestedOneWithoutFavoritesInput = {
-    create?: XOR<CourseCreateWithoutFavoritesInput, CourseUncheckedCreateWithoutFavoritesInput>
-    connectOrCreate?: CourseCreateOrConnectWithoutFavoritesInput
-    connect?: CourseWhereUniqueInput
+  export type ResourceCreateNestedOneWithoutFavoritesInput = {
+    create?: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
+    connectOrCreate?: ResourceCreateOrConnectWithoutFavoritesInput
+    connect?: ResourceWhereUniqueInput
   }
 
   export type ChapterCreateNestedOneWithoutFavoritesInput = {
@@ -17889,28 +17883,26 @@ export namespace Prisma {
     connect?: ChapterWhereUniqueInput
   }
 
-  export type ResourceCreateNestedOneWithoutFavoritesInput = {
-    create?: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
-    connectOrCreate?: ResourceCreateOrConnectWithoutFavoritesInput
-    connect?: ResourceWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutFavoritesNestedInput = {
-    create?: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFavoritesInput
-    upsert?: UserUpsertWithoutFavoritesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFavoritesInput, UserUpdateWithoutFavoritesInput>, UserUncheckedUpdateWithoutFavoritesInput>
-  }
-
-  export type CourseUpdateOneWithoutFavoritesNestedInput = {
+  export type CourseCreateNestedOneWithoutFavoritesInput = {
     create?: XOR<CourseCreateWithoutFavoritesInput, CourseUncheckedCreateWithoutFavoritesInput>
     connectOrCreate?: CourseCreateOrConnectWithoutFavoritesInput
-    upsert?: CourseUpsertWithoutFavoritesInput
-    disconnect?: CourseWhereInput | boolean
-    delete?: CourseWhereInput | boolean
     connect?: CourseWhereUniqueInput
-    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutFavoritesInput, CourseUpdateWithoutFavoritesInput>, CourseUncheckedUpdateWithoutFavoritesInput>
+  }
+
+  export type UserCreateNestedOneWithoutFavoritesInput = {
+    create?: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoritesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ResourceUpdateOneWithoutFavoritesNestedInput = {
+    create?: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
+    connectOrCreate?: ResourceCreateOrConnectWithoutFavoritesInput
+    upsert?: ResourceUpsertWithoutFavoritesInput
+    disconnect?: ResourceWhereInput | boolean
+    delete?: ResourceWhereInput | boolean
+    connect?: ResourceWhereUniqueInput
+    update?: XOR<XOR<ResourceUpdateToOneWithWhereWithoutFavoritesInput, ResourceUpdateWithoutFavoritesInput>, ResourceUncheckedUpdateWithoutFavoritesInput>
   }
 
   export type ChapterUpdateOneWithoutFavoritesNestedInput = {
@@ -17923,14 +17915,22 @@ export namespace Prisma {
     update?: XOR<XOR<ChapterUpdateToOneWithWhereWithoutFavoritesInput, ChapterUpdateWithoutFavoritesInput>, ChapterUncheckedUpdateWithoutFavoritesInput>
   }
 
-  export type ResourceUpdateOneWithoutFavoritesNestedInput = {
-    create?: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
-    connectOrCreate?: ResourceCreateOrConnectWithoutFavoritesInput
-    upsert?: ResourceUpsertWithoutFavoritesInput
-    disconnect?: ResourceWhereInput | boolean
-    delete?: ResourceWhereInput | boolean
-    connect?: ResourceWhereUniqueInput
-    update?: XOR<XOR<ResourceUpdateToOneWithWhereWithoutFavoritesInput, ResourceUpdateWithoutFavoritesInput>, ResourceUncheckedUpdateWithoutFavoritesInput>
+  export type CourseUpdateOneWithoutFavoritesNestedInput = {
+    create?: XOR<CourseCreateWithoutFavoritesInput, CourseUncheckedCreateWithoutFavoritesInput>
+    connectOrCreate?: CourseCreateOrConnectWithoutFavoritesInput
+    upsert?: CourseUpsertWithoutFavoritesInput
+    disconnect?: CourseWhereInput | boolean
+    delete?: CourseWhereInput | boolean
+    connect?: CourseWhereUniqueInput
+    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutFavoritesInput, CourseUpdateWithoutFavoritesInput>, CourseUncheckedUpdateWithoutFavoritesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutFavoritesNestedInput = {
+    create?: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoritesInput
+    upsert?: UserUpsertWithoutFavoritesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFavoritesInput, UserUpdateWithoutFavoritesInput>, UserUncheckedUpdateWithoutFavoritesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -18159,68 +18159,74 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type UserPreferencesCreateWithoutUserInput = {
-    id?: string
-    theme?: string
-    codePanelRatio?: number
-    language?: string
-    notifications?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type UserPreferencesUncheckedCreateWithoutUserInput = {
-    id?: string
-    theme?: string
-    codePanelRatio?: number
-    language?: string
-    notifications?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type UserPreferencesCreateOrConnectWithoutUserInput = {
-    where: UserPreferencesWhereUniqueInput
-    create: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
-  }
-
-  export type DiscussionCreateWithoutAuthorInput = {
+  export type ChapterCreateWithoutAuthorInput = {
     id?: string
     title: string
-    content: string
-    category: $Enums.DiscussionCategory
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
     status?: string
-    isPinned?: boolean
-    views?: number
-    likes?: number
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    comments?: CommentCreateNestedManyWithoutDiscussionInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutDiscussionInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    children?: ChapterCreateNestedManyWithoutParentInput
+    favorites?: FavoriteCreateNestedManyWithoutChapterInput
   }
 
-  export type DiscussionUncheckedCreateWithoutAuthorInput = {
+  export type ChapterUncheckedCreateWithoutAuthorInput = {
     id?: string
     title: string
-    content: string
-    category: $Enums.DiscussionCategory
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
     status?: string
-    isPinned?: boolean
-    views?: number
-    likes?: number
+    parentId?: string | null
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    comments?: CommentUncheckedCreateNestedManyWithoutDiscussionInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutDiscussionInput
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
   }
 
-  export type DiscussionCreateOrConnectWithoutAuthorInput = {
-    where: DiscussionWhereUniqueInput
-    create: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput>
+  export type ChapterCreateOrConnectWithoutAuthorInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput>
   }
 
-  export type DiscussionCreateManyAuthorInputEnvelope = {
-    data: DiscussionCreateManyAuthorInput | DiscussionCreateManyAuthorInput[]
+  export type ChapterCreateManyAuthorInputEnvelope = {
+    data: ChapterCreateManyAuthorInput | ChapterCreateManyAuthorInput[]
+  }
+
+  export type CommentLikeCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    comment: CommentCreateNestedOneWithoutCommentLikesInput
+  }
+
+  export type CommentLikeUncheckedCreateWithoutUserInput = {
+    id?: string
+    commentId: string
+    createdAt?: Date | string
+  }
+
+  export type CommentLikeCreateOrConnectWithoutUserInput = {
+    where: CommentLikeWhereUniqueInput
+    create: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput>
+  }
+
+  export type CommentLikeCreateManyUserInputEnvelope = {
+    data: CommentLikeCreateManyUserInput | CommentLikeCreateManyUserInput[]
   }
 
   export type CommentCreateWithoutAuthorInput = {
@@ -18230,8 +18236,8 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    discussion: DiscussionCreateNestedOneWithoutCommentsInput
     commentLikes?: CommentLikeCreateNestedManyWithoutCommentInput
+    discussion: DiscussionCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutAuthorInput = {
@@ -18301,53 +18307,91 @@ export namespace Prisma {
     data: CourseCreateManyAuthorInput | CourseCreateManyAuthorInput[]
   }
 
-  export type ChapterCreateWithoutAuthorInput = {
+  export type DiscussionLikeCreateWithoutUserInput = {
+    id?: string
+    createdAt?: Date | string
+    discussion: DiscussionCreateNestedOneWithoutDiscussionLikesInput
+  }
+
+  export type DiscussionLikeUncheckedCreateWithoutUserInput = {
+    id?: string
+    discussionId: string
+    createdAt?: Date | string
+  }
+
+  export type DiscussionLikeCreateOrConnectWithoutUserInput = {
+    where: DiscussionLikeWhereUniqueInput
+    create: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput>
+  }
+
+  export type DiscussionLikeCreateManyUserInputEnvelope = {
+    data: DiscussionLikeCreateManyUserInput | DiscussionLikeCreateManyUserInput[]
+  }
+
+  export type DiscussionCreateWithoutAuthorInput = {
     id?: string
     title: string
-    content?: string | null
-    excerpt?: string | null
-    type?: string
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
+    content: string
+    category: $Enums.DiscussionCategory
     status?: string
-    viewCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    isPinned?: boolean
+    views?: number
+    likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    parent?: ChapterCreateNestedOneWithoutChildrenInput
-    children?: ChapterCreateNestedManyWithoutParentInput
-    favorites?: FavoriteCreateNestedManyWithoutChapterInput
+    comments?: CommentCreateNestedManyWithoutDiscussionInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutDiscussionInput
   }
 
-  export type ChapterUncheckedCreateWithoutAuthorInput = {
+  export type DiscussionUncheckedCreateWithoutAuthorInput = {
     id?: string
     title: string
-    content?: string | null
-    excerpt?: string | null
-    type?: string
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
+    content: string
+    category: $Enums.DiscussionCategory
     status?: string
-    parentId?: string | null
-    viewCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    isPinned?: boolean
+    views?: number
+    likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+    comments?: CommentUncheckedCreateNestedManyWithoutDiscussionInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutDiscussionInput
   }
 
-  export type ChapterCreateOrConnectWithoutAuthorInput = {
-    where: ChapterWhereUniqueInput
-    create: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput>
+  export type DiscussionCreateOrConnectWithoutAuthorInput = {
+    where: DiscussionWhereUniqueInput
+    create: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput>
   }
 
-  export type ChapterCreateManyAuthorInputEnvelope = {
-    data: ChapterCreateManyAuthorInput | ChapterCreateManyAuthorInput[]
+  export type DiscussionCreateManyAuthorInputEnvelope = {
+    data: DiscussionCreateManyAuthorInput | DiscussionCreateManyAuthorInput[]
+  }
+
+  export type FavoriteCreateWithoutUserInput = {
+    id?: string
+    targetType: string
+    createdAt?: Date | string
+    resource?: ResourceCreateNestedOneWithoutFavoritesInput
+    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
+    course?: CourseCreateNestedOneWithoutFavoritesInput
+  }
+
+  export type FavoriteUncheckedCreateWithoutUserInput = {
+    id?: string
+    targetType: string
+    courseId?: string | null
+    chapterId?: string | null
+    resourceId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type FavoriteCreateOrConnectWithoutUserInput = {
+    where: FavoriteWhereUniqueInput
+    create: XOR<FavoriteCreateWithoutUserInput, FavoriteUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteCreateManyUserInputEnvelope = {
+    data: FavoriteCreateManyUserInput | FavoriteCreateManyUserInput[]
   }
 
   export type ResourceCreateWithoutAuthorInput = {
@@ -18395,137 +18439,93 @@ export namespace Prisma {
     data: ResourceCreateManyAuthorInput | ResourceCreateManyAuthorInput[]
   }
 
-  export type FavoriteCreateWithoutUserInput = {
+  export type UserPreferencesCreateWithoutUserInput = {
     id?: string
-    targetType: string
+    theme?: string
+    codePanelRatio?: number
+    language?: string
+    notifications?: boolean
     createdAt?: Date | string
-    course?: CourseCreateNestedOneWithoutFavoritesInput
-    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
-    resource?: ResourceCreateNestedOneWithoutFavoritesInput
+    updatedAt?: Date | string
   }
 
-  export type FavoriteUncheckedCreateWithoutUserInput = {
+  export type UserPreferencesUncheckedCreateWithoutUserInput = {
     id?: string
-    targetType: string
-    courseId?: string | null
-    chapterId?: string | null
-    resourceId?: string | null
+    theme?: string
+    codePanelRatio?: number
+    language?: string
+    notifications?: boolean
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type FavoriteCreateOrConnectWithoutUserInput = {
-    where: FavoriteWhereUniqueInput
-    create: XOR<FavoriteCreateWithoutUserInput, FavoriteUncheckedCreateWithoutUserInput>
+  export type UserPreferencesCreateOrConnectWithoutUserInput = {
+    where: UserPreferencesWhereUniqueInput
+    create: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
   }
 
-  export type FavoriteCreateManyUserInputEnvelope = {
-    data: FavoriteCreateManyUserInput | FavoriteCreateManyUserInput[]
+  export type ChapterUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: ChapterWhereUniqueInput
+    update: XOR<ChapterUpdateWithoutAuthorInput, ChapterUncheckedUpdateWithoutAuthorInput>
+    create: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput>
   }
 
-  export type DiscussionLikeCreateWithoutUserInput = {
-    id?: string
-    createdAt?: Date | string
-    discussion: DiscussionCreateNestedOneWithoutDiscussionLikesInput
+  export type ChapterUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: ChapterWhereUniqueInput
+    data: XOR<ChapterUpdateWithoutAuthorInput, ChapterUncheckedUpdateWithoutAuthorInput>
   }
 
-  export type DiscussionLikeUncheckedCreateWithoutUserInput = {
-    id?: string
-    discussionId: string
-    createdAt?: Date | string
+  export type ChapterUpdateManyWithWhereWithoutAuthorInput = {
+    where: ChapterScalarWhereInput
+    data: XOR<ChapterUpdateManyMutationInput, ChapterUncheckedUpdateManyWithoutAuthorInput>
   }
 
-  export type DiscussionLikeCreateOrConnectWithoutUserInput = {
-    where: DiscussionLikeWhereUniqueInput
-    create: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput>
+  export type ChapterScalarWhereInput = {
+    AND?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+    OR?: ChapterScalarWhereInput[]
+    NOT?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
+    id?: StringFilter<"Chapter"> | string
+    title?: StringFilter<"Chapter"> | string
+    content?: StringNullableFilter<"Chapter"> | string | null
+    excerpt?: StringNullableFilter<"Chapter"> | string | null
+    type?: StringFilter<"Chapter"> | string
+    order?: IntFilter<"Chapter"> | number
+    duration?: StringNullableFilter<"Chapter"> | string | null
+    videoUrl?: StringNullableFilter<"Chapter"> | string | null
+    status?: StringFilter<"Chapter"> | string
+    parentId?: StringNullableFilter<"Chapter"> | string | null
+    authorId?: StringNullableFilter<"Chapter"> | string | null
+    viewCount?: IntFilter<"Chapter"> | number
+    favoriteCount?: IntFilter<"Chapter"> | number
+    tags?: JsonNullableFilter<"Chapter">
+    createdAt?: DateTimeFilter<"Chapter"> | Date | string
+    updatedAt?: DateTimeFilter<"Chapter"> | Date | string
   }
 
-  export type DiscussionLikeCreateManyUserInputEnvelope = {
-    data: DiscussionLikeCreateManyUserInput | DiscussionLikeCreateManyUserInput[]
-  }
-
-  export type CommentLikeCreateWithoutUserInput = {
-    id?: string
-    createdAt?: Date | string
-    comment: CommentCreateNestedOneWithoutCommentLikesInput
-  }
-
-  export type CommentLikeUncheckedCreateWithoutUserInput = {
-    id?: string
-    commentId: string
-    createdAt?: Date | string
-  }
-
-  export type CommentLikeCreateOrConnectWithoutUserInput = {
+  export type CommentLikeUpsertWithWhereUniqueWithoutUserInput = {
     where: CommentLikeWhereUniqueInput
+    update: XOR<CommentLikeUpdateWithoutUserInput, CommentLikeUncheckedUpdateWithoutUserInput>
     create: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput>
   }
 
-  export type CommentLikeCreateManyUserInputEnvelope = {
-    data: CommentLikeCreateManyUserInput | CommentLikeCreateManyUserInput[]
+  export type CommentLikeUpdateWithWhereUniqueWithoutUserInput = {
+    where: CommentLikeWhereUniqueInput
+    data: XOR<CommentLikeUpdateWithoutUserInput, CommentLikeUncheckedUpdateWithoutUserInput>
   }
 
-  export type UserPreferencesUpsertWithoutUserInput = {
-    update: XOR<UserPreferencesUpdateWithoutUserInput, UserPreferencesUncheckedUpdateWithoutUserInput>
-    create: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
-    where?: UserPreferencesWhereInput
+  export type CommentLikeUpdateManyWithWhereWithoutUserInput = {
+    where: CommentLikeScalarWhereInput
+    data: XOR<CommentLikeUpdateManyMutationInput, CommentLikeUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type UserPreferencesUpdateToOneWithWhereWithoutUserInput = {
-    where?: UserPreferencesWhereInput
-    data: XOR<UserPreferencesUpdateWithoutUserInput, UserPreferencesUncheckedUpdateWithoutUserInput>
-  }
-
-  export type UserPreferencesUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    theme?: StringFieldUpdateOperationsInput | string
-    codePanelRatio?: IntFieldUpdateOperationsInput | number
-    language?: StringFieldUpdateOperationsInput | string
-    notifications?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserPreferencesUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    theme?: StringFieldUpdateOperationsInput | string
-    codePanelRatio?: IntFieldUpdateOperationsInput | number
-    language?: StringFieldUpdateOperationsInput | string
-    notifications?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DiscussionUpsertWithWhereUniqueWithoutAuthorInput = {
-    where: DiscussionWhereUniqueInput
-    update: XOR<DiscussionUpdateWithoutAuthorInput, DiscussionUncheckedUpdateWithoutAuthorInput>
-    create: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput>
-  }
-
-  export type DiscussionUpdateWithWhereUniqueWithoutAuthorInput = {
-    where: DiscussionWhereUniqueInput
-    data: XOR<DiscussionUpdateWithoutAuthorInput, DiscussionUncheckedUpdateWithoutAuthorInput>
-  }
-
-  export type DiscussionUpdateManyWithWhereWithoutAuthorInput = {
-    where: DiscussionScalarWhereInput
-    data: XOR<DiscussionUpdateManyMutationInput, DiscussionUncheckedUpdateManyWithoutAuthorInput>
-  }
-
-  export type DiscussionScalarWhereInput = {
-    AND?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
-    OR?: DiscussionScalarWhereInput[]
-    NOT?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
-    id?: StringFilter<"Discussion"> | string
-    title?: StringFilter<"Discussion"> | string
-    content?: StringFilter<"Discussion"> | string
-    category?: EnumDiscussionCategoryFilter<"Discussion"> | $Enums.DiscussionCategory
-    status?: StringFilter<"Discussion"> | string
-    isPinned?: BoolFilter<"Discussion"> | boolean
-    views?: IntFilter<"Discussion"> | number
-    likes?: IntFilter<"Discussion"> | number
-    authorId?: StringFilter<"Discussion"> | string
-    createdAt?: DateTimeFilter<"Discussion"> | Date | string
-    updatedAt?: DateTimeFilter<"Discussion"> | Date | string
+  export type CommentLikeScalarWhereInput = {
+    AND?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
+    OR?: CommentLikeScalarWhereInput[]
+    NOT?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
+    id?: StringFilter<"CommentLike"> | string
+    userId?: StringFilter<"CommentLike"> | string
+    commentId?: StringFilter<"CommentLike"> | string
+    createdAt?: DateTimeFilter<"CommentLike"> | Date | string
   }
 
   export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -18596,42 +18596,92 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Course"> | Date | string
   }
 
-  export type ChapterUpsertWithWhereUniqueWithoutAuthorInput = {
-    where: ChapterWhereUniqueInput
-    update: XOR<ChapterUpdateWithoutAuthorInput, ChapterUncheckedUpdateWithoutAuthorInput>
-    create: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput>
+  export type DiscussionLikeUpsertWithWhereUniqueWithoutUserInput = {
+    where: DiscussionLikeWhereUniqueInput
+    update: XOR<DiscussionLikeUpdateWithoutUserInput, DiscussionLikeUncheckedUpdateWithoutUserInput>
+    create: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput>
   }
 
-  export type ChapterUpdateWithWhereUniqueWithoutAuthorInput = {
-    where: ChapterWhereUniqueInput
-    data: XOR<ChapterUpdateWithoutAuthorInput, ChapterUncheckedUpdateWithoutAuthorInput>
+  export type DiscussionLikeUpdateWithWhereUniqueWithoutUserInput = {
+    where: DiscussionLikeWhereUniqueInput
+    data: XOR<DiscussionLikeUpdateWithoutUserInput, DiscussionLikeUncheckedUpdateWithoutUserInput>
   }
 
-  export type ChapterUpdateManyWithWhereWithoutAuthorInput = {
-    where: ChapterScalarWhereInput
-    data: XOR<ChapterUpdateManyMutationInput, ChapterUncheckedUpdateManyWithoutAuthorInput>
+  export type DiscussionLikeUpdateManyWithWhereWithoutUserInput = {
+    where: DiscussionLikeScalarWhereInput
+    data: XOR<DiscussionLikeUpdateManyMutationInput, DiscussionLikeUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type ChapterScalarWhereInput = {
-    AND?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
-    OR?: ChapterScalarWhereInput[]
-    NOT?: ChapterScalarWhereInput | ChapterScalarWhereInput[]
-    id?: StringFilter<"Chapter"> | string
-    title?: StringFilter<"Chapter"> | string
-    content?: StringNullableFilter<"Chapter"> | string | null
-    excerpt?: StringNullableFilter<"Chapter"> | string | null
-    type?: StringFilter<"Chapter"> | string
-    order?: IntFilter<"Chapter"> | number
-    duration?: StringNullableFilter<"Chapter"> | string | null
-    videoUrl?: StringNullableFilter<"Chapter"> | string | null
-    status?: StringFilter<"Chapter"> | string
-    parentId?: StringNullableFilter<"Chapter"> | string | null
-    authorId?: StringNullableFilter<"Chapter"> | string | null
-    viewCount?: IntFilter<"Chapter"> | number
-    favoriteCount?: IntFilter<"Chapter"> | number
-    tags?: JsonNullableFilter<"Chapter">
-    createdAt?: DateTimeFilter<"Chapter"> | Date | string
-    updatedAt?: DateTimeFilter<"Chapter"> | Date | string
+  export type DiscussionLikeScalarWhereInput = {
+    AND?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
+    OR?: DiscussionLikeScalarWhereInput[]
+    NOT?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
+    id?: StringFilter<"DiscussionLike"> | string
+    userId?: StringFilter<"DiscussionLike"> | string
+    discussionId?: StringFilter<"DiscussionLike"> | string
+    createdAt?: DateTimeFilter<"DiscussionLike"> | Date | string
+  }
+
+  export type DiscussionUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: DiscussionWhereUniqueInput
+    update: XOR<DiscussionUpdateWithoutAuthorInput, DiscussionUncheckedUpdateWithoutAuthorInput>
+    create: XOR<DiscussionCreateWithoutAuthorInput, DiscussionUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type DiscussionUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: DiscussionWhereUniqueInput
+    data: XOR<DiscussionUpdateWithoutAuthorInput, DiscussionUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type DiscussionUpdateManyWithWhereWithoutAuthorInput = {
+    where: DiscussionScalarWhereInput
+    data: XOR<DiscussionUpdateManyMutationInput, DiscussionUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type DiscussionScalarWhereInput = {
+    AND?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
+    OR?: DiscussionScalarWhereInput[]
+    NOT?: DiscussionScalarWhereInput | DiscussionScalarWhereInput[]
+    id?: StringFilter<"Discussion"> | string
+    title?: StringFilter<"Discussion"> | string
+    content?: StringFilter<"Discussion"> | string
+    category?: EnumDiscussionCategoryFilter<"Discussion"> | $Enums.DiscussionCategory
+    status?: StringFilter<"Discussion"> | string
+    isPinned?: BoolFilter<"Discussion"> | boolean
+    views?: IntFilter<"Discussion"> | number
+    likes?: IntFilter<"Discussion"> | number
+    authorId?: StringFilter<"Discussion"> | string
+    createdAt?: DateTimeFilter<"Discussion"> | Date | string
+    updatedAt?: DateTimeFilter<"Discussion"> | Date | string
+  }
+
+  export type FavoriteUpsertWithWhereUniqueWithoutUserInput = {
+    where: FavoriteWhereUniqueInput
+    update: XOR<FavoriteUpdateWithoutUserInput, FavoriteUncheckedUpdateWithoutUserInput>
+    create: XOR<FavoriteCreateWithoutUserInput, FavoriteUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteUpdateWithWhereUniqueWithoutUserInput = {
+    where: FavoriteWhereUniqueInput
+    data: XOR<FavoriteUpdateWithoutUserInput, FavoriteUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FavoriteUpdateManyWithWhereWithoutUserInput = {
+    where: FavoriteScalarWhereInput
+    data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type FavoriteScalarWhereInput = {
+    AND?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
+    OR?: FavoriteScalarWhereInput[]
+    NOT?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
+    id?: StringFilter<"Favorite"> | string
+    userId?: StringFilter<"Favorite"> | string
+    targetType?: StringFilter<"Favorite"> | string
+    courseId?: StringNullableFilter<"Favorite"> | string | null
+    chapterId?: StringNullableFilter<"Favorite"> | string | null
+    resourceId?: StringNullableFilter<"Favorite"> | string | null
+    createdAt?: DateTimeFilter<"Favorite"> | Date | string
   }
 
   export type ResourceUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -18671,85 +18721,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Resource"> | Date | string
   }
 
-  export type FavoriteUpsertWithWhereUniqueWithoutUserInput = {
-    where: FavoriteWhereUniqueInput
-    update: XOR<FavoriteUpdateWithoutUserInput, FavoriteUncheckedUpdateWithoutUserInput>
-    create: XOR<FavoriteCreateWithoutUserInput, FavoriteUncheckedCreateWithoutUserInput>
+  export type UserPreferencesUpsertWithoutUserInput = {
+    update: XOR<UserPreferencesUpdateWithoutUserInput, UserPreferencesUncheckedUpdateWithoutUserInput>
+    create: XOR<UserPreferencesCreateWithoutUserInput, UserPreferencesUncheckedCreateWithoutUserInput>
+    where?: UserPreferencesWhereInput
   }
 
-  export type FavoriteUpdateWithWhereUniqueWithoutUserInput = {
-    where: FavoriteWhereUniqueInput
-    data: XOR<FavoriteUpdateWithoutUserInput, FavoriteUncheckedUpdateWithoutUserInput>
+  export type UserPreferencesUpdateToOneWithWhereWithoutUserInput = {
+    where?: UserPreferencesWhereInput
+    data: XOR<UserPreferencesUpdateWithoutUserInput, UserPreferencesUncheckedUpdateWithoutUserInput>
   }
 
-  export type FavoriteUpdateManyWithWhereWithoutUserInput = {
-    where: FavoriteScalarWhereInput
-    data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutUserInput>
+  export type UserPreferencesUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    codePanelRatio?: IntFieldUpdateOperationsInput | number
+    language?: StringFieldUpdateOperationsInput | string
+    notifications?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FavoriteScalarWhereInput = {
-    AND?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
-    OR?: FavoriteScalarWhereInput[]
-    NOT?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
-    id?: StringFilter<"Favorite"> | string
-    userId?: StringFilter<"Favorite"> | string
-    targetType?: StringFilter<"Favorite"> | string
-    courseId?: StringNullableFilter<"Favorite"> | string | null
-    chapterId?: StringNullableFilter<"Favorite"> | string | null
-    resourceId?: StringNullableFilter<"Favorite"> | string | null
-    createdAt?: DateTimeFilter<"Favorite"> | Date | string
-  }
-
-  export type DiscussionLikeUpsertWithWhereUniqueWithoutUserInput = {
-    where: DiscussionLikeWhereUniqueInput
-    update: XOR<DiscussionLikeUpdateWithoutUserInput, DiscussionLikeUncheckedUpdateWithoutUserInput>
-    create: XOR<DiscussionLikeCreateWithoutUserInput, DiscussionLikeUncheckedCreateWithoutUserInput>
-  }
-
-  export type DiscussionLikeUpdateWithWhereUniqueWithoutUserInput = {
-    where: DiscussionLikeWhereUniqueInput
-    data: XOR<DiscussionLikeUpdateWithoutUserInput, DiscussionLikeUncheckedUpdateWithoutUserInput>
-  }
-
-  export type DiscussionLikeUpdateManyWithWhereWithoutUserInput = {
-    where: DiscussionLikeScalarWhereInput
-    data: XOR<DiscussionLikeUpdateManyMutationInput, DiscussionLikeUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type DiscussionLikeScalarWhereInput = {
-    AND?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
-    OR?: DiscussionLikeScalarWhereInput[]
-    NOT?: DiscussionLikeScalarWhereInput | DiscussionLikeScalarWhereInput[]
-    id?: StringFilter<"DiscussionLike"> | string
-    userId?: StringFilter<"DiscussionLike"> | string
-    discussionId?: StringFilter<"DiscussionLike"> | string
-    createdAt?: DateTimeFilter<"DiscussionLike"> | Date | string
-  }
-
-  export type CommentLikeUpsertWithWhereUniqueWithoutUserInput = {
-    where: CommentLikeWhereUniqueInput
-    update: XOR<CommentLikeUpdateWithoutUserInput, CommentLikeUncheckedUpdateWithoutUserInput>
-    create: XOR<CommentLikeCreateWithoutUserInput, CommentLikeUncheckedCreateWithoutUserInput>
-  }
-
-  export type CommentLikeUpdateWithWhereUniqueWithoutUserInput = {
-    where: CommentLikeWhereUniqueInput
-    data: XOR<CommentLikeUpdateWithoutUserInput, CommentLikeUncheckedUpdateWithoutUserInput>
-  }
-
-  export type CommentLikeUpdateManyWithWhereWithoutUserInput = {
-    where: CommentLikeScalarWhereInput
-    data: XOR<CommentLikeUpdateManyMutationInput, CommentLikeUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type CommentLikeScalarWhereInput = {
-    AND?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
-    OR?: CommentLikeScalarWhereInput[]
-    NOT?: CommentLikeScalarWhereInput | CommentLikeScalarWhereInput[]
-    id?: StringFilter<"CommentLike"> | string
-    userId?: StringFilter<"CommentLike"> | string
-    commentId?: StringFilter<"CommentLike"> | string
-    createdAt?: DateTimeFilter<"CommentLike"> | Date | string
+  export type UserPreferencesUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    theme?: StringFieldUpdateOperationsInput | string
+    codePanelRatio?: IntFieldUpdateOperationsInput | number
+    language?: StringFieldUpdateOperationsInput | string
+    notifications?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutUserPreferencesInput = {
@@ -18764,14 +18764,14 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
     discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutUserPreferencesInput = {
@@ -18786,14 +18786,14 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
     discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutUserPreferencesInput = {
@@ -18824,14 +18824,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPreferencesInput = {
@@ -18846,63 +18846,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutDiscussionsInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutDiscussionsInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutDiscussionsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type CommentCreateWithoutDiscussionInput = {
@@ -18912,8 +18863,8 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutCommentsInput
     commentLikes?: CommentLikeCreateNestedManyWithoutCommentInput
+    author: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutDiscussionInput = {
@@ -18957,59 +18908,53 @@ export namespace Prisma {
     data: DiscussionLikeCreateManyDiscussionInput | DiscussionLikeCreateManyDiscussionInput[]
   }
 
-  export type UserUpsertWithoutDiscussionsInput = {
-    update: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
+  export type UserCreateWithoutDiscussionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDiscussionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDiscussionsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutDiscussionsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
-  }
-
-  export type UserUpdateWithoutDiscussionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutDiscussionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentUpsertWithWhereUniqueWithoutDiscussionInput = {
@@ -19044,53 +18989,80 @@ export namespace Prisma {
     data: XOR<DiscussionLikeUpdateManyMutationInput, DiscussionLikeUncheckedUpdateManyWithoutDiscussionInput>
   }
 
-  export type UserCreateWithoutCommentsInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+  export type UserUpsertWithoutDiscussionsInput = {
+    update: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
+    create: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    where?: UserWhereInput
   }
 
-  export type UserUncheckedCreateWithoutCommentsInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+  export type UserUpdateToOneWithWhereWithoutDiscussionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
   }
 
-  export type UserCreateOrConnectWithoutCommentsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+  export type UserUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type CommentLikeCreateWithoutCommentInput = {
+    id?: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutCommentLikesInput
+  }
+
+  export type CommentLikeUncheckedCreateWithoutCommentInput = {
+    id?: string
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type CommentLikeCreateOrConnectWithoutCommentInput = {
+    where: CommentLikeWhereUniqueInput
+    create: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput>
+  }
+
+  export type CommentLikeCreateManyCommentInputEnvelope = {
+    data: CommentLikeCreateManyCommentInput | CommentLikeCreateManyCommentInput[]
   }
 
   export type DiscussionCreateWithoutCommentsInput = {
@@ -19104,8 +19076,8 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutDiscussionsInput
     discussionLikes?: DiscussionLikeCreateNestedManyWithoutDiscussionInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
   }
 
   export type DiscussionUncheckedCreateWithoutCommentsInput = {
@@ -19128,25 +19100,110 @@ export namespace Prisma {
     create: XOR<DiscussionCreateWithoutCommentsInput, DiscussionUncheckedCreateWithoutCommentsInput>
   }
 
-  export type CommentLikeCreateWithoutCommentInput = {
+  export type UserCreateWithoutCommentsInput = {
     id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutCommentLikesInput
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
   }
 
-  export type CommentLikeUncheckedCreateWithoutCommentInput = {
+  export type UserUncheckedCreateWithoutCommentsInput = {
     id?: string
-    userId: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
   }
 
-  export type CommentLikeCreateOrConnectWithoutCommentInput = {
+  export type UserCreateOrConnectWithoutCommentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type CommentLikeUpsertWithWhereUniqueWithoutCommentInput = {
     where: CommentLikeWhereUniqueInput
+    update: XOR<CommentLikeUpdateWithoutCommentInput, CommentLikeUncheckedUpdateWithoutCommentInput>
     create: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput>
   }
 
-  export type CommentLikeCreateManyCommentInputEnvelope = {
-    data: CommentLikeCreateManyCommentInput | CommentLikeCreateManyCommentInput[]
+  export type CommentLikeUpdateWithWhereUniqueWithoutCommentInput = {
+    where: CommentLikeWhereUniqueInput
+    data: XOR<CommentLikeUpdateWithoutCommentInput, CommentLikeUncheckedUpdateWithoutCommentInput>
+  }
+
+  export type CommentLikeUpdateManyWithWhereWithoutCommentInput = {
+    where: CommentLikeScalarWhereInput
+    data: XOR<CommentLikeUpdateManyMutationInput, CommentLikeUncheckedUpdateManyWithoutCommentInput>
+  }
+
+  export type DiscussionUpsertWithoutCommentsInput = {
+    update: XOR<DiscussionUpdateWithoutCommentsInput, DiscussionUncheckedUpdateWithoutCommentsInput>
+    create: XOR<DiscussionCreateWithoutCommentsInput, DiscussionUncheckedCreateWithoutCommentsInput>
+    where?: DiscussionWhereInput
+  }
+
+  export type DiscussionUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: DiscussionWhereInput
+    data: XOR<DiscussionUpdateWithoutCommentsInput, DiscussionUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type DiscussionUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    discussionLikes?: DiscussionLikeUpdateManyWithoutDiscussionNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+  }
+
+  export type DiscussionUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutDiscussionNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -19172,14 +19229,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUpdateManyWithoutAuthorNestedInput
     chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
     commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    courses?: CourseUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -19194,120 +19251,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
     chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
     commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type DiscussionUpsertWithoutCommentsInput = {
-    update: XOR<DiscussionUpdateWithoutCommentsInput, DiscussionUncheckedUpdateWithoutCommentsInput>
-    create: XOR<DiscussionCreateWithoutCommentsInput, DiscussionUncheckedCreateWithoutCommentsInput>
-    where?: DiscussionWhereInput
-  }
-
-  export type DiscussionUpdateToOneWithWhereWithoutCommentsInput = {
-    where?: DiscussionWhereInput
-    data: XOR<DiscussionUpdateWithoutCommentsInput, DiscussionUncheckedUpdateWithoutCommentsInput>
-  }
-
-  export type DiscussionUpdateWithoutCommentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
-    status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutDiscussionNestedInput
-  }
-
-  export type DiscussionUncheckedUpdateWithoutCommentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
-    status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
-    authorId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutDiscussionNestedInput
-  }
-
-  export type CommentLikeUpsertWithWhereUniqueWithoutCommentInput = {
-    where: CommentLikeWhereUniqueInput
-    update: XOR<CommentLikeUpdateWithoutCommentInput, CommentLikeUncheckedUpdateWithoutCommentInput>
-    create: XOR<CommentLikeCreateWithoutCommentInput, CommentLikeUncheckedCreateWithoutCommentInput>
-  }
-
-  export type CommentLikeUpdateWithWhereUniqueWithoutCommentInput = {
-    where: CommentLikeWhereUniqueInput
-    data: XOR<CommentLikeUpdateWithoutCommentInput, CommentLikeUncheckedUpdateWithoutCommentInput>
-  }
-
-  export type CommentLikeUpdateManyWithWhereWithoutCommentInput = {
-    where: CommentLikeScalarWhereInput
-    data: XOR<CommentLikeUpdateManyMutationInput, CommentLikeUncheckedUpdateManyWithoutCommentInput>
-  }
-
-  export type UserCreateWithoutDiscussionLikesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutDiscussionLikesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutDiscussionLikesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutDiscussionLikesInput, UserUncheckedCreateWithoutDiscussionLikesInput>
+    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type DiscussionCreateWithoutDiscussionLikesInput = {
@@ -19321,8 +19272,8 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutDiscussionsInput
     comments?: CommentCreateNestedManyWithoutDiscussionInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
   }
 
   export type DiscussionUncheckedCreateWithoutDiscussionLikesInput = {
@@ -19343,6 +19294,96 @@ export namespace Prisma {
   export type DiscussionCreateOrConnectWithoutDiscussionLikesInput = {
     where: DiscussionWhereUniqueInput
     create: XOR<DiscussionCreateWithoutDiscussionLikesInput, DiscussionUncheckedCreateWithoutDiscussionLikesInput>
+  }
+
+  export type UserCreateWithoutDiscussionLikesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDiscussionLikesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDiscussionLikesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDiscussionLikesInput, UserUncheckedCreateWithoutDiscussionLikesInput>
+  }
+
+  export type DiscussionUpsertWithoutDiscussionLikesInput = {
+    update: XOR<DiscussionUpdateWithoutDiscussionLikesInput, DiscussionUncheckedUpdateWithoutDiscussionLikesInput>
+    create: XOR<DiscussionCreateWithoutDiscussionLikesInput, DiscussionUncheckedCreateWithoutDiscussionLikesInput>
+    where?: DiscussionWhereInput
+  }
+
+  export type DiscussionUpdateToOneWithWhereWithoutDiscussionLikesInput = {
+    where?: DiscussionWhereInput
+    data: XOR<DiscussionUpdateWithoutDiscussionLikesInput, DiscussionUncheckedUpdateWithoutDiscussionLikesInput>
+  }
+
+  export type DiscussionUpdateWithoutDiscussionLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUpdateManyWithoutDiscussionNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+  }
+
+  export type DiscussionUncheckedUpdateWithoutDiscussionLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUncheckedUpdateManyWithoutDiscussionNestedInput
   }
 
   export type UserUpsertWithoutDiscussionLikesInput = {
@@ -19368,14 +19409,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
     favorites?: FavoriteUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDiscussionLikesInput = {
@@ -19390,104 +19431,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
     favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type DiscussionUpsertWithoutDiscussionLikesInput = {
-    update: XOR<DiscussionUpdateWithoutDiscussionLikesInput, DiscussionUncheckedUpdateWithoutDiscussionLikesInput>
-    create: XOR<DiscussionCreateWithoutDiscussionLikesInput, DiscussionUncheckedCreateWithoutDiscussionLikesInput>
-    where?: DiscussionWhereInput
-  }
-
-  export type DiscussionUpdateToOneWithWhereWithoutDiscussionLikesInput = {
-    where?: DiscussionWhereInput
-    data: XOR<DiscussionUpdateWithoutDiscussionLikesInput, DiscussionUncheckedUpdateWithoutDiscussionLikesInput>
-  }
-
-  export type DiscussionUpdateWithoutDiscussionLikesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
-    status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
-    comments?: CommentUpdateManyWithoutDiscussionNestedInput
-  }
-
-  export type DiscussionUncheckedUpdateWithoutDiscussionLikesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
-    status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
-    authorId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUncheckedUpdateManyWithoutDiscussionNestedInput
-  }
-
-  export type UserCreateWithoutCommentLikesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutCommentLikesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutCommentLikesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCommentLikesInput, UserUncheckedCreateWithoutCommentLikesInput>
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type CommentCreateWithoutCommentLikesInput = {
@@ -19497,8 +19448,8 @@ export namespace Prisma {
     likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutCommentsInput
     discussion: DiscussionCreateNestedOneWithoutCommentsInput
+    author: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutCommentLikesInput = {
@@ -19515,6 +19466,88 @@ export namespace Prisma {
   export type CommentCreateOrConnectWithoutCommentLikesInput = {
     where: CommentWhereUniqueInput
     create: XOR<CommentCreateWithoutCommentLikesInput, CommentUncheckedCreateWithoutCommentLikesInput>
+  }
+
+  export type UserCreateWithoutCommentLikesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCommentLikesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCommentLikesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentLikesInput, UserUncheckedCreateWithoutCommentLikesInput>
+  }
+
+  export type CommentUpsertWithoutCommentLikesInput = {
+    update: XOR<CommentUpdateWithoutCommentLikesInput, CommentUncheckedUpdateWithoutCommentLikesInput>
+    create: XOR<CommentCreateWithoutCommentLikesInput, CommentUncheckedCreateWithoutCommentLikesInput>
+    where?: CommentWhereInput
+  }
+
+  export type CommentUpdateToOneWithWhereWithoutCommentLikesInput = {
+    where?: CommentWhereInput
+    data: XOR<CommentUpdateWithoutCommentLikesInput, CommentUncheckedUpdateWithoutCommentLikesInput>
+  }
+
+  export type CommentUpdateWithoutCommentLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    likes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutCommentLikesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    likes?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    discussionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUpsertWithoutCommentLikesInput = {
@@ -19540,14 +19573,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentLikesInput = {
@@ -19562,47 +19595,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type CommentUpsertWithoutCommentLikesInput = {
-    update: XOR<CommentUpdateWithoutCommentLikesInput, CommentUncheckedUpdateWithoutCommentLikesInput>
-    create: XOR<CommentCreateWithoutCommentLikesInput, CommentUncheckedCreateWithoutCommentLikesInput>
-    where?: CommentWhereInput
-  }
-
-  export type CommentUpdateToOneWithWhereWithoutCommentLikesInput = {
-    where?: CommentWhereInput
-    data: XOR<CommentUpdateWithoutCommentLikesInput, CommentUncheckedUpdateWithoutCommentLikesInput>
-  }
-
-  export type CommentUpdateWithoutCommentLikesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    likes?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
-    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
-  }
-
-  export type CommentUncheckedUpdateWithoutCommentLikesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    likes?: IntFieldUpdateOperationsInput | number
-    authorId?: StringFieldUpdateOperationsInput | string
-    discussionId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCoursesInput = {
@@ -19617,14 +19617,14 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
     chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
     commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCoursesInput = {
@@ -19639,14 +19639,14 @@ export namespace Prisma {
     role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
     commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCoursesInput = {
@@ -19658,9 +19658,9 @@ export namespace Prisma {
     id?: string
     targetType: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutFavoritesInput
-    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
     resource?: ResourceCreateNestedOneWithoutFavoritesInput
+    chapter?: ChapterCreateNestedOneWithoutFavoritesInput
+    user: UserCreateNestedOneWithoutFavoritesInput
   }
 
   export type FavoriteUncheckedCreateWithoutCourseInput = {
@@ -19704,14 +19704,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
     chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
     commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCoursesInput = {
@@ -19726,14 +19726,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
     commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type FavoriteUpsertWithWhereUniqueWithoutCourseInput = {
@@ -19752,6 +19752,55 @@ export namespace Prisma {
     data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutCourseInput>
   }
 
+  export type UserCreateWithoutChaptersInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutChaptersInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutChaptersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
+  }
+
   export type ChapterCreateWithoutChildrenInput = {
     id?: string
     title: string
@@ -19767,8 +19816,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    parent?: ChapterCreateNestedOneWithoutChildrenInput
     author?: UserCreateNestedOneWithoutChaptersInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
   }
 
@@ -19812,8 +19861,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    children?: ChapterCreateNestedManyWithoutParentInput
     author?: UserCreateNestedOneWithoutChaptersInput
+    children?: ChapterCreateNestedManyWithoutParentInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
   }
 
@@ -19846,62 +19895,13 @@ export namespace Prisma {
     data: ChapterCreateManyParentInput | ChapterCreateManyParentInput[]
   }
 
-  export type UserCreateWithoutChaptersInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutChaptersInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutChaptersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
-  }
-
   export type FavoriteCreateWithoutChapterInput = {
     id?: string
     targetType: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutFavoritesInput
-    course?: CourseCreateNestedOneWithoutFavoritesInput
     resource?: ResourceCreateNestedOneWithoutFavoritesInput
+    course?: CourseCreateNestedOneWithoutFavoritesInput
+    user: UserCreateNestedOneWithoutFavoritesInput
   }
 
   export type FavoriteUncheckedCreateWithoutChapterInput = {
@@ -19920,6 +19920,61 @@ export namespace Prisma {
 
   export type FavoriteCreateManyChapterInputEnvelope = {
     data: FavoriteCreateManyChapterInput | FavoriteCreateManyChapterInput[]
+  }
+
+  export type UserUpsertWithoutChaptersInput = {
+    update: XOR<UserUpdateWithoutChaptersInput, UserUncheckedUpdateWithoutChaptersInput>
+    create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutChaptersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutChaptersInput, UserUncheckedUpdateWithoutChaptersInput>
+  }
+
+  export type UserUpdateWithoutChaptersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutChaptersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type ChapterUpsertWithoutChildrenInput = {
@@ -19948,8 +20003,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    parent?: ChapterUpdateOneWithoutChildrenNestedInput
     author?: UserUpdateOneWithoutChaptersNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
   }
 
@@ -19989,61 +20044,6 @@ export namespace Prisma {
     data: XOR<ChapterUpdateManyMutationInput, ChapterUncheckedUpdateManyWithoutParentInput>
   }
 
-  export type UserUpsertWithoutChaptersInput = {
-    update: XOR<UserUpdateWithoutChaptersInput, UserUncheckedUpdateWithoutChaptersInput>
-    create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutChaptersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutChaptersInput, UserUncheckedUpdateWithoutChaptersInput>
-  }
-
-  export type UserUpdateWithoutChaptersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutChaptersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
-  }
-
   export type FavoriteUpsertWithWhereUniqueWithoutChapterInput = {
     where: FavoriteWhereUniqueInput
     update: XOR<FavoriteUpdateWithoutChapterInput, FavoriteUncheckedUpdateWithoutChapterInput>
@@ -20060,62 +20060,13 @@ export namespace Prisma {
     data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutChapterInput>
   }
 
-  export type UserCreateWithoutResourcesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutResourcesInput = {
-    id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
-    status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutResourcesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
-  }
-
   export type FavoriteCreateWithoutResourceInput = {
     id?: string
     targetType: string
     createdAt?: Date | string
-    user: UserCreateNestedOneWithoutFavoritesInput
-    course?: CourseCreateNestedOneWithoutFavoritesInput
     chapter?: ChapterCreateNestedOneWithoutFavoritesInput
+    course?: CourseCreateNestedOneWithoutFavoritesInput
+    user: UserCreateNestedOneWithoutFavoritesInput
   }
 
   export type FavoriteUncheckedCreateWithoutResourceInput = {
@@ -20134,6 +20085,71 @@ export namespace Prisma {
 
   export type FavoriteCreateManyResourceInputEnvelope = {
     data: FavoriteCreateManyResourceInput | FavoriteCreateManyResourceInput[]
+  }
+
+  export type UserCreateWithoutResourcesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutResourcesInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutResourcesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutResourcesInput, UserUncheckedCreateWithoutResourcesInput>
+  }
+
+  export type FavoriteUpsertWithWhereUniqueWithoutResourceInput = {
+    where: FavoriteWhereUniqueInput
+    update: XOR<FavoriteUpdateWithoutResourceInput, FavoriteUncheckedUpdateWithoutResourceInput>
+    create: XOR<FavoriteCreateWithoutResourceInput, FavoriteUncheckedCreateWithoutResourceInput>
+  }
+
+  export type FavoriteUpdateWithWhereUniqueWithoutResourceInput = {
+    where: FavoriteWhereUniqueInput
+    data: XOR<FavoriteUpdateWithoutResourceInput, FavoriteUncheckedUpdateWithoutResourceInput>
+  }
+
+  export type FavoriteUpdateManyWithWhereWithoutResourceInput = {
+    where: FavoriteScalarWhereInput
+    data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutResourceInput>
   }
 
   export type UserUpsertWithoutResourcesInput = {
@@ -20159,14 +20175,14 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutResourcesInput = {
@@ -20181,79 +20197,100 @@ export namespace Prisma {
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
-  export type FavoriteUpsertWithWhereUniqueWithoutResourceInput = {
-    where: FavoriteWhereUniqueInput
-    update: XOR<FavoriteUpdateWithoutResourceInput, FavoriteUncheckedUpdateWithoutResourceInput>
-    create: XOR<FavoriteCreateWithoutResourceInput, FavoriteUncheckedCreateWithoutResourceInput>
-  }
-
-  export type FavoriteUpdateWithWhereUniqueWithoutResourceInput = {
-    where: FavoriteWhereUniqueInput
-    data: XOR<FavoriteUpdateWithoutResourceInput, FavoriteUncheckedUpdateWithoutResourceInput>
-  }
-
-  export type FavoriteUpdateManyWithWhereWithoutResourceInput = {
-    where: FavoriteScalarWhereInput
-    data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutResourceInput>
-  }
-
-  export type UserCreateWithoutFavoritesInput = {
+  export type ResourceCreateWithoutFavoritesInput = {
     id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
+    title: string
+    description?: string | null
+    cover?: string | null
+    icon?: string | null
+    url: string
+    type?: string
     status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
+    viewCount?: number
+    likeCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
-    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    courses?: CourseCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterCreateNestedManyWithoutAuthorInput
-    resources?: ResourceCreateNestedManyWithoutAuthorInput
-    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    author?: UserCreateNestedOneWithoutResourcesInput
   }
 
-  export type UserUncheckedCreateWithoutFavoritesInput = {
+  export type ResourceUncheckedCreateWithoutFavoritesInput = {
     id?: string
-    username: string
-    email: string
-    password: string
-    bio?: string | null
-    avatar?: string | null
+    title: string
+    description?: string | null
+    cover?: string | null
+    icon?: string | null
+    url: string
+    type?: string
     status?: string
-    lastLoginAt?: Date | string | null
-    role?: $Enums.UserRole
+    authorId?: string | null
+    viewCount?: number
+    likeCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
-    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
-    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
-    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
-    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
-    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutFavoritesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
+  export type ResourceCreateOrConnectWithoutFavoritesInput = {
+    where: ResourceWhereUniqueInput
+    create: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
+  }
+
+  export type ChapterCreateWithoutFavoritesInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author?: UserCreateNestedOneWithoutChaptersInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    children?: ChapterCreateNestedManyWithoutParentInput
+  }
+
+  export type ChapterUncheckedCreateWithoutFavoritesInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    parentId?: string | null
+    authorId?: string | null
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ChapterCreateOrConnectWithoutFavoritesInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutFavoritesInput, ChapterUncheckedCreateWithoutFavoritesInput>
   }
 
   export type CourseCreateWithoutFavoritesInput = {
@@ -20299,145 +20336,151 @@ export namespace Prisma {
     create: XOR<CourseCreateWithoutFavoritesInput, CourseUncheckedCreateWithoutFavoritesInput>
   }
 
-  export type ChapterCreateWithoutFavoritesInput = {
+  export type UserCreateWithoutFavoritesInput = {
     id?: string
-    title: string
-    content?: string | null
-    excerpt?: string | null
-    type?: string
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
     status?: string
-    viewCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    parent?: ChapterCreateNestedOneWithoutChildrenInput
-    children?: ChapterCreateNestedManyWithoutParentInput
-    author?: UserCreateNestedOneWithoutChaptersInput
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
   }
 
-  export type ChapterUncheckedCreateWithoutFavoritesInput = {
+  export type UserUncheckedCreateWithoutFavoritesInput = {
     id?: string
-    title: string
-    content?: string | null
-    excerpt?: string | null
-    type?: string
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
     status?: string
-    parentId?: string | null
-    authorId?: string | null
-    viewCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
-    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
   }
 
-  export type ChapterCreateOrConnectWithoutFavoritesInput = {
-    where: ChapterWhereUniqueInput
-    create: XOR<ChapterCreateWithoutFavoritesInput, ChapterUncheckedCreateWithoutFavoritesInput>
-  }
-
-  export type ResourceCreateWithoutFavoritesInput = {
-    id?: string
-    title: string
-    description?: string | null
-    cover?: string | null
-    icon?: string | null
-    url: string
-    type?: string
-    status?: string
-    viewCount?: number
-    likeCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    author?: UserCreateNestedOneWithoutResourcesInput
-  }
-
-  export type ResourceUncheckedCreateWithoutFavoritesInput = {
-    id?: string
-    title: string
-    description?: string | null
-    cover?: string | null
-    icon?: string | null
-    url: string
-    type?: string
-    status?: string
-    authorId?: string | null
-    viewCount?: number
-    likeCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type ResourceCreateOrConnectWithoutFavoritesInput = {
-    where: ResourceWhereUniqueInput
-    create: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
-  }
-
-  export type UserUpsertWithoutFavoritesInput = {
-    update: XOR<UserUpdateWithoutFavoritesInput, UserUncheckedUpdateWithoutFavoritesInput>
+  export type UserCreateOrConnectWithoutFavoritesInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
-    where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutFavoritesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutFavoritesInput, UserUncheckedUpdateWithoutFavoritesInput>
+  export type ResourceUpsertWithoutFavoritesInput = {
+    update: XOR<ResourceUpdateWithoutFavoritesInput, ResourceUncheckedUpdateWithoutFavoritesInput>
+    create: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
+    where?: ResourceWhereInput
   }
 
-  export type UserUpdateWithoutFavoritesInput = {
+  export type ResourceUpdateToOneWithWhereWithoutFavoritesInput = {
+    where?: ResourceWhereInput
+    data: XOR<ResourceUpdateWithoutFavoritesInput, ResourceUncheckedUpdateWithoutFavoritesInput>
+  }
+
+  export type ResourceUpdateWithoutFavoritesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cover?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUpdateManyWithoutAuthorNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    author?: UserUpdateOneWithoutResourcesNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutFavoritesInput = {
+  export type ResourceUncheckedUpdateWithoutFavoritesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cover?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
-    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
-    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
-    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
-    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ChapterUpsertWithoutFavoritesInput = {
+    update: XOR<ChapterUpdateWithoutFavoritesInput, ChapterUncheckedUpdateWithoutFavoritesInput>
+    create: XOR<ChapterCreateWithoutFavoritesInput, ChapterUncheckedCreateWithoutFavoritesInput>
+    where?: ChapterWhereInput
+  }
+
+  export type ChapterUpdateToOneWithWhereWithoutFavoritesInput = {
+    where?: ChapterWhereInput
+    data: XOR<ChapterUpdateWithoutFavoritesInput, ChapterUncheckedUpdateWithoutFavoritesInput>
+  }
+
+  export type ChapterUpdateWithoutFavoritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneWithoutChaptersNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
+  }
+
+  export type ChapterUncheckedUpdateWithoutFavoritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type CourseUpsertWithoutFavoritesInput = {
@@ -20489,115 +20532,83 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ChapterUpsertWithoutFavoritesInput = {
-    update: XOR<ChapterUpdateWithoutFavoritesInput, ChapterUncheckedUpdateWithoutFavoritesInput>
-    create: XOR<ChapterCreateWithoutFavoritesInput, ChapterUncheckedCreateWithoutFavoritesInput>
-    where?: ChapterWhereInput
+  export type UserUpsertWithoutFavoritesInput = {
+    update: XOR<UserUpdateWithoutFavoritesInput, UserUncheckedUpdateWithoutFavoritesInput>
+    create: XOR<UserCreateWithoutFavoritesInput, UserUncheckedCreateWithoutFavoritesInput>
+    where?: UserWhereInput
   }
 
-  export type ChapterUpdateToOneWithWhereWithoutFavoritesInput = {
-    where?: ChapterWhereInput
-    data: XOR<ChapterUpdateWithoutFavoritesInput, ChapterUncheckedUpdateWithoutFavoritesInput>
+  export type UserUpdateToOneWithWhereWithoutFavoritesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFavoritesInput, UserUncheckedUpdateWithoutFavoritesInput>
   }
 
-  export type ChapterUpdateWithoutFavoritesInput = {
+  export type UserUpdateWithoutFavoritesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    order?: IntFieldUpdateOperationsInput | number
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    viewCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    parent?: ChapterUpdateOneWithoutChildrenNestedInput
-    children?: ChapterUpdateManyWithoutParentNestedInput
-    author?: UserUpdateOneWithoutChaptersNestedInput
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
   }
 
-  export type ChapterUncheckedUpdateWithoutFavoritesInput = {
+  export type UserUncheckedUpdateWithoutFavoritesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    order?: IntFieldUpdateOperationsInput | number
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    authorId?: NullableStringFieldUpdateOperationsInput | string | null
-    viewCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
   }
 
-  export type ResourceUpsertWithoutFavoritesInput = {
-    update: XOR<ResourceUpdateWithoutFavoritesInput, ResourceUncheckedUpdateWithoutFavoritesInput>
-    create: XOR<ResourceCreateWithoutFavoritesInput, ResourceUncheckedCreateWithoutFavoritesInput>
-    where?: ResourceWhereInput
-  }
-
-  export type ResourceUpdateToOneWithWhereWithoutFavoritesInput = {
-    where?: ResourceWhereInput
-    data: XOR<ResourceUpdateWithoutFavoritesInput, ResourceUncheckedUpdateWithoutFavoritesInput>
-  }
-
-  export type ResourceUpdateWithoutFavoritesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    cover?: NullableStringFieldUpdateOperationsInput | string | null
-    icon?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    viewCount?: IntFieldUpdateOperationsInput | number
-    likeCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneWithoutResourcesNestedInput
-  }
-
-  export type ResourceUncheckedUpdateWithoutFavoritesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    cover?: NullableStringFieldUpdateOperationsInput | string | null
-    icon?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    authorId?: NullableStringFieldUpdateOperationsInput | string | null
-    viewCount?: IntFieldUpdateOperationsInput | number
-    likeCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DiscussionCreateManyAuthorInput = {
+  export type ChapterCreateManyAuthorInput = {
     id?: string
     title: string
-    content: string
-    category: $Enums.DiscussionCategory
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
     status?: string
-    isPinned?: boolean
-    views?: number
-    likes?: number
+    parentId?: string | null
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type CommentLikeCreateManyUserInput = {
+    id?: string
+    commentId: string
+    createdAt?: Date | string
   }
 
   export type CommentCreateManyAuthorInput = {
@@ -20628,22 +20639,32 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type ChapterCreateManyAuthorInput = {
+  export type DiscussionLikeCreateManyUserInput = {
+    id?: string
+    discussionId: string
+    createdAt?: Date | string
+  }
+
+  export type DiscussionCreateManyAuthorInput = {
     id?: string
     title: string
-    content?: string | null
-    excerpt?: string | null
-    type?: string
-    order?: number
-    duration?: string | null
-    videoUrl?: string | null
+    content: string
+    category: $Enums.DiscussionCategory
     status?: string
-    parentId?: string | null
-    viewCount?: number
-    favoriteCount?: number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    isPinned?: boolean
+    views?: number
+    likes?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type FavoriteCreateManyUserInput = {
+    id?: string
+    targetType: string
+    courseId?: string | null
+    chapterId?: string | null
+    resourceId?: string | null
+    createdAt?: Date | string
   }
 
   export type ResourceCreateManyAuthorInput = {
@@ -20663,68 +20684,80 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type FavoriteCreateManyUserInput = {
-    id?: string
-    targetType: string
-    courseId?: string | null
-    chapterId?: string | null
-    resourceId?: string | null
-    createdAt?: Date | string
-  }
-
-  export type DiscussionLikeCreateManyUserInput = {
-    id?: string
-    discussionId: string
-    createdAt?: Date | string
-  }
-
-  export type CommentLikeCreateManyUserInput = {
-    id?: string
-    commentId: string
-    createdAt?: Date | string
-  }
-
-  export type DiscussionUpdateWithoutAuthorInput = {
+  export type ChapterUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUpdateManyWithoutDiscussionNestedInput
-    discussionLikes?: DiscussionLikeUpdateManyWithoutDiscussionNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
+    favorites?: FavoriteUpdateManyWithoutChapterNestedInput
   }
 
-  export type DiscussionUncheckedUpdateWithoutAuthorInput = {
+  export type ChapterUncheckedUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUncheckedUpdateManyWithoutDiscussionNestedInput
-    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutDiscussionNestedInput
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
   }
 
-  export type DiscussionUncheckedUpdateManyWithoutAuthorInput = {
+  export type ChapterUncheckedUpdateManyWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    views?: IntFieldUpdateOperationsInput | number
-    likes?: IntFieldUpdateOperationsInput | number
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentLikeUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comment?: CommentUpdateOneRequiredWithoutCommentLikesNestedInput
+  }
+
+  export type CommentLikeUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    commentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentLikeUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    commentId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentUpdateWithoutAuthorInput = {
@@ -20734,8 +20767,8 @@ export namespace Prisma {
     likes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
     commentLikes?: CommentLikeUpdateManyWithoutCommentNestedInput
+    discussion?: DiscussionUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateWithoutAuthorInput = {
@@ -20815,62 +20848,92 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ChapterUpdateWithoutAuthorInput = {
+  export type DiscussionLikeUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    order?: IntFieldUpdateOperationsInput | number
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    viewCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    parent?: ChapterUpdateOneWithoutChildrenNestedInput
-    children?: ChapterUpdateManyWithoutParentNestedInput
-    favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+    discussion?: DiscussionUpdateOneRequiredWithoutDiscussionLikesNestedInput
   }
 
-  export type ChapterUncheckedUpdateWithoutAuthorInput = {
+  export type DiscussionLikeUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    order?: IntFieldUpdateOperationsInput | number
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    viewCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    discussionId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
-    favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
   }
 
-  export type ChapterUncheckedUpdateManyWithoutAuthorInput = {
+  export type DiscussionLikeUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    discussionId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DiscussionUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    content?: NullableStringFieldUpdateOperationsInput | string | null
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    order?: IntFieldUpdateOperationsInput | number
-    duration?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
     status?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    viewCount?: IntFieldUpdateOperationsInput | number
-    favoriteCount?: IntFieldUpdateOperationsInput | number
-    tags?: NullableJsonNullValueInput | InputJsonValue
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUpdateManyWithoutDiscussionNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutDiscussionNestedInput
+  }
+
+  export type DiscussionUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUncheckedUpdateManyWithoutDiscussionNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutDiscussionNestedInput
+  }
+
+  export type DiscussionUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    category?: EnumDiscussionCategoryFieldUpdateOperationsInput | $Enums.DiscussionCategory
+    status?: StringFieldUpdateOperationsInput | string
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    likes?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resource?: ResourceUpdateOneWithoutFavoritesNestedInput
+    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
+    course?: CourseUpdateOneWithoutFavoritesNestedInput
+  }
+
+  export type FavoriteUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: StringFieldUpdateOperationsInput | string
+    courseId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: StringFieldUpdateOperationsInput | string
+    courseId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ResourceUpdateWithoutAuthorInput = {
@@ -20926,69 +20989,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type FavoriteUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    targetType?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    course?: CourseUpdateOneWithoutFavoritesNestedInput
-    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
-    resource?: ResourceUpdateOneWithoutFavoritesNestedInput
-  }
-
-  export type FavoriteUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    targetType?: StringFieldUpdateOperationsInput | string
-    courseId?: NullableStringFieldUpdateOperationsInput | string | null
-    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
-    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FavoriteUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    targetType?: StringFieldUpdateOperationsInput | string
-    courseId?: NullableStringFieldUpdateOperationsInput | string | null
-    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
-    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DiscussionLikeUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    discussion?: DiscussionUpdateOneRequiredWithoutDiscussionLikesNestedInput
-  }
-
-  export type DiscussionLikeUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    discussionId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DiscussionLikeUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    discussionId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CommentLikeUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comment?: CommentUpdateOneRequiredWithoutCommentLikesNestedInput
-  }
-
-  export type CommentLikeUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    commentId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type CommentLikeUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    commentId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type CommentCreateManyDiscussionInput = {
     id?: string
     content: string
@@ -21012,8 +21012,8 @@ export namespace Prisma {
     likes?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
     commentLikes?: CommentLikeUpdateManyWithoutCommentNestedInput
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateWithoutDiscussionInput = {
@@ -21092,9 +21092,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
-    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
     resource?: ResourceUpdateOneWithoutFavoritesNestedInput
+    chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
+    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
   }
 
   export type FavoriteUncheckedUpdateWithoutCourseInput = {
@@ -21157,8 +21157,8 @@ export namespace Prisma {
     tags?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    children?: ChapterUpdateManyWithoutParentNestedInput
     author?: UserUpdateOneWithoutChaptersNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
   }
 
@@ -21204,9 +21204,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
-    course?: CourseUpdateOneWithoutFavoritesNestedInput
     resource?: ResourceUpdateOneWithoutFavoritesNestedInput
+    course?: CourseUpdateOneWithoutFavoritesNestedInput
+    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
   }
 
   export type FavoriteUncheckedUpdateWithoutChapterInput = {
@@ -21240,9 +21240,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
-    course?: CourseUpdateOneWithoutFavoritesNestedInput
     chapter?: ChapterUpdateOneWithoutFavoritesNestedInput
+    course?: CourseUpdateOneWithoutFavoritesNestedInput
+    user?: UserUpdateOneRequiredWithoutFavoritesNestedInput
   }
 
   export type FavoriteUncheckedUpdateWithoutResourceInput = {

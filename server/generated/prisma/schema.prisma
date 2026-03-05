@@ -1,53 +1,40 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
-// 多环境数据库配置
-// 开发环境：SQLite
-// 生产环境：PostgreSQL
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
 
-// 用户模型
 model User {
-  id          String    @id @default(cuid())
-  username    String    @unique
-  email       String    @unique
-  password    String
-  bio         String?
-  avatar      String?
-  status      String    @default("active") // active/disabled/banned
-  lastLoginAt DateTime? @map("last_login_at")
-  role        UserRole  @default(USER)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-
-  // 关联关系
-  userPreferences UserPreferences?
-  discussions     Discussion[]
+  id              String           @id @default(cuid())
+  username        String           @unique
+  email           String           @unique
+  password        String
+  bio             String?
+  avatar          String?
+  status          String           @default("active")
+  lastLoginAt     DateTime?        @map("last_login_at")
+  role            UserRole         @default(USER)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  chapters        Chapter[]
+  commentLikes    CommentLike[]
   comments        Comment[]
   courses         Course[]
-  chapters        Chapter[]
-  resources       Resource[]
-  favorites       Favorite[]
   discussionLikes DiscussionLike[]
-  commentLikes    CommentLike[]
+  discussions     Discussion[]
+  favorites       Favorite[]
+  resources       Resource[]
+  userPreferences UserPreferences?
 
   @@index([email])
   @@index([username])
   @@map("users")
 }
 
-// 用户偏好设置模型
 model UserPreferences {
   id             String   @id @default(cuid())
   userId         String   @unique @map("user_id")
@@ -57,88 +44,176 @@ model UserPreferences {
   notifications  Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
-
-  // 关联关系
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
 }
 
-// 社区帖子模型
 model Discussion {
-  id        String             @id @default(cuid())
-  title     String
-  content   String
-  category  DiscussionCategory
-  status    String             @default("published") // published/hidden
-  isPinned  Boolean            @default(false) @map("is_pinned")
-  views     Int                @default(0)
-  likes     Int                @default(0)
-  authorId  String             @map("author_id")
-  createdAt DateTime           @default(now()) @map("created_at")
-  updatedAt DateTime           @updatedAt @map("updated_at")
-
-  // 关联关系
-  author          User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  id              String             @id @default(cuid())
+  title           String
+  content         String
+  category        DiscussionCategory
+  status          String             @default("published")
+  isPinned        Boolean            @default(false) @map("is_pinned")
+  views           Int                @default(0)
+  likes           Int                @default(0)
+  authorId        String             @map("author_id")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
   comments        Comment[]
   discussionLikes DiscussionLike[]
+  author          User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([status])
   @@index([isPinned])
   @@map("discussions")
 }
 
-// 评论模型
 model Comment {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   content      String
-  status       String   @default("visible") // visible/hidden
-  likes        Int      @default(0)
-  authorId     String   @map("author_id")
-  discussionId String   @map("discussion_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  // 关联关系
-  author       User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  discussion   Discussion    @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  status       String        @default("visible")
+  likes        Int           @default(0)
+  authorId     String        @map("author_id")
+  discussionId String        @map("discussion_id")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
   commentLikes CommentLike[]
+  discussion   Discussion    @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  author       User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([status])
   @@map("comments")
 }
 
-// 帖子点赞去重表
 model DiscussionLike {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  discussionId String   @map("discussion_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  discussion Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  id           String     @id @default(cuid())
+  userId       String     @map("user_id")
+  discussionId String     @map("discussion_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, discussionId])
   @@index([discussionId])
   @@map("discussion_likes")
 }
 
-// 评论点赞去重表
 model CommentLike {
   id        String   @id @default(cuid())
   userId    String   @map("user_id")
   commentId String   @map("comment_id")
   createdAt DateTime @default(now()) @map("created_at")
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, commentId])
   @@index([commentId])
   @@map("comment_likes")
 }
 
-// 枚举类型
+model Course {
+  id            String     @id @default(cuid())
+  title         String
+  level         String?
+  cover         String?
+  url           String
+  status        String     @default("draft")
+  duration      String?
+  content       String?
+  order         Int        @default(0)
+  authorId      String?    @map("author_id")
+  viewCount     Int        @default(0)
+  studentCount  Int        @default(0)
+  favoriteCount Int        @default(0)
+  tags          Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  author        User?      @relation(fields: [authorId], references: [id])
+  favorites     Favorite[]
+
+  @@index([authorId])
+  @@index([level])
+  @@index([status])
+  @@index([order])
+  @@map("courses")
+}
+
+model Chapter {
+  id            String     @id @default(cuid())
+  title         String
+  content       String?
+  excerpt       String?
+  type          String     @default("section")
+  order         Int        @default(0)
+  duration      String?
+  videoUrl      String?    @map("video_url")
+  status        String     @default("draft")
+  parentId      String?    @map("parent_id")
+  authorId      String?    @map("author_id")
+  viewCount     Int        @default(0)
+  favoriteCount Int        @default(0)
+  tags          Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  author        User?      @relation(fields: [authorId], references: [id])
+  parent        Chapter?   @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children      Chapter[]  @relation("ChapterHierarchy")
+  favorites     Favorite[]
+
+  @@index([parentId])
+  @@index([type])
+  @@index([order])
+  @@index([status])
+  @@map("chapters")
+}
+
+model Resource {
+  id            String     @id @default(cuid())
+  title         String
+  description   String?
+  cover         String?
+  icon          String?
+  url           String
+  type          String     @default("website")
+  status        String     @default("draft")
+  authorId      String?    @map("author_id")
+  viewCount     Int        @default(0)
+  likeCount     Int        @default(0)
+  favoriteCount Int        @default(0)
+  tags          Json?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  favorites     Favorite[]
+  author        User?      @relation(fields: [authorId], references: [id])
+
+  @@index([type])
+  @@index([status])
+  @@map("resources")
+}
+
+model Favorite {
+  id         String    @id @default(cuid())
+  userId     String    @map("user_id")
+  targetType String    @map("target_type")
+  courseId   String?   @map("course_id")
+  chapterId  String?   @map("chapter_id")
+  resourceId String?   @map("resource_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  resource   Resource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  chapter    Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  course     Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, courseId])
+  @@unique([userId, targetType, chapterId])
+  @@unique([userId, targetType, resourceId])
+  @@index([userId])
+  @@index([targetType])
+  @@map("favorites")
+}
+
 enum UserRole {
   USER
   ADMIN
@@ -157,113 +232,4 @@ enum DiscussionCategory {
   EXPERIENCE
   PROJECT
   HELP
-}
-
-// 课程模型
-model Course {
-  id            String   @id @default(cuid())
-  title         String
-  level         String? // beginner/intermediate/advanced
-  cover         String? // 封面图片 URL
-  url           String // B站视频链接
-  status        String   @default("draft") // draft/published/archived
-  duration      String? // 课程时长
-  content       String? // 课程简介
-  order         Int      @default(0) // 排序顺序
-  authorId      String?  @map("author_id")
-  viewCount     Int      @default(0) // 浏览次数
-  studentCount  Int      @default(0) // 学习人数
-  favoriteCount Int      @default(0) // 收藏量
-  tags          Json?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  favorites Favorite[]
-
-  @@index([authorId])
-  @@index([level])
-  @@index([status])
-  @@index([order])
-  @@map("courses")
-}
-
-// 章节模型（层级结构：章节包含小节）
-model Chapter {
-  id            String   @id @default(cuid())
-  title         String
-  content       String? // Markdown 内容（仅小节有内容）
-  excerpt       String? // 章节摘要
-  type          String   @default("section") // chapter: 章节, section: 小节
-  order         Int      @default(0) // 排序
-  duration      String? // 章节时长
-  videoUrl      String?  @map("video_url") // 视频链接（可选）
-  status        String   @default("draft") // draft/published
-  parentId      String?  @map("parent_id") // 父章节 ID（小节指向章节）
-  authorId      String?  @map("author_id")
-  viewCount     Int      @default(0) // 浏览次数
-  favoriteCount Int      @default(0) // 收藏量
-  tags          Json?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  parent    Chapter?   @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children  Chapter[]  @relation("ChapterHierarchy")
-  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  favorites Favorite[]
-
-  @@index([parentId])
-  @@index([type])
-  @@index([order])
-  @@index([status])
-  @@map("chapters")
-}
-
-// 资源模型
-model Resource {
-  id            String   @id @default(cuid())
-  title         String
-  description   String?
-  cover         String? // 封面图片
-  icon          String? // 资源图标
-  url           String // 官网链接
-  type          String   @default("website") // website/document/tool/tutorial
-  status        String   @default("draft") // draft/published/archived
-  authorId      String?  @map("author_id")
-  viewCount     Int      @default(0) // 浏览次数
-  likeCount     Int      @default(0) // 点赞数
-  favoriteCount Int      @default(0) // 收藏量
-  tags          Json?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  author    User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  favorites Favorite[]
-
-  @@index([type])
-  @@index([status])
-  @@map("resources")
-}
-
-// 用户收藏模型
-model Favorite {
-  id         String   @id @default(cuid())
-  userId     String   @map("user_id")
-  targetType String   @map("target_type") // course/chapter/resource
-  courseId   String?  @map("course_id")
-  chapterId  String?  @map("chapter_id")
-  resourceId String?  @map("resource_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course   Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  chapter  Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  resource Resource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, targetType, courseId])
-  @@unique([userId, targetType, chapterId])
-  @@unique([userId, targetType, resourceId])
-  @@index([userId])
-  @@index([targetType])
-  @@map("favorites")
 }
