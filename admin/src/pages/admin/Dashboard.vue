@@ -427,32 +427,90 @@ const loadDashboardData = async () => {
     const allChapters = chaptersRes.data?.data?.items || []
     const allComments = commentsRes.data?.data?.items || []
 
-    // 计算今日新增
-    const todayUsers = allUsers.filter((u: any) => new Date(u.createdAt) >= todayStart)
+    // 计算今日新增（兼容registeredAt和createdAt字段）
+    const todayUsers = allUsers.filter((u: any) => {
+      const dateStr = u.registeredAt || u.createdAt
+      if (!dateStr) return false
+      // 处理格式化的日期字符串 "2026-03-05 09:12" 或 ISO 格式
+      const userDate = new Date(dateStr.replace(' ', 'T'))
+      return userDate >= todayStart
+    })
+    
     const todayContent = [
-      ...allCourses.filter((c: any) => new Date(c.createdAt) >= todayStart),
-      ...allResources.filter((r: any) => new Date(r.createdAt) >= todayStart),
-      ...allChapters.filter((ch: any) => new Date(ch.createdAt) >= todayStart)
+      ...allCourses.filter((c: any) => {
+        const dateStr = c.updatedAt || c.createdAt
+        if (!dateStr) return false
+        const courseDate = new Date(dateStr.replace(' ', 'T'))
+        return courseDate >= todayStart
+      }),
+      ...allResources.filter((r: any) => {
+        const dateStr = r.updatedAt || r.createdAt
+        if (!dateStr) return false
+        const resourceDate = new Date(dateStr.replace(' ', 'T'))
+        return resourceDate >= todayStart
+      }),
+      ...allChapters.filter((ch: any) => {
+        const dateStr = ch.updatedAt || ch.createdAt
+        if (!dateStr) return false
+        const chapterDate = new Date(dateStr.replace(' ', 'T'))
+        return chapterDate >= todayStart
+      })
     ]
 
     // 计算昨日数据用于增长率
     const yesterdayStart = new Date(todayStart)
     yesterdayStart.setDate(yesterdayStart.getDate() - 1)
     const yesterdayUsers = allUsers.filter((u: any) => {
-      const d = new Date(u.createdAt)
-      return d >= yesterdayStart && d < todayStart
+      const dateStr = u.registeredAt || u.createdAt
+      if (!dateStr) return false
+      const userDate = new Date(dateStr.replace(' ', 'T'))
+      return userDate >= yesterdayStart && userDate < todayStart
     })
+    
+    // 计算昨日新增内容
+    const yesterdayContent = [
+      ...allCourses.filter((c: any) => {
+        const dateStr = c.updatedAt || c.createdAt
+        if (!dateStr) return false
+        const courseDate = new Date(dateStr.replace(' ', 'T'))
+        return courseDate >= yesterdayStart && courseDate < todayStart
+      }),
+      ...allResources.filter((r: any) => {
+        const dateStr = r.updatedAt || r.createdAt
+        if (!dateStr) return false
+        const resourceDate = new Date(dateStr.replace(' ', 'T'))
+        return resourceDate >= yesterdayStart && resourceDate < todayStart
+      }),
+      ...allChapters.filter((ch: any) => {
+        const dateStr = ch.updatedAt || ch.createdAt
+        if (!dateStr) return false
+        const chapterDate = new Date(dateStr.replace(' ', 'T'))
+        return chapterDate >= yesterdayStart && chapterDate < todayStart
+      })
+    ]
+    
+    // 计算系统健康度（基于数据完整性）
+    const totalItems = allUsers.length + allCourses.length + allResources.length + allDiscussions.length
+    const itemsWithContent = [
+      ...allCourses.filter((c: any) => c.title && c.content),
+      ...allResources.filter((r: any) => r.title && r.url),
+      ...allDiscussions.filter((d: any) => d.title && d.content)
+    ].length
+    const dataIntegrity = totalItems > 0 ? Math.round((itemsWithContent / (allCourses.length + allResources.length + allDiscussions.length)) * 100) : 100
+    const systemHealth = Math.max(90, Math.min(100, dataIntegrity))
 
     todayStats.value = {
       newUsers: todayUsers.length,
       userGrowth: yesterdayUsers.length > 0 
         ? Math.round(((todayUsers.length - yesterdayUsers.length) / yesterdayUsers.length) * 100)
-        : 100,
+        : (todayUsers.length > 0 ? 100 : 0),
       newContent: todayContent.length,
-      contentGrowth: 15,
+      contentGrowth: yesterdayContent.length > 0
+        ? Math.round(((todayContent.length - yesterdayContent.length) / yesterdayContent.length) * 100)
+        : (todayContent.length > 0 ? 100 : 0),
       pendingReview: allDiscussions.filter((d: any) => d.status === 'pending').length +
                      allComments.filter((c: any) => c.status === 'pending').length,
-      systemHealth: 98
+      systemHealth
     }
 
     // 更新待办事项
@@ -469,8 +527,8 @@ const loadDashboardData = async () => {
     allUsers.slice(0, 3).forEach((user: any) => {
       activities.push({
         id: `user-${user.id}`,
-        content: `用户 "${user.username}" 注册了账号`,
-        timestamp: formatTime(user.createdAt),
+        content: `用户 "${user.name || user.username}" 注册了账号`,
+        timestamp: formatTime(user.registeredAt || user.createdAt),
         type: 'success',
         icon: markRaw(UserFilled),
         tag: '新用户',
@@ -534,11 +592,31 @@ const loadDashboardData = async () => {
     // 本周趋势
     const weekAgo = new Date()
     weekAgo.setDate(weekAgo.getDate() - 7)
-    const weekUsers = allUsers.filter((u: any) => new Date(u.createdAt) >= weekAgo)
+    const weekUsers = allUsers.filter((u: any) => {
+      const dateStr = u.registeredAt || u.createdAt
+      if (!dateStr) return false
+      const userDate = new Date(dateStr.replace(' ', 'T'))
+      return userDate >= weekAgo
+    })
     const weekContent = [
-      ...allCourses.filter((c: any) => new Date(c.createdAt) >= weekAgo),
-      ...allResources.filter((r: any) => new Date(r.createdAt) >= weekAgo),
-      ...allChapters.filter((ch: any) => new Date(ch.createdAt) >= weekAgo)
+      ...allCourses.filter((c: any) => {
+        const dateStr = c.updatedAt || c.createdAt
+        if (!dateStr) return false
+        const courseDate = new Date(dateStr.replace(' ', 'T'))
+        return courseDate >= weekAgo
+      }),
+      ...allResources.filter((r: any) => {
+        const dateStr = r.updatedAt || r.createdAt
+        if (!dateStr) return false
+        const resourceDate = new Date(dateStr.replace(' ', 'T'))
+        return resourceDate >= weekAgo
+      }),
+      ...allChapters.filter((ch: any) => {
+        const dateStr = ch.updatedAt || ch.createdAt
+        if (!dateStr) return false
+        const chapterDate = new Date(dateStr.replace(' ', 'T'))
+        return chapterDate >= weekAgo
+      })
     ]
 
     weeklyTrend.value = {
