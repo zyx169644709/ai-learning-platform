@@ -1,3 +1,4 @@
+//npm run generate-users
 import { PrismaClient } from '../generated/prisma'
 import * as readline from 'readline'
 import * as bcrypt from 'bcryptjs'
@@ -14,6 +15,21 @@ function generateEmail(username: string): string {
   return `${username}@example.com`
 }
 
+// 查找下一个可用的用户编号
+async function findNextAvailableIndex(startIndex: number): Promise<number> {
+  let index = startIndex
+  while (true) {
+    const username = generateUsername(index)
+    const existingUser = await prisma.user.findUnique({
+      where: { username }
+    })
+    if (!existingUser) {
+      return index
+    }
+    index++
+  }
+}
+
 // 批量生成用户
 async function generateUsers(count: number) {
   console.log(`\n开始生成 ${count} 个用户...\n`)
@@ -21,10 +37,13 @@ async function generateUsers(count: number) {
   const defaultPassword = await bcrypt.hash('123456', 10)
   let successCount = 0
   let failCount = 0
+  let currentIndex = 1
 
   for (let i = 1; i <= count; i++) {
     try {
-      const username = generateUsername(i)
+      // 查找下一个可用的用户编号
+      const availableIndex = await findNextAvailableIndex(currentIndex)
+      const username = generateUsername(availableIndex)
       const email = generateEmail(username)
       
       const user = await prisma.user.create({
@@ -39,6 +58,9 @@ async function generateUsers(count: number) {
 
       successCount++
       console.log(`✓ [${i}/${count}] 创建用户: ${user.username} (${user.email})`)
+      
+      // 下次从这个编号的下一个开始查找
+      currentIndex = availableIndex + 1
     } catch (error: any) {
       failCount++
       console.error(`✗ [${i}/${count}] 创建失败: ${error.message}`)

@@ -66,13 +66,13 @@
       <el-card class="overview-card" shadow="hover">
         <div class="card-content">
           <div class="card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-            <el-icon :size="24"><Odometer /></el-icon>
+            <el-icon :size="24"><TrendCharts /></el-icon>
           </div>
           <div class="card-info">
-            <div class="card-value">{{ todayStats.systemHealth }}%</div>
-            <div class="card-label">系统健康度</div>
-            <div class="card-status" :class="{ healthy: todayStats.systemHealth >= 90 }">
-              {{ todayStats.systemHealth >= 90 ? '正常' : '异常' }}
+            <div class="card-value">{{ todayStats.userActivity }}%</div>
+            <div class="card-label">用户活跃度</div>
+            <div class="card-status" :class="{ healthy: todayStats.userActivity >= 30 }">
+              {{ todayStats.activityLabel }}
             </div>
           </div>
         </div>
@@ -117,7 +117,14 @@
           <template #header>
             <div class="card-header">
               <span>🔄 实时活动</span>
-              <el-tag size="small" type="success">实时更新</el-tag>
+              <el-button 
+                size="small" 
+                :icon="Refresh" 
+                :loading="loading"
+                @click="loadDashboardData"
+              >
+                刷新
+              </el-button>
             </div>
           </template>
           <el-timeline class="activity-timeline">
@@ -265,17 +272,53 @@
         <div class="trend-list">
           <div class="trend-item">
             <div class="trend-label">新增用户</div>
-            <div class="trend-chart">{{ weeklyTrend.users }}</div>
+            <div class="trend-bars">
+              <div 
+                v-for="(value, index) in weeklyTrend.usersData" 
+                :key="index"
+                class="trend-bar users-bar"
+                :style="{ 
+                  height: weeklyTrend.usersData.length > 0 && Math.max(...weeklyTrend.usersData) > 0
+                    ? `${(value / Math.max(...weeklyTrend.usersData)) * 100}%` 
+                    : '2px' 
+                }"
+                :title="`${value} 人`"
+              />
+            </div>
             <div class="trend-value">{{ weeklyTrend.usersTotal }}</div>
           </div>
           <div class="trend-item">
             <div class="trend-label">新增内容</div>
-            <div class="trend-chart">{{ weeklyTrend.content }}</div>
+            <div class="trend-bars">
+              <div 
+                v-for="(value, index) in weeklyTrend.contentData" 
+                :key="index"
+                class="trend-bar content-bar"
+                :style="{ 
+                  height: weeklyTrend.contentData.length > 0 && Math.max(...weeklyTrend.contentData) > 0
+                    ? `${(value / Math.max(...weeklyTrend.contentData)) * 100}%` 
+                    : '2px' 
+                }"
+                :title="`${value} 个`"
+              />
+            </div>
             <div class="trend-value">{{ weeklyTrend.contentTotal }}</div>
           </div>
           <div class="trend-item">
             <div class="trend-label">活跃度</div>
-            <div class="trend-chart">{{ weeklyTrend.activity }}</div>
+            <div class="trend-bars">
+              <div 
+                v-for="(value, index) in weeklyTrend.activityData" 
+                :key="index"
+                class="trend-bar activity-bar"
+                :style="{ 
+                  height: weeklyTrend.activityData.length > 0 && Math.max(...weeklyTrend.activityData) > 0
+                    ? `${(value / Math.max(...weeklyTrend.activityData)) * 100}%` 
+                    : '2px' 
+                }"
+                :title="`${value}%`"
+              />
+            </div>
             <div class="trend-value">{{ weeklyTrend.activityAvg }}%</div>
           </div>
         </div>
@@ -299,7 +342,7 @@ import {
   Refresh,
   DocumentAdd,
   Warning,
-  Odometer,
+  TrendCharts,
   CaretTop,
   CaretBottom,
   ChatDotRound,
@@ -318,7 +361,8 @@ const todayStats = ref({
   newContent: 0,
   contentGrowth: 0,
   pendingReview: 0,
-  systemHealth: 100
+  userActivity: 0,
+  activityLabel: '较低'
 })
 
 // 待办事项
@@ -395,11 +439,11 @@ const userRoles = ref({
 
 // 本周趋势
 const weeklyTrend = ref({
-  users: '▁▂▃▅▇▆▄',
+  usersData: [] as number[],      // 最近7天每日新增用户数
   usersTotal: 0,
-  content: '▂▃▄▅▆▅▄',
+  contentData: [] as number[],    // 最近7天每日新增内容数
   contentTotal: 0,
-  activity: '▃▄▅▆▇▆▅',
+  activityData: [] as number[],   // 最近7天每日活跃度
   activityAvg: 0
 })
 
@@ -489,15 +533,27 @@ const loadDashboardData = async () => {
       })
     ]
     
-    // 计算系统健康度（基于数据完整性）
-    const totalItems = allUsers.length + allCourses.length + allResources.length + allDiscussions.length
-    const itemsWithContent = [
-      ...allCourses.filter((c: any) => c.title && c.content),
-      ...allResources.filter((r: any) => r.title && r.url),
-      ...allDiscussions.filter((d: any) => d.title && d.content)
-    ].length
-    const dataIntegrity = totalItems > 0 ? Math.round((itemsWithContent / (allCourses.length + allResources.length + allDiscussions.length)) * 100) : 100
-    const systemHealth = Math.max(90, Math.min(100, dataIntegrity))
+    // 计算今日登录用户数（基于lastLogin字段）
+    const todayActiveUsers = allUsers.filter((u: any) => {
+      const lastLogin = u.lastLogin
+      if (!lastLogin || lastLogin === '-') return false
+      // 处理格式化的日期字符串 "2026-03-05 09:12"
+      const loginDate = new Date(lastLogin.replace(' ', 'T'))
+      return loginDate >= todayStart
+    })
+
+    // 用户活跃度 = 今日登录用户数 / 总用户数 × 100%
+    const activityRate = allUsers.length > 0 ? Math.round((todayActiveUsers.length / allUsers.length) * 100) : 0
+    
+    // 活跃度评级标准
+    let activityLabel = '较低'
+    if (activityRate >= 50) {
+      activityLabel = '优秀'
+    } else if (activityRate >= 30) {
+      activityLabel = '良好'
+    } else if (activityRate >= 10) {
+      activityLabel = '一般'
+    }
 
     todayStats.value = {
       newUsers: todayUsers.length,
@@ -510,7 +566,8 @@ const loadDashboardData = async () => {
         : (todayContent.length > 0 ? 100 : 0),
       pendingReview: allDiscussions.filter((d: any) => d.status === 'pending').length +
                      allComments.filter((c: any) => c.status === 'pending').length,
-      systemHealth
+      userActivity: activityRate,
+      activityLabel: activityLabel
     }
 
     // 更新待办事项
@@ -523,8 +580,8 @@ const loadDashboardData = async () => {
     // 生成实时活动流
     const activities: any[] = []
     
-    // 最近用户注册
-    allUsers.slice(0, 3).forEach((user: any) => {
+    // 所有用户注册活动
+    allUsers.forEach((user: any) => {
       activities.push({
         id: `user-${user.id}`,
         content: `用户 "${user.name || user.username}" 注册了账号`,
@@ -536,8 +593,8 @@ const loadDashboardData = async () => {
       })
     })
 
-    // 最近讨论
-    allDiscussions.slice(0, 2).forEach((discussion: any) => {
+    // 所有讨论发布活动
+    allDiscussions.forEach((discussion: any) => {
       activities.push({
         id: `discussion-${discussion.id}`,
         content: `发布了新讨论 "${discussion.title}"`,
@@ -549,8 +606,8 @@ const loadDashboardData = async () => {
       })
     })
 
-    // 最近课程
-    allCourses.slice(0, 2).forEach((course: any) => {
+    // 所有已发布课程活动
+    allCourses.forEach((course: any) => {
       if (course.status === 'published') {
         activities.push({
           id: `course-${course.id}`,
@@ -576,8 +633,8 @@ const loadDashboardData = async () => {
 
     qualityMetrics.value = {
       courseCompletion: totalCourses > 0 ? Math.min(Math.round((totalCourses / (totalCourses + 10)) * 100), 100) : 0,
-      userActivity: totalUsers > 0 ? Math.min(Math.round((todayUsers.length / totalUsers) * 1000), 100) : 0,
-      userActivityLabel: totalUsers > 50 ? '良好' : '一般',
+      userActivity: activityRate,
+      userActivityLabel: activityLabel,
       discussionEngagement: totalDiscussions > 0 ? Math.min(Math.round((allComments.length / totalDiscussions) * 10), 100) : 0,
       resourceUtilization: totalResources > 0 ? Math.min(Math.round((totalResources / (totalResources + 5)) * 100), 100) : 0
     }
@@ -589,43 +646,75 @@ const loadDashboardData = async () => {
       user: allUsers.filter((u: any) => u.role === 'USER').length
     }
 
-    // 本周趋势
-    const weekAgo = new Date()
-    weekAgo.setDate(weekAgo.getDate() - 7)
-    const weekUsers = allUsers.filter((u: any) => {
-      const dateStr = u.registeredAt || u.createdAt
-      if (!dateStr) return false
-      const userDate = new Date(dateStr.replace(' ', 'T'))
-      return userDate >= weekAgo
+    // 本周趋势 - 计算最近7天的每日数据
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date()
+      date.setDate(date.getDate() - (6 - i))
+      date.setHours(0, 0, 0, 0)
+      return date
     })
-    const weekContent = [
-      ...allCourses.filter((c: any) => {
-        const dateStr = c.updatedAt || c.createdAt
+    
+    // 计算每天的新增用户数
+    const dailyUsersData = last7Days.map(day => {
+      const nextDay = new Date(day)
+      nextDay.setDate(nextDay.getDate() + 1)
+      return allUsers.filter((u: any) => {
+        const dateStr = u.registeredAt || u.createdAt
         if (!dateStr) return false
-        const courseDate = new Date(dateStr.replace(' ', 'T'))
-        return courseDate >= weekAgo
-      }),
-      ...allResources.filter((r: any) => {
-        const dateStr = r.updatedAt || r.createdAt
-        if (!dateStr) return false
-        const resourceDate = new Date(dateStr.replace(' ', 'T'))
-        return resourceDate >= weekAgo
-      }),
-      ...allChapters.filter((ch: any) => {
-        const dateStr = ch.updatedAt || ch.createdAt
-        if (!dateStr) return false
-        const chapterDate = new Date(dateStr.replace(' ', 'T'))
-        return chapterDate >= weekAgo
-      })
-    ]
+        const userDate = new Date(dateStr.replace(' ', 'T'))
+        return userDate >= day && userDate < nextDay
+      }).length
+    })
+    
+    // 计算每天的新增内容数
+    const dailyContentData = last7Days.map(day => {
+      const nextDay = new Date(day)
+      nextDay.setDate(nextDay.getDate() + 1)
+      const dayContent = [
+        ...allCourses.filter((c: any) => {
+          const dateStr = c.updatedAt || c.createdAt
+          if (!dateStr) return false
+          const courseDate = new Date(dateStr.replace(' ', 'T'))
+          return courseDate >= day && courseDate < nextDay
+        }),
+        ...allResources.filter((r: any) => {
+          const dateStr = r.updatedAt || r.createdAt
+          if (!dateStr) return false
+          const resourceDate = new Date(dateStr.replace(' ', 'T'))
+          return resourceDate >= day && resourceDate < nextDay
+        }),
+        ...allChapters.filter((ch: any) => {
+          const dateStr = ch.updatedAt || ch.createdAt
+          if (!dateStr) return false
+          const chapterDate = new Date(dateStr.replace(' ', 'T'))
+          return chapterDate >= day && chapterDate < nextDay
+        })
+      ]
+      return dayContent.length
+    })
+    
+    // 计算每天的活跃度
+    const dailyActivityData = last7Days.map(day => {
+      const nextDay = new Date(day)
+      nextDay.setDate(nextDay.getDate() + 1)
+      const dayActiveUsers = allUsers.filter((u: any) => {
+        const lastLogin = u.lastLogin
+        if (!lastLogin || lastLogin === '-') return false
+        const loginDate = new Date(lastLogin.replace(' ', 'T'))
+        return loginDate >= day && loginDate < nextDay
+      }).length
+      return totalUsers > 0 ? Math.round((dayActiveUsers / totalUsers) * 100) : 0
+    })
 
     weeklyTrend.value = {
-      users: '▁▂▃▅▇▆▄',
-      usersTotal: weekUsers.length,
-      content: '▂▃▄▅▆▅▄',
-      contentTotal: weekContent.length,
-      activity: '▃▄▅▆▇▆▅',
-      activityAvg: totalUsers > 0 ? Math.min(Math.round((weekUsers.length / totalUsers) * 100), 100) : 0
+      usersData: dailyUsersData,
+      usersTotal: dailyUsersData.reduce((a, b) => a + b, 0),
+      contentData: dailyContentData,
+      contentTotal: dailyContentData.reduce((a, b) => a + b, 0),
+      activityData: dailyActivityData,
+      activityAvg: dailyActivityData.length > 0 
+        ? Math.round(dailyActivityData.reduce((a, b) => a + b, 0) / dailyActivityData.length) 
+        : 0
     }
 
   } catch (error) {
@@ -954,13 +1043,35 @@ onUnmounted(() => {
 
 .quick-actions-card .action-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
 .quick-actions-card .el-button {
+  width: 100%;
   height: 56px;
   font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.quick-actions-card .el-button > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.quick-actions-card .el-button .el-icon {
+  margin: 0;
+}
+
+.quick-actions-card .el-button + .el-button {
+  margin-left: 0;
 }
 
 .quality-card .quality-metrics {
@@ -1072,11 +1183,38 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-.trend-chart {
-  font-size: 24px;
-  letter-spacing: 2px;
-  color: #409eff;
-  font-family: monospace;
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 40px;
+  padding: 4px 0;
+}
+
+.trend-bar {
+  flex: 1;
+  border-radius: 3px;
+  min-height: 2px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.trend-bar:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+.users-bar {
+  background: linear-gradient(to top, #667eea 0%, #764ba2 100%);
+}
+
+.content-bar {
+  background: linear-gradient(to top, #f093fb 0%, #f5576c 100%);
+}
+
+.activity-bar {
+  background: linear-gradient(to top, #4facfe 0%, #00f2fe 100%);
 }
 
 .trend-value {
@@ -1116,7 +1254,7 @@ onUnmounted(() => {
   }
   
   .quick-actions-card .action-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
