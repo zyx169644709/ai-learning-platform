@@ -17,7 +17,7 @@
         <div class="guide-steps">
           <!-- 步骤1：认识HTML标签 -->
           <div class="step" :class="{ active: currentStep === 1, completed: currentStep > 1 }">
-            <div class="step-header">
+            <div class="step-header" @click="currentStep = 1" style="cursor: pointer;">
               <div class="step-number">1</div>
               <h3 class="step-title">认识 HTML 标签</h3>
             </div>
@@ -44,7 +44,7 @@
 
           <!-- 步骤2：理解Vue数据绑定 -->
           <div class="step" :class="{ active: currentStep === 2, completed: currentStep > 2 }">
-            <div class="step-header">
+            <div class="step-header" @click="currentStep = 2" style="cursor: pointer;">
               <div class="step-number">2</div>
               <h3 class="step-title">Vue 数据绑定</h3>
             </div>
@@ -67,7 +67,7 @@
 
           <!-- 步骤3：v-for循环渲染 -->
           <div class="step" :class="{ active: currentStep === 3, completed: currentStep > 3 }">
-            <div class="step-header">
+            <div class="step-header" @click="currentStep = 3" style="cursor: pointer;">
               <div class="step-number">3</div>
               <h3 class="step-title">v-for 循环渲染</h3>
             </div>
@@ -178,10 +178,13 @@ const hasTitleModified = computed(() => {
 })
 
 const hasListModified = computed(() => {
+  // 检查是否添加了新的待办项（原始有3个，现在应该有4个或更多）
   const matches = code.value.match(/todos:\s*\[([\s\S]*?)\]/m)
   if (matches) {
-    const items = matches[1].split(',').filter(s => s.trim().length > 0 && !s.includes('//'))
-    return items.length > 3
+    const content = matches[1]
+    // 统计字符串字面量的数量（包括单引号和双引号）
+    const stringCount = (content.match(/['"][^'"]*['"]/g) || []).length
+    return stringCount > 3
   }
   return false
 })

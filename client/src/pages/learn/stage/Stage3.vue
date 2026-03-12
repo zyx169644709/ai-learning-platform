@@ -150,13 +150,12 @@ const initialCode = `<!DOCTYPE html>
 </head>
 <body>
   <div id="app">
-    <!-- :style 可以动态绑定样式 -->
-    <h1 :style="{ color: textColor }">{{ message }}</h1>
+    <h1>{{ message }}</h1>
     
     <p>点击按钮切换颜色：</p>
-    <button @click="textColor = '#e74c3c'">红色</button>
-    <button @click="textColor = '#3498db'">蓝色</button>
-    <button @click="textColor = '#27ae60'">绿色</button>
+    <button @click="changeColor('#e74c3c')">红色</button>
+    <button @click="changeColor('#3498db')">蓝色</button>
+    <button @click="changeColor('#27ae60')">绿色</button>
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"><\/script>
@@ -164,8 +163,13 @@ const initialCode = `<!DOCTYPE html>
     Vue.createApp({
       data() {
         return {
-          message: 'Hello Vue!',
-          textColor: '#e74c3c'  // 文字颜色
+          message: 'Hello Vue!'
+        }
+      },
+      methods: {
+        changeColor(color) {
+          // 动态修改 CSS 样式
+          document.querySelector('h1').style.color = color
         }
       }
     }).mount('#app')

@@ -38,17 +38,18 @@
       <iframe
         class="preview-frame"
         :srcdoc="modelValue"
+        :key="iframeKey"
       ></iframe>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import MonacoEditor from './MonacoEditor.vue'
 import { useResizableSplit } from '@/composables/useResizableSplit'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   modelValue: string
   language?: string
   fileName?: string
@@ -61,6 +62,14 @@ defineEmits<{
   'update:modelValue': [value: string]
   'change': []
 }>()
+
+// 添加一个key来强制iframe重新渲染
+const iframeKey = ref(0)
+
+// 监听modelValue变化，强制更新iframe
+watch(() => props.modelValue, () => {
+  iframeKey.value++
+})
 
 // 使用可拖拽分隔条 composable
 const {

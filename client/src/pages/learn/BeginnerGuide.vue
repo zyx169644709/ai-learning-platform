@@ -26,7 +26,7 @@
             :key="index"
             class="progress-node"
             :class="{ completed: stage.completed, active: index === currentStageIndex }"
-            :style="{ left: (index / 3) * 100 + '%' }"
+            :style="{ left: ((index + 1) / 4) * 100 + '%' }"
           >
             <span class="node-icon">{{ stage.completed ? '✓' : index + 1 }}</span>
           </div>
