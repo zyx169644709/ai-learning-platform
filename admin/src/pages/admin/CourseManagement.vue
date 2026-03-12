@@ -127,7 +127,7 @@
       :title="editingCourse ? '编辑课程' : '创建课程'"
       width="800px"
     >
-      <el-form :model="courseForm" :rules="courseRules" ref="courseFormRef" label-width="100px">
+      <el-form :model="courseForm" :rules="courseRules" ref="formRef" label-width="100px">
         <el-form-item label="课程标题" prop="title">
           <el-input v-model="courseForm.title" placeholder="请输入课程标题" />
         </el-form-item>
@@ -220,6 +220,7 @@ const {
   showEditDialog: showCreateDialog,
   editingItem: editingCourse,
   saving,
+  formRef,
   loadItems,
   editItem,
   saveItem,
