@@ -53,7 +53,11 @@ import {
   batchDeleteComments,
   adminCreateDiscussion,
   adminUpdateDiscussion,
-  adminCreateComment
+  adminCreateComment,
+  approveDiscussion,
+  rejectDiscussion,
+  approveComment,
+  rejectComment
 } from '../controllers/communityController'
 import authMiddleware from '../middleware/authMiddleware'
 import { requireAdmin } from '../middleware/adminAuth'
@@ -118,12 +122,16 @@ router.post('/community/discussions', authMiddleware, requireAdmin, adminCreateD
 router.post('/community/discussions/batch-delete', authMiddleware, requireAdmin, batchDeleteDiscussions)
 router.post('/community/discussions/:id/toggle-status', authMiddleware, requireAdmin, toggleDiscussionStatus)
 router.post('/community/discussions/:id/toggle-pin', authMiddleware, requireAdmin, toggleDiscussionPin)
+router.post('/community/discussions/:id/approve', authMiddleware, requireAdmin, approveDiscussion)
+router.post('/community/discussions/:id/reject', authMiddleware, requireAdmin, rejectDiscussion)
 router.put('/community/discussions/:id', authMiddleware, requireAdmin, adminUpdateDiscussion)
 router.delete('/community/discussions/:id', authMiddleware, requireAdmin, adminDeleteDiscussion)
 router.get('/community/comments', authMiddleware, requireAdmin, adminGetComments)
 router.post('/community/comments', authMiddleware, requireAdmin, adminCreateComment)
 router.post('/community/comments/batch-delete', authMiddleware, requireAdmin, batchDeleteComments)
 router.post('/community/comments/:id/toggle-status', authMiddleware, requireAdmin, toggleCommentStatus)
+router.post('/community/comments/:id/approve', authMiddleware, requireAdmin, approveComment)
+router.post('/community/comments/:id/reject', authMiddleware, requireAdmin, rejectComment)
 router.delete('/community/comments/:id', authMiddleware, requireAdmin, adminDeleteComment)
 
 export default router

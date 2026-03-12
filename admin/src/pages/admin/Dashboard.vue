@@ -324,6 +324,93 @@
         </div>
       </el-card>
     </div>
+
+    <!-- 审核弹窗 -->
+    <el-dialog
+      v-model="reviewDialogVisible"
+      :title="reviewDialogTitle"
+      width="600px"
+      @close="handleDialogClose"
+    >
+      <div v-if="currentReviewItem" class="review-content">
+        <el-descriptions :column="1" border>
+          <el-descriptions-item label="类型">
+            {{ currentReviewItem.type === 'discussion' ? '讨论帖' : '评论' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="作者">
+            {{ currentReviewItem.author }}
+          </el-descriptions-item>
+          <el-descriptions-item v-if="currentReviewItem.type === 'discussion'" label="标题">
+            {{ currentReviewItem.title }}
+          </el-descriptions-item>
+          <el-descriptions-item label="内容">
+            <div class="content-preview">{{ currentReviewItem.content }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item label="发布时间">
+            {{ formatTime(currentReviewItem.createdAt) }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+      
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="reviewDialogVisible = false">取消</el-button>
+          <el-button type="danger" @click="handleReject">拒绝</el-button>
+          <el-button type="primary" @click="handleApprove">通过审核</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 待审核列表弹窗 -->
+    <el-dialog
+      v-model="pendingListDialogVisible"
+      title="待审核内容"
+      width="800px"
+      @close="handleListDialogClose"
+    >
+      <el-tabs v-model="activeTab">
+        <el-tab-pane label="待审核讨论帖" name="discussions">
+          <el-table :data="pendingDiscussions" stripe max-height="400">
+            <el-table-column prop="title" label="标题" min-width="200" />
+            <el-table-column prop="author" label="作者" width="120" />
+            <el-table-column prop="createdAt" label="发布时间" width="160">
+              <template #default="{ row }">
+                {{ formatTime(row.createdAt) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right">
+              <template #default="{ row }">
+                <el-button type="primary" link @click="openReviewDialog(row, 'discussion')">
+                  审核
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="待审核评论" name="comments">
+          <el-table :data="pendingComments" stripe max-height="400">
+            <el-table-column prop="content" label="内容" min-width="200">
+              <template #default="{ row }">
+                <el-text truncated>{{ row.content }}</el-text>
+              </template>
+            </el-table-column>
+            <el-table-column prop="author" label="作者" width="120" />
+            <el-table-column prop="createdAt" label="发布时间" width="160">
+              <template #default="{ row }">
+                {{ formatTime(row.createdAt) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right">
+              <template #default="{ row }">
+                <el-button type="primary" link @click="openReviewDialog(row, 'comment')">
+                  审核
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </div>
 </template>
 
@@ -731,18 +818,135 @@ const refreshData = () => {
   ElMessage.success('数据已刷新')
 }
 
-// 处理待审核点击
-const handlePendingClick = () => {
+// 审核弹窗相关
+const reviewDialogVisible = ref(false)
+const reviewDialogTitle = ref('')
+const currentReviewItem = ref<any>(null)
+const pendingListDialogVisible = ref(false)
+const activeTab = ref('discussions')
+const pendingDiscussions = ref<any[]>([])
+const pendingComments = ref<any[]>([])
+
+// 打开审核列表弹窗
+const handlePendingClick = async () => {
   if (todayStats.value.pendingReview > 0) {
-    router.push('/admin/community/discussions')
+    // 加载待审核数据
+    try {
+      const [discussionsRes, commentsRes] = await Promise.all([
+        request.get('/admin/community/discussions?page=1&limit=1000&status=pending'),
+        request.get('/admin/community/comments?page=1&limit=1000&status=pending')
+      ])
+      
+      pendingDiscussions.value = discussionsRes.data?.data?.items || []
+      pendingComments.value = commentsRes.data?.data?.items || []
+      pendingListDialogVisible.value = true
+    } catch (error) {
+      ElMessage.error('加载待审核内容失败')
+    }
   }
 }
 
 // 处理待办事项点击
-const handleTodoClick = (type: string) => {
-  const todo = todos.value.find(t => t.type === type)
-  if (todo && todo.route) {
-    router.push(todo.route)
+const handleTodoClick = async (type: string) => {
+  if (type === 'pendingDiscussions' || type === 'pendingComments') {
+    // 如果是待审核项，打开审核弹窗
+    try {
+      const [discussionsRes, commentsRes] = await Promise.all([
+        request.get('/admin/community/discussions?page=1&limit=1000&status=pending'),
+        request.get('/admin/community/comments?page=1&limit=1000&status=pending')
+      ])
+      
+      pendingDiscussions.value = discussionsRes.data?.data?.items || []
+      pendingComments.value = commentsRes.data?.data?.items || []
+      activeTab.value = type === 'pendingDiscussions' ? 'discussions' : 'comments'
+      pendingListDialogVisible.value = true
+    } catch (error) {
+      ElMessage.error('加载待审核内容失败')
+    }
+  } else {
+    // 其他待办事项，跳转到对应页面
+    const todo = todos.value.find(t => t.type === type)
+    if (todo && todo.route) {
+      router.push(todo.route)
+    }
+  }
+}
+
+// 打开审核详情弹窗
+const openReviewDialog = (item: any, type: 'discussion' | 'comment') => {
+  currentReviewItem.value = { ...item, type }
+  reviewDialogTitle.value = type === 'discussion' ? '审核讨论帖' : '审核评论'
+  reviewDialogVisible.value = true
+}
+
+// 关闭审核弹窗
+const handleDialogClose = () => {
+  currentReviewItem.value = null
+}
+
+// 关闭列表弹窗
+const handleListDialogClose = () => {
+  pendingDiscussions.value = []
+  pendingComments.value = []
+}
+
+// 通过审核
+const handleApprove = async () => {
+  if (!currentReviewItem.value) return
+  
+  try {
+    const { id, type } = currentReviewItem.value
+    const endpoint = type === 'discussion' 
+      ? `/admin/community/discussions/${id}/approve`
+      : `/admin/community/comments/${id}/approve`
+    
+    await request.post(endpoint)
+    ElMessage.success('审核通过')
+    
+    // 从列表中移除已审核项
+    if (type === 'discussion') {
+      pendingDiscussions.value = pendingDiscussions.value.filter(d => d.id !== id)
+    } else {
+      pendingComments.value = pendingComments.value.filter(c => c.id !== id)
+    }
+    
+    reviewDialogVisible.value = false
+    currentReviewItem.value = null
+    
+    // 刷新仪表盘数据
+    await loadDashboardData()
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '审核失败')
+  }
+}
+
+// 拒绝审核
+const handleReject = async () => {
+  if (!currentReviewItem.value) return
+  
+  try {
+    const { id, type } = currentReviewItem.value
+    const endpoint = type === 'discussion'
+      ? `/admin/community/discussions/${id}/reject`
+      : `/admin/community/comments/${id}/reject`
+    
+    await request.post(endpoint)
+    ElMessage.success('已拒绝')
+    
+    // 从列表中移除已审核项
+    if (type === 'discussion') {
+      pendingDiscussions.value = pendingDiscussions.value.filter(d => d.id !== id)
+    } else {
+      pendingComments.value = pendingComments.value.filter(c => c.id !== id)
+    }
+    
+    reviewDialogVisible.value = false
+    currentReviewItem.value = null
+    
+    // 刷新仪表盘数据
+    await loadDashboardData()
+  } catch (error: any) {
+    ElMessage.error(error.response?.data?.message || '操作失败')
   }
 }
 
@@ -1262,5 +1466,27 @@ onUnmounted(() => {
   .overview-cards {
     grid-template-columns: 1fr;
   }
+}
+
+/* 审核弹窗样式 */
+.review-content {
+  margin: 20px 0;
+}
+
+.content-preview {
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 10px;
+  background: #f5f7fa;
+  border-radius: 4px;
+  line-height: 1.6;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>

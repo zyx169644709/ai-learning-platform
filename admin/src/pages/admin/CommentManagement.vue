@@ -29,6 +29,7 @@
         <el-table-column prop="content" label="评论内容" min-width="280">
           <template #default="{ row }">
             <div class="comment-content" @click.stop="viewContent(row)">
+              <el-tag v-if="row.status === 'pending'" type="primary" size="small" style="flex-shrink: 0; margin-right: 6px;">审核中</el-tag>
               <el-tag v-if="row.status === 'hidden'" type="danger" size="small" style="flex-shrink: 0; margin-right: 6px;">隐藏</el-tag>
               <span class="content-text">{{ row.content }}</span>
             </div>

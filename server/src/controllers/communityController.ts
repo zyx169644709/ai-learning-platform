@@ -119,6 +119,7 @@ export const createDiscussion = async (req: Request, res: Response) => {
         content,
         category: (category as string).toUpperCase() as any,
         authorId: finalAuthorId,
+        status: 'pending',  // 默认状态为待审核
         views: 0,
         likes: 0
       },
@@ -301,6 +302,7 @@ export const createComment = async (req: Request, res: Response) => {
         content,
         authorId: finalAuthorId,
         discussionId,
+        status: 'pending',  // 默认状态为待审核
         likes: 0
       },
       include: {
@@ -500,6 +502,74 @@ export const adminGetComments = async (req: Request, res: Response) => {
   }
 }
 
+// 审核通过讨论帖子
+export const approveDiscussion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    await prisma.discussion.update({ 
+      where: { id }, 
+      data: { status: 'published' } 
+    })
+    res.json({ success: true, message: '帖子审核通过', data: { status: 'published' } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '审核失败', error: error.message })
+  }
+}
+
+// 拒绝讨论帖子
+export const rejectDiscussion = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
+    if (!discussion) return res.status(404).json({ success: false, message: '帖子不存在' })
+
+    await prisma.discussion.update({ 
+      where: { id }, 
+      data: { status: 'hidden' } 
+    })
+    res.json({ success: true, message: '帖子已拒绝', data: { status: 'hidden' } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '操作失败', error: error.message })
+  }
+}
+
+// 审核通过评论
+export const approveComment = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const comment = await prisma.comment.findUnique({ where: { id } })
+    if (!comment) return res.status(404).json({ success: false, message: '评论不存在' })
+
+    await prisma.comment.update({ 
+      where: { id }, 
+      data: { status: 'visible' } 
+    })
+    res.json({ success: true, message: '评论审核通过', data: { status: 'visible' } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '审核失败', error: error.message })
+  }
+}
+
+// 拒绝评论
+export const rejectComment = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const comment = await prisma.comment.findUnique({ where: { id } })
+    if (!comment) return res.status(404).json({ success: false, message: '评论不存在' })
+
+    await prisma.comment.update({ 
+      where: { id }, 
+      data: { status: 'hidden' } 
+    })
+    res.json({ success: true, message: '评论已拒绝', data: { status: 'hidden' } })
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: '操作失败', error: error.message })
+  }
+}
+
 // 隐藏/显示帖子
 export const toggleDiscussionStatus = async (req: Request, res: Response) => {
   try {
@@ -617,6 +687,7 @@ export const adminCreateDiscussion = async (req: Request, res: Response) => {
         content,
         category: (category as string).toUpperCase() as any,
         authorId,
+        status: 'pending',  // 默认状态为待审核
         views: 0,
         likes: 0
       },
@@ -634,7 +705,7 @@ export const adminCreateDiscussion = async (req: Request, res: Response) => {
         views: 0,
         likes: 0,
         commentCount: 0,
-        status: 'published',
+        status: discussion.status,
         isPinned: false
       }
     })
@@ -692,7 +763,7 @@ export const adminCreateComment = async (req: Request, res: Response) => {
     if (!authorId) return res.status(401).json({ success: false, message: '未授权' })
 
     const comment = await prisma.comment.create({
-      data: { content, authorId, discussionId, likes: 0 },
+      data: { content, authorId, discussionId, status: 'pending', likes: 0 },
       include: {
         author: { select: { id: true, username: true, avatar: true } },
         discussion: { select: { id: true, title: true } }
@@ -709,7 +780,7 @@ export const adminCreateComment = async (req: Request, res: Response) => {
         discussionId: comment.discussionId,
         likes: 0,
         createdAt: comment.createdAt,
-        status: 'visible'
+        status: comment.status
       }
     })
   } catch (error: any) {

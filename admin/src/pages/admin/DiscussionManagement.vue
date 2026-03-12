@@ -39,6 +39,7 @@
           <template #default="{ row }">
             <div class="title-cell">
               <el-tag v-if="row.isPinned" type="warning" size="small" style="margin-right: 6px;">置顶</el-tag>
+              <el-tag v-if="row.status === 'pending'" type="primary" size="small" style="margin-right: 6px;">审核中</el-tag>
               <el-tag v-if="row.status === 'hidden'" type="danger" size="small" style="margin-right: 6px;">隐藏</el-tag>
               <span>{{ row.title }}</span>
             </div>
