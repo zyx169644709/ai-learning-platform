@@ -1,0 +1,188 @@
+{
+  "courseId": "html-basics",
+  "courseName": "HTML 核心基础",
+  "passingScore": 60,
+  "questionCount": 5,
+  "questions": [
+    {
+      "id": 1,
+      "question": "HTML 的全称是什么？",
+      "options": [
+        "Hyper Text Markup Language",
+        "High Tech Modern Language",
+        "Home Tool Markup Language",
+        "Hyperlinks and Text Markup Language"
+      ],
+      "correctAnswer": 0,
+      "explanation": "HTML 是 HyperText Markup Language 的缩写，即超文本标记语言，是用于创建网页的标准标记语言。"
+    },
+    {
+      "id": 2,
+      "question": "哪个标签用于创建超链接？",
+      "options": [
+        "<link>",
+        "<a>",
+        "<href>",
+        "<url>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<a> 标签（anchor 锚点）用于创建超链接，通过 href 属性指定链接的目标地址。"
+    },
+    {
+      "id": 3,
+      "question": "<div> 是什么类型的元素？",
+      "options": [
+        "行内元素",
+        "块级元素",
+        "表格元素",
+        "表单元素"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<div> 是块级元素（block-level element），它会独占一行，可以包含其他块级元素和行内元素。"
+    },
+    {
+      "id": 4,
+      "question": "下列哪个是正确的 HTML 文档基本结构？",
+      "options": [
+        "<html><head></head><body></body></html>",
+        "<body><html><head></head></html></body>",
+        "<head><html><body></body></html></head>",
+        "<html><body><head></head></body></html>"
+      ],
+      "correctAnswer": 0,
+      "explanation": "正确的 HTML 文档结构是：<html> 作为根元素，包含 <head>（头部信息）和 <body>（页面内容）两个子元素。"
+    },
+    {
+      "id": 5,
+      "question": "哪个标签用于定义网页的标题（显示在浏览器标签页上）？",
+      "options": [
+        "<header>",
+        "<title>",
+        "<h1>",
+        "<caption>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<title> 标签定义文档的标题，显示在浏览器的标题栏或标签页上。它必须放在 <head> 标签内。"
+    },
+    {
+      "id": 6,
+      "question": "哪个标签用于插入图片？",
+      "options": [
+        "<image>",
+        "<img>",
+        "<picture>",
+        "<photo>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<img> 标签用于在网页中插入图片，通过 src 属性指定图片路径，alt 属性提供替代文本。"
+    },
+    {
+      "id": 7,
+      "question": "<span> 是什么类型的元素？",
+      "options": [
+        "块级元素",
+        "行内元素",
+        "表格元素",
+        "列表元素"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<span> 是行内元素（inline element），不会独占一行，通常用于对文本的一部分进行样式设置。"
+    },
+    {
+      "id": 8,
+      "question": "哪个标签用于创建无序列表？",
+      "options": [
+        "<ol>",
+        "<ul>",
+        "<list>",
+        "<li>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<ul> 标签用于创建无序列表（unordered list），列表项使用 <li> 标签定义。"
+    },
+    {
+      "id": 9,
+      "question": "HTML 注释的正确写法是？",
+      "options": [
+        "// 这是注释",
+        "/* 这是注释 */",
+        "<!-- 这是注释 -->",
+        "# 这是注释"
+      ],
+      "correctAnswer": 2,
+      "explanation": "HTML 注释使用 <!-- 注释内容 --> 的格式，注释内容不会在浏览器中显示。"
+    },
+    {
+      "id": 10,
+      "question": "哪个标签用于定义表格？",
+      "options": [
+        "<table>",
+        "<tab>",
+        "<grid>",
+        "<data>"
+      ],
+      "correctAnswer": 0,
+      "explanation": "<table> 标签用于定义 HTML 表格，配合 <tr>（行）、<td>（单元格）等标签使用。"
+    },
+    {
+      "id": 11,
+      "question": "哪个属性用于指定链接的目标地址？",
+      "options": [
+        "src",
+        "href",
+        "link",
+        "url"
+      ],
+      "correctAnswer": 1,
+      "explanation": "href 属性用于指定超链接的目标地址，是 <a> 标签最重要的属性。"
+    },
+    {
+      "id": 12,
+      "question": "哪个标签用于定义最重要的标题？",
+      "options": [
+        "<h6>",
+        "<h3>",
+        "<h1>",
+        "<header>"
+      ],
+      "correctAnswer": 2,
+      "explanation": "<h1> 标签定义最重要的标题，HTML 提供了 <h1> 到 <h6> 六级标题，数字越小重要性越高。"
+    },
+    {
+      "id": 13,
+      "question": "哪个标签用于定义段落？",
+      "options": [
+        "<p>",
+        "<para>",
+        "<paragraph>",
+        "<text>"
+      ],
+      "correctAnswer": 0,
+      "explanation": "<p> 标签用于定义段落（paragraph），浏览器会自动在段落前后添加空白。"
+    },
+    {
+      "id": 14,
+      "question": "哪个标签用于创建换行？",
+      "options": [
+        "<break>",
+        "<lb>",
+        "<br>",
+        "<newline>"
+      ],
+      "correctAnswer": 2,
+      "explanation": "<br> 标签用于创建换行（break），它是一个空标签，不需要闭合标签。"
+    },
+    {
+      "id": 15,
+      "question": "HTML 文档的字符编码通常设置为？",
+      "options": [
+        "GB2312",
+        "ASCII",
+        "UTF-8",
+        "GBK"
+      ],
+      "correctAnswer": 2,
+      "explanation": "UTF-8 是最常用的字符编码，它支持世界上几乎所有的字符，包括中文、英文等。"
+    }
+  ]
+}
