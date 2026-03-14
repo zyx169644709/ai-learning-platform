@@ -424,6 +424,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { courseProgressService } from '@/services/courseProgressService'
 
 const router = useRouter()
 
@@ -678,9 +679,17 @@ const goBack = () => {
   router.push('/learn/basics')
 }
 
-const completeCourse = () => {
-  alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
-  router.push('/learn/css-basics')
+const completeCourse = async () => {
+  try {
+    await courseProgressService.completeCourse('html-basics')
+    alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
+    router.push('/learn/css-basics')
+  } catch (error) {
+    console.error('记录课程完成失败:', error)
+    // 即使记录失败也允许继续
+    alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
+    router.push('/learn/css-basics')
+  }
 }
 </script>
 

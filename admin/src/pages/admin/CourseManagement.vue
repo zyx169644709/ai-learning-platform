@@ -220,7 +220,6 @@ const {
   showEditDialog: showCreateDialog,
   editingItem: editingCourse,
   saving,
-  formRef,
   loadItems,
   editItem,
   saveItem,

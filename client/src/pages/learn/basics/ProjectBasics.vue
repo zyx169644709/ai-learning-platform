@@ -119,6 +119,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { courseProgressService } from '@/services/courseProgressService'
 
 const router = useRouter()
 
@@ -260,8 +261,15 @@ const goBack = () => {
   router.push('/learn/basics')
 }
 
-const completeCourse = () => {
-  router.push('/learn/vue-intro')
+const completeCourse = async () => {
+  try {
+    await courseProgressService.completeCourse('project-basics')
+    router.push('/learn/vue-intro')
+  } catch (error) {
+    console.error('记录课程完成失败:', error)
+    // 即使记录失败也允许继续
+    router.push('/learn/vue-intro')
+  }
 }
 </script>
 

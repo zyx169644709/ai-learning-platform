@@ -9,26 +9,27 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  username        String           @unique
-  email           String           @unique
-  password        String
-  bio             String?
-  avatar          String?
-  status          String           @default("active")
-  lastLoginAt     DateTime?        @map("last_login_at")
-  role            UserRole         @default(USER)
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
-  chapters        Chapter[]
-  commentLikes    CommentLike[]
-  comments        Comment[]
-  courses         Course[]
-  discussionLikes DiscussionLike[]
-  discussions     Discussion[]
-  favorites       Favorite[]
-  resources       Resource[]
-  userPreferences UserPreferences?
+  id                String             @id @default(cuid())
+  username          String             @unique
+  email             String             @unique
+  password          String
+  bio               String?
+  avatar            String?
+  status            String             @default("active")
+  lastLoginAt       DateTime?          @map("last_login_at")
+  role              UserRole           @default(USER)
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  chapters          Chapter[]
+  commentLikes      CommentLike[]
+  comments          Comment[]
+  courses           Course[]
+  discussionLikes   DiscussionLike[]
+  discussions       Discussion[]
+  favorites         Favorite[]
+  resources         Resource[]
+  userPreferences   UserPreferences?
+  courseCompletions CourseCompletion[]
 
   @@index([email])
   @@index([username])
@@ -232,4 +233,17 @@ enum DiscussionCategory {
   EXPERIENCE
   PROJECT
   HELP
+}
+
+model CourseCompletion {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  courseId    String   @map("course_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("course_completions")
 }

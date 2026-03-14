@@ -211,6 +211,7 @@ import BatchActionBar from '@/components/BatchActionBar.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import ExportData from '@/components/ExportData.vue'
+import { userStatsService } from '@/api/userStatsService'
 
 // 使用分页 composable
 const { pagination, resetPagination, setTotal, getPaginationParams } = usePagination()
@@ -227,7 +228,6 @@ const {
   selectedItem: selectedUser,
   saving,
   loadItems,
-  viewItem: viewUser,
   editItem,
   deleteItem
 } = useCrud({
@@ -282,6 +282,43 @@ const resetFilter = () => {
   filterForm.role = ''
   resetPagination()
   loadUsers()
+}
+
+// 查看用户详情（覆盖默认实现，加载真实学习统计）
+const viewUser = async (user: any) => {
+  try {
+    // 加载用户学习统计
+    const statsResult = await userStatsService.getUserStats(user.id)
+    
+    if (statsResult.success) {
+      const stats = statsResult.data
+      
+      // 更新用户数据，包含真实的学习统计
+      selectedUser.value = {
+        ...user,
+        completedCourses: stats.completedCount,
+        progress: stats.completionRate,
+        courses: stats.completedCourses.map((c: any) => ({
+          title: c.courseName,
+          progress: 100,
+          status: 'completed',
+          completedAt: new Date(c.completedAt).toLocaleDateString('zh-CN')
+        }))
+      }
+      
+      showUserDialog.value = true
+    } else {
+      ElMessage.warning('无法获取学习统计，显示基本信息')
+      selectedUser.value = user
+      showUserDialog.value = true
+    }
+  } catch (error: any) {
+    console.error('获取学习统计失败:', error)
+    ElMessage.warning('获取学习统计失败，显示基本信息')
+    // 即使获取统计失败，也显示基本用户信息
+    selectedUser.value = user
+    showUserDialog.value = true
+  }
 }
 
 // 编辑用户

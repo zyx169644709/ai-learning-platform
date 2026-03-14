@@ -399,6 +399,7 @@ element.innerText = '新内容';</code></pre>
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { courseProgressService } from '@/services/courseProgressService'
 
 const router = useRouter()
 
@@ -766,9 +767,16 @@ const goBack = () => {
   router.push('/learn/basics')
 }
 
-const completeCourse = () => {
-  alert('🎉 恭喜完成 JavaScript 核心基础课程！\n\n你已经掌握了 HTML、CSS、JavaScript 三大核心技术！')
-  router.push('/learn/basics')
+const completeCourse = async () => {
+  try {
+    await courseProgressService.completeCourse('js-basics')
+    alert('🎉 恭喜完成 JavaScript 核心基础课程！\n\n你已经掌握了 HTML、CSS、JavaScript 三大核心技术！')
+    router.push('/learn/project-basics')
+  } catch (error) {
+    console.error('记录课程完成失败:', error)
+    alert('🎉 恭喜完成 JavaScript 核心基础课程！\n\n你已经掌握了 HTML、CSS、JavaScript 三大核心技术！')
+    router.push('/learn/project-basics')
+  }
 }
 </script>
 
