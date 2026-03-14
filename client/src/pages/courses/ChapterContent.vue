@@ -7,8 +7,19 @@
     <span v-if="section">{{ section?.title }}</span>
   </div>
   <div class="chapter-content">
-    <div v-if="section?.duration" class="section-meta">
-      <span class="reading-time">⏱ 大约阅读时间：{{ section.duration }}</span>
+    <div class="section-header">
+      <div v-if="section?.duration" class="section-meta">
+        <span class="reading-time">⏱ 大约阅读时间：{{ section.duration }}</span>
+      </div>
+      <button 
+        v-if="section"
+        class="favorite-btn" 
+        :class="{ 'favorited': isFavorited }"
+        @click="toggleFavorite"
+        :title="isFavorited ? '取消收藏' : '收藏章节'"
+      >
+        {{ isFavorited ? '★ 取消收藏' : '☆ 收藏' }}
+      </button>
     </div>
 
     <div v-if="html" class="md" v-html="html" />
@@ -18,17 +29,13 @@
     <div v-if="codeEditors.length > 0 && !hasInlineEditors" class="code-editors-section">
       <h3>💻 交互式代码示例</h3>
       <p>以下代码示例可以在编辑器中运行和修改：</p>
-      
+
       <div v-for="(editor, index) in codeEditors" :key="index" class="markdown-editor">
         <div class="editor-header">
           <span class="language-badge">{{ editor.language }}</span>
           <span class="editor-title">代码示例 {{ index + 1 }}</span>
         </div>
-        <CodeEditor 
-          :initial-code="editor.code" 
-          :language="editor.language"
-          :key="`editor-${index}`"
-        />
+        <CodeEditor :initial-code="editor.code" :language="editor.language" :key="`editor-${index}`" />
       </div>
     </div>
 
@@ -47,6 +54,8 @@ import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
 import CodeEditor from '@/components/common/CodeEditorWidget.vue'
+import { favoriteService } from '@/services/favoriteService'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const chaptersStore = useChaptersStore()
@@ -81,6 +90,7 @@ const md = new MarkdownIt({
 const html = ref('')
 const codeEditors = ref<Array<{ code: string; language: string }>>([])
 const hasInlineEditors = ref(false)
+const isFavorited = ref(false)
 
 // 安全清洗 HTML 内容
 const sanitizeHtml = (rawHtml: string): string => {
@@ -121,11 +131,11 @@ const parseCodeEditors = (markdown: string): { processedMarkdown: string; editor
   while ((match = editorRegex.exec(markdown)) !== null) {
     const language = match[1]
     const code = match[2].trim()
-    
+
     console.log(`🔍 找到代码编辑器 ${editorIndex}:`, { language, codeLength: code.length })
-    
+
     editors.push({ code, language })
-    
+
     // 在正文放置一个挂载点，后续可在该位置渲染编辑器
     const slot = `<div class="md-editor-slot" data-editor-index="${editorIndex}"></div>`
     processedMarkdown = processedMarkdown.replace(match[0], slot)
@@ -206,7 +216,7 @@ const load = async () => {
     const rawHtml = md.render(processedMarkdown)
     html.value = sanitizeHtml(rawHtml)
 
-    fetch(`/api/chapters/${chapter.value.id}/sections/${section.value.id}/view`, { method: 'POST' }).catch(() => {})
+    fetch(`/api/chapters/${chapter.value.id}/sections/${section.value.id}/view`, { method: 'POST' }).catch(() => { })
 
     await nextTick()
     insertCodeEditors()
@@ -233,10 +243,44 @@ const prev = computed(() => currentIndex.value > 0 ? siblings.value[currentIndex
 const next = computed(() => currentIndex.value >= 0 && currentIndex.value < siblings.value.length - 1 ? siblings.value[currentIndex.value + 1] : undefined)
 
 const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.slug}` })
+
+// 检查收藏状态
+const checkFavoriteStatus = async () => {
+  if (!section.value?.id) return
+  try {
+    const result = await favoriteService.checkFavorite('chapter', section.value.id)
+    if (result.success) {
+      isFavorited.value = result.favorited
+    }
+  } catch (error) {
+    console.error('检查收藏状态失败:', error)
+  }
+}
+
+// 切换收藏状态
+const toggleFavorite = async () => {
+  if (!section.value?.id) return
+  try {
+    const result = await favoriteService.toggleFavorite('chapter', section.value.id)
+    if (result.success) {
+      isFavorited.value = result.favorited
+      ElMessage.success(result.message)
+    }
+  } catch (error: any) {
+    console.error('收藏操作失败:', error)
+    ElMessage.error(error.response?.data?.message || '操作失败，请重试')
+  }
+}
+
+// 监听章节变化，检查收藏状态
+watch([section], async () => {
+  if (section.value?.id) {
+    await checkFavoriteStatus()
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>
-
 .breadcrumb {
   color: var(--text-tertiary);
   display: flex;
@@ -246,6 +290,7 @@ const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.s
   align-items: center;
   font-size: 13px;
 }
+
 .chapter-content {
   margin: -35px 0px 0px 45px;
   margin-top: -35px;
@@ -253,46 +298,7 @@ const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.s
   max-width: 860px;
 }
 
-.section-meta {
-  margin-bottom: 16px;
-}
-
-.reading-time {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 4px 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.code-editors-section {
-  margin: 40px 0;
-  padding: 24px;
-  background: var(--bg-secondary, #f8fafc);
-  border-radius: 12px;
-  border: 1px solid var(--border-color, #e5e7eb);
-}
-
-.code-editors-section h3 {
-  margin: 0 0 12px 0;
-  color: var(--text-primary);
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-
-.code-editors-section p {
-  margin: 0 0 24px 0;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-}
-
-.markdown-editor {
-  margin: 24px 0;
-  border: 1px solid var(--border-color, #e5e7eb);
+.section-header {
   border-radius: 8px;
   overflow: hidden;
 }
@@ -358,7 +364,8 @@ const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.s
   color: var(--text-primary);
 }
 
-.md :deep(ul), .md :deep(ol) {
+.md :deep(ul),
+.md :deep(ol) {
   margin: 1rem 0;
   padding-left: 2rem;
 }
@@ -438,43 +445,56 @@ const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.s
 
 /* highlight.js 令牌颜色（近似文档截图风格） */
 .md :deep(.hljs) {
-  color: var(--code-text); /* 基本文字 */
+  color: var(--code-text);
+  /* 基本文字 */
   background: transparent;
 }
+
 .md :deep(.hljs-comment),
 .md :deep(.hljs-quote) {
-  color: var(--code-comment); /* 注释 */
+  color: var(--code-comment);
+  /* 注释 */
   font-style: italic;
 }
+
 .md :deep(.hljs-keyword),
 .md :deep(.hljs-selector-tag),
 .md :deep(.hljs-literal),
 .md :deep(.hljs-name) {
-  color: var(--code-keyword); /* 关键字、类型名 */
+  color: var(--code-keyword);
+  /* 关键字、类型名 */
 }
+
 .md :deep(.hljs-string),
 .md :deep(.hljs-title),
 .md :deep(.hljs-section),
 .md :deep(.hljs-attribute) {
-  color: var(--code-string); /* 字符串、属性、标题 */
+  color: var(--code-string);
+  /* 字符串、属性、标题 */
 }
+
 .md :deep(.hljs-number),
 .md :deep(.hljs-built_in),
 .md :deep(.hljs-builtin-name),
 .md :deep(.hljs-class .hljs-title) {
-  color: var(--code-number); /* 数字、内置 */
+  color: var(--code-number);
+  /* 数字、内置 */
 }
+
 .md :deep(.hljs-symbol),
 .md :deep(.hljs-bullet),
 .md :deep(.hljs-link) {
-  color: var(--code-symbol); /* 符号/链接 */
+  color: var(--code-symbol);
+  /* 符号/链接 */
 }
+
 .md :deep(.hljs-variable),
 .md :deep(.hljs-template-variable),
 .md :deep(.hljs-tag),
 .md :deep(.hljs-regexp),
 .md :deep(.hljs-deletion) {
-  color: var(--code-variable); /* 变量/正则/删除 */
+  color: var(--code-variable);
+  /* 变量/正则/删除 */
 }
 
 .md :deep(table) {
@@ -509,6 +529,66 @@ const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.s
   margin: 2rem 0;
   border: none;
   border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* 章节操作按钮 */
+.section-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.section-meta {
+  margin-right: auto;
+}
+
+.reading-time {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chapter-actions {
+  margin: 32px 0 16px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.favorite-btn {
+  padding: 10px 24px;
+  margin-left: 20px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favorite-btn.favorited {
+  background: #fff5f5;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.favorite-btn.favorited:hover {
+  background: #ffe5e5;
 }
 
 /* 去除 RouterLink 的下划线 */

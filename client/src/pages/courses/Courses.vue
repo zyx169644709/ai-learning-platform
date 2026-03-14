@@ -85,7 +85,6 @@ onMounted(async () => {
 const filteredCourses = computed(() => {
   let result = courses.value
 
-  // 难度筛选已移除
 
   // 按搜索关键词筛选
   const q = query.value.trim().toLowerCase()
@@ -239,7 +238,37 @@ a:hover {
   object-fit: cover;
 }
 
- 
+/* 播放按钮覆盖层 */
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .play-overlay {
+  opacity: 1;
+}
+
+.play-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #333;
+  font-weight: bold;
+}
 
 .meta {
   padding: 12px;

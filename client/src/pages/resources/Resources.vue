@@ -134,13 +134,9 @@ const filtered = computed(() => {
 
 const typeText = (t: ResType) => ({ website: '网站', document: '文档', tool: '工具', tutorial: '教程' }[t])
 
-// 处理资源点击事件：优先打开外部链接/下载链接
+// 处理资源点击事件：跳转到资源详情页面
 const handleResourceClick = (resource: ResourceCard) => {
-  fetch(`http://localhost:3000/api/resources/${resource.id}/view`, { method: 'POST' }).catch(() => {})
-  resource.viewCount = (resource.viewCount || 0) + 1
-  if (resource.url) {
-    window.open(resource.url, '_blank')
-  }
+  window.location.href = `/resource/${resource.id}`
 }
 
 const handleLike = async (event: Event, resource: ResourceCard) => {

@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 // 添加/取消收藏（切换）
 export const toggleFavorite = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id
+    const userId = (req as any).user?.userId
     if (!userId) return res.status(401).json({ success: false, message: '请先登录' })
 
     const { targetType, targetId } = req.body
@@ -62,7 +62,7 @@ export const toggleFavorite = async (req: Request, res: Response) => {
 // 检查是否已收藏
 export const checkFavorite = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id
+    const userId = (req as any).user?.userId
     if (!userId) return res.json({ success: true, favorited: false })
 
     const { targetType, targetId } = req.query
@@ -89,7 +89,7 @@ export const checkFavorite = async (req: Request, res: Response) => {
 // 获取用户收藏列表
 export const getFavorites = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id
+    const userId = (req as any).user?.userId
     if (!userId) return res.status(401).json({ success: false, message: '请先登录' })
 
     const { targetType } = req.query

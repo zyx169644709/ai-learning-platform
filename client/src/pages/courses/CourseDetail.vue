@@ -41,6 +41,14 @@
           <button class="action-btn primary" @click="startCourse">
             立刻学习
           </button>
+          <button 
+            class="action-btn favorite" 
+            :class="{ 'favorited': isFavorited }"
+            @click="toggleFavorite"
+            :title="isFavorited ? '取消收藏' : '收藏课程'"
+          >
+            {{ isFavorited ? '★ 已收藏' : '☆ 收藏' }}
+          </button>
         </div>
       </div>
     </div>
@@ -92,6 +100,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
+import { favoriteService } from '@/services/favoriteService'
+import { ElMessage } from 'element-plus'
 
 interface Course {
   id: string
@@ -112,6 +122,7 @@ const route = useRoute()
 const course = ref<Course | null>(null)
 const loading = ref(true)
 const showPlayer = ref(false)
+const isFavorited = ref(false)
 
 const md = new MarkdownIt({ html: true, linkify: true })
 
@@ -171,6 +182,34 @@ const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') closePlayer()
 }
 
+// 检查收藏状态
+const checkFavoriteStatus = async () => {
+  if (!course.value) return
+  try {
+    const result = await favoriteService.checkFavorite('course', course.value.id)
+    if (result.success) {
+      isFavorited.value = result.favorited
+    }
+  } catch (error) {
+    console.error('检查收藏状态失败:', error)
+  }
+}
+
+// 切换收藏状态
+const toggleFavorite = async () => {
+  if (!course.value) return
+  try {
+    const result = await favoriteService.toggleFavorite('course', course.value.id)
+    if (result.success) {
+      isFavorited.value = result.favorited
+      ElMessage.success(result.message)
+    }
+  } catch (error: any) {
+    console.error('收藏操作失败:', error)
+    ElMessage.error(error.response?.data?.message || '操作失败，请重试')
+  }
+}
+
 onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
   const id = route.params.id as string
@@ -180,6 +219,8 @@ onMounted(async () => {
       course.value = await res.json()
       // 浏览量+1
       fetch(`http://localhost:3000/api/courses/${id}/view`, { method: 'POST' }).catch(() => {})
+      // 检查收藏状态
+      await checkFavoriteStatus()
     }
   } catch (e) {
     console.error('加载课程详情失败', e)
@@ -296,6 +337,8 @@ onUnmounted(() => {
 /* 操作按钮 */
 .course-actions {
   margin-top: auto;
+  display: flex;
+  gap: 12px;
 }
 
 .action-btn {
@@ -317,6 +360,28 @@ onUnmounted(() => {
   background: var(--accent-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn.favorite {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.action-btn.favorite:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.favorite.favorited {
+  background: #fff5f5;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.action-btn.favorite.favorited:hover {
+  background: #ffe5e5;
 }
 
 /* 课程内容 */

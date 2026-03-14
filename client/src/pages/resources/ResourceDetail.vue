@@ -12,45 +12,30 @@
       
       <div class="resource-info">
         <h1 class="resource-title">{{ resource.title }}</h1>
-        <p class="resource-description">{{ resource.description }}</p>
-        
-        <div class="resource-meta">
-          <div class="meta-item">
-            <span class="meta-label">作者：</span>
-            <span class="meta-value">{{ resource.author }}</span>
-          </div>
-          <div class="meta-item" v-if="resource.size">
-            <span class="meta-label">大小：</span>
-            <span class="meta-value">{{ resource.size }}</span>
-          </div>
-          <div class="meta-item" v-if="resource.language">
-            <span class="meta-label">语言：</span>
-            <span class="meta-value">{{ resource.language }}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">下载量：</span>
-            <span class="meta-value">{{ resource.downloads.toLocaleString() }}</span>
-          </div>
-        </div>
         
         <div class="resource-tags" v-if="resource.tags && resource.tags.length > 0">
           <span class="tag" v-for="tag in resource.tags" :key="tag">{{ tag }}</span>
         </div>
         
+        <div class="resource-stats">
+          <span class="stat-item">👁 浏览量：{{ resource.downloads.toLocaleString() }}</span>
+          <span class="stat-item">❤ 收藏量：{{ favoriteCount }}</span>
+        </div>
+        
         <div class="resource-actions">
-          <button 
-            v-if="resource.downloadUrl" 
-            @click="downloadResource" 
-            class="action-btn primary"
-          >
-            📥 下载资源
-          </button>
           <button 
             v-if="resource.externalUrl" 
             @click="viewOnline" 
-            class="action-btn secondary"
+            class="action-btn primary"
           >
-            🌐 在线查看
+            🌐 访问网站
+          </button>
+          <button 
+            class="action-btn favorite" 
+            :class="{ 'favorited': isFavorited }"
+            @click="toggleFavorite"
+          >
+            {{ isFavorited ? '★ 已收藏' : '☆ 收藏' }}
           </button>
         </div>
       </div>
@@ -58,24 +43,7 @@
     
     <div class="resource-content">
       <h2>资源详情</h2>
-      <div class="content-section">
-        <h3>使用说明</h3>
-        <p>这是一个高质量的{{ typeText(resource.type) }}资源，适合{{ getDifficultyLevel() }}学习者使用。</p>
-        <ul>
-          <li v-if="resource.type === 'document'">包含详细的文档说明和示例代码</li>
-          <li v-if="resource.type === 'video'">提供完整的视频教程和配套资料</li>
-          <li v-if="resource.type === 'code'">包含完整的源代码和注释</li>
-          <li v-if="resource.type === 'dataset'">提供清洗好的数据集和说明文档</li>
-          <li v-if="resource.type === 'tool'">包含安装指南和使用教程</li>
-        </ul>
-      </div>
-      
-      <div class="content-section" v-if="resource.tags && resource.tags.length > 0">
-        <h3>相关标签</h3>
-        <div class="tag-cloud">
-          <span class="tag" v-for="tag in resource.tags" :key="tag">{{ tag }}</span>
-        </div>
-      </div>
+      <p>{{ resource.description }}</p>
     </div>
   </div>
 </template>
@@ -83,10 +51,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { favoriteService } from '@/services/favoriteService'
+import { ElMessage } from 'element-plus'
 
 type ResType = 'document' | 'video' | 'code' | 'dataset' | 'tool'
 interface ResourceCard { 
-  id: number; 
+  id: string; 
   title: string; 
   description: string; 
   type: ResType; 
@@ -103,7 +73,7 @@ interface ResourceCard {
 
 const route = useRoute()
 const resource = ref<ResourceCard>({
-  id: 0,
+  id: '',
   title: '',
   description: '',
   type: 'document',
@@ -117,11 +87,13 @@ const resource = ref<ResourceCard>({
   language: '',
   tags: []
 })
+const isFavorited = ref(false)
+const favoriteCount = ref(0)
 
 // 模拟资源数据（实际项目中应该从API获取）
 const mockResources: ResourceCard[] = [
   { 
-    id: 1, 
+    id: '1', 
     title: 'Python 机器学习完整教程', 
     description: '从零开始的机器学习路线与代码示例。', 
     type: 'document', 
@@ -136,7 +108,7 @@ const mockResources: ResourceCard[] = [
     tags: ['机器学习', 'Python', '教程']
   },
   { 
-    id: 2, 
+    id: '2', 
     title: '深度学习实战项目合集', 
     description: '10 个完整项目覆盖图像与文本任务。', 
     type: 'code', 
@@ -151,7 +123,7 @@ const mockResources: ResourceCard[] = [
     tags: ['深度学习', 'PyTorch', '项目']
   },
   { 
-    id: 3, 
+    id: '3', 
     title: 'NLP 数据集大全', 
     description: '文本分类/情感分析/机器翻译常用数据集汇总。', 
     type: 'dataset', 
@@ -166,7 +138,7 @@ const mockResources: ResourceCard[] = [
     tags: ['NLP', '数据集', '文本分析']
   },
   { 
-    id: 4, 
+    id: '4', 
     title: 'TensorFlow 官方教程', 
     description: 'Google 官方深度学习框架完整教程。', 
     type: 'video', 
@@ -180,7 +152,7 @@ const mockResources: ResourceCard[] = [
     tags: ['TensorFlow', '深度学习', 'Google']
   },
   { 
-    id: 5, 
+    id: '5', 
     title: 'Jupyter Notebook 工具集', 
     description: '数据科学必备的交互式开发环境。', 
     type: 'tool', 
@@ -218,11 +190,71 @@ const viewOnline = () => {
   }
 }
 
-onMounted(() => {
-  const resourceId = parseInt(route.params.id as string)
-  const foundResource = mockResources.find(r => r.id === resourceId)
-  if (foundResource) {
-    resource.value = foundResource
+// 检查收藏状态
+const checkFavoriteStatus = async () => {
+  if (!resource.value.id) return
+  try {
+    const result = await favoriteService.checkFavorite('resource', String(resource.value.id))
+    if (result.success) {
+      isFavorited.value = result.favorited
+    }
+  } catch (error) {
+    console.error('检查收藏状态失败:', error)
+  }
+}
+
+// 切换收藏状态
+const toggleFavorite = async () => {
+  if (!resource.value.id) {
+    ElMessage.error('资源ID不存在')
+    return
+  }
+  
+  try {
+    const result = await favoriteService.toggleFavorite('resource', String(resource.value.id))
+    if (result.success) {
+      isFavorited.value = result.favorited
+      favoriteCount.value = result.favorited ? favoriteCount.value + 1 : favoriteCount.value - 1
+      ElMessage.success(result.message)
+    } else {
+      ElMessage.error(result.message || '操作失败')
+    }
+  } catch (error: any) {
+    console.error('收藏操作失败:', error)
+    ElMessage.error(error.response?.data?.message || '操作失败，请重试')
+  }
+}
+
+onMounted(async () => {
+  const resourceId = route.params.id as string
+  try {
+    const res = await fetch(`http://localhost:3000/api/resources/${resourceId}`)
+    const result = await res.json()
+    if (result.success && result.data) {
+      const r = result.data
+      resource.value = {
+        id: r.id,
+        title: r.title,
+        description: r.description || '',
+        type: (r.type as ResType) || 'document',
+        preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
+        downloads: r.viewCount || 0,
+        author: r.author || 'AI学院',
+        authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
+        downloadUrl: r.url || '',
+        externalUrl: r.url || '',
+        size: '未知',
+        language: 'Multi',
+        tags: Array.isArray(r.tags) ? r.tags : []
+      }
+      favoriteCount.value = r.favoriteCount || 0
+      // 增加浏览量
+      fetch(`http://localhost:3000/api/resources/${resourceId}/view`, { method: 'POST' }).catch(() => {})
+      // 检查收藏状态
+      await checkFavoriteStatus()
+    }
+  } catch (error) {
+    console.error('加载资源详情失败:', error)
   }
 })
 </script>
@@ -277,7 +309,7 @@ onMounted(() => {
 .badge {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 12px;
@@ -336,7 +368,7 @@ onMounted(() => {
 .resource-tags {
   display: flex;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
@@ -346,6 +378,20 @@ onMounted(() => {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
+}
+
+.resource-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .resource-actions {
@@ -373,15 +419,37 @@ onMounted(() => {
   transform: translateY(-2px);
 }
 
-.action-btn.secondary {
+.action-btn.favorite {
   background: var(--bg-primary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
-.action-btn.secondary:hover {
+.action-btn.favorite:hover {
   background: var(--bg-secondary);
-  border-color: var(--accent-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.favorite.favorited {
+  background: #fff5f5;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.action-btn.favorite.favorited:hover {
+  background: #ffe5e5;
+}
+
+/* 删除图片右上角收藏按钮样式 */
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .resource-content {
