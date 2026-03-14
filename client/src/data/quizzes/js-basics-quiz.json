@@ -1,0 +1,188 @@
+{
+  "courseId": "js-basics",
+  "courseName": "JavaScript 核心基础",
+  "passingScore": 60,
+  "questionCount": 5,
+  "questions": [
+    {
+      "id": 1,
+      "question": "JavaScript 是一种什么类型的语言？",
+      "options": [
+        "编译型语言",
+        "解释型语言",
+        "汇编语言",
+        "机器语言"
+      ],
+      "correctAnswer": 1,
+      "explanation": "JavaScript 是一种解释型语言，代码在运行时由浏览器或 Node.js 解释执行。"
+    },
+    {
+      "id": 2,
+      "question": "如何声明一个变量？",
+      "options": [
+        "variable x = 5",
+        "var x = 5",
+        "v x = 5",
+        "dim x = 5"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 var、let 或 const 关键字声明变量，如 var x = 5。"
+    },
+    {
+      "id": 3,
+      "question": "哪个运算符用于字符串连接？",
+      "options": [
+        "&",
+        "+",
+        "*",
+        "."
+      ],
+      "correctAnswer": 1,
+      "explanation": "加号(+)运算符可以用于字符串连接，如 'Hello' + 'World'。"
+    },
+    {
+      "id": 4,
+      "question": "如何定义一个函数？",
+      "options": [
+        "function myFunction() {}",
+        "def myFunction() {}",
+        "func myFunction() {}",
+        "function: myFunction() {}"
+      ],
+      "correctAnswer": 0,
+      "explanation": "使用 function 关键字定义函数，如 function myFunction() {}。"
+    },
+    {
+      "id": 5,
+      "question": "JavaScript 中的 'console.log()' 用于做什么？",
+      "options": [
+        "弹出警告框",
+        "在控制台输出信息",
+        "写入文件",
+        "发送网络请求"
+      ],
+      "correctAnswer": 1,
+      "explanation": "console.log() 用于在浏览器控制台输出信息，常用于调试。"
+    },
+    {
+      "id": 6,
+      "question": "如何获取 id 为 'demo' 的元素？",
+      "options": [
+        "document.getElement('demo')",
+        "document.getElementById('demo')",
+        "document.get('#demo')",
+        "document.select('#demo')"
+      ],
+      "correctAnswer": 1,
+      "explanation": "document.getElementById('demo') 用于获取指定 ID 的元素。"
+    },
+    {
+      "id": 7,
+      "question": "JavaScript 中的数组索引从几开始？",
+      "options": [
+        "1",
+        "0",
+        "-1",
+        "任意数字"
+      ],
+      "correctAnswer": 1,
+      "explanation": "JavaScript 数组索引从 0 开始，第一个元素的索引是 0。"
+    },
+    {
+      "id": 8,
+      "question": "哪个关键字用于声明常量？",
+      "options": [
+        "var",
+        "let",
+        "const",
+        "constant"
+      ],
+      "correctAnswer": 2,
+      "explanation": "const 关键字用于声明常量，常量的值不能被重新赋值。"
+    },
+    {
+      "id": 9,
+      "question": "如何添加单行注释？",
+      "options": [
+        "// 这是注释",
+        "<!-- 这是注释 -->",
+        "/* 这是注释 */",
+        "# 这是注释"
+      ],
+      "correctAnswer": 0,
+      "explanation": "JavaScript 单行注释使用双斜杠 //，多行注释使用 /* */。"
+    },
+    {
+      "id": 10,
+      "question": "如何创建一个数组？",
+      "options": [
+        "var arr = (1, 2, 3)",
+        "var arr = [1, 2, 3]",
+        "var arr = {1, 2, 3}",
+        "var arr = <1, 2, 3>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用方括号 [] 创建数组，如 var arr = [1, 2, 3]。"
+    },
+    {
+      "id": 11,
+      "question": "== 和 === 的区别是什么？",
+      "options": [
+        "没有区别",
+        "== 比较值，=== 比较值和类型",
+        "== 比较类型，=== 比较值",
+        "=== 是赋值运算符"
+      ],
+      "correctAnswer": 1,
+      "explanation": "== 只比较值，=== 同时比较值和类型。例如 '5' == 5 为 true，但 '5' === 5 为 false。"
+    },
+    {
+      "id": 12,
+      "question": "如何给元素添加点击事件？",
+      "options": [
+        "element.onClick = function() {}",
+        "element.addEventListener('click', function() {})",
+        "element.click(function() {})",
+        "element.on('click', function() {})"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 addEventListener 方法添加事件监听器，如 element.addEventListener('click', function() {})。"
+    },
+    {
+      "id": 13,
+      "question": "typeof 运算符用于做什么？",
+      "options": [
+        "转换类型",
+        "检测变量类型",
+        "定义类型",
+        "比较类型"
+      ],
+      "correctAnswer": 1,
+      "explanation": "typeof 运算符用于检测变量的数据类型，如 typeof 'hello' 返回 'string'。"
+    },
+    {
+      "id": 14,
+      "question": "如何将字符串转换为数字？",
+      "options": [
+        "Number('123')",
+        "String('123')",
+        "toNumber('123')",
+        "parseInt('123')"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Number() 或 parseInt() 都可以将字符串转换为数字，如 Number('123') 返回 123。"
+    },
+    {
+      "id": 15,
+      "question": "JavaScript 中的 'null' 表示什么？",
+      "options": [
+        "未定义",
+        "空值/无值",
+        "错误",
+        "零"
+      ],
+      "correctAnswer": 1,
+      "explanation": "null 表示空值或无值，是一个特殊的值，表示'没有对象'。"
+    }
+  ]
+}

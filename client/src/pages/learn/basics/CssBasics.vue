@@ -101,7 +101,9 @@
           </div>
         </div>
 
-        <button class="next-step-btn" @click="nextStep">下一步：学习 CSS 语法 →</button>
+        <div class="step-buttons">
+          <button class="next-step-btn" @click="nextStep">下一步：学习 CSS 语法 →</button>
+        </div>
       </section>
 
       <!-- 步骤2：CSS 基础语法 -->
@@ -437,19 +439,49 @@
 
         <div class="step-buttons">
           <button class="prev-step-btn" @click="prevStep">← 上一步</button>
-          <button class="complete-btn" @click="completeCourse">🎉 完成课程</button>
+          <button class="quiz-btn" @click="showQuiz = true">📝 小测试</button>
+          <button 
+            class="complete-btn" 
+            :disabled="!quizPassed"
+            :title="quizPassed ? '' : '请先完成小测试并达到60分以上'"
+            @click="completeCourse"
+          >
+            🎉 完成课程
+          </button>
         </div>
       </section>
     </div>
   </div>
+
+  <QuizModal 
+    v-model:visible="showQuiz"
+    :quiz-data="quizData"
+    @completed="handleQuizCompleted"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { courseProgressService } from '@/services/courseProgressService'
+import QuizModal from '@/components/QuizModal.vue'
+import quizData from '@/data/quizzes/css-basics-quiz.json'
 
 const router = useRouter()
+
+const showQuiz = ref(false)
+const quizPassed = ref(false)
+
+const handleQuizCompleted = (result: { score: number; passed: boolean; answers: number[] }) => {
+  console.log('测试完成:', result)
+  quizPassed.value = result.passed
+  
+  if (result.passed) {
+    alert(`🎉 恭喜！你的成绩是 ${result.score} 分，测试通过！\n\n现在可以点击"完成课程"按钮了！`)
+  } else {
+    alert(`继续加油！你的成绩是 ${result.score} 分，再试一次吧！`)
+  }
+}
 
 // 步骤管理
 const currentStep = ref(1)
@@ -1099,11 +1131,18 @@ const completeCourse = async () => {
 }
 
 /* 按钮 */
-.next-step-btn, .prev-step-btn, .complete-btn {
+.step-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.next-step-btn, .prev-step-btn, .quiz-btn, .complete-btn {
   padding: 12px 32px;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -1112,8 +1151,6 @@ const completeCourse = async () => {
 .next-step-btn, .complete-btn {
   background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
   color: white;
-  display: block;
-  margin: 32px auto 0;
 }
 
 .next-step-btn:hover, .complete-btn:hover {
@@ -1121,10 +1158,26 @@ const completeCourse = async () => {
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 }
 
-.step-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 32px;
+.quiz-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+}
+
+.quiz-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.complete-btn:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.complete-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .prev-step-btn {

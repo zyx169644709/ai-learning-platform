@@ -1,0 +1,188 @@
+{
+  "courseId": "css-basics",
+  "courseName": "CSS 核心基础",
+  "passingScore": 60,
+  "questionCount": 5,
+  "questions": [
+    {
+      "id": 1,
+      "question": "CSS 的全称是什么？",
+      "options": [
+        "Cascading Style Sheets",
+        "Computer Style Sheets",
+        "Creative Style Sheets",
+        "Colorful Style Sheets"
+      ],
+      "correctAnswer": 0,
+      "explanation": "CSS 是 Cascading Style Sheets 的缩写，即层叠样式表，用于控制网页的样式和布局。"
+    },
+    {
+      "id": 2,
+      "question": "哪个 CSS 属性用于改变文字颜色？",
+      "options": [
+        "text-color",
+        "font-color",
+        "color",
+        "text-style"
+      ],
+      "correctAnswer": 2,
+      "explanation": "color 属性用于设置文本的颜色，可以使用颜色名称、十六进制值或 RGB 值。"
+    },
+    {
+      "id": 3,
+      "question": "如何在 CSS 中选择 class 为 'header' 的元素？",
+      "options": [
+        "#header",
+        ".header",
+        "header",
+        "*header"
+      ],
+      "correctAnswer": 1,
+      "explanation": "类选择器使用点号(.)加类名的格式，如 .header 选择所有 class='header' 的元素。"
+    },
+    {
+      "id": 4,
+      "question": "哪个属性用于设置元素的背景颜色？",
+      "options": [
+        "bgcolor",
+        "background-color",
+        "color",
+        "bg-color"
+      ],
+      "correctAnswer": 1,
+      "explanation": "background-color 属性用于设置元素的背景颜色。"
+    },
+    {
+      "id": 5,
+      "question": "CSS 中的 'margin' 属性用于设置什么？",
+      "options": [
+        "内边距",
+        "外边距",
+        "边框",
+        "内容区域"
+      ],
+      "correctAnswer": 1,
+      "explanation": "margin 属性用于设置元素的外边距，即元素边框外的空白区域。"
+    },
+    {
+      "id": 6,
+      "question": "如何在 CSS 中选择 id 为 'main' 的元素？",
+      "options": [
+        ".main",
+        "#main",
+        "main",
+        "*main"
+      ],
+      "correctAnswer": 1,
+      "explanation": "ID 选择器使用井号(#)加 ID 名的格式，如 #main 选择 id='main' 的元素。"
+    },
+    {
+      "id": 7,
+      "question": "哪个属性用于设置文字大小？",
+      "options": [
+        "text-size",
+        "font-size",
+        "text-style",
+        "size"
+      ],
+      "correctAnswer": 1,
+      "explanation": "font-size 属性用于设置文本的字体大小，可以使用像素(px)、em、rem 等单位。"
+    },
+    {
+      "id": 8,
+      "question": "CSS 中的 'padding' 属性用于设置什么？",
+      "options": [
+        "外边距",
+        "内边距",
+        "边框",
+        "行高"
+      ],
+      "correctAnswer": 1,
+      "explanation": "padding 属性用于设置元素的内边距，即内容与边框之间的空白区域。"
+    },
+    {
+      "id": 9,
+      "question": "哪个属性用于设置元素的宽度？",
+      "options": [
+        "width",
+        "size",
+        "length",
+        "w"
+      ],
+      "correctAnswer": 0,
+      "explanation": "width 属性用于设置元素的宽度，可以使用像素、百分比等单位。"
+    },
+    {
+      "id": 10,
+      "question": "如何设置文字加粗？",
+      "options": [
+        "font-weight: bold",
+        "text-weight: bold",
+        "font-style: bold",
+        "text-style: bold"
+      ],
+      "correctAnswer": 0,
+      "explanation": "font-weight: bold 用于设置文字加粗，也可以使用数值如 700。"
+    },
+    {
+      "id": 11,
+      "question": "哪个属性用于设置文本对齐方式？",
+      "options": [
+        "align",
+        "text-align",
+        "alignment",
+        "text-position"
+      ],
+      "correctAnswer": 1,
+      "explanation": "text-align 属性用于设置文本的水平对齐方式，如 left、center、right。"
+    },
+    {
+      "id": 12,
+      "question": "CSS 注释的正确写法是？",
+      "options": [
+        "// 这是注释",
+        "<!-- 这是注释 -->",
+        "/* 这是注释 */",
+        "# 这是注释"
+      ],
+      "correctAnswer": 2,
+      "explanation": "CSS 注释使用 /* 注释内容 */ 的格式。"
+    },
+    {
+      "id": 13,
+      "question": "哪个属性用于设置边框？",
+      "options": [
+        "border",
+        "outline",
+        "frame",
+        "edge"
+      ],
+      "correctAnswer": 0,
+      "explanation": "border 属性用于设置元素的边框，可以设置宽度、样式和颜色。"
+    },
+    {
+      "id": 14,
+      "question": "display: flex 用于创建什么布局？",
+      "options": [
+        "网格布局",
+        "弹性布局",
+        "浮动布局",
+        "定位布局"
+      ],
+      "correctAnswer": 1,
+      "explanation": "display: flex 用于创建弹性盒子布局（Flexbox），是一种强大的一维布局方式。"
+    },
+    {
+      "id": 15,
+      "question": "哪个单位是相对于父元素字体大小的？",
+      "options": [
+        "px",
+        "pt",
+        "em",
+        "cm"
+      ],
+      "correctAnswer": 2,
+      "explanation": "em 是相对单位，相对于父元素的字体大小。1em 等于父元素的字体大小。"
+    }
+  ]
+}
