@@ -149,6 +149,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/learn/basics/ProjectBasics.vue'),
     meta: { hideLeftSidebar: true, hideRightSidebar: true }
   },
+  {
+    path: '/learn/vue-intro',
+    name: 'VueIntro',
+    component: () => import('../pages/learn/basics/VueIntro.vue'),
+    meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
 ]
 
 const router = createRouter({

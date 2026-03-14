@@ -261,8 +261,7 @@ const goBack = () => {
 }
 
 const completeCourse = () => {
-  alert('🎉 恭喜完成所有核心基础课程！\n\n你已经掌握了 HTML、CSS、JavaScript 三大核心技术！')
-  router.push('/learn/basics')
+  router.push('/learn/vue-intro')
 }
 </script>
 
