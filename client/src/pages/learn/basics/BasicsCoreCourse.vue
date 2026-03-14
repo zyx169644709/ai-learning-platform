@@ -45,18 +45,33 @@
           </div>
 
           <!-- JS 课程 -->
-          <div class="course-card highlight" @click="goToCourse('js')">
-            <div class="card-badge">重点推荐</div>
+          <div class="course-card" @click="goToCourse('js')">
             <div class="card-icon">⚡</div>
             <div class="card-content">
-              <h3 class="card-title">JS 核心（重点）</h3>
-              <p class="card-time">⏱️ 2 小时</p>
-              <p class="card-desc">变量、对象、函数、数组、事件</p>
+              <h3 class="card-title">JavaScript 核心</h3>
+              <p class="card-time">⏱️ 1 小时</p>
+              <p class="card-desc">变量、数据类型、运算符、简单交互</p>
               <div class="card-topics">
-                <span class="topic-tag">变量</span>
-                <span class="topic-tag">对象</span>
-                <span class="topic-tag">函数</span>
-                <span class="topic-tag">数组</span>
+                <span class="topic-tag">变量常量</span>
+                <span class="topic-tag">数据类型</span>
+                <span class="topic-tag">事件交互</span>
+              </div>
+            </div>
+            <div class="card-arrow">→</div>
+          </div>
+
+          <!-- 综合实战课程 -->
+          <div class="course-card highlight" @click="goToCourse('project')">
+            <div class="card-badge">综合实战</div>
+            <div class="card-icon">🎯</div>
+            <div class="card-content">
+              <h3 class="card-title">个人简介页面</h3>
+              <p class="card-time">⏱️ 0.5 小时</p>
+              <p class="card-desc">整合 HTML + CSS + JS 三大技术</p>
+              <div class="card-topics">
+                <span class="topic-tag">HTML 结构</span>
+                <span class="topic-tag">CSS 样式</span>
+                <span class="topic-tag">JS 交互</span>
               </div>
             </div>
             <div class="card-arrow">→</div>
@@ -80,7 +95,8 @@ const goToCourse = (course: string) => {
   const routes: Record<string, string> = {
     html: '/learn/html-basics',
     css: '/learn/css-basics',
-    js: '/learn/js-basics'
+    js: '/learn/js-basics',
+    project: '/learn/project-basics'
   }
   router.push(routes[course])
 }
