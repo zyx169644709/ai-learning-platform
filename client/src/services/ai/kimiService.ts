@@ -3,7 +3,6 @@ import { kimiRateLimiter } from '@/utils/rateLimiter'
 
 // Moonshot Kimi API
 const KIMI_API_BASE = 'https://api.moonshot.cn/v1'
-console.log('[Kimi] env key exists?', Boolean((import.meta as any).env?.VITE_KIMI_API || (import.meta as any).env?.VITE_KIMI_API_KEY))
 // 兼容两种变量名：VITE_KIMI_API / VITE_KIMI_API_KEY
 const KIMI_API_KEY = (import.meta as any)?.env?.VITE_KIMI_API || (import.meta as any)?.env?.VITE_KIMI_API_KEY
 

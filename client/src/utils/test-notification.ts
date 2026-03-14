@@ -31,5 +31,4 @@ export const testNotification = () => {
 // 将测试函数暴露到全局，方便在控制台调用
 if (typeof window !== 'undefined') {
   (window as any).testNotification = testNotification
-  console.log('通知系统已加载！在控制台运行 testNotification() 来测试')
 }

@@ -129,11 +129,9 @@ export const useUserStore = defineStore('user', {
       }
 
       try {
-        console.log('开始从服务器获取用户信息...')
         const response: ApiResponse<{ user: UserInfo }> = await userService.getProfile()
         
         if (response.success) {
-          console.log('服务器返回用户信息:', response.data!.user)
           // 更新用户信息
           this.userInfo = response.data!.user
           this.token = token
