@@ -420,10 +420,11 @@
           <button 
             class="complete-btn" 
             :disabled="!quizPassed"
-            :title="quizPassed ? '' : '请先完成小测试并达到60分以上'"
-            @click="completeCourse"
+            :class="{ 'completed': courseCompleted }"
+            :title="courseCompleted ? '该课程已完成' : (quizPassed ? '' : '请先完成小测试并达到60分以上')"
+            @click="!courseCompleted && completeCourse()"
           >
-            🎉 完成课程
+            {{ courseCompleted ? '✅ 已完成该课程' : '🎉 完成课程' }}
           </button>
         </div>
       </section>
@@ -448,6 +449,7 @@ const router = useRouter()
 
 const showQuiz = ref(false)
 const quizPassed = ref(false)
+const courseCompleted = ref(false)
 
 const handleQuizCompleted = (result: { score: number; passed: boolean; answers: number[] }) => {
   console.log('测试完成:', result)
@@ -459,6 +461,22 @@ const handleQuizCompleted = (result: { score: number; passed: boolean; answers: 
     alert(`继续加油！你的成绩是 ${result.score} 分，再试一次吧！`)
   }
 }
+
+// 检查课程是否已完成
+const checkCourseStatus = async () => {
+  try {
+    const completed = await courseProgressService.checkCourseCompleted('html-basics')
+    courseCompleted.value = completed
+    if (completed) {
+      quizPassed.value = true // 如果已完成，则自动设置测试通过
+    }
+  } catch (error) {
+    console.error('检查课程状态失败:', error)
+  }
+}
+
+// 页面加载时检查课程状态
+checkCourseStatus()
 
 // 步骤管理
 const currentStep = ref(1)
@@ -1073,6 +1091,16 @@ const completeCourse = async () => {
 }
 
 .complete-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.complete-btn.completed {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  cursor: default;
+}
+
+.complete-btn.completed:hover {
   transform: none;
   box-shadow: none;
 }

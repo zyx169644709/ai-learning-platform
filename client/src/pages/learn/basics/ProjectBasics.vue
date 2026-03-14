@@ -110,7 +110,14 @@
 
       <div class="action-buttons">
         <button class="back-btn-large" @click="goBack">← 返回课程列表</button>
-        <button class="complete-btn" @click="completeCourse">🎉 完成所有课程</button>
+        <button 
+          class="complete-btn" 
+          :class="{ 'completed': courseCompleted }"
+          :title="courseCompleted ? '前去学习 Vue 框架' : ''"
+          @click="courseCompleted ? goToVue() : completeCourse()"
+        >
+          {{ courseCompleted ? '📚 前去学习 Vue' : '🎉 完成所有课程' }}
+        </button>
       </div>
     </div>
   </div>
@@ -122,6 +129,20 @@ import { useRouter } from 'vue-router'
 import { courseProgressService } from '@/services/courseProgressService'
 
 const router = useRouter()
+
+const courseCompleted = ref(false)
+
+// 检查课程是否已完成
+const checkCourseStatus = async () => {
+  try {
+    const completed = await courseProgressService.checkCourseCompleted('project-basics')
+    courseCompleted.value = completed
+  } catch (error) {
+    console.error('检查课程状态失败:', error)
+  }
+}
+
+checkCourseStatus()
 
 // 综合实战项目代码
 const projectCode = ref(`<!DOCTYPE html>
@@ -258,7 +279,11 @@ const projectKey = ref(0)
 watch(projectCode, () => projectKey.value++)
 
 const goBack = () => {
-  router.push('/learn/basics')
+  router.push('/learn')
+}
+
+const goToVue = () => {
+  router.push('/learn/vue-intro')
 }
 
 const completeCourse = async () => {
@@ -494,6 +519,16 @@ const completeCourse = async () => {
 .complete-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
+}
+
+.complete-btn.completed {
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  cursor: default;
+}
+
+.complete-btn.completed:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 /* 响应式 */
