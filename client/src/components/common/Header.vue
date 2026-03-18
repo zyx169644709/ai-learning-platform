@@ -150,37 +150,57 @@
               </div>
             </div>
 
-            <div class="avatar-container" @click="showAvatarModal = true">
-              <img :src="avatarSrc" alt="头像" class="avatar-img" />
+            <div class="user-dropdown-wrapper" @mouseenter="showUserDropdown = true" @mouseleave="showUserDropdown = false">
+              <div class="avatar-container">
+                <img :src="avatarSrc" alt="头像" class="avatar-img" />
+              </div>
+
+              <transition name="dropdown-fade">
+                <div v-show="showUserDropdown" class="user-dropdown-menu">
+                  <div class="dropdown-menu-item" @click="goToProfile">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>个人中心</span>
+                  </div>
+                  <div class="dropdown-menu-item" @click="goToFavorites">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>我的收藏</span>
+                  </div>
+                  <div class="dropdown-menu-item" @click="goToEditProfile">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>编辑资料</span>
+                  </div>
+                  <div class="dropdown-menu-item" @click="goToChangePassword">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>修改密码</span>
+                  </div>
+                </div>
+              </transition>
             </div>
 
-            <div class="user-actions">
-              <button class="action-btn profile-btn auth-btn" @click="goToProfile">
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  <path
-                    d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                个人中心
-              </button>
-              <button class="action-btn logout-btn auth-btn" @click="logout">
-                <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                  <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                </svg>
-                退出登录
-              </button>
-            </div>
+            <button class="action-btn logout-btn auth-btn" @click="logout">
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              退出登录
+            </button>
 
             <div v-if="showAvatarModal" class="avatar-modal" @click.self="showAvatarModal = false">
               <div class="modal-content">
@@ -262,6 +282,7 @@ const userStore = useUserStore()
 const prefs = useUserPrefs()
 const showAvatarModal = ref(false)
 const showEnlargedAvatar = ref(false)
+const showUserDropdown = ref(false)
 const searchQuery = ref('')
 const isDarkTheme = computed(() => prefs.theme === 'dark')
 
@@ -515,6 +536,36 @@ const goToProfile = async () => {
   }
 }
 
+const goToFavorites = async () => {
+  showUserDropdown.value = false
+  if (!userStore.isLogin || !userStore.token) {
+    notification.warning('请先登录')
+    await router.push('/login')
+    return
+  }
+  await router.push('/my-favorites')
+}
+
+const goToEditProfile = async () => {
+  showUserDropdown.value = false
+  if (!userStore.isLogin || !userStore.token) {
+    notification.warning('请先登录')
+    await router.push('/login')
+    return
+  }
+  await router.push('/edit-profile')
+}
+
+const goToChangePassword = async () => {
+  showUserDropdown.value = false
+  if (!userStore.isLogin || !userStore.token) {
+    notification.warning('请先登录')
+    await router.push('/login')
+    return
+  }
+  await router.push('/change-password')
+}
+
 const toggleAvatarEnlarged = () => {
   showEnlargedAvatar.value = true
 }
@@ -614,10 +665,11 @@ const onAvatarChange = async (e: any) => {
 .header-container-left {
   display: flex;
   align-items: center;
+  margin-right: auto;
+  margin-left: 50px;
   height: 100%;
   padding: 0 24px;
   gap: 32px;
-  margin-left: -75px;
 }
 
 .header-container-right {
@@ -947,15 +999,89 @@ const onAvatarChange = async (e: any) => {
   transition: all 0.2s ease;
 }
 
-.avatar-container:hover {
+.user-dropdown-wrapper:hover .avatar-container {
   border-color: var(--accent-color);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 用户头像下拉菜单 */
+.user-dropdown-wrapper {
+  position: relative;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 180px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1005;
+  padding: 6px 0;
+  overflow: hidden;
+}
+
+.dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.dropdown-menu-item svg {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.dropdown-menu-item:hover {
+  background: var(--bg-secondary);
+}
+
+.dropdown-menu-item:hover svg {
+  color: var(--accent-color);
+}
+
+.dropdown-menu-item--danger {
+  color: #e53e3e;
+}
+
+.dropdown-menu-item--danger svg {
+  color: #e53e3e !important;
+}
+
+.dropdown-menu-item--danger:hover {
+  background: rgba(229, 62, 62, 0.08);
+}
+
+.dropdown-menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+/* 下拉菜单过渡动画 */
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 .user-actions {

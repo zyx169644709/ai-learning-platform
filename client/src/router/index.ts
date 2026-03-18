@@ -9,6 +9,7 @@ import Register from '../pages/auth/Register.vue'
 import Profile from '../pages/user/Profile.vue'
 import ChangePassword from '../pages/auth/ChangePassword.vue'
 import EditProfile from '../pages/user/EditProfile.vue'
+import MyFavorites from '../pages/user/MyFavorites.vue'
 import Resources from '../pages/resources/Resources.vue'
 import ResourceDetail from '../pages/resources/ResourceDetail.vue'
 import Community from '../pages/community/Community.vue'
@@ -52,6 +53,12 @@ const routes: RouteRecordRaw[] = [
     path: '/change-password',
     name: 'ChangePassword',
     component: ChangePassword,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/my-favorites',
+    name: 'MyFavorites',
+    component: MyFavorites,
     meta: { requiresAuth: true }
   },
   {

@@ -170,27 +170,6 @@
               退出登录
             </el-button>
           </div>
-
-          <!-- 其他操作 -->
-          <div class="other-actions">
-            <div class="divider">
-              <span>其他操作</span>
-            </div>
-            <div class="action-buttons">
-              <el-button class="action-btn" @click="changePassword" title="修改您的登录密码">
-                <el-icon>
-                  <Lock />
-                </el-icon>
-                修改密码
-              </el-button>
-              <el-button class="action-btn" @click="editProfile" title="编辑您的个人资料信息">
-                <el-icon>
-                  <Edit />
-                </el-icon>
-                编辑资料
-              </el-button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -776,68 +755,6 @@ const onAvatarChange = async (e) => {
   box-shadow: 0 8px 24px rgba(229, 62, 62, 0.3);
 }
 
-.other-actions {
-  text-align: center;
-}
-
-.divider {
-  position: relative;
-  margin: 20px 0;
-  text-align: center;
-}
-
-.divider::before {
-  content: '';
-  position: absolute;
-  top: 125%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--border-color);
-}
-
-.divider span {
-  background: var(--bg-primary);
-  padding: 0 20px;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.action-btn {
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.action-btn:hover {
-  background: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-.action-btn .el-icon {
-  font-size: 16px;
-}
-
-
-
 .not-logged-in {
   min-height: 80vh;
   display: flex;
@@ -953,10 +870,6 @@ const onAvatarChange = async (e) => {
   }
 
   .profile-actions {
-    flex-direction: column;
-  }
-
-  .action-buttons {
     flex-direction: column;
   }
 }
