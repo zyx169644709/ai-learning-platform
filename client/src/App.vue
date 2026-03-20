@@ -9,6 +9,8 @@
     ]">
       <router-view />
     </main>
+    <!-- 浮动AI聊天助手 -->
+    <AiChatWidget />
   </div>
 </template>
 
@@ -16,6 +18,7 @@
 import Header from './components/common/Header.vue'
 import Sidebar from './components/common/Sidebar.vue'
 import AiPanel from './components/common/AiPanel.vue'
+import AiChatWidget from './components/common/AiChatWidget.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 

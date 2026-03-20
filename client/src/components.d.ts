@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AiChatWidget: typeof import('./components/common/AiChatWidget.vue')['default']
     AiPanel: typeof import('./components/common/AiPanel.vue')['default']
     ChapterItem: typeof import('./components/common/ChapterItem.vue')['default']
     ChapterItemCollapsible: typeof import('./components/common/ChapterItemCollapsible.vue')['default']
