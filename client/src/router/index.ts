@@ -17,7 +17,6 @@ import DiscussionDetail from '../pages/community/DiscussionDetail.vue'
 import CodeEditor from '../components/common/CodeEditorPage.vue'
 import BeginnerGuide from '../pages/learn/BeginnerGuide.vue'
 import TeachingAssistant from '../pages/api/DeepSeek.vue'
-import Kimi from '../pages/api/Kimi.vue'
 import SearchResults from '../pages/misc/SearchResults.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -66,12 +65,6 @@ const routes: RouteRecordRaw[] = [
     name: 'VueAssistant',
     component: () => import('../pages/api/DeepSeek.vue'),
     meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 专家助教' }
-  },
-  {
-    path: '/api/kimi',
-    name: 'KimiAssistant',
-    component: Kimi,
-    meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 学习助手' }
   },
   {
     path: '/code-editor',

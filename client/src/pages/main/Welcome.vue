@@ -150,7 +150,7 @@ const handleLevelSelect = (level: 'beginner' | 'basic' | 'intermediate') => {
       router.push('/learn/beginner')
       break
     case 'basic':
-      router.push('/home')
+      router.push('/learn/vue-intro')
       break
     case 'intermediate':
       router.push('/guide/review')

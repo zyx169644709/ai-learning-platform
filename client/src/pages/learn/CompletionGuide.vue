@@ -104,7 +104,7 @@ const goToBasics = () => {
 }
 
 const goToVueCourse = () => {
-  router.push('/home')
+  router.push('/learn/vue-intro')
 }
 </script>
 

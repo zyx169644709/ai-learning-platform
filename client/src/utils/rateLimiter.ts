@@ -107,8 +107,8 @@ class RateLimiter {
   }
 }
 
-// 创建 Kimi API 的频率限制器实例
-export const kimiRateLimiter = new RateLimiter({
+// 创建 AI API 的频率限制器实例
+export const aiRateLimiter = new RateLimiter({
   maxRequests: 3,                    // 最多3次请求
   timeWindow: 60 * 1000,            // 1分钟时间窗口
   message: '非会员一分钟最多使用三次，请稍后再试'  // 限制提示消息
@@ -116,7 +116,7 @@ export const kimiRateLimiter = new RateLimiter({
 
 // 定期清理过期记录（每5分钟清理一次）
 setInterval(() => {
-  kimiRateLimiter.cleanup()
+  aiRateLimiter.cleanup()
 }, 5 * 60 * 1000)
 
 export default RateLimiter

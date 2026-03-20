@@ -4,7 +4,7 @@
     <section class="congratulations-section">
       <div class="congrats-content">
         <div class="congrats-icon">🎉</div>
-        <h1 class="congrats-title">恭喜你完成了基础课程！</h1>
+        <h1 class="congrats-title">欢饮来到Vue的世界！</h1>
         <p class="congrats-desc">你已经掌握了前端开发的三大核心技术</p>
         
         <div class="skills-grid">
