@@ -47,6 +47,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./components/common/Header.vue')['default']
     InlineCodeEditor: typeof import('./components/common/InlineCodeEditor.vue')['default']
+    MarkdownEditor: typeof import('./components/admin/MarkdownEditor.vue')['default']
     MonacoEditor: typeof import('./components/common/MonacoEditor.vue')['default']
     QuizModal: typeof import('./components/QuizModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

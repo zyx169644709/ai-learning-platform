@@ -124,7 +124,11 @@
             <el-input v-model="itemForm.excerpt" type="textarea" :rows="2" placeholder="请输入小节摘要" />
           </el-form-item>
           <el-form-item label="内容" prop="content">
-            <el-input v-model="itemForm.content" type="textarea" :rows="6" placeholder="请输入小节内容（支持 Markdown）" />
+            <MarkdownEditor
+              v-model="itemForm.content"
+              height="400px"
+              placeholder="请输入小节内容（支持 Markdown）"
+            />
           </el-form-item>
           <el-row :gutter="20">
             <el-col :span="12">
@@ -176,6 +180,7 @@ import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
 import StatsDisplay from '@/components/StatsDisplay.vue'
+import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import request from '@/utils/request'
 
 // 选中的章节
