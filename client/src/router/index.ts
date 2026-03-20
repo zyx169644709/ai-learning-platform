@@ -14,7 +14,6 @@ import Resources from '../pages/resources/Resources.vue'
 import ResourceDetail from '../pages/resources/ResourceDetail.vue'
 import Community from '../pages/community/Community.vue'
 import DiscussionDetail from '../pages/community/DiscussionDetail.vue'
-import CodeEditor from '../components/common/CodeEditorPage.vue'
 import BeginnerGuide from '../pages/learn/BeginnerGuide.vue'
 import TeachingAssistant from '../pages/api/DeepSeek.vue'
 import SearchResults from '../pages/misc/SearchResults.vue'
@@ -67,12 +66,6 @@ const routes: RouteRecordRaw[] = [
     meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 专家助教' }
   },
   {
-    path: '/code-editor',
-    name: 'CodeEditor',
-    component: CodeEditor,
-    meta: { topOnly: true, hideLeftSidebar: true, hideRightSidebar: true }
-  },
-  {
     path: '/search',
     name: 'SearchResults',
     component: SearchResults
@@ -88,6 +81,12 @@ const routes: RouteRecordRaw[] = [
     name: 'VueReview',
     component: () => import('../pages/learn/VueReview.vue'),
     meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/code-playground',
+    name: 'CodePlayground',
+    component: () => import('../pages/code/CodePlayground.vue'),
+    meta: { topOnly: true, hideLeftSidebar: true, hideRightSidebar: true }
   },
   {
     path: '/learn/stage-1',

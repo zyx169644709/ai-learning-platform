@@ -22,24 +22,27 @@
         <li>全平台适配：支持桌面与移动端访问，随时随地开启你的 Vue 学习之旅</li>
       </ul>
 
-      <!-- 在线交互演练 -->
-      <div class="code-editor-section">
-        <h2 class="section-title">在线 Vue 代码编辑器</h2>
+      <!-- 代码示例展示 -->
+      <div class="code-example-section">
+        <h2 class="section-title">Vue 3 代码示例</h2>
         <p class="section-description">
-          立即体验我们的在线代码编辑器，编写并运行 Vue 3 代码片段，实时查看运行效果！
+          以下是 Vue 3 Composition API 的基础示例，展示了响应式数据和生命周期钩子的使用：
         </p>
 
-        <CodeEditor :initial-code="defaultCode" language="javascript" />
+        <InlineCodeEditor
+          :initialCode="defaultCode"
+          language="javascript"
+          title="Vue 3 Composition API"
+          :readOnly="false"
+        />
 
-        <div class="editor-features">
-          <h3>编辑器特性</h3>
+        <div class="learning-features">
+          <h3>平台特性</h3>
           <ul>
-            <li><strong>Vue 3 核心支持：</strong>完美支持 Composition API 和 SFC 语法</li>
-            <li><strong>智能代码补全：</strong>基于 Monaco Editor 提供专业的 Vue 语法辅助</li>
-            <li><strong>实时预览：</strong>代码修改后即刻在预览窗口查看渲染效果</li>
-            <li><strong>智能诊断：</strong>内置 Vue 专家诊断工具，快速定位语法错误与性能瓶颈</li>
-            <li><strong>组件化模板：</strong>内置常用 Vue 组件模板，加速原型开发</li>
-            <li><strong>性能分析：</strong>监控组件渲染性能，助你编写高效代码</li>
+            <li><strong>系统化学习：</strong>从基础到进阶的完整 Vue 3 学习路径</li>
+            <li><strong>智能助教：</strong>AI 驱动的 Vue 专家助教，实时解答你的问题</li>
+            <li><strong>实战练习：</strong>每章配套习题与实操挑战，即学即练</li>
+            <li><strong>社区交流：</strong>与其他学习者分享心得，共同进步</li>
           </ul>
         </div>
       </div>
@@ -49,12 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import CodeEditor from '@/components/common/CodeEditorWidget.vue'
+import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
 
 // 默认代码示例
-const defaultCode = `// 欢迎使用 Vue Learning 在线代码编辑器！
-// 在这里体验 Vue 3 Composition API 的魅力
-
+const defaultCode = `// Vue 3 Composition API 示例
 import { ref, onMounted } from 'vue';
 
 export default {
@@ -64,18 +65,13 @@ export default {
 
     const increment = () => {
       count.value++;
-      console.log(\`当前计数值: \${count.value}\`);
     };
 
     onMounted(() => {
-      console.log("🚀 Vue 组件已挂载，开始你的编程之旅！");
+      console.log("组件已挂载");
     });
 
-    return {
-      count,
-      message,
-      increment
-    };
+    return { count, message, increment };
   }
 };
 `
@@ -157,8 +153,8 @@ p {
   color: var(--accent-color);
 }
 
-/* 代码编辑器部分 */
-.code-editor-section {
+/* 代码示例部分 */
+.code-example-section {
   margin-top: 48px;
   padding-top: 32px;
   border-top: 1px solid var(--border-color);
@@ -178,7 +174,7 @@ p {
   line-height: 1.6;
 }
 
-.editor-features {
+.learning-features {
   margin-top: 32px;
   padding: 24px;
   background: var(--bg-secondary);
@@ -186,25 +182,25 @@ p {
   border-radius: 10px;
 }
 
-.editor-features h3 {
+.learning-features h3 {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 16px 0;
   color: var(--text-primary);
 }
 
-.editor-features ul {
+.learning-features ul {
   margin: 0;
   padding-left: 22px;
 }
 
-.editor-features li {
+.learning-features li {
   margin: 8px 0;
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
-.editor-features li strong {
+.learning-features li strong {
   color: var(--text-primary);
 }
 </style>

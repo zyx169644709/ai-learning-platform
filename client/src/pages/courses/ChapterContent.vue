@@ -25,18 +25,16 @@
     <div v-if="html" class="md" v-html="html" />
     <div v-else class="empty">尚未准备内容</div>
 
-    <!-- 代码编辑器区域 -->
+    <!-- 代码示例区域 -->
     <div v-if="codeEditors.length > 0 && !hasInlineEditors" class="code-editors-section">
-      <h3>💻 交互式代码示例</h3>
-      <p>以下代码示例可以在编辑器中运行和修改：</p>
-
-      <div v-for="(editor, index) in codeEditors" :key="index" class="markdown-editor">
-        <div class="editor-header">
-          <span class="language-badge">{{ editor.language }}</span>
-          <span class="editor-title">代码示例 {{ index + 1 }}</span>
-        </div>
-        <CodeEditor :initial-code="editor.code" :language="editor.language" :key="`editor-${index}`" />
-      </div>
+      <h3>💻 代码示例</h3>
+      <InlineCodeEditor
+        v-for="(editor, index) in codeEditors"
+        :key="index"
+        :initialCode="editor.code"
+        :language="editor.language"
+        :title="`示例 ${index + 1}`"
+      />
     </div>
 
     <div class="nav">
@@ -47,20 +45,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, createVNode, render, getCurrentInstance, nextTick } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
-import CodeEditor from '@/components/common/CodeEditorWidget.vue'
 import { favoriteService } from '@/services/favoriteService'
+import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const chaptersStore = useChaptersStore()
-// 捕获当前应用上下文，供动态渲染的子组件继承（路由/Pinia 等）
-const appContext = getCurrentInstance()?.appContext
 const chapterSlug = computed(() => String(route.params.chapterSlug || ''))
 const sectionSlug = computed(() => String(route.params.sectionSlug || ''))
 
@@ -147,7 +143,7 @@ const parseCodeEditors = (markdown: string): { processedMarkdown: string; editor
   return { processedMarkdown, editors }
 }
 
-// 在正文中把 CodeEditor 渲染到占位节点
+// 在正文中把代码示例渲染到占位节点
 const insertCodeEditors = () => {
   const container = document.querySelector('.md')
   if (!container) return
@@ -159,12 +155,24 @@ const insertCodeEditors = () => {
     const idx = Number(idxAttr)
     const editor = codeEditors.value[idx]
     if (!editor) return
-    // 动态挂载一个简易的 CodeEditor 实例
-    const mount = document.createElement('div')
-    slot.replaceWith(mount)
-    const vnode = createVNode(CodeEditor, { initialCode: editor.code, language: editor.language })
-    if (appContext) vnode.appContext = appContext
-    render(vnode, mount)
+    // 创建静态代码展示块
+    const codeBlock = document.createElement('div')
+    codeBlock.className = 'inline-code-example'
+    codeBlock.innerHTML = `
+      <div class="code-example-header">
+        <span class="language-badge">${editor.language}</span>
+      </div>
+      <pre class="code-example-content"><code>${escapeHtml(editor.code)}</code></pre>
+    `
+    slot.replaceWith(codeBlock)
+  })
+}
+
+// HTML转义函数
+const escapeHtml = (str: string): string => {
+  return str.replace(/[&<>"']/g, (char) => {
+    const entities: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+    return entities[char]
   })
 }
 

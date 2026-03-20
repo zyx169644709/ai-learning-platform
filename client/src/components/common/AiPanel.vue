@@ -5,12 +5,12 @@
       <h3 class="section-title">🤖 智能助手</h3>
       <div class="ai-buttons">
         <button class="ai-btn" @click="router.push('/api/deepseek')">
-          <span class="ai-btn-icon">🔍</span>
-          <span class="ai-btn-text">Vue 专家诊断</span>
-        </button>
-        <button class="ai-btn" @click="router.push('/api/kimi')">
           <span class="ai-btn-icon">💬</span>
-          <span class="ai-btn-text">Vue 知识问答</span>
+          <span class="ai-btn-text">知识问答</span>
+        </button>
+        <button class="ai-btn" @click="router.push('/code-playground')">
+          <span class="ai-btn-icon">✏️</span>
+          <span class="ai-btn-text">代码演练</span>
         </button>
       </div>
     </div>
