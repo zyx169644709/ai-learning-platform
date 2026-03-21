@@ -19,6 +19,15 @@
       </div>
 
       <div class="toolbar-right">
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept=".md,.markdown,.txt"
+          @change="handleFileImport"
+          style="display: none"
+        />
+        <button type="button" class="toolbar-btn" @click="triggerFileImport" title="导入文件">Import</button>
+        <button type="button" class="toolbar-btn" @click="exportAsFile" title="导出文件">Export</button>
         <button type="button" class="toolbar-btn" :class="{ active: showPreview }" @click="togglePreview" title="预览">Preview</button>
         <button type="button" class="toolbar-btn" @click="toggleFullscreen" title="全屏">Full</button>
       </div>
@@ -85,6 +94,7 @@ const cursorLine = ref(1)
 const cursorCol = ref(1)
 const textareaRef = ref<HTMLTextAreaElement>()
 const previewRef = ref<HTMLDivElement>()
+const fileInputRef = ref<HTMLInputElement>()
 
 const md = new MarkdownIt({
   html: true,
@@ -213,6 +223,56 @@ const syncScroll = () => {
   const preview = previewRef.value
   const scrollPercent = textarea.scrollTop / (textarea.scrollHeight - textarea.clientHeight)
   preview.scrollTop = scrollPercent * (preview.scrollHeight - preview.clientHeight)
+}
+
+// 文件导入/导出功能
+const triggerFileImport = () => {
+  fileInputRef.value?.click()
+}
+
+const handleFileImport = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+
+  // 如果当前有内容，提示用户确认
+  if (content.value.trim()) {
+    const confirmed = confirm('导入文件将替换当前编辑器中的所有内容，是否继续？')
+    if (!confirmed) {
+      target.value = '' // 清空选择
+      return
+    }
+  }
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    const fileContent = e.target?.result as string
+    if (fileContent) {
+      content.value = fileContent
+      updateCursorPosition()
+    }
+  }
+  reader.readAsText(file, 'UTF-8')
+  
+  // 清空 input，允许重复选择同一文件
+  target.value = ''
+}
+
+const exportAsFile = () => {
+  if (!content.value.trim()) {
+    return
+  }
+
+  const blob = new Blob([content.value], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `markdown-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.md`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 
 onMounted(() => {
