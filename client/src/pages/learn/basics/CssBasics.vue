@@ -466,7 +466,7 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { courseProgressService } from '@/services/courseProgressService'
 import QuizModal from '@/components/QuizModal.vue'
-import quizData from '@/data/quizzes/css-basics-quiz.json'
+import quizData from '@/data/questions/basics/css-basics-quiz.json'
 
 const router = useRouter()
 
