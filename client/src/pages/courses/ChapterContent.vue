@@ -71,12 +71,21 @@ const section = computed<SectionNode | undefined>(() => {
 const md = new MarkdownIt({
   html: true,
   highlight: (str: string, lang: string): string => {
-    if (lang && hljs.getLanguage(lang)) {
+    // 语言映射，将不支持的语言映射到相近的语言
+    const langMap: Record<string, string> = {
+      'vue': 'html',
+      'jsx': 'javascript',
+      'tsx': 'typescript'
+    }
+    
+    const actualLang = langMap[lang] || lang
+    
+    if (actualLang && hljs.getLanguage(actualLang)) {
       try {
-        return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${hljs.highlight(str, { language: lang }).value}</code></pre>`
+        return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${hljs.highlight(str, { language: actualLang }).value}</code></pre>`
       } catch { }
     }
-    return `<pre class="hljs" data-lang="plain"><code class="hljs">${str.replace(/[&<>"']/g, (char) => {
+    return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${str.replace(/[&<>"']/g, (char) => {
       const entities: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
       return entities[char]
     })}</code></pre>`
@@ -597,6 +606,34 @@ watch([section], async () => {
 
 .favorite-btn.favorited:hover {
   background: #ffe5e5;
+}
+
+/* 导航区域布局 */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.nav a {
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.nav a:hover {
+  background: var(--accent-color, #3b82f6);
+  color: white;
+  border-color: var(--accent-color, #3b82f6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 /* 去除 RouterLink 的下划线 */
