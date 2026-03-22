@@ -30,6 +30,7 @@ model User {
   resources          Resource[]
   userPreferences    UserPreferences?
   courseCompletions  CourseCompletion[]
+  sectionCompletions SectionCompletion[]
 
   @@index([email])
   @@index([username])
@@ -162,6 +163,7 @@ model Chapter {
   parent        Chapter?   @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
   children      Chapter[]  @relation("ChapterHierarchy")
   favorites     Favorite[]
+  sectionCompletions SectionCompletion[]
 
   @@index([parentId])
   @@index([type])
@@ -246,4 +248,18 @@ model CourseCompletion {
   @@index([userId])
   @@index([courseId])
   @@map("course_completions")
+}
+
+model SectionCompletion {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  sectionId   String   @map("section_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section     Chapter  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sectionId])
+  @@index([userId])
+  @@index([sectionId])
+  @@map("section_completions")
 }

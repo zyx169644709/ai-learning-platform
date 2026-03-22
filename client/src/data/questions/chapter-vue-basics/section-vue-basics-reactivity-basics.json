@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-responsiveness",
+  "courseName": "Vue 3 响应式系统",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue 3 中，ref() 函数可以用于定义哪些类型的数据？",
+      "options": [
+        "仅基本类型",
+        "仅对象类型",
+        "所有类型（基本类型、对象、数组等）",
+        "仅字符串和数字"
+      ],
+      "correctAnswer": 2,
+      "explanation": "ref() 是一个通用的响应式 API，可以用于定义任何类型的数据，包括基本类型（number、string、boolean）、对象和数组。它返回一个带有 .value 属性的响应式引用对象。"
+    },
+    {
+      "id": 2,
+      "question": "在 JavaScript 代码中，如何访问 ref 创建的响应式数据的值？",
+      "options": [
+        "直接使用变量名",
+        "使用 .value 属性",
+        "使用 .get() 方法",
+        "使用 .data 属性"
+      ],
+      "correctAnswer": 1,
+      "explanation": "在 JavaScript 代码中，需要通过 .value 属性来访问和修改 ref 的值。例如：const count = ref(0); console.log(count.value); count.value = 1;"
+    },
+    {
+      "id": 3,
+      "question": "在 Vue 模板中使用 ref 时，是否需要使用 .value？",
+      "options": [
+        "需要",
+        "不需要，会自动解包",
+        "取决于数据类型",
+        "需要使用 .data"
+      ],
+      "correctAnswer": 1,
+      "explanation": "在 Vue 模板中，ref 会自动解包，不需要使用 .value。例如：{{ count }} 可以直接访问 count 的值，而不是 count.value。"
+    },
+    {
+      "id": 4,
+      "question": "reactive() 函数只能用于定义什么类型的数据？",
+      "options": [
+        "所有类型",
+        "基本类型",
+        "对象类型（对象、数组、集合等）",
+        "仅字符串和数字"
+      ],
+      "correctAnswer": 2,
+      "explanation": "reactive() 仅用于定义对象类型的响应式数据，包括普通对象、数组、Map 和 Set 等。它返回原始对象的响应式代理。"
+    },
+    {
+      "id": 5,
+      "question": "使用 reactive() 创建的对象，如何访问和修改其属性？",
+      "options": [
+        "使用 .value",
+        "直接访问和修改属性",
+        "使用 .get() 和 .set()",
+        "需要使用 toRefs"
+      ],
+      "correctAnswer": 1,
+      "explanation": "reactive 对象的属性可以直接访问和修改，无需使用 .value。例如：const state = reactive({ count: 0 }); state.count = 1;"
+    },
+    {
+      "id": 6,
+      "question": "为什么不能直接解构 reactive 对象？",
+      "options": [
+        "解构会导致类型错误",
+        "解构会丢失响应式",
+        "解构会导致性能问题",
+        "解构是非法操作"
+      ],
+      "correctAnswer": 1,
+      "explanation": "解构 reactive 对象会丢失响应式，因为解构后得到的是普通变量，不再是响应式代理。如果需要解构，应该使用 toRefs() 工具函数来保持响应式。"
+    },
+    {
+      "id": 7,
+      "question": "计算属性 (computed) 的主要特性是什么？",
+      "options": [
+        "每次访问都重新计算",
+        "具有缓存性，依赖变化时才重新计算",
+        "可以执行异步操作",
+        "会自动修改原始数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "计算属性具有缓存性，只有当其依赖的响应式数据发生变化时才会重新计算。多次访问相同的计算属性，只要依赖没有变化，就会返回缓存的值，这提高了性能。"
+    },
+    {
+      "id": 8,
+      "question": "watch 和 watchEffect 的主要区别是什么？",
+      "options": [
+        "watch 会立即执行，watchEffect 不会",
+        "watchEffect 会立即执行并自动追踪依赖，watch 需要显式指定依赖",
+        "watch 可以监听多个源，watchEffect 不可以",
+        "watchEffect 可以访问旧值，watch 不可以"
+      ],
+      "correctAnswer": 1,
+      "explanation": "watchEffect 会立即执行一次，并自动追踪其内部使用的所有响应式数据。而 watch 需要显式指定要监听的数据源，只有在数据变化时才会执行回调。"
+    },
+    {
+      "id": 9,
+      "question": "哪个 watch 配置选项可以让监听器立即执行一次？",
+      "options": [
+        "deep",
+        "flush",
+        "immediate",
+        "sync"
+      ],
+      "correctAnswer": 2,
+      "explanation": "immediate 选项设置为 true 时，watch 会在创建时立即执行一次回调函数，而不是等待数据变化后再执行。"
+    },
+    {
+      "id": 10,
+      "question": "在以下场景中，应该使用 computed 而不是 watch？",
+      "options": [
+        "发送 API 请求",
+        "修改 DOM 元素",
+        "根据现有数据计算新值（如过滤、排序列表）",
+        "记录日志"
+      ],
+      "correctAnswer": 2,
+      "explanation": "computed 应该用于派生新数据的场景，如数据转换、过滤、排序等。而发送 API 请求、修改 DOM、记录日志等副作用操作应该使用 watch。computed 具有缓存机制，性能更好。"
+    }
+  ]
+}

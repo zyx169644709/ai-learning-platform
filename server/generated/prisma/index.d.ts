@@ -68,6 +68,11 @@ export type Favorite = $Result.DefaultSelection<Prisma.$FavoritePayload>
  * 
  */
 export type CourseCompletion = $Result.DefaultSelection<Prisma.$CourseCompletionPayload>
+/**
+ * Model SectionCompletion
+ * 
+ */
+export type SectionCompletion = $Result.DefaultSelection<Prisma.$SectionCompletionPayload>
 
 /**
  * Enums
@@ -342,6 +347,16 @@ export class PrismaClient<
     * ```
     */
   get courseCompletion(): Prisma.CourseCompletionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sectionCompletion`: Exposes CRUD operations for the **SectionCompletion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SectionCompletions
+    * const sectionCompletions = await prisma.sectionCompletion.findMany()
+    * ```
+    */
+  get sectionCompletion(): Prisma.SectionCompletionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -792,7 +807,8 @@ export namespace Prisma {
     Chapter: 'Chapter',
     Resource: 'Resource',
     Favorite: 'Favorite',
-    CourseCompletion: 'CourseCompletion'
+    CourseCompletion: 'CourseCompletion',
+    SectionCompletion: 'SectionCompletion'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -811,7 +827,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userPreferences" | "discussion" | "comment" | "discussionLike" | "commentLike" | "course" | "chapter" | "resource" | "favorite" | "courseCompletion"
+      modelProps: "user" | "userPreferences" | "discussion" | "comment" | "discussionLike" | "commentLike" | "course" | "chapter" | "resource" | "favorite" | "courseCompletion" | "sectionCompletion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1629,6 +1645,80 @@ export namespace Prisma {
           }
         }
       }
+      SectionCompletion: {
+        payload: Prisma.$SectionCompletionPayload<ExtArgs>
+        fields: Prisma.SectionCompletionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SectionCompletionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SectionCompletionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          findFirst: {
+            args: Prisma.SectionCompletionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SectionCompletionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          findMany: {
+            args: Prisma.SectionCompletionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>[]
+          }
+          create: {
+            args: Prisma.SectionCompletionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          createMany: {
+            args: Prisma.SectionCompletionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SectionCompletionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>[]
+          }
+          delete: {
+            args: Prisma.SectionCompletionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          update: {
+            args: Prisma.SectionCompletionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          deleteMany: {
+            args: Prisma.SectionCompletionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SectionCompletionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SectionCompletionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>[]
+          }
+          upsert: {
+            args: Prisma.SectionCompletionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SectionCompletionPayload>
+          }
+          aggregate: {
+            args: Prisma.SectionCompletionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSectionCompletion>
+          }
+          groupBy: {
+            args: Prisma.SectionCompletionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SectionCompletionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SectionCompletionCountArgs<ExtArgs>
+            result: $Utils.Optional<SectionCompletionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1732,6 +1822,7 @@ export namespace Prisma {
     resource?: ResourceOmit
     favorite?: FavoriteOmit
     courseCompletion?: CourseCompletionOmit
+    sectionCompletion?: SectionCompletionOmit
   }
 
   /* Types for Logging */
@@ -1821,6 +1912,7 @@ export namespace Prisma {
     favorites: number
     resources: number
     courseCompletions: number
+    sectionCompletions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1833,6 +1925,7 @@ export namespace Prisma {
     favorites?: boolean | UserCountOutputTypeCountFavoritesArgs
     resources?: boolean | UserCountOutputTypeCountResourcesArgs
     courseCompletions?: boolean | UserCountOutputTypeCountCourseCompletionsArgs
+    sectionCompletions?: boolean | UserCountOutputTypeCountSectionCompletionsArgs
   }
 
   // Custom InputTypes
@@ -1907,6 +2000,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCourseCompletionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CourseCompletionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSectionCompletionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SectionCompletionWhereInput
   }
 
 
@@ -2019,11 +2119,13 @@ export namespace Prisma {
   export type ChapterCountOutputType = {
     children: number
     favorites: number
+    sectionCompletions: number
   }
 
   export type ChapterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     children?: boolean | ChapterCountOutputTypeCountChildrenArgs
     favorites?: boolean | ChapterCountOutputTypeCountFavoritesArgs
+    sectionCompletions?: boolean | ChapterCountOutputTypeCountSectionCompletionsArgs
   }
 
   // Custom InputTypes
@@ -2049,6 +2151,13 @@ export namespace Prisma {
    */
   export type ChapterCountOutputTypeCountFavoritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FavoriteWhereInput
+  }
+
+  /**
+   * ChapterCountOutputType without action
+   */
+  export type ChapterCountOutputTypeCountSectionCompletionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SectionCompletionWhereInput
   }
 
 
@@ -2309,6 +2418,7 @@ export namespace Prisma {
     resources?: boolean | User$resourcesArgs<ExtArgs>
     userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
     courseCompletions?: boolean | User$courseCompletionsArgs<ExtArgs>
+    sectionCompletions?: boolean | User$sectionCompletionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2366,6 +2476,7 @@ export namespace Prisma {
     resources?: boolean | User$resourcesArgs<ExtArgs>
     userPreferences?: boolean | User$userPreferencesArgs<ExtArgs>
     courseCompletions?: boolean | User$courseCompletionsArgs<ExtArgs>
+    sectionCompletions?: boolean | User$sectionCompletionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2384,6 +2495,7 @@ export namespace Prisma {
       resources: Prisma.$ResourcePayload<ExtArgs>[]
       userPreferences: Prisma.$UserPreferencesPayload<ExtArgs> | null
       courseCompletions: Prisma.$CourseCompletionPayload<ExtArgs>[]
+      sectionCompletions: Prisma.$SectionCompletionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2801,6 +2913,7 @@ export namespace Prisma {
     resources<T extends User$resourcesArgs<ExtArgs> = {}>(args?: Subset<T, User$resourcesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ResourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userPreferences<T extends User$userPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$userPreferencesArgs<ExtArgs>>): Prisma__UserPreferencesClient<$Result.GetResult<Prisma.$UserPreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     courseCompletions<T extends User$courseCompletionsArgs<ExtArgs> = {}>(args?: Subset<T, User$courseCompletionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CourseCompletionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sectionCompletions<T extends User$sectionCompletionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sectionCompletionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3459,6 +3572,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CourseCompletionScalarFieldEnum | CourseCompletionScalarFieldEnum[]
+  }
+
+  /**
+   * User.sectionCompletions
+   */
+  export type User$sectionCompletionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    where?: SectionCompletionWhereInput
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    cursor?: SectionCompletionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SectionCompletionScalarFieldEnum | SectionCompletionScalarFieldEnum[]
   }
 
   /**
@@ -10692,6 +10829,7 @@ export namespace Prisma {
     parent?: boolean | Chapter$parentArgs<ExtArgs>
     children?: boolean | Chapter$childrenArgs<ExtArgs>
     favorites?: boolean | Chapter$favoritesArgs<ExtArgs>
+    sectionCompletions?: boolean | Chapter$sectionCompletionsArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
@@ -10762,6 +10900,7 @@ export namespace Prisma {
     parent?: boolean | Chapter$parentArgs<ExtArgs>
     children?: boolean | Chapter$childrenArgs<ExtArgs>
     favorites?: boolean | Chapter$favoritesArgs<ExtArgs>
+    sectionCompletions?: boolean | Chapter$sectionCompletionsArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChapterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10780,6 +10919,7 @@ export namespace Prisma {
       parent: Prisma.$ChapterPayload<ExtArgs> | null
       children: Prisma.$ChapterPayload<ExtArgs>[]
       favorites: Prisma.$FavoritePayload<ExtArgs>[]
+      sectionCompletions: Prisma.$SectionCompletionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11196,6 +11336,7 @@ export namespace Prisma {
     parent<T extends Chapter$parentArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$parentArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     children<T extends Chapter$childrenArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     favorites<T extends Chapter$favoritesArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sectionCompletions<T extends Chapter$sectionCompletionsArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$sectionCompletionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11718,6 +11859,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FavoriteScalarFieldEnum | FavoriteScalarFieldEnum[]
+  }
+
+  /**
+   * Chapter.sectionCompletions
+   */
+  export type Chapter$sectionCompletionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    where?: SectionCompletionWhereInput
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    cursor?: SectionCompletionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SectionCompletionScalarFieldEnum | SectionCompletionScalarFieldEnum[]
   }
 
   /**
@@ -15219,6 +15384,1057 @@ export namespace Prisma {
 
 
   /**
+   * Model SectionCompletion
+   */
+
+  export type AggregateSectionCompletion = {
+    _count: SectionCompletionCountAggregateOutputType | null
+    _min: SectionCompletionMinAggregateOutputType | null
+    _max: SectionCompletionMaxAggregateOutputType | null
+  }
+
+  export type SectionCompletionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    sectionId: string | null
+    completedAt: Date | null
+  }
+
+  export type SectionCompletionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    sectionId: string | null
+    completedAt: Date | null
+  }
+
+  export type SectionCompletionCountAggregateOutputType = {
+    id: number
+    userId: number
+    sectionId: number
+    completedAt: number
+    _all: number
+  }
+
+
+  export type SectionCompletionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    sectionId?: true
+    completedAt?: true
+  }
+
+  export type SectionCompletionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    sectionId?: true
+    completedAt?: true
+  }
+
+  export type SectionCompletionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    sectionId?: true
+    completedAt?: true
+    _all?: true
+  }
+
+  export type SectionCompletionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SectionCompletion to aggregate.
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SectionCompletions to fetch.
+     */
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SectionCompletionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SectionCompletions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SectionCompletions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SectionCompletions
+    **/
+    _count?: true | SectionCompletionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SectionCompletionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SectionCompletionMaxAggregateInputType
+  }
+
+  export type GetSectionCompletionAggregateType<T extends SectionCompletionAggregateArgs> = {
+        [P in keyof T & keyof AggregateSectionCompletion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSectionCompletion[P]>
+      : GetScalarType<T[P], AggregateSectionCompletion[P]>
+  }
+
+
+
+
+  export type SectionCompletionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SectionCompletionWhereInput
+    orderBy?: SectionCompletionOrderByWithAggregationInput | SectionCompletionOrderByWithAggregationInput[]
+    by: SectionCompletionScalarFieldEnum[] | SectionCompletionScalarFieldEnum
+    having?: SectionCompletionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SectionCompletionCountAggregateInputType | true
+    _min?: SectionCompletionMinAggregateInputType
+    _max?: SectionCompletionMaxAggregateInputType
+  }
+
+  export type SectionCompletionGroupByOutputType = {
+    id: string
+    userId: string
+    sectionId: string
+    completedAt: Date
+    _count: SectionCompletionCountAggregateOutputType | null
+    _min: SectionCompletionMinAggregateOutputType | null
+    _max: SectionCompletionMaxAggregateOutputType | null
+  }
+
+  type GetSectionCompletionGroupByPayload<T extends SectionCompletionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SectionCompletionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SectionCompletionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SectionCompletionGroupByOutputType[P]>
+            : GetScalarType<T[P], SectionCompletionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SectionCompletionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    sectionId?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sectionCompletion"]>
+
+  export type SectionCompletionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    sectionId?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sectionCompletion"]>
+
+  export type SectionCompletionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    sectionId?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sectionCompletion"]>
+
+  export type SectionCompletionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    sectionId?: boolean
+    completedAt?: boolean
+  }
+
+  export type SectionCompletionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "sectionId" | "completedAt", ExtArgs["result"]["sectionCompletion"]>
+  export type SectionCompletionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }
+  export type SectionCompletionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }
+  export type SectionCompletionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    section?: boolean | ChapterDefaultArgs<ExtArgs>
+  }
+
+  export type $SectionCompletionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SectionCompletion"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      section: Prisma.$ChapterPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      sectionId: string
+      completedAt: Date
+    }, ExtArgs["result"]["sectionCompletion"]>
+    composites: {}
+  }
+
+  type SectionCompletionGetPayload<S extends boolean | null | undefined | SectionCompletionDefaultArgs> = $Result.GetResult<Prisma.$SectionCompletionPayload, S>
+
+  type SectionCompletionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SectionCompletionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SectionCompletionCountAggregateInputType | true
+    }
+
+  export interface SectionCompletionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SectionCompletion'], meta: { name: 'SectionCompletion' } }
+    /**
+     * Find zero or one SectionCompletion that matches the filter.
+     * @param {SectionCompletionFindUniqueArgs} args - Arguments to find a SectionCompletion
+     * @example
+     * // Get one SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SectionCompletionFindUniqueArgs>(args: SelectSubset<T, SectionCompletionFindUniqueArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SectionCompletion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SectionCompletionFindUniqueOrThrowArgs} args - Arguments to find a SectionCompletion
+     * @example
+     * // Get one SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SectionCompletionFindUniqueOrThrowArgs>(args: SelectSubset<T, SectionCompletionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SectionCompletion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionFindFirstArgs} args - Arguments to find a SectionCompletion
+     * @example
+     * // Get one SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SectionCompletionFindFirstArgs>(args?: SelectSubset<T, SectionCompletionFindFirstArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SectionCompletion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionFindFirstOrThrowArgs} args - Arguments to find a SectionCompletion
+     * @example
+     * // Get one SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SectionCompletionFindFirstOrThrowArgs>(args?: SelectSubset<T, SectionCompletionFindFirstOrThrowArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SectionCompletions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SectionCompletions
+     * const sectionCompletions = await prisma.sectionCompletion.findMany()
+     * 
+     * // Get first 10 SectionCompletions
+     * const sectionCompletions = await prisma.sectionCompletion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sectionCompletionWithIdOnly = await prisma.sectionCompletion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SectionCompletionFindManyArgs>(args?: SelectSubset<T, SectionCompletionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SectionCompletion.
+     * @param {SectionCompletionCreateArgs} args - Arguments to create a SectionCompletion.
+     * @example
+     * // Create one SectionCompletion
+     * const SectionCompletion = await prisma.sectionCompletion.create({
+     *   data: {
+     *     // ... data to create a SectionCompletion
+     *   }
+     * })
+     * 
+     */
+    create<T extends SectionCompletionCreateArgs>(args: SelectSubset<T, SectionCompletionCreateArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SectionCompletions.
+     * @param {SectionCompletionCreateManyArgs} args - Arguments to create many SectionCompletions.
+     * @example
+     * // Create many SectionCompletions
+     * const sectionCompletion = await prisma.sectionCompletion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SectionCompletionCreateManyArgs>(args?: SelectSubset<T, SectionCompletionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SectionCompletions and returns the data saved in the database.
+     * @param {SectionCompletionCreateManyAndReturnArgs} args - Arguments to create many SectionCompletions.
+     * @example
+     * // Create many SectionCompletions
+     * const sectionCompletion = await prisma.sectionCompletion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SectionCompletions and only return the `id`
+     * const sectionCompletionWithIdOnly = await prisma.sectionCompletion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SectionCompletionCreateManyAndReturnArgs>(args?: SelectSubset<T, SectionCompletionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SectionCompletion.
+     * @param {SectionCompletionDeleteArgs} args - Arguments to delete one SectionCompletion.
+     * @example
+     * // Delete one SectionCompletion
+     * const SectionCompletion = await prisma.sectionCompletion.delete({
+     *   where: {
+     *     // ... filter to delete one SectionCompletion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SectionCompletionDeleteArgs>(args: SelectSubset<T, SectionCompletionDeleteArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SectionCompletion.
+     * @param {SectionCompletionUpdateArgs} args - Arguments to update one SectionCompletion.
+     * @example
+     * // Update one SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SectionCompletionUpdateArgs>(args: SelectSubset<T, SectionCompletionUpdateArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SectionCompletions.
+     * @param {SectionCompletionDeleteManyArgs} args - Arguments to filter SectionCompletions to delete.
+     * @example
+     * // Delete a few SectionCompletions
+     * const { count } = await prisma.sectionCompletion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SectionCompletionDeleteManyArgs>(args?: SelectSubset<T, SectionCompletionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SectionCompletions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SectionCompletions
+     * const sectionCompletion = await prisma.sectionCompletion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SectionCompletionUpdateManyArgs>(args: SelectSubset<T, SectionCompletionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SectionCompletions and returns the data updated in the database.
+     * @param {SectionCompletionUpdateManyAndReturnArgs} args - Arguments to update many SectionCompletions.
+     * @example
+     * // Update many SectionCompletions
+     * const sectionCompletion = await prisma.sectionCompletion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SectionCompletions and only return the `id`
+     * const sectionCompletionWithIdOnly = await prisma.sectionCompletion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SectionCompletionUpdateManyAndReturnArgs>(args: SelectSubset<T, SectionCompletionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SectionCompletion.
+     * @param {SectionCompletionUpsertArgs} args - Arguments to update or create a SectionCompletion.
+     * @example
+     * // Update or create a SectionCompletion
+     * const sectionCompletion = await prisma.sectionCompletion.upsert({
+     *   create: {
+     *     // ... data to create a SectionCompletion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SectionCompletion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SectionCompletionUpsertArgs>(args: SelectSubset<T, SectionCompletionUpsertArgs<ExtArgs>>): Prisma__SectionCompletionClient<$Result.GetResult<Prisma.$SectionCompletionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SectionCompletions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionCountArgs} args - Arguments to filter SectionCompletions to count.
+     * @example
+     * // Count the number of SectionCompletions
+     * const count = await prisma.sectionCompletion.count({
+     *   where: {
+     *     // ... the filter for the SectionCompletions we want to count
+     *   }
+     * })
+    **/
+    count<T extends SectionCompletionCountArgs>(
+      args?: Subset<T, SectionCompletionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SectionCompletionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SectionCompletion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SectionCompletionAggregateArgs>(args: Subset<T, SectionCompletionAggregateArgs>): Prisma.PrismaPromise<GetSectionCompletionAggregateType<T>>
+
+    /**
+     * Group by SectionCompletion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SectionCompletionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SectionCompletionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SectionCompletionGroupByArgs['orderBy'] }
+        : { orderBy?: SectionCompletionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SectionCompletionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSectionCompletionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SectionCompletion model
+   */
+  readonly fields: SectionCompletionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SectionCompletion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SectionCompletionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    section<T extends ChapterDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChapterDefaultArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SectionCompletion model
+   */
+  interface SectionCompletionFieldRefs {
+    readonly id: FieldRef<"SectionCompletion", 'String'>
+    readonly userId: FieldRef<"SectionCompletion", 'String'>
+    readonly sectionId: FieldRef<"SectionCompletion", 'String'>
+    readonly completedAt: FieldRef<"SectionCompletion", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SectionCompletion findUnique
+   */
+  export type SectionCompletionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter, which SectionCompletion to fetch.
+     */
+    where: SectionCompletionWhereUniqueInput
+  }
+
+  /**
+   * SectionCompletion findUniqueOrThrow
+   */
+  export type SectionCompletionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter, which SectionCompletion to fetch.
+     */
+    where: SectionCompletionWhereUniqueInput
+  }
+
+  /**
+   * SectionCompletion findFirst
+   */
+  export type SectionCompletionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter, which SectionCompletion to fetch.
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SectionCompletions to fetch.
+     */
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SectionCompletions.
+     */
+    cursor?: SectionCompletionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SectionCompletions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SectionCompletions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SectionCompletions.
+     */
+    distinct?: SectionCompletionScalarFieldEnum | SectionCompletionScalarFieldEnum[]
+  }
+
+  /**
+   * SectionCompletion findFirstOrThrow
+   */
+  export type SectionCompletionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter, which SectionCompletion to fetch.
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SectionCompletions to fetch.
+     */
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SectionCompletions.
+     */
+    cursor?: SectionCompletionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SectionCompletions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SectionCompletions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SectionCompletions.
+     */
+    distinct?: SectionCompletionScalarFieldEnum | SectionCompletionScalarFieldEnum[]
+  }
+
+  /**
+   * SectionCompletion findMany
+   */
+  export type SectionCompletionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter, which SectionCompletions to fetch.
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SectionCompletions to fetch.
+     */
+    orderBy?: SectionCompletionOrderByWithRelationInput | SectionCompletionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SectionCompletions.
+     */
+    cursor?: SectionCompletionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SectionCompletions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SectionCompletions.
+     */
+    skip?: number
+    distinct?: SectionCompletionScalarFieldEnum | SectionCompletionScalarFieldEnum[]
+  }
+
+  /**
+   * SectionCompletion create
+   */
+  export type SectionCompletionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SectionCompletion.
+     */
+    data: XOR<SectionCompletionCreateInput, SectionCompletionUncheckedCreateInput>
+  }
+
+  /**
+   * SectionCompletion createMany
+   */
+  export type SectionCompletionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SectionCompletions.
+     */
+    data: SectionCompletionCreateManyInput | SectionCompletionCreateManyInput[]
+  }
+
+  /**
+   * SectionCompletion createManyAndReturn
+   */
+  export type SectionCompletionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * The data used to create many SectionCompletions.
+     */
+    data: SectionCompletionCreateManyInput | SectionCompletionCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SectionCompletion update
+   */
+  export type SectionCompletionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SectionCompletion.
+     */
+    data: XOR<SectionCompletionUpdateInput, SectionCompletionUncheckedUpdateInput>
+    /**
+     * Choose, which SectionCompletion to update.
+     */
+    where: SectionCompletionWhereUniqueInput
+  }
+
+  /**
+   * SectionCompletion updateMany
+   */
+  export type SectionCompletionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SectionCompletions.
+     */
+    data: XOR<SectionCompletionUpdateManyMutationInput, SectionCompletionUncheckedUpdateManyInput>
+    /**
+     * Filter which SectionCompletions to update
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * Limit how many SectionCompletions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SectionCompletion updateManyAndReturn
+   */
+  export type SectionCompletionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * The data used to update SectionCompletions.
+     */
+    data: XOR<SectionCompletionUpdateManyMutationInput, SectionCompletionUncheckedUpdateManyInput>
+    /**
+     * Filter which SectionCompletions to update
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * Limit how many SectionCompletions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SectionCompletion upsert
+   */
+  export type SectionCompletionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SectionCompletion to update in case it exists.
+     */
+    where: SectionCompletionWhereUniqueInput
+    /**
+     * In case the SectionCompletion found by the `where` argument doesn't exist, create a new SectionCompletion with this data.
+     */
+    create: XOR<SectionCompletionCreateInput, SectionCompletionUncheckedCreateInput>
+    /**
+     * In case the SectionCompletion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SectionCompletionUpdateInput, SectionCompletionUncheckedUpdateInput>
+  }
+
+  /**
+   * SectionCompletion delete
+   */
+  export type SectionCompletionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+    /**
+     * Filter which SectionCompletion to delete.
+     */
+    where: SectionCompletionWhereUniqueInput
+  }
+
+  /**
+   * SectionCompletion deleteMany
+   */
+  export type SectionCompletionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SectionCompletions to delete
+     */
+    where?: SectionCompletionWhereInput
+    /**
+     * Limit how many SectionCompletions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SectionCompletion without action
+   */
+  export type SectionCompletionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SectionCompletion
+     */
+    select?: SectionCompletionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SectionCompletion
+     */
+    omit?: SectionCompletionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SectionCompletionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -15399,6 +16615,16 @@ export namespace Prisma {
   export type CourseCompletionScalarFieldEnum = (typeof CourseCompletionScalarFieldEnum)[keyof typeof CourseCompletionScalarFieldEnum]
 
 
+  export const SectionCompletionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    sectionId: 'sectionId',
+    completedAt: 'completedAt'
+  };
+
+  export type SectionCompletionScalarFieldEnum = (typeof SectionCompletionScalarFieldEnum)[keyof typeof SectionCompletionScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -15536,6 +16762,7 @@ export namespace Prisma {
     resources?: ResourceListRelationFilter
     userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
     courseCompletions?: CourseCompletionListRelationFilter
+    sectionCompletions?: SectionCompletionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -15560,6 +16787,7 @@ export namespace Prisma {
     resources?: ResourceOrderByRelationAggregateInput
     userPreferences?: UserPreferencesOrderByWithRelationInput
     courseCompletions?: CourseCompletionOrderByRelationAggregateInput
+    sectionCompletions?: SectionCompletionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -15587,6 +16815,7 @@ export namespace Prisma {
     resources?: ResourceListRelationFilter
     userPreferences?: XOR<UserPreferencesNullableScalarRelationFilter, UserPreferencesWhereInput> | null
     courseCompletions?: CourseCompletionListRelationFilter
+    sectionCompletions?: SectionCompletionListRelationFilter
   }, "id" | "username" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -16113,6 +17342,7 @@ export namespace Prisma {
     parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     children?: ChapterListRelationFilter
     favorites?: FavoriteListRelationFilter
+    sectionCompletions?: SectionCompletionListRelationFilter
   }
 
   export type ChapterOrderByWithRelationInput = {
@@ -16136,6 +17366,7 @@ export namespace Prisma {
     parent?: ChapterOrderByWithRelationInput
     children?: ChapterOrderByRelationAggregateInput
     favorites?: FavoriteOrderByRelationAggregateInput
+    sectionCompletions?: SectionCompletionOrderByRelationAggregateInput
   }
 
   export type ChapterWhereUniqueInput = Prisma.AtLeast<{
@@ -16162,6 +17393,7 @@ export namespace Prisma {
     parent?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
     children?: ChapterListRelationFilter
     favorites?: FavoriteListRelationFilter
+    sectionCompletions?: SectionCompletionListRelationFilter
   }, "id">
 
   export type ChapterOrderByWithAggregationInput = {
@@ -16448,6 +17680,60 @@ export namespace Prisma {
     completedAt?: DateTimeWithAggregatesFilter<"CourseCompletion"> | Date | string
   }
 
+  export type SectionCompletionWhereInput = {
+    AND?: SectionCompletionWhereInput | SectionCompletionWhereInput[]
+    OR?: SectionCompletionWhereInput[]
+    NOT?: SectionCompletionWhereInput | SectionCompletionWhereInput[]
+    id?: StringFilter<"SectionCompletion"> | string
+    userId?: StringFilter<"SectionCompletion"> | string
+    sectionId?: StringFilter<"SectionCompletion"> | string
+    completedAt?: DateTimeFilter<"SectionCompletion"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    section?: XOR<ChapterScalarRelationFilter, ChapterWhereInput>
+  }
+
+  export type SectionCompletionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    sectionId?: SortOrder
+    completedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    section?: ChapterOrderByWithRelationInput
+  }
+
+  export type SectionCompletionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_sectionId?: SectionCompletionUserIdSectionIdCompoundUniqueInput
+    AND?: SectionCompletionWhereInput | SectionCompletionWhereInput[]
+    OR?: SectionCompletionWhereInput[]
+    NOT?: SectionCompletionWhereInput | SectionCompletionWhereInput[]
+    userId?: StringFilter<"SectionCompletion"> | string
+    sectionId?: StringFilter<"SectionCompletion"> | string
+    completedAt?: DateTimeFilter<"SectionCompletion"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    section?: XOR<ChapterScalarRelationFilter, ChapterWhereInput>
+  }, "id" | "userId_sectionId">
+
+  export type SectionCompletionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    sectionId?: SortOrder
+    completedAt?: SortOrder
+    _count?: SectionCompletionCountOrderByAggregateInput
+    _max?: SectionCompletionMaxOrderByAggregateInput
+    _min?: SectionCompletionMinOrderByAggregateInput
+  }
+
+  export type SectionCompletionScalarWhereWithAggregatesInput = {
+    AND?: SectionCompletionScalarWhereWithAggregatesInput | SectionCompletionScalarWhereWithAggregatesInput[]
+    OR?: SectionCompletionScalarWhereWithAggregatesInput[]
+    NOT?: SectionCompletionScalarWhereWithAggregatesInput | SectionCompletionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SectionCompletion"> | string
+    userId?: StringWithAggregatesFilter<"SectionCompletion"> | string
+    sectionId?: StringWithAggregatesFilter<"SectionCompletion"> | string
+    completedAt?: DateTimeWithAggregatesFilter<"SectionCompletion"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -16470,6 +17756,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -16494,6 +17781,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -16518,6 +17806,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -16542,6 +17831,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -17095,6 +18385,7 @@ export namespace Prisma {
     parent?: ChapterCreateNestedOneWithoutChildrenInput
     children?: ChapterCreateNestedManyWithoutParentInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUncheckedCreateInput = {
@@ -17116,6 +18407,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     children?: ChapterUncheckedCreateNestedManyWithoutParentInput
     favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUpdateInput = {
@@ -17137,6 +18429,7 @@ export namespace Prisma {
     parent?: ChapterUpdateOneWithoutChildrenNestedInput
     children?: ChapterUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateInput = {
@@ -17158,6 +18451,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterCreateManyInput = {
@@ -17458,6 +18752,53 @@ export namespace Prisma {
     completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SectionCompletionCreateInput = {
+    id?: string
+    completedAt?: Date | string
+    user: UserCreateNestedOneWithoutSectionCompletionsInput
+    section: ChapterCreateNestedOneWithoutSectionCompletionsInput
+  }
+
+  export type SectionCompletionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    sectionId: string
+    completedAt?: Date | string
+  }
+
+  export type SectionCompletionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSectionCompletionsNestedInput
+    section?: ChapterUpdateOneRequiredWithoutSectionCompletionsNestedInput
+  }
+
+  export type SectionCompletionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    sectionId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SectionCompletionCreateManyInput = {
+    id?: string
+    userId: string
+    sectionId: string
+    completedAt?: Date | string
+  }
+
+  export type SectionCompletionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SectionCompletionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    sectionId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -17574,6 +18915,12 @@ export namespace Prisma {
     none?: CourseCompletionWhereInput
   }
 
+  export type SectionCompletionListRelationFilter = {
+    every?: SectionCompletionWhereInput
+    some?: SectionCompletionWhereInput
+    none?: SectionCompletionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -17612,6 +18959,10 @@ export namespace Prisma {
   }
 
   export type CourseCompletionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SectionCompletionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18320,6 +19671,37 @@ export namespace Prisma {
     completedAt?: SortOrder
   }
 
+  export type ChapterScalarRelationFilter = {
+    is?: ChapterWhereInput
+    isNot?: ChapterWhereInput
+  }
+
+  export type SectionCompletionUserIdSectionIdCompoundUniqueInput = {
+    userId: string
+    sectionId: string
+  }
+
+  export type SectionCompletionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    sectionId?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type SectionCompletionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    sectionId?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type SectionCompletionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    sectionId?: SortOrder
+    completedAt?: SortOrder
+  }
+
   export type ChapterCreateNestedManyWithoutAuthorInput = {
     create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
@@ -18389,6 +19771,13 @@ export namespace Prisma {
     connect?: CourseCompletionWhereUniqueInput | CourseCompletionWhereUniqueInput[]
   }
 
+  export type SectionCompletionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput> | SectionCompletionCreateWithoutUserInput[] | SectionCompletionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutUserInput | SectionCompletionCreateOrConnectWithoutUserInput[]
+    createMany?: SectionCompletionCreateManyUserInputEnvelope
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+  }
+
   export type ChapterUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
@@ -18456,6 +19845,13 @@ export namespace Prisma {
     connectOrCreate?: CourseCompletionCreateOrConnectWithoutUserInput | CourseCompletionCreateOrConnectWithoutUserInput[]
     createMany?: CourseCompletionCreateManyUserInputEnvelope
     connect?: CourseCompletionWhereUniqueInput | CourseCompletionWhereUniqueInput[]
+  }
+
+  export type SectionCompletionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput> | SectionCompletionCreateWithoutUserInput[] | SectionCompletionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutUserInput | SectionCompletionCreateOrConnectWithoutUserInput[]
+    createMany?: SectionCompletionCreateManyUserInputEnvelope
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -18614,6 +20010,20 @@ export namespace Prisma {
     deleteMany?: CourseCompletionScalarWhereInput | CourseCompletionScalarWhereInput[]
   }
 
+  export type SectionCompletionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput> | SectionCompletionCreateWithoutUserInput[] | SectionCompletionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutUserInput | SectionCompletionCreateOrConnectWithoutUserInput[]
+    upsert?: SectionCompletionUpsertWithWhereUniqueWithoutUserInput | SectionCompletionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SectionCompletionCreateManyUserInputEnvelope
+    set?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    disconnect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    delete?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    update?: SectionCompletionUpdateWithWhereUniqueWithoutUserInput | SectionCompletionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SectionCompletionUpdateManyWithWhereWithoutUserInput | SectionCompletionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
+  }
+
   export type ChapterUncheckedUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<ChapterCreateWithoutAuthorInput, ChapterUncheckedCreateWithoutAuthorInput> | ChapterCreateWithoutAuthorInput[] | ChapterUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: ChapterCreateOrConnectWithoutAuthorInput | ChapterCreateOrConnectWithoutAuthorInput[]
@@ -18748,6 +20158,20 @@ export namespace Prisma {
     update?: CourseCompletionUpdateWithWhereUniqueWithoutUserInput | CourseCompletionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: CourseCompletionUpdateManyWithWhereWithoutUserInput | CourseCompletionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: CourseCompletionScalarWhereInput | CourseCompletionScalarWhereInput[]
+  }
+
+  export type SectionCompletionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput> | SectionCompletionCreateWithoutUserInput[] | SectionCompletionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutUserInput | SectionCompletionCreateOrConnectWithoutUserInput[]
+    upsert?: SectionCompletionUpsertWithWhereUniqueWithoutUserInput | SectionCompletionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SectionCompletionCreateManyUserInputEnvelope
+    set?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    disconnect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    delete?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    update?: SectionCompletionUpdateWithWhereUniqueWithoutUserInput | SectionCompletionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SectionCompletionUpdateManyWithWhereWithoutUserInput | SectionCompletionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutUserPreferencesInput = {
@@ -19088,6 +20512,13 @@ export namespace Prisma {
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
   }
 
+  export type SectionCompletionCreateNestedManyWithoutSectionInput = {
+    create?: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput> | SectionCompletionCreateWithoutSectionInput[] | SectionCompletionUncheckedCreateWithoutSectionInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutSectionInput | SectionCompletionCreateOrConnectWithoutSectionInput[]
+    createMany?: SectionCompletionCreateManySectionInputEnvelope
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+  }
+
   export type ChapterUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
     connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
@@ -19100,6 +20531,13 @@ export namespace Prisma {
     connectOrCreate?: FavoriteCreateOrConnectWithoutChapterInput | FavoriteCreateOrConnectWithoutChapterInput[]
     createMany?: FavoriteCreateManyChapterInputEnvelope
     connect?: FavoriteWhereUniqueInput | FavoriteWhereUniqueInput[]
+  }
+
+  export type SectionCompletionUncheckedCreateNestedManyWithoutSectionInput = {
+    create?: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput> | SectionCompletionCreateWithoutSectionInput[] | SectionCompletionUncheckedCreateWithoutSectionInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutSectionInput | SectionCompletionCreateOrConnectWithoutSectionInput[]
+    createMany?: SectionCompletionCreateManySectionInputEnvelope
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
   }
 
   export type UserUpdateOneWithoutChaptersNestedInput = {
@@ -19150,6 +20588,20 @@ export namespace Prisma {
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
   }
 
+  export type SectionCompletionUpdateManyWithoutSectionNestedInput = {
+    create?: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput> | SectionCompletionCreateWithoutSectionInput[] | SectionCompletionUncheckedCreateWithoutSectionInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutSectionInput | SectionCompletionCreateOrConnectWithoutSectionInput[]
+    upsert?: SectionCompletionUpsertWithWhereUniqueWithoutSectionInput | SectionCompletionUpsertWithWhereUniqueWithoutSectionInput[]
+    createMany?: SectionCompletionCreateManySectionInputEnvelope
+    set?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    disconnect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    delete?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    update?: SectionCompletionUpdateWithWhereUniqueWithoutSectionInput | SectionCompletionUpdateWithWhereUniqueWithoutSectionInput[]
+    updateMany?: SectionCompletionUpdateManyWithWhereWithoutSectionInput | SectionCompletionUpdateManyWithWhereWithoutSectionInput[]
+    deleteMany?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
+  }
+
   export type ChapterUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<ChapterCreateWithoutParentInput, ChapterUncheckedCreateWithoutParentInput> | ChapterCreateWithoutParentInput[] | ChapterUncheckedCreateWithoutParentInput[]
     connectOrCreate?: ChapterCreateOrConnectWithoutParentInput | ChapterCreateOrConnectWithoutParentInput[]
@@ -19176,6 +20628,20 @@ export namespace Prisma {
     update?: FavoriteUpdateWithWhereUniqueWithoutChapterInput | FavoriteUpdateWithWhereUniqueWithoutChapterInput[]
     updateMany?: FavoriteUpdateManyWithWhereWithoutChapterInput | FavoriteUpdateManyWithWhereWithoutChapterInput[]
     deleteMany?: FavoriteScalarWhereInput | FavoriteScalarWhereInput[]
+  }
+
+  export type SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput = {
+    create?: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput> | SectionCompletionCreateWithoutSectionInput[] | SectionCompletionUncheckedCreateWithoutSectionInput[]
+    connectOrCreate?: SectionCompletionCreateOrConnectWithoutSectionInput | SectionCompletionCreateOrConnectWithoutSectionInput[]
+    upsert?: SectionCompletionUpsertWithWhereUniqueWithoutSectionInput | SectionCompletionUpsertWithWhereUniqueWithoutSectionInput[]
+    createMany?: SectionCompletionCreateManySectionInputEnvelope
+    set?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    disconnect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    delete?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    connect?: SectionCompletionWhereUniqueInput | SectionCompletionWhereUniqueInput[]
+    update?: SectionCompletionUpdateWithWhereUniqueWithoutSectionInput | SectionCompletionUpdateWithWhereUniqueWithoutSectionInput[]
+    updateMany?: SectionCompletionUpdateManyWithWhereWithoutSectionInput | SectionCompletionUpdateManyWithWhereWithoutSectionInput[]
+    deleteMany?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
   }
 
   export type FavoriteCreateNestedManyWithoutResourceInput = {
@@ -19310,6 +20776,34 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCourseCompletionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCourseCompletionsInput, UserUpdateWithoutCourseCompletionsInput>, UserUncheckedUpdateWithoutCourseCompletionsInput>
+  }
+
+  export type UserCreateNestedOneWithoutSectionCompletionsInput = {
+    create?: XOR<UserCreateWithoutSectionCompletionsInput, UserUncheckedCreateWithoutSectionCompletionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSectionCompletionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ChapterCreateNestedOneWithoutSectionCompletionsInput = {
+    create?: XOR<ChapterCreateWithoutSectionCompletionsInput, ChapterUncheckedCreateWithoutSectionCompletionsInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutSectionCompletionsInput
+    connect?: ChapterWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSectionCompletionsNestedInput = {
+    create?: XOR<UserCreateWithoutSectionCompletionsInput, UserUncheckedCreateWithoutSectionCompletionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSectionCompletionsInput
+    upsert?: UserUpsertWithoutSectionCompletionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSectionCompletionsInput, UserUpdateWithoutSectionCompletionsInput>, UserUncheckedUpdateWithoutSectionCompletionsInput>
+  }
+
+  export type ChapterUpdateOneRequiredWithoutSectionCompletionsNestedInput = {
+    create?: XOR<ChapterCreateWithoutSectionCompletionsInput, ChapterUncheckedCreateWithoutSectionCompletionsInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutSectionCompletionsInput
+    upsert?: ChapterUpsertWithoutSectionCompletionsInput
+    connect?: ChapterWhereUniqueInput
+    update?: XOR<XOR<ChapterUpdateToOneWithWhereWithoutSectionCompletionsInput, ChapterUpdateWithoutSectionCompletionsInput>, ChapterUncheckedUpdateWithoutSectionCompletionsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -19556,6 +21050,7 @@ export namespace Prisma {
     parent?: ChapterCreateNestedOneWithoutChildrenInput
     children?: ChapterCreateNestedManyWithoutParentInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUncheckedCreateWithoutAuthorInput = {
@@ -19576,6 +21071,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     children?: ChapterUncheckedCreateNestedManyWithoutParentInput
     favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterCreateOrConnectWithoutAuthorInput = {
@@ -19862,6 +21358,27 @@ export namespace Prisma {
 
   export type CourseCompletionCreateManyUserInputEnvelope = {
     data: CourseCompletionCreateManyUserInput | CourseCompletionCreateManyUserInput[]
+  }
+
+  export type SectionCompletionCreateWithoutUserInput = {
+    id?: string
+    completedAt?: Date | string
+    section: ChapterCreateNestedOneWithoutSectionCompletionsInput
+  }
+
+  export type SectionCompletionUncheckedCreateWithoutUserInput = {
+    id?: string
+    sectionId: string
+    completedAt?: Date | string
+  }
+
+  export type SectionCompletionCreateOrConnectWithoutUserInput = {
+    where: SectionCompletionWhereUniqueInput
+    create: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SectionCompletionCreateManyUserInputEnvelope = {
+    data: SectionCompletionCreateManyUserInput | SectionCompletionCreateManyUserInput[]
   }
 
   export type ChapterUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -20178,6 +21695,32 @@ export namespace Prisma {
     completedAt?: DateTimeFilter<"CourseCompletion"> | Date | string
   }
 
+  export type SectionCompletionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SectionCompletionWhereUniqueInput
+    update: XOR<SectionCompletionUpdateWithoutUserInput, SectionCompletionUncheckedUpdateWithoutUserInput>
+    create: XOR<SectionCompletionCreateWithoutUserInput, SectionCompletionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SectionCompletionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SectionCompletionWhereUniqueInput
+    data: XOR<SectionCompletionUpdateWithoutUserInput, SectionCompletionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SectionCompletionUpdateManyWithWhereWithoutUserInput = {
+    where: SectionCompletionScalarWhereInput
+    data: XOR<SectionCompletionUpdateManyMutationInput, SectionCompletionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SectionCompletionScalarWhereInput = {
+    AND?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
+    OR?: SectionCompletionScalarWhereInput[]
+    NOT?: SectionCompletionScalarWhereInput | SectionCompletionScalarWhereInput[]
+    id?: StringFilter<"SectionCompletion"> | string
+    userId?: StringFilter<"SectionCompletion"> | string
+    sectionId?: StringFilter<"SectionCompletion"> | string
+    completedAt?: DateTimeFilter<"SectionCompletion"> | Date | string
+  }
+
   export type UserCreateWithoutUserPreferencesInput = {
     id?: string
     username: string
@@ -20199,6 +21742,7 @@ export namespace Prisma {
     favorites?: FavoriteCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserPreferencesInput = {
@@ -20222,6 +21766,7 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserPreferencesInput = {
@@ -20261,6 +21806,7 @@ export namespace Prisma {
     favorites?: FavoriteUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPreferencesInput = {
@@ -20284,6 +21830,7 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentCreateWithoutDiscussionInput = {
@@ -20359,6 +21906,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDiscussionsInput = {
@@ -20382,6 +21930,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDiscussionsInput = {
@@ -20453,6 +22002,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDiscussionsInput = {
@@ -20476,6 +22026,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentLikeCreateWithoutCommentInput = {
@@ -20555,6 +22106,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -20578,6 +22130,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -20674,6 +22227,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -20697,6 +22251,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DiscussionCreateWithoutDiscussionLikesInput = {
@@ -20755,6 +22310,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDiscussionLikesInput = {
@@ -20778,6 +22334,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDiscussionLikesInput = {
@@ -20858,6 +22415,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDiscussionLikesInput = {
@@ -20881,6 +22439,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CommentCreateWithoutCommentLikesInput = {
@@ -20931,6 +22490,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentLikesInput = {
@@ -20954,6 +22514,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentLikesInput = {
@@ -21026,6 +22587,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentLikesInput = {
@@ -21049,6 +22611,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCoursesInput = {
@@ -21072,6 +22635,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCoursesInput = {
@@ -21095,6 +22659,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCoursesInput = {
@@ -21161,6 +22726,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCoursesInput = {
@@ -21184,6 +22750,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type FavoriteUpsertWithWhereUniqueWithoutCourseInput = {
@@ -21223,6 +22790,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChaptersInput = {
@@ -21246,6 +22814,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChaptersInput = {
@@ -21271,6 +22840,7 @@ export namespace Prisma {
     author?: UserCreateNestedOneWithoutChaptersInput
     parent?: ChapterCreateNestedOneWithoutChildrenInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUncheckedCreateWithoutChildrenInput = {
@@ -21291,6 +22861,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterCreateOrConnectWithoutChildrenInput = {
@@ -21316,6 +22887,7 @@ export namespace Prisma {
     author?: UserCreateNestedOneWithoutChaptersInput
     children?: ChapterCreateNestedManyWithoutParentInput
     favorites?: FavoriteCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUncheckedCreateWithoutParentInput = {
@@ -21336,6 +22908,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     children?: ChapterUncheckedCreateNestedManyWithoutParentInput
     favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterCreateOrConnectWithoutParentInput = {
@@ -21374,6 +22947,27 @@ export namespace Prisma {
     data: FavoriteCreateManyChapterInput | FavoriteCreateManyChapterInput[]
   }
 
+  export type SectionCompletionCreateWithoutSectionInput = {
+    id?: string
+    completedAt?: Date | string
+    user: UserCreateNestedOneWithoutSectionCompletionsInput
+  }
+
+  export type SectionCompletionUncheckedCreateWithoutSectionInput = {
+    id?: string
+    userId: string
+    completedAt?: Date | string
+  }
+
+  export type SectionCompletionCreateOrConnectWithoutSectionInput = {
+    where: SectionCompletionWhereUniqueInput
+    create: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput>
+  }
+
+  export type SectionCompletionCreateManySectionInputEnvelope = {
+    data: SectionCompletionCreateManySectionInput | SectionCompletionCreateManySectionInput[]
+  }
+
   export type UserUpsertWithoutChaptersInput = {
     update: XOR<UserUpdateWithoutChaptersInput, UserUncheckedUpdateWithoutChaptersInput>
     create: XOR<UserCreateWithoutChaptersInput, UserUncheckedCreateWithoutChaptersInput>
@@ -21406,6 +23000,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChaptersInput = {
@@ -21429,6 +23024,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ChapterUpsertWithoutChildrenInput = {
@@ -21460,6 +23056,7 @@ export namespace Prisma {
     author?: UserUpdateOneWithoutChaptersNestedInput
     parent?: ChapterUpdateOneWithoutChildrenNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutChildrenInput = {
@@ -21480,6 +23077,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUpsertWithWhereUniqueWithoutParentInput = {
@@ -21512,6 +23110,22 @@ export namespace Prisma {
   export type FavoriteUpdateManyWithWhereWithoutChapterInput = {
     where: FavoriteScalarWhereInput
     data: XOR<FavoriteUpdateManyMutationInput, FavoriteUncheckedUpdateManyWithoutChapterInput>
+  }
+
+  export type SectionCompletionUpsertWithWhereUniqueWithoutSectionInput = {
+    where: SectionCompletionWhereUniqueInput
+    update: XOR<SectionCompletionUpdateWithoutSectionInput, SectionCompletionUncheckedUpdateWithoutSectionInput>
+    create: XOR<SectionCompletionCreateWithoutSectionInput, SectionCompletionUncheckedCreateWithoutSectionInput>
+  }
+
+  export type SectionCompletionUpdateWithWhereUniqueWithoutSectionInput = {
+    where: SectionCompletionWhereUniqueInput
+    data: XOR<SectionCompletionUpdateWithoutSectionInput, SectionCompletionUncheckedUpdateWithoutSectionInput>
+  }
+
+  export type SectionCompletionUpdateManyWithWhereWithoutSectionInput = {
+    where: SectionCompletionScalarWhereInput
+    data: XOR<SectionCompletionUpdateManyMutationInput, SectionCompletionUncheckedUpdateManyWithoutSectionInput>
   }
 
   export type FavoriteCreateWithoutResourceInput = {
@@ -21562,6 +23176,7 @@ export namespace Prisma {
     favorites?: FavoriteCreateNestedManyWithoutUserInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutResourcesInput = {
@@ -21585,6 +23200,7 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutResourcesInput = {
@@ -21640,6 +23256,7 @@ export namespace Prisma {
     favorites?: FavoriteUpdateManyWithoutUserNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutResourcesInput = {
@@ -21663,6 +23280,7 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ResourceCreateWithoutFavoritesInput = {
@@ -21724,6 +23342,7 @@ export namespace Prisma {
     author?: UserCreateNestedOneWithoutChaptersInput
     parent?: ChapterCreateNestedOneWithoutChildrenInput
     children?: ChapterCreateNestedManyWithoutParentInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterUncheckedCreateWithoutFavoritesInput = {
@@ -21744,6 +23363,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutSectionInput
   }
 
   export type ChapterCreateOrConnectWithoutFavoritesInput = {
@@ -21815,6 +23435,7 @@ export namespace Prisma {
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFavoritesInput = {
@@ -21838,6 +23459,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
     courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFavoritesInput = {
@@ -21921,6 +23543,7 @@ export namespace Prisma {
     author?: UserUpdateOneWithoutChaptersNestedInput
     parent?: ChapterUpdateOneWithoutChildrenNestedInput
     children?: ChapterUpdateManyWithoutParentNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutFavoritesInput = {
@@ -21941,6 +23564,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput
   }
 
   export type CourseUpsertWithoutFavoritesInput = {
@@ -22024,6 +23648,7 @@ export namespace Prisma {
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFavoritesInput = {
@@ -22047,6 +23672,7 @@ export namespace Prisma {
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
     courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCourseCompletionsInput = {
@@ -22070,6 +23696,7 @@ export namespace Prisma {
     favorites?: FavoriteCreateNestedManyWithoutUserInput
     resources?: ResourceCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+    sectionCompletions?: SectionCompletionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCourseCompletionsInput = {
@@ -22093,6 +23720,7 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
     resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
     userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+    sectionCompletions?: SectionCompletionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCourseCompletionsInput = {
@@ -22132,6 +23760,7 @@ export namespace Prisma {
     favorites?: FavoriteUpdateManyWithoutUserNestedInput
     resources?: ResourceUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCourseCompletionsInput = {
@@ -22155,6 +23784,219 @@ export namespace Prisma {
     favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
     resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
     userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutSectionCompletionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    courses?: CourseCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeCreateNestedManyWithoutUserInput
+    discussions?: DiscussionCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteCreateNestedManyWithoutUserInput
+    resources?: ResourceCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesCreateNestedOneWithoutUserInput
+    courseCompletions?: CourseCompletionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSectionCompletionsInput = {
+    id?: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    avatar?: string | null
+    status?: string
+    lastLoginAt?: Date | string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapters?: ChapterUncheckedCreateNestedManyWithoutAuthorInput
+    commentLikes?: CommentLikeUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    courses?: CourseUncheckedCreateNestedManyWithoutAuthorInput
+    discussionLikes?: DiscussionLikeUncheckedCreateNestedManyWithoutUserInput
+    discussions?: DiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutUserInput
+    resources?: ResourceUncheckedCreateNestedManyWithoutAuthorInput
+    userPreferences?: UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+    courseCompletions?: CourseCompletionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSectionCompletionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSectionCompletionsInput, UserUncheckedCreateWithoutSectionCompletionsInput>
+  }
+
+  export type ChapterCreateWithoutSectionCompletionsInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author?: UserCreateNestedOneWithoutChaptersInput
+    parent?: ChapterCreateNestedOneWithoutChildrenInput
+    children?: ChapterCreateNestedManyWithoutParentInput
+    favorites?: FavoriteCreateNestedManyWithoutChapterInput
+  }
+
+  export type ChapterUncheckedCreateWithoutSectionCompletionsInput = {
+    id?: string
+    title: string
+    content?: string | null
+    excerpt?: string | null
+    type?: string
+    order?: number
+    duration?: string | null
+    videoUrl?: string | null
+    status?: string
+    parentId?: string | null
+    authorId?: string | null
+    viewCount?: number
+    favoriteCount?: number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: ChapterUncheckedCreateNestedManyWithoutParentInput
+    favorites?: FavoriteUncheckedCreateNestedManyWithoutChapterInput
+  }
+
+  export type ChapterCreateOrConnectWithoutSectionCompletionsInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutSectionCompletionsInput, ChapterUncheckedCreateWithoutSectionCompletionsInput>
+  }
+
+  export type UserUpsertWithoutSectionCompletionsInput = {
+    update: XOR<UserUpdateWithoutSectionCompletionsInput, UserUncheckedUpdateWithoutSectionCompletionsInput>
+    create: XOR<UserCreateWithoutSectionCompletionsInput, UserUncheckedCreateWithoutSectionCompletionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSectionCompletionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSectionCompletionsInput, UserUncheckedUpdateWithoutSectionCompletionsInput>
+  }
+
+  export type UserUpdateWithoutSectionCompletionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapters?: ChapterUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUpdateManyWithoutUserNestedInput
+    resources?: ResourceUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUpdateOneWithoutUserNestedInput
+    courseCompletions?: CourseCompletionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSectionCompletionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapters?: ChapterUncheckedUpdateManyWithoutAuthorNestedInput
+    commentLikes?: CommentLikeUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    courses?: CourseUncheckedUpdateManyWithoutAuthorNestedInput
+    discussionLikes?: DiscussionLikeUncheckedUpdateManyWithoutUserNestedInput
+    discussions?: DiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutUserNestedInput
+    resources?: ResourceUncheckedUpdateManyWithoutAuthorNestedInput
+    userPreferences?: UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+    courseCompletions?: CourseCompletionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ChapterUpsertWithoutSectionCompletionsInput = {
+    update: XOR<ChapterUpdateWithoutSectionCompletionsInput, ChapterUncheckedUpdateWithoutSectionCompletionsInput>
+    create: XOR<ChapterCreateWithoutSectionCompletionsInput, ChapterUncheckedCreateWithoutSectionCompletionsInput>
+    where?: ChapterWhereInput
+  }
+
+  export type ChapterUpdateToOneWithWhereWithoutSectionCompletionsInput = {
+    where?: ChapterWhereInput
+    data: XOR<ChapterUpdateWithoutSectionCompletionsInput, ChapterUncheckedUpdateWithoutSectionCompletionsInput>
+  }
+
+  export type ChapterUpdateWithoutSectionCompletionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneWithoutChaptersNestedInput
+    parent?: ChapterUpdateOneWithoutChildrenNestedInput
+    children?: ChapterUpdateManyWithoutParentNestedInput
+    favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+  }
+
+  export type ChapterUncheckedUpdateWithoutSectionCompletionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    duration?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    authorId?: NullableStringFieldUpdateOperationsInput | string | null
+    viewCount?: IntFieldUpdateOperationsInput | number
+    favoriteCount?: IntFieldUpdateOperationsInput | number
+    tags?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
+    favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterCreateManyAuthorInput = {
@@ -22260,6 +24102,12 @@ export namespace Prisma {
     completedAt?: Date | string
   }
 
+  export type SectionCompletionCreateManyUserInput = {
+    id?: string
+    sectionId: string
+    completedAt?: Date | string
+  }
+
   export type ChapterUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -22278,6 +24126,7 @@ export namespace Prisma {
     parent?: ChapterUpdateOneWithoutChildrenNestedInput
     children?: ChapterUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutAuthorInput = {
@@ -22298,6 +24147,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateManyWithoutAuthorInput = {
@@ -22583,6 +24433,24 @@ export namespace Prisma {
     completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SectionCompletionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    section?: ChapterUpdateOneRequiredWithoutSectionCompletionsNestedInput
+  }
+
+  export type SectionCompletionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sectionId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SectionCompletionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sectionId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CommentCreateManyDiscussionInput = {
     id?: string
     content: string
@@ -22736,6 +24604,12 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type SectionCompletionCreateManySectionInput = {
+    id?: string
+    userId: string
+    completedAt?: Date | string
+  }
+
   export type ChapterUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -22754,6 +24628,7 @@ export namespace Prisma {
     author?: UserUpdateOneWithoutChaptersNestedInput
     children?: ChapterUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutParentInput = {
@@ -22774,6 +24649,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     children?: ChapterUncheckedUpdateManyWithoutParentNestedInput
     favorites?: FavoriteUncheckedUpdateManyWithoutChapterNestedInput
+    sectionCompletions?: SectionCompletionUncheckedUpdateManyWithoutSectionNestedInput
   }
 
   export type ChapterUncheckedUpdateManyWithoutParentInput = {
@@ -22819,6 +24695,24 @@ export namespace Prisma {
     courseId?: NullableStringFieldUpdateOperationsInput | string | null
     resourceId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SectionCompletionUpdateWithoutSectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSectionCompletionsNestedInput
+  }
+
+  export type SectionCompletionUncheckedUpdateWithoutSectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SectionCompletionUncheckedUpdateManyWithoutSectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    completedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type FavoriteCreateManyResourceInput = {

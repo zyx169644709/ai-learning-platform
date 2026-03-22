@@ -254,6 +254,13 @@ exports.Prisma.CourseCompletionScalarFieldEnum = {
   completedAt: 'completedAt'
 };
 
+exports.Prisma.SectionCompletionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sectionId: 'sectionId',
+  completedAt: 'completedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -303,7 +310,8 @@ exports.Prisma.ModelName = {
   Chapter: 'Chapter',
   Resource: 'Resource',
   Favorite: 'Favorite',
-  CourseCompletion: 'CourseCompletion'
+  CourseCompletion: 'CourseCompletion',
+  SectionCompletion: 'SectionCompletion'
 };
 
 /**

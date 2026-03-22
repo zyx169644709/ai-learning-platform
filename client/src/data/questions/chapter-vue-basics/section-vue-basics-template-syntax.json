@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-template-syntax",
+  "courseName": "Vue 3 模板语法与指令",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Vue 模板中文本插值的语法是？",
+      "options": [
+        "单大括号 {}",
+        "双大括号 {{}}",
+        "中括号 []",
+        "尖括号 <>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 使用「Mustache」语法（双大括号）进行文本插值，如 {{ msg }}。"
+    },
+    {
+      "id": 2,
+      "question": "v-bind 指令的简写是？",
+      "options": [
+        "@",
+        ":",
+        "#",
+        "&"
+      ],
+      "correctAnswer": 1,
+      "explanation": "v-bind 指令可以简写为冒号 :，如 :src 等价于 v-bind:src。"
+    },
+    {
+      "id": 3,
+      "question": "v-on 指令的简写是？",
+      "options": [
+        ":",
+        "@",
+        "#",
+        "*"
+      ],
+      "correctAnswer": 1,
+      "explanation": "v-on 指令可以简写为 @，如 @click 等价于 v-on:click。"
+    },
+    {
+      "id": 4,
+      "question": "哪个指令用于输出原始 HTML？",
+      "options": [
+        "v-text",
+        "v-html",
+        "v-bind",
+        "v-model"
+      ],
+      "correctAnswer": 1,
+      "explanation": "v-html 指令用于更新元素的 innerHTML，可以输出原始 HTML。但要注意 XSS 安全风险。"
+    },
+    {
+      "id": 5,
+      "question": "v-show 和 v-if 的主要区别是？",
+      "options": [
+        "v-show 性能更好，v-if 功能更强",
+        "v-show 切换 display，v-if 销毁重建元素",
+        "v-show 支持动画，v-if 不支持",
+        "没有区别，用法完全相同"
+      ],
+      "correctAnswer": 1,
+      "explanation": "v-show 通过切换 CSS display 属性控制显示隐藏，元素始终在 DOM 中；v-if 根据条件销毁和重建元素。"
+    },
+    {
+      "id": 6,
+      "question": "v-for 指令中必须绑定的属性是？",
+      "options": [
+        "id",
+        "index",
+        "key",
+        "value"
+      ],
+      "correctAnswer": 2,
+      "explanation": "使用 v-for 时必须提供唯一的 key 属性，以便 Vue 能够追踪每个节点的身份，提高渲染性能。"
+    },
+    {
+      "id": 7,
+      "question": "v-model 指令的作用是？",
+      "options": [
+        "单向数据绑定",
+        "双向数据绑定",
+        "事件绑定",
+        "属性绑定"
+      ],
+      "correctAnswer": 1,
+      "explanation": "v-model 在表单输入元素或组件上创建双向绑定，是 v-bind 和 v-on 的语法糖。"
+    },
+    {
+      "id": 8,
+      "question": "哪个修饰符用于阻止表单默认提交行为？",
+      "options": [
+        ".终止",
+        ".prevent",
+        ".once",
+        ".capture"
+      ],
+      "correctAnswer": 1,
+      "explanation": ".prevent 修饰符用于阻止事件的默认行为，如 @submit.prevent 可以阻止表单默认提交。"
+    },
+    {
+      "id": 9,
+      "question": "v-model 的 .trim 修饰符的作用是？",
+      "options": [
+        "转为数字",
+        "延迟更新",
+        "过滤首尾空白",
+        "只读模式"
+      ],
+      "correctAnswer": 2,
+      "explanation": ".trim 修饰符会自动过滤用户输入的首尾空白字符。"
+    },
+    {
+      "id": 10,
+      "question": "为什么不应在同一元素上同时使用 v-if 和 v-for？",
+      "options": [
+        "会导致编译错误",
+        "v-if 优先级高于 v-for，可能无法按预期工作",
+        "性能会变慢",
+        "两者功能冲突"
+      ],
+      "correctAnswer": 1,
+      "explanation": "当 v-if 和 v-for 处于同一节点时，v-if 的优先级比 v-for 更高，可能导致无法按预期渲染列表。建议使用 template 标签包裹或计算属性。"
+    }
+  ]
+}

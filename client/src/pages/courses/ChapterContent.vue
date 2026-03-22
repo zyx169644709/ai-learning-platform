@@ -37,6 +37,27 @@
       />
     </div>
 
+    <!-- 小节测验区域 -->
+    <div v-if="quizData && section" class="quiz-section">
+      <div class="quiz-card">
+        <div class="quiz-card-icon">📝</div>
+        <div class="quiz-card-info">
+          <h3>小节测验</h3>
+          <p>完成本节测验，检验你的学习成果</p>
+        </div>
+        <button class="quiz-btn" @click="showQuiz = true">
+          {{ quizPassed ? '✅ 已通过 · 再测一次' : '开始测验' }}
+        </button>
+      </div>
+    </div>
+
+    <QuizModal
+      v-if="quizData"
+      v-model:visible="showQuiz"
+      :quiz-data="quizData"
+      @completed="handleQuizCompleted"
+    />
+
     <div class="nav">
       <RouterLink v-if="prev" :to="linkOf(prev)">← 上一节：{{ prev.title }}</RouterLink>
       <RouterLink v-if="next" :to="linkOf(next)">下一节：{{ next.title }} →</RouterLink>
@@ -53,6 +74,7 @@ import DOMPurify from 'dompurify'
 import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
 import { favoriteService } from '@/services/favoriteService'
 import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
+import QuizModal from '@/components/QuizModal.vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -96,6 +118,109 @@ const html = ref('')
 const codeEditors = ref<Array<{ code: string; language: string }>>([])
 const hasInlineEditors = ref(false)
 const isFavorited = ref(false)
+const showQuiz = ref(false)
+const quizPassed = ref(false)
+const quizData = ref<any>(null)
+
+// 动态加载小节测验数据
+const quizModules = import.meta.glob('@/data/questions/**/section-*.json')
+
+const loadQuizData = async () => {
+  quizData.value = null
+  quizPassed.value = false
+
+  const chSlug = chapterSlug.value
+  const secSlug = sectionSlug.value
+  if (!chSlug || !secSlug) return
+
+  // 数据库 slug 已包含前缀：chSlug = "chapter-vue-basics", secSlug = "section-vue-basics-introduction"
+  // JSON 目录名即 chSlug，文件名即 secSlug.json
+  const key = Object.keys(quizModules).find(k =>
+    k.includes(`/${chSlug}/`) && k.includes(`${secSlug}.json`)
+  )
+  if (!key) return
+
+  try {
+    const mod: any = await quizModules[key]()
+    const originalQuizData = mod.default || mod
+    
+    if (originalQuizData && originalQuizData.questions && originalQuizData.questions.length >= 5) {
+      // 从原始题目中随机选择5道题
+      const shuffled = [...originalQuizData.questions].sort(() => 0.5 - Math.random())
+      const selectedQuestions = shuffled.slice(0, 5)
+      
+      // 构建新的测验数据
+      quizData.value = {
+        ...originalQuizData,
+        questionCount: 5,
+        passingScore: 60,
+        questions: selectedQuestions
+      }
+    } else {
+      // 如果题目不足5道，直接使用原数据
+      quizData.value = originalQuizData
+    }
+  } catch (e) {
+    console.error('加载测验数据失败:', e)
+  }
+}
+
+const handleQuizCompleted = async (result: { score: number; passed: boolean; answers: number[] }) => {
+  quizPassed.value = result.passed
+
+  if (result.passed) {
+    ElMessage.success(`恭喜通过！得分：${result.score} 分`)
+    // 标记小节完成
+    if (chapter.value?.id && section.value?.id) {
+      try {
+        const token = localStorage.getItem('token')
+        const userInfo = localStorage.getItem('userInfo')
+        console.log('🔍 Debug info:', { 
+          hasToken: !!token, 
+          tokenLength: token?.length || 0,
+          hasUserInfo: !!userInfo,
+          chapterId: chapter.value.id,
+          sectionId: section.value.id
+        })
+        
+        if (!token) {
+          console.warn('未找到登录令牌，无法标记小节完成')
+          ElMessage.warning('请先登录以记录学习进度')
+          return
+        }
+        
+        const apiUrl = `/api/chapters/${chapter.value.id}/sections/${section.value.id}/complete`
+        console.log('🌐 API URL:', apiUrl)
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        console.log('📡 API Response:', { status: response.status, statusText: response.statusText })
+        const responseData = await response.json()
+        console.log('📋 Response Data:', responseData)
+        
+        if (response.ok && responseData.success) {
+          ElMessage.success('小节已标记为完成！')
+        } else {
+          console.error('标记小节完成失败:', responseData)
+          ElMessage.warning(`API错误: ${responseData.message || '未知错误'}`)
+        }
+      } catch (e) {
+        console.error('标记小节完成失败:', e)
+        ElMessage.error('网络错误，学习进度可能未保存')
+      }
+    } else {
+      console.warn('章节或小节信息缺失:', { chapterId: chapter.value?.id, sectionId: section.value?.id })
+    }
+  } else {
+    ElMessage.warning(`得分：${result.score} 分，继续加油！`)
+  }
+}
 
 // 安全清洗 HTML 内容
 const sanitizeHtml = (rawHtml: string): string => {
@@ -130,14 +255,9 @@ const parseCodeEditors = (markdown: string): { processedMarkdown: string; editor
   let match
   let editorIndex = 0
 
-  console.log('🔍 开始解析Markdown中的代码编辑器语法...')
-  console.log('🔍 原始Markdown长度:', markdown.length)
-
   while ((match = editorRegex.exec(markdown)) !== null) {
     const language = match[1]
     const code = match[2].trim()
-
-    console.log(`🔍 找到代码编辑器 ${editorIndex}:`, { language, codeLength: code.length })
 
     editors.push({ code, language })
 
@@ -148,7 +268,6 @@ const parseCodeEditors = (markdown: string): { processedMarkdown: string; editor
     hasInlineEditors.value = true
   }
 
-  console.log(`🔍 总共找到 ${editors.length} 个代码编辑器`)
   return { processedMarkdown, editors }
 }
 
@@ -157,7 +276,6 @@ const insertCodeEditors = () => {
   const container = document.querySelector('.md')
   if (!container) return
   const slots = container.querySelectorAll('.md-editor-slot[data-editor-index]') as NodeListOf<HTMLDivElement>
-  console.log('🔧 slots found:', slots.length)
   slots.forEach(slot => {
     const idxAttr = slot.getAttribute('data-editor-index')
     if (!idxAttr) return
@@ -214,6 +332,9 @@ const load = async () => {
     return
   }
 
+  // 加载小节测验数据（不依赖内容是否加载成功）
+  loadQuizData()
+
   try {
     // 从 API 获取小节内容
     const res = await fetch(`/api/chapters/${chapter.value.id}/sections/${section.value.id}`)
@@ -247,7 +368,7 @@ onMounted(load)
 
 // 监听路由参数变化，重新加载内容
 watch([chapterSlug, sectionSlug], () => {
-  console.log('Route parameters changed, reloading content...')
+  showQuiz.value = false
   load().then(() => {
     // 切换章节/小节后滚动到页面顶部
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
@@ -606,6 +727,67 @@ watch([section], async () => {
 
 .favorite-btn.favorited:hover {
   background: #ffe5e5;
+}
+
+/* 小节测验区域 */
+.quiz-section {
+  margin-top: 3rem;
+}
+
+.quiz-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.quiz-card:hover {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.quiz-card-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.quiz-card-info {
+  flex: 1;
+}
+
+.quiz-card-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+.quiz-card-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #3b82f6;
+}
+
+.quiz-btn {
+  padding: 10px 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.quiz-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* 导航区域布局 */
