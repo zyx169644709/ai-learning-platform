@@ -1,6 +1,7 @@
 // src/stores/userStore.ts
 import { defineStore } from 'pinia'
 import { userService } from '@/services/userService.ts'
+import { getValidToken } from '@/utils/tokenHelper'
 
 interface UserInfo {
   id: number;
@@ -104,10 +105,19 @@ export const useUserStore = defineStore('user', {
 
     // 登出
     async logout() {
+      // 检查 token 是否有效
+      const validToken = getValidToken()
+      
       try {
-        await userService.logout()
+        // 只有 token 有效时才调用后端 logout API
+        if (validToken) {
+          await userService.logout()
+        } else {
+          console.log('Token 已过期或无效，跳过后端登出请求')
+        }
       } catch (error: any) {
         console.error('登出错误:', error)
+        // 即使后端登出失败，也要清除本地状态
       } finally {
         this.userInfo = null
         this.token = ''
@@ -120,10 +130,11 @@ export const useUserStore = defineStore('user', {
 
     // 加载用户信息
     async loadUser() {
-      const token = localStorage.getItem('token')
+      // 使用 getValidToken 检查 token 有效性
+      const token = getValidToken()
       
       if (!token) {
-        console.log('没有token，清除登录状态')
+        console.log('没有有效 token，清除登录状态')
         this.clearUserState()
         return
       }
