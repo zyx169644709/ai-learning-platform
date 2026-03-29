@@ -59,11 +59,9 @@ export function getValidToken(): string | null {
   }
   
   if (!isTokenValid(token)) {
-    // Token 无效，清除本地存储
-    console.log('检测到无效 token，清除本地存储')
+    // access token 过期，只移除 access token，保留 refreshToken 供拦截器自动刷新
+    console.log('检测到无效 token，清除 access token（refreshToken 保留供自动刷新）')
     localStorage.removeItem('token')
-    localStorage.removeItem('refreshToken')
-    localStorage.removeItem('userInfo')
     return null
   }
   

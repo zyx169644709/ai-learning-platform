@@ -130,13 +130,18 @@ export const useUserStore = defineStore('user', {
 
     // 加载用户信息
     async loadUser() {
-      // 使用 getValidToken 检查 token 有效性
+      // 使用 getValidToken 检查 access token 有效性
       const token = getValidToken()
       
       if (!token) {
-        console.log('没有有效 token，清除登录状态')
-        this.clearUserState()
-        return
+        // access token 无效，但如果 refreshToken 还在，axios 拦截器会自动刷新
+        const refreshToken = localStorage.getItem('refreshToken')
+        if (!refreshToken) {
+          console.log('没有有效 token 也没有 refreshToken，清除登录状态')
+          this.clearUserState()
+          return
+        }
+        console.log('access token 已过期，尝试通过 refreshToken 自动续期...')
       }
 
       try {
@@ -145,7 +150,7 @@ export const useUserStore = defineStore('user', {
         if (response.success) {
           // 更新用户信息
           this.userInfo = response.data!.user
-          this.token = token
+          this.token = localStorage.getItem('token') || token || ''
           this.isLogin = true
           localStorage.setItem('userInfo', JSON.stringify(response.data!.user))
         } else {
