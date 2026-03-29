@@ -543,12 +543,24 @@ watch(() => route.path, () => {
   // 路由变化时可以选择性地提示用户
 })
 
+// 外部打开弹窗
+const openChat = () => {
+  if (!isOpen.value) {
+    toggleChat()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('open-ai-chat', openChat)
+})
+
 // 组件卸载时清理事件监听
 onUnmounted(() => {
   document.removeEventListener('mousemove', handleResize)
   document.removeEventListener('mouseup', stopResize)
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  window.removeEventListener('open-ai-chat', openChat)
 })
 </script>
 

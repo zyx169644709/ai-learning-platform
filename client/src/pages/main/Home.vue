@@ -4,7 +4,7 @@
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
-        <RouterLink to="/api/deepseek">立即咨询 Vue 专家助教</RouterLink>
+        <span class="callout-link" @click="openAiChat">立即咨询 Vue 专家助教</span>
       </div>
 
       <p>
@@ -53,6 +53,8 @@
 
 <script setup lang="ts">
 import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
+
+const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 // 默认代码示例
 const defaultCode = `// Vue 3 Composition API 示例
@@ -130,6 +132,17 @@ a {
 }
 
 a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.callout-link {
+  color: var(--accent-color);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.callout-link:hover {
   color: var(--accent-hover);
   text-decoration: underline;
 }

@@ -4,7 +4,7 @@
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
-        <RouterLink to="/api/deepseek">找不到资料？让 Vue 专家助教给你推荐</RouterLink>
+        <span class="callout-link" @click="openAiChat">找不到资料？让 Vue 专家助教给你推荐</span>
       </div>
 
       <div class="grid">
@@ -36,6 +36,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+
+const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 type ResType = 'website' | 'document' | 'tool' | 'tutorial'
 interface ResourceCard { 
@@ -210,7 +212,15 @@ a:hover {
   text-decoration: underline;
 }
 
+.callout-link {
+  color: var(--accent-color);
+  cursor: pointer;
+}
 
+.callout-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
 
 .grid {
   display: grid;
