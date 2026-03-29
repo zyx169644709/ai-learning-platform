@@ -20,7 +20,6 @@
             <option value="javascript">JavaScript</option>
             <option value="typescript">TypeScript</option>
             <option value="html">HTML</option>
-            <option value="css">CSS</option>
             <option value="vue">Vue</option>
           </select>
         </div>
@@ -110,7 +109,7 @@
             ></iframe>
             <div v-else class="empty-state">
               <span class="empty-icon">👁️</span>
-              <p>HTML/Vue 代码支持实时预览</p>
+              <p>HTML / Vue 代码支持实时预览</p>
             </div>
           </div>
         </div>
@@ -136,6 +135,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import MonacoEditor from '@/components/common/MonacoEditor.vue'
+import { transform as sucraseTransform } from 'sucrase'
 
 const router = useRouter()
 
@@ -190,57 +190,121 @@ console.log(greet(user));
   html: `<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
     body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #f0f4f8;
       min-height: 100vh;
-      margin: 0;
+    }
+
+    /* 导航栏 */
+    .navbar {
+      background: #2c3e50;
+      padding: 1rem 2rem;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
+    }
+    .navbar .logo { color: #42b883; font-size: 1.4rem; font-weight: bold; }
+    .navbar nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      transition: color 0.2s;
+    }
+    .navbar nav a:hover { color: #42b883; }
+
+    /* 主内容 */
+    .container {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* 卡片网格 */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
     .card {
       background: white;
-      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      text-align: center;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    h1 { color: #42b883; margin: 0 0 10px; }
-    p { color: #666; margin: 0; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .card-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+    .card h3 { color: #2c3e50; margin-bottom: 0.5rem; }
+    .card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
+
+    /* 按鈕 */
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1.2rem;
+      background: #42b883;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #35a876; }
+
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeIn 0.4s ease both; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.2s; }
+
+    /* 响应式 */
+    @media (max-width: 600px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎉 Hello Vue!</h1>
-    <p>欢迎使用代码演练场</p>
+  <div class="navbar">
+    <span class="logo">Vue Learning</span>
+    <nav>
+      <a href="#">首页</a>
+      <a href="#">课程</a>
+      <a href="#">资源</a>
+    </nav>
+  </div>
+  <div class="container">
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>Vue 3 基础</h3>
+        <p>学习组合式 API、响应式系统和组件开发</p>
+        <button class="btn">开始学习</button>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎨</div>
+        <h3>CSS 效果</h3>
+        <p>运用 Grid、Flex、动画创建现代界面</p>
+        <button class="btn">开始学习</button>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>JavaScript</h3>
+        <p>深入理解异步、闭包、原型链等核心概念</p>
+        <button class="btn">开始学习</button>
+      </div>
+    </div>
   </div>
 </body>
 </html>
-`,
-  css: `/* CSS 代码演练 */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #1a1a2e;
-}
-
-.box {
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(45deg, #42b883, #35495e);
-  border-radius: 12px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
 `,
   vue: `<template>
   <div class="app">
@@ -285,7 +349,6 @@ const monacoLanguage = computed(() => {
     javascript: 'javascript',
     typescript: 'typescript',
     html: 'html',
-    css: 'css',
     vue: 'html'
   }
   return map[selectedLanguage.value] || 'javascript'
@@ -296,7 +359,6 @@ const fileName = computed(() => {
     javascript: 'main.js',
     typescript: 'main.ts',
     html: 'index.html',
-    css: 'style.css',
     vue: 'App.vue'
   }
   return names[selectedLanguage.value] || 'main.js'
@@ -307,7 +369,6 @@ const languageLabel = computed(() => {
     javascript: 'JavaScript',
     typescript: 'TypeScript',
     html: 'HTML',
-    css: 'CSS',
     vue: 'Vue SFC'
   }
   return labels[selectedLanguage.value] || 'JavaScript'
@@ -319,35 +380,84 @@ const codeSize = computed(() => {
   return `${(bytes / 1024).toFixed(1)} KB`
 })
 
+
+const buildVueSfcPreview = (sfcCode: string): string => {
+  const tplMatch = sfcCode.match(/<template>([\s\S]*?)<\/template>/)
+  const scriptMatch = sfcCode.match(/<script\b[^>]*>([\s\S]*?)<\/script>/)
+  const styleMatch = sfcCode.match(/<style\b[^>]*>([\s\S]*?)<\/style>/)
+
+  const template = tplMatch?.[1]?.trim() || '<div>无 template</div>'
+  let script = scriptMatch?.[1]?.trim() || ''
+  const style = styleMatch?.[1]?.trim() || ''
+
+  // 移除 Vue 核心 import（在 vue.global.js 中以全局方式提供）
+  script = script.replace(/^import\s+\{[^}]*\}\s+from\s+['"]vue['"];?\s*\n?/gm, '')
+  // 移除其他 import
+  script = script.replace(/^import\s+.+;?\s*\n?/gm, '')
+  // 替换 defineProps / defineEmits 为空操作
+  script = script.replace(/const\s+(\w+)\s*=\s*defineProps(?:<[^>]*>)?\([^)]*\);?/g, 'const $1 = {};')
+  script = script.replace(/const\s+(\w+)\s*=\s*defineEmits(?:<[^>]*>)?\([^)]*\);?/g, 'const $1 = () => {};')
+  script = script.replace(/defineProps(?:<[\s\S]*?>)?\([^)]*\);?\n?/g, '')
+  script = script.replace(/defineEmits(?:<[\s\S]*?>)?\([^)]*\);?\n?/g, '')
+
+  // 处理 TypeScript：用 sucrase 转译
+  const isTs = /<script\b[^>]*lang=["']ts["']/.test(sfcCode)
+  if (isTs) {
+    try {
+      const result = sucraseTransform(script, { transforms: ['typescript'] })
+      script = result.code
+    } catch (_) { /* 转译失败则尝试原文执行 */ }
+  }
+
+  // 提取顶层变量/函数名，自动构建 return 语句
+  const names = new Set<string>()
+  const re = /^(?:const|let|var|async function|function)\s+([a-zA-Z_$]\w*)/gm
+  let m
+  while ((m = re.exec(script)) !== null) names.add(m[1])
+  const returnStmt = names.size > 0 ? `return { ${[...names].join(', ')} }` : 'return {}'
+
+  // 转义模板中的反引号
+  const safeTpl = template.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"><\/script>
+  ${style ? `<style>${style}<\/style>` : ''}
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const { createApp, ref, computed, reactive, watch, watchEffect,
+            onMounted, onUnmounted, onUpdated, nextTick,
+            toRef, toRefs, isRef, unref, provide, inject } = Vue;
+    const defineProps = () => ({});
+    const defineEmits = () => () => {};
+
+    createApp({
+      template: \`${safeTpl}\`,
+      setup() {
+        try {
+          ${script}
+          ${returnStmt}
+        } catch(e) {
+          console.error('[Vue setup error]', e.message);
+          return {};
+        }
+      }
+    }).mount('#app');
+  <\/script>
+</body>
+</html>`
+}
+
 const previewHtml = computed(() => {
   if (selectedLanguage.value === 'html') {
     return code.value
   }
   if (selectedLanguage.value === 'vue') {
-    // 简单的 Vue SFC 预览
-    return `
-      <html>
-      <head>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"><\/script>
-      </head>
-      <body>
-        <div id="app"></div>
-        <script>
-          // 简化的 Vue SFC 解析
-          const template = \`${code.value.match(/<template>([\s\S]*?)<\/template>/)?.[1] || ''}\`;
-          const app = Vue.createApp({
-            template: template,
-            setup() {
-              const count = Vue.ref(0);
-              const message = Vue.ref('Hello Vue 3!');
-              return { count, message };
-            }
-          });
-          app.mount('#app');
-        <\/script>
-      </body>
-      </html>
-    `
+    return buildVueSfcPreview(code.value)
   }
   return ''
 })
@@ -377,7 +487,7 @@ const resetCode = () => {
   showToast('代码已重置')
 }
 
-const runCode = () => {
+const runCode = async () => {
   if (selectedLanguage.value === 'html' || selectedLanguage.value === 'vue') {
     activeTab.value = 'preview'
     return
@@ -387,19 +497,61 @@ const runCode = () => {
   consoleOutput.value = []
   const startTime = performance.now()
   
+  let codeToRun = code.value
+  
+  if (selectedLanguage.value === 'typescript') {
+    try {
+      const result = sucraseTransform(codeToRun, { transforms: ['typescript'] })
+      codeToRun = result.code
+    } catch (err: any) {
+      consoleOutput.value = [{ type: 'error', text: `TypeScript 转译失败: ${err.message}` }]
+      isRunning.value = false
+      return
+    }
+  }
+  
   try {
     // 创建沙箱执行环境
     const logs: Array<{ type: string; text: string }> = []
     const sandbox = {
       console: {
-        log: (...args: any[]) => logs.push({ type: 'log', text: args.join(' ') }),
-        error: (...args: any[]) => logs.push({ type: 'error', text: args.join(' ') }),
-        warn: (...args: any[]) => logs.push({ type: 'warn', text: args.join(' ') }),
-        info: (...args: any[]) => logs.push({ type: 'info', text: args.join(' ') })
+        log: (...args: any[]) => logs.push({ type: 'log', text: args.map((a: any) => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ') }),
+        error: (...args: any[]) => logs.push({ type: 'error', text: args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }),
+        warn: (...args: any[]) => logs.push({ type: 'warn', text: args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') }),
+        info: (...args: any[]) => logs.push({ type: 'info', text: args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') })
       }
     }
-    
-    const fn = new Function(...Object.keys(sandbox), code.value)
+
+    // DOM 沙箱补丁：让 DOMContentLoaded 立即触发，getElementById 返回桩对象，mock fetch
+    const domPreamble = `
+;(function() {
+  var _origAddEL = document.addEventListener.bind(document);
+  document.addEventListener = function(evt, fn, opts) {
+    if (evt === 'DOMContentLoaded') { try { fn(); } catch(e) { console.error(e.message); } }
+    else { _origAddEL(evt, fn, opts); }
+  };
+  var _origGetById = document.getElementById.bind(document);
+  document.getElementById = function(id) {
+    return _origGetById(id) || {
+      addEventListener: function(){}, removeEventListener: function(){},
+      submit: function(){}, reset: function(){},
+      querySelector: function(){ return null; }, querySelectorAll: function(){ return []; },
+      style: {}, classList: { add:function(){}, remove:function(){}, toggle:function(){}, contains:function(){ return false; } },
+      value: '', textContent: '', innerHTML: ''
+    };
+  };
+  window.fetch = function(url) {
+    console.warn('[沙箱] fetch 已拦截: ' + url);
+    return Promise.resolve({
+      ok: true, status: 200,
+      json: function() { return Promise.resolve({ code: 200, message: 'mock ok', data: {}, success: true }); },
+      text: function() { return Promise.resolve(''); },
+      headers: { get: function() { return null; } }
+    });
+  };
+})();
+`
+    const fn = new Function(...Object.keys(sandbox), domPreamble + codeToRun)
     fn(...Object.values(sandbox))
     
     consoleOutput.value = logs
@@ -411,6 +563,7 @@ const runCode = () => {
     isRunning.value = false
   }
 }
+
 
 const showToast = (msg: string) => {
   const toast = document.createElement('div')
@@ -608,6 +761,7 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 14px;
 }
+
 
 .editor-container {
   flex: 1;
