@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-setup-lifecycle",
+  "courseName": "Vue 3 Setup 函数与生命周期钩子",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "setup() 函数在组件实例的哪个阶段被调用？",
+      "options": [
+        "组件实例创建之后",
+        "组件实例创建之前，props 被解析之后",
+        "组件挂载完成之后",
+        "组件更新之前"
+      ],
+      "correctAnswer": 1,
+      "explanation": "setup() 函数在组件实例创建之前、props 被解析之后立即调用。这是组合式 API 的入口点。"
+    },
+    {
+      "id": 2,
+      "question": "在 setup() 函数中，this 关键字的值是？",
+      "options": [
+        "指向组件实例",
+        "指向 window 对象",
+        "undefined",
+        "指向 Vue 实例"
+      ],
+      "correctAnswer": 2,
+      "explanation": "在 setup() 函数中，this 的值是 undefined，因为 setup() 在组件实例创建之前调用，所以无法访问组件实例。"
+    },
+    {
+      "id": 3,
+      "question": "setup() 函数的第二个参数 context 不包含以下哪个属性？",
+      "options": [
+        "attrs",
+        "slots",
+        "emit",
+        "props"
+      ],
+      "correctAnswer": 3,
+      "explanation": "context 对象包含 attrs、slots 和 emit 三个属性。props 是 setup() 的第一个参数，不在 context 中。"
+    },
+    {
+      "id": 4,
+      "question": "为什么推荐使用 <script setup> 语法糖？",
+      "options": [
+        "支持更多生命周期钩子",
+        "更简洁且性能更好",
+        "可以访问 this",
+        "支持所有 Vue 2 特性"
+      ],
+      "correctAnswer": 1,
+      "explanation": "<script setup> 语法糖让代码更简洁，顶层定义的变量自动暴露给模板，并且有更好的运行时性能。"
+    },
+    {
+      "id": 5,
+      "question": "组合式 API 中，哪个生命周期钩子对应选项式 API 的 mounted？",
+      "options": [
+        "onBeforeMount",
+        "onMounted",
+        "onAfterMount",
+        "onReady"
+      ],
+      "correctAnswer": 1,
+      "explanation": "onMounted 是组合式 API 中对应选项式 API mounted 的生命周期钩子，在组件挂载完成后调用。"
+    },
+    {
+      "id": 6,
+      "question": "以下哪个操作适合在 onMounted 钩子中执行？",
+      "options": [
+        "修改响应式数据",
+        "执行 DOM 操作或发起 API 请求",
+        "定义组件 props",
+        "注册全局组件"
+      ],
+      "correctAnswer": 1,
+      "explanation": "onMounted 在 DOM 挂载完成后调用，适合执行 DOM 操作、发起 API 请求、订阅事件等副作用操作。"
+    },
+    {
+      "id": 7,
+      "question": "生命周期钩子必须在什么位置调用？",
+      "options": [
+        "可以在任何位置调用",
+        "只能在 setup() 函数中同步调用",
+        "只能在组件方法中调用",
+        "只能在模板中调用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "生命周期钩子必须在 setup() 函数或 <script setup> 中同步调用，不能在条件语句、循环或异步函数中调用。"
+    },
+    {
+      "id": 8,
+      "question": "组件卸载时，应该在哪个钩子中清理定时器和事件监听器？",
+      "options": [
+        "onBeforeUnmount",
+        "onUnmounted",
+        "onBeforeMount",
+        "onUpdated"
+      ],
+      "correctAnswer": 1,
+      "explanation": "onUnmounted 在组件实例被卸载之后调用，是清理定时器、取消订阅、移除事件监听器等副作用的理想位置。"
+    },
+    {
+      "id": 9,
+      "question": "在 setup() 函数中，为什么要使用 toRefs 解构 props？",
+      "options": [
+        "为了提高性能",
+        "为了保持 props 的响应性",
+        "为了减少代码量",
+        "为了支持 TypeScript"
+      ],
+      "correctAnswer": 1,
+      "explanation": "直接解构 props 会失去响应性，使用 toRefs 可以创建响应式的 ref，保持 props 的响应特性。"
+    },
+    {
+      "id": 10,
+      "question": "以下关于生命周期钩子的说法，哪个是正确的？",
+      "options": [
+        "同一钩子只能注册一次",
+        "同一钩子可以多次注册，按顺序执行",
+        "onUpdated 中修改状态不会导致无限循环",
+        "钩子可以在异步函数中调用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "同一个生命周期钩子可以被多次调用，所有回调函数都会按注册顺序执行。但要注意不要在 onUpdated 中修改状态，否则可能导致无限循环。"
+    }
+  ]
+}

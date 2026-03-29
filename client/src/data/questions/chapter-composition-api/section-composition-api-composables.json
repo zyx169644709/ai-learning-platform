@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-composables",
+  "courseName": "Vue 3 组合式函数 (Composables)",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "组合式函数（Composables）的命名约定是？",
+      "options": [
+        "以 get 开头",
+        "以 use 开头",
+        "以 on 开头",
+        "以 handle 开头"
+      ],
+      "correctAnswer": 1,
+      "explanation": "组合式函数应该以 use 开头，如 useMouse、useFetch、useAuth 等，这样可以清晰表达其用途。"
+    },
+    {
+      "id": 2,
+      "question": "组合式函数相比 Mixins 的主要优势是？",
+      "options": [
+        "性能更好",
+        "来源清晰且没有命名空间冲突",
+        "代码更少",
+        "支持更多功能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Composables 来源清晰（可以明确知道从哪个文件导入），并且不会有命名空间冲突，每个组合式函数返回的对象可以自由重命名。"
+    },
+    {
+      "id": 3,
+      "question": "在组合式函数中，如果直接解构 reactive 对象会发生什么？",
+      "options": [
+        "保持响应性",
+        "失去响应性",
+        "语法错误",
+        "性能提升"
+      ],
+      "correctAnswer": 1,
+      "explanation": "直接解构 reactive 对象会失去响应性。如果需要解构并保持响应性，应该使用 toRefs 工具函数。"
+    },
+    {
+      "id": 4,
+      "question": "如何让组合式函数接受响应式参数（既可以是普通值也可以是 ref）？",
+      "options": [
+        "使用 ref() 包装",
+        "使用 toValue() 处理",
+        "使用 reactive() 包装",
+        "直接使用即可"
+      ],
+      "correctAnswer": 1,
+      "explanation": "toValue() 工具函数可以自动解包 ref 或 getter，返回实际值，这让组合式函数可以同时接受普通值和响应式参数。"
+    },
+    {
+      "id": 5,
+      "question": "组合式函数应该在什么位置调用？",
+      "options": [
+        "可以在任何位置调用",
+        "只能在 setup() 函数或 <script setup> 中同步调用",
+        "只能在 methods 中调用",
+        "只能在生命周期钩子中调用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "组合式函数必须在 setup() 函数或 <script setup> 的顶层同步调用，不能在条件语句、循环或异步函数中调用。"
+    },
+    {
+      "id": 6,
+      "question": "以下哪个是组合式函数的正确返回值？",
+      "options": [
+        "返回普通对象",
+        "返回包含 ref 的对象或响应式对象",
+        "返回字符串",
+        "返回组件实例"
+      ],
+      "correctAnswer": 1,
+      "explanation": "组合式函数通常返回包含 ref 的对象或响应式对象，这样可以保持响应性，让组件能够响应数据变化。"
+    },
+    {
+      "id": 7,
+      "question": "在组合式函数中，如果添加了事件监听器或定时器，应该在什么时候清理？",
+      "options": [
+        "不需要清理",
+        "在 onUnmounted 生命周期钩子中清理",
+        "在 onMounted 中清理",
+        "在函数返回前清理"
+      ],
+      "correctAnswer": 1,
+      "explanation": "在组合式函数中添加的事件监听器、定时器等副作用应该在 onUnmounted 钩子中清理，防止内存泄漏。"
+    },
+    {
+      "id": 8,
+      "question": "组合式函数如何支持 TypeScript 类型推导？",
+      "options": [
+        "自动推导，无需额外处理",
+        "需要手动定义返回类型接口",
+        "不支持 TypeScript",
+        "需要使用特殊的类型注解"
+      ],
+      "correctAnswer": 1,
+      "explanation": "组合式函数对 TypeScript 非常友好，可以自动推导返回类型。对于复杂的返回值，可以定义明确的接口类型。"
+    },
+    {
+      "id": 9,
+      "question": "以下关于组合式函数的最佳实践，哪个是不推荐的？",
+      "options": [
+        "以 use 开头命名",
+        "接受响应式参数",
+        "在组合式函数中直接修改组件的 props",
+        "返回响应式状态"
+      ],
+      "correctAnswer": 2,
+      "explanation": "组合式函数不应该直接修改组件的 props，props 应该是只读的。组合式函数应该返回新的响应式状态或方法。"
+    },
+    {
+      "id": 10,
+      "question": "一个组合式函数可以使用其他组合式函数吗？",
+      "options": [
+        "不可以，只能使用组合式 API",
+        "可以，这是组合式函数的核心优势",
+        "可以，但有限制",
+        "只能使用内置的组合式函数"
+      ],
+      "correctAnswer": 1,
+      "explanation": "组合式函数可以组合使用其他组合式函数，这是其核心优势之一，可以通过组合构建更复杂的逻辑。"
+    }
+  ]
+}

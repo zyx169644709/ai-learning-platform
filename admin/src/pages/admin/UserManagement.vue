@@ -65,11 +65,6 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="progress" label="学习进度" width="150" align="center" header-align="center">
-          <template #default="{ row }">
-            <el-progress :percentage="row.progress" :stroke-width="6" />
-          </template>
-        </el-table-column>
         <el-table-column prop="completedCourses" label="完成课程" width="90" align="center" header-align="center" />
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
@@ -135,8 +130,8 @@
           <el-descriptions-item label="评论数">{{ selectedUser.commentsCount || 0 }} 条</el-descriptions-item>
           <el-descriptions-item label="注册时间">{{ formatRelativeTime(selectedUser.registeredAt) || '暂无数据' }}</el-descriptions-item>
           <el-descriptions-item label="最后登录">{{ formatRelativeTime(selectedUser.lastLogin) || '暂无数据' }}</el-descriptions-item>
-          <el-descriptions-item label="学习进度" :span="2">
-            <el-progress :percentage="selectedUser.progress || 0" />
+          <el-descriptions-item label="完成小节数" :span="2">
+            {{ selectedUser.completedSections || 0 }} 个小节
           </el-descriptions-item>
         </el-descriptions>
 
@@ -297,6 +292,7 @@ const viewUser = async (user: any) => {
       selectedUser.value = {
         ...user,
         completedCourses: stats.completedCount,
+        completedSections: stats.completedSections,
         progress: stats.completionRate,
         courses: stats.completedCourses.map((c: any) => ({
           title: c.courseName,

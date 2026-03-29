@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-computed-watch",
+  "courseName": "Vue 3 计算属性与侦听器",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "计算属性（computed）的核心特性是什么？",
+      "options": [
+        "每次访问都重新计算",
+        "基于缓存，依赖不变时直接返回缓存值",
+        "只能在模板中使用",
+        "不支持异步操作"
+      ],
+      "correctAnswer": 1,
+      "explanation": "计算属性具有缓存特性，只有当依赖的响应式数据发生变化时才会重新计算。依赖不变时，多次访问会直接返回缓存值，从而提高性能。"
+    },
+    {
+      "id": 2,
+      "question": "watch 和 watchEffect 的主要区别是？",
+      "options": [
+        "watchEffect 性能更好",
+        "watch 需要显式指定监听源，watchEffect 自动追踪依赖",
+        "watchEffect 支持访问旧值",
+        "两者功能完全相同"
+      ],
+      "correctAnswer": 1,
+      "explanation": "watch 需要显式指定要监听的数据源，而 watchEffect 会自动追踪其内部使用的所有响应式数据。watchEffect 会立即执行一次，而 watch 默认是惰性的。"
+    },
+    {
+      "id": 3,
+      "question": "如何在计算属性中实现双向绑定（可写计算属性）？",
+      "options": [
+        "使用 v-model 指令",
+        "提供一个包含 get 和 set 方法的对象",
+        "使用 watch 监听计算属性",
+        "计算属性默认就是可写的"
+      ],
+      "correctAnswer": 1,
+      "explanation": "可以通过提供一个包含 get 和 set 方法的对象来创建可写计算属性。get 方法用于返回计算值，set 方法用于处理赋值操作。"
+    },
+    {
+      "id": 4,
+      "question": "watch 选项中，immediate: true 的作用是？",
+      "options": [
+        "立即执行监听回调",
+        "深度监听对象变化",
+        "同步执行回调",
+        "只执行一次监听"
+      ],
+      "correctAnswer": 0,
+      "explanation": "immediate: true 选项会让侦听器在创建时立即执行一次回调函数，而不是等待数据变化后才执行。"
+    },
+    {
+      "id": 5,
+      "question": "在什么场景下应该使用 computed 而不是 watch？",
+      "options": [
+        "需要执行异步操作时",
+        "需要在数据变化时修改 DOM 时",
+        "需要根据其他响应式数据派生出新的值时",
+        "需要在数据变化时发送 API 请求时"
+      ],
+      "correctAnswer": 2,
+      "explanation": "computed 适合用于根据现有响应式数据派生出新的数据，特别是需要缓存以提高性能的场景。watch 更适合执行副作用操作，如异步请求、DOM 操作等。"
+    },
+    {
+      "id": 6,
+      "question": "watch 选项中，deep: true 的作用是？",
+      "options": [
+        "监听数组索引变化",
+        "深度监听对象或数组的内部变化",
+        "立即执行监听回调",
+        "监听所有响应式数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "deep: true 选项可以深度监听对象或数组内部属性的变化，而不仅仅是监听引用的变化。但深度监听会有性能开销，应谨慎使用。"
+    },
+    {
+      "id": 7,
+      "question": "watch 的清理函数（onCleanup）的主要用途是？",
+      "options": [
+        "清理计算属性缓存",
+        "在侦听器失效时清理副作用（如定时器、事件监听器）",
+        "释放响应式数据",
+        "重置监听状态"
+      ],
+      "correctAnswer": 1,
+      "explanation": "清理函数用于在侦听器被停止或组件卸载时执行清理操作，如取消未完成的异步请求、清除定时器、移除事件监听器等，防止内存泄漏。"
+    },
+    {
+      "id": 8,
+      "question": "以下关于计算属性的使用场景，哪个是不推荐的？",
+      "options": [
+        "派生复杂的数据",
+        "格式化显示数据",
+        "在计算属性中执行 API 请求",
+        "根据多个字段生成 fullName"
+      ],
+      "correctAnswer": 2,
+      "explanation": "不推荐在计算属性中执行副作用操作（如异步请求、DOM 操作等）。计算属性应该是纯函数，只用于计算和返回值。副作用操作应该使用 watch 或 watchEffect。"
+    },
+    {
+      "id": 9,
+      "question": "watch 选项中，flush: 'post' 的作用是？",
+      "options": [
+        "在组件更新前执行回调",
+        "在组件更新后执行回调",
+        "同步执行回调",
+        "延迟执行回调"
+      ],
+      "correctAnswer": 1,
+      "explanation": "flush: 'post' 选项会让侦听器回调在组件更新后执行，这样可以确保在回调中访问到更新后的 DOM。默认值是 'pre'（在更新前执行）。"
+    },
+    {
+      "id": 10,
+      "question": "当需要监听一个对象的多个不同属性时，最佳实践是？",
+      "options": [
+        "使用 deep: true 监听整个对象",
+        "监听 getter 函数返回该属性 () => obj.key",
+        "使用 watchEffect 监听整个对象",
+        "使用计算属性包装后监听"
+      ],
+      "correctAnswer": 1,
+      "explanation": "分别监听每个属性可以避免深度监听带来的性能开销，是较为稳妥的实践方式；Vue3 中也可使用 getter 函数批量监听多个属性。"
+    }
+  ]
+}

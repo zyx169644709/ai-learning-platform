@@ -155,6 +155,26 @@ export const getUsers = async (req: Request, res: Response) => {
       prisma.user.count({ where })
     ])
     
+    // 获取每个用户的完成小节数
+    const userIds = users.map(user => user.id)
+    const sectionCompletions = await prisma.sectionCompletion.groupBy({
+      by: ['userId'],
+      where: {
+        userId: {
+          in: userIds
+        }
+      },
+      _count: {
+        sectionId: true
+      }
+    })
+    
+    // 创建完成小节数映射
+    const completedSectionsMap = new Map<string, number>()
+    sectionCompletions.forEach(completion => {
+      completedSectionsMap.set(completion.userId, completion._count.sectionId)
+    })
+    
     // 格式化返回数据
     const formattedUsers = users.map(user => ({
       id: user.id,
@@ -163,7 +183,7 @@ export const getUsers = async (req: Request, res: Response) => {
       avatar: user.avatar || '',
       role: user.role,
       status: user.status || 'active',
-      progress: 0, // TODO: 计算实际学习进度
+      completedSections: completedSectionsMap.get(user.id) || 0,
       completedCourses: 0, // TODO: 从学习记录计算
       lastLogin: user.lastLoginAt ? formatDate(user.lastLoginAt) : '-',
       registeredAt: formatDate(user.createdAt),

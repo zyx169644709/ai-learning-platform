@@ -303,10 +303,13 @@ const escapeHtml = (str: string): string => {
   })
 }
 
+// 渲染"建设中"占位内容
 const renderUnderConstruction = () => {
-  const placeholder = `# 正在开发中\n\n本节内容正在编写中，敬请期待。\n\n> 如果你是维护者：请在 \`src/content/markdown/${chapter.value?.slug}\` 下添加对应的 \`.md\` 文件。`
-  const rawHtml = md.render(placeholder)
-  html.value = sanitizeHtml(rawHtml)
+  html.value = `<div style="text-align:center;padding:60px 20px;color:var(--text-tertiary);">
+    <p style="font-size:48px;">🚧</p>
+    <h2 style="color:var(--text-secondary);">内容建设中</h2>
+    <p>该小节内容正在准备中，敬请期待...</p>
+  </div>`
 }
 
 const load = async () => {
@@ -549,6 +552,22 @@ watch([section], async () => {
   box-shadow: 0 1px 0 rgba(148, 163, 184, 0.1) inset;
 }
 
+.md :deep(pre[data-lang])::after {
+  content: attr(data-lang);
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #94a3b8);
+  background: var(--bg-secondary, rgba(148, 163, 184, 0.15));
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
 .md :deep(code) {
   font-family: 'Fira Code', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
   font-size: 0.9rem;
@@ -563,22 +582,6 @@ watch([section], async () => {
   padding: 0;
   border-radius: 0;
   color: var(--code-text);
-}
-
-/* 右上角语言标签 */
-.md :deep(pre[data-lang]::after) {
-  content: attr(data-lang);
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 12px;
-  line-height: 1;
-  color: var(--code-badge-text);
-  background: var(--code-badge-bg);
-  border: 1px solid var(--code-badge-border);
-  padding: 4px 6px;
-  border-radius: 6px;
-  text-transform: uppercase;
 }
 
 /* highlight.js 令牌颜色（近似文档截图风格） */

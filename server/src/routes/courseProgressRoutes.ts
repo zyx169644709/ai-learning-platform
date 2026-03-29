@@ -92,6 +92,11 @@ router.get('/users/:userId/stats', authMiddleware, async (req, res) => {
       }
     })
 
+    // 获取完成小节数
+    const completedSections = await prisma.sectionCompletion.count({
+      where: { userId }
+    })
+
     // 定义课程列表
     const allCourses = [
       { id: 'html-basics', name: 'HTML 核心基础' },
@@ -127,6 +132,7 @@ router.get('/users/:userId/stats', authMiddleware, async (req, res) => {
         completedCount,
         totalCourses,
         completionRate: parseFloat(completionRate),
+        completedSections,
         courseStats,
         completedCourses: completedCourses.map((c: any) => ({
           courseId: c.courseId,

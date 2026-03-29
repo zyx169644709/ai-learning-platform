@@ -147,6 +147,24 @@ const getRandomQuestions = (questions: Question[], count?: number): Question[] =
   return shuffled.slice(0, count)
 }
 
+// 打乱单道题目的选项顺序，并重新映射 correctAnswer
+const shuffleOptions = (question: Question): Question => {
+  // 创建带原始索引的选项数组
+  const indexed = question.options.map((opt, i) => ({ opt, i }))
+  // Fisher-Yates 洗牌
+  for (let j = indexed.length - 1; j > 0; j--) {
+    const k = Math.floor(Math.random() * (j + 1));
+    [indexed[j], indexed[k]] = [indexed[k], indexed[j]]
+  }
+  // 找到正确答案在新数组中的位置
+  const newCorrect = indexed.findIndex(item => item.i === question.correctAnswer)
+  return {
+    ...question,
+    options: indexed.map(item => item.opt),
+    correctAnswer: newCorrect
+  }
+}
+
 const currentQuestion = computed(() => selectedQuestions.value[currentQuestionIndex.value])
 const progressPercent = computed(() => ((currentQuestionIndex.value + 1) / selectedQuestions.value.length) * 100)
 
@@ -211,8 +229,9 @@ const resetQuiz = () => {
   answered.value = false
   userAnswers.value = []
   showResult.value = false
-  // 随机抽取题目
+  // 随机抽取题目，并打乱每题的选项顺序
   selectedQuestions.value = getRandomQuestions(props.quizData.questions, props.quizData.questionCount)
+    .map(q => shuffleOptions(q))
 }
 
 const closeModal = () => {
