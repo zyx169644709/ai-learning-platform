@@ -417,7 +417,7 @@ element.innerText = '新内容';</code></pre>
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { courseProgressService } from '@/services/courseProgressService'
-import QuizModal from '@/components/QuizModal.vue'
+import QuizModal from '@/pages/misc/QuizModal.vue'
 import quizData from '@/data/questions/basics/js-basics-quiz.json'
 
 const router = useRouter()

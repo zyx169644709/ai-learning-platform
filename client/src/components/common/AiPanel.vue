@@ -2,7 +2,7 @@
   <div class="ai-panel">
     <!-- AI 智能工具 -->
     <div class="section">
-      <h3 class="section-title">🤖 智能助手</h3>
+      <h3 class="section-title">🤖 理论实操</h3>
       <div class="ai-buttons">
         <button class="ai-btn" @click="router.push('/api/deepseek')">
           <span class="ai-btn-icon">💬</span>

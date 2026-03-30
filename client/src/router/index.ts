@@ -4,10 +4,10 @@ import Home from '../pages/main/Home.vue'
 import Courses from '../pages/courses/Courses.vue'
 import CourseDetail from '../pages/courses/CourseDetail.vue'
 import ChapterContent from '../pages/courses/ChapterContent.vue'
-import Login from '../pages/auth/Login.vue'
-import Register from '../pages/auth/Register.vue'
+import Login from '../pages/user/Login.vue'
+import Register from '../pages/user/Register.vue'
 import Profile from '../pages/user/Profile.vue'
-import ChangePassword from '../pages/auth/ChangePassword.vue'
+import ChangePassword from '../pages/user/ChangePassword.vue'
 import EditProfile from '../pages/user/EditProfile.vue'
 import MyFavorites from '../pages/user/MyFavorites.vue'
 import Resources from '../pages/resources/Resources.vue'
@@ -85,7 +85,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/code-playground',
     name: 'CodePlayground',
-    component: () => import('../pages/code/CodePlayground.vue'),
+    component: () => import('../components/common/CodePlayground.vue'),
     meta: { topOnly: true, hideLeftSidebar: true, hideRightSidebar: true }
   },
   {
@@ -153,6 +153,12 @@ const routes: RouteRecordRaw[] = [
     name: 'VueIntro',
     component: () => import('../pages/learn/basics/VueIntro.vue'),
     meta: { hideLeftSidebar: true, hideRightSidebar: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../pages/error/NotFound.vue'),
+    meta: { topOnly: true, hideLeftSidebar: true, hideRightSidebar: true }
   },
 ]
 

@@ -220,6 +220,7 @@ const {
   showEditDialog: showCreateDialog,
   editingItem: editingCourse,
   saving,
+  formRef,
   loadItems,
   editItem,
   saveItem,
@@ -381,6 +382,7 @@ const exportFields = [
 
 // 保存课程
 const saveCourse = async () => {
+  if (!formRef.value) return
   await saveItem(courseForm, loadCourses)
 }
 

@@ -45,6 +45,12 @@
             </div>
           </div>
           <div class="header-actions">
+            <button class="header-btn" :class="{ 'is-active': isPinned }" @click="togglePin" :title="isPinned ? '取消钉住' : '钉住窗口'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 17v5"/>
+                <path d="M8 3h8l-1 5 3 3v2H6v-2l3-3-1-5z"/>
+              </svg>
+            </button>
             <button class="header-btn" @click="clearMessages" title="清空对话">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -145,6 +151,7 @@ const messages = ref<ChatMessage[]>([])
 const messagesContainer = ref<HTMLElement | null>(null)
 const inputRef = ref<HTMLTextAreaElement | null>(null)
 const chatWindowRef = ref<HTMLElement | null>(null)
+const isPinned = ref(false)
 
 // 窗口尺寸状态
 const windowWidth = ref(380)
@@ -485,6 +492,21 @@ const toggleChat = () => {
   }
 }
 
+const togglePin = () => {
+  isPinned.value = !isPinned.value
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (!isOpen.value || isPinned.value || isDragging.value || isResizing.value) return
+
+  const target = event.target as Node | null
+  if (!target) return
+
+  if (chatWindowRef.value?.contains(target)) return
+
+  isOpen.value = false
+}
+
 // 发送消息
 const sendMessage = async (text: string) => {
   const question = text.trim()
@@ -538,7 +560,6 @@ const clearMessages = () => {
   }]
 }
 
-// 监听路由变化，更新上下文提示
 watch(() => route.path, () => {
   // 路由变化时可以选择性地提示用户
 })
@@ -552,6 +573,7 @@ const openChat = () => {
 
 onMounted(() => {
   window.addEventListener('open-ai-chat', openChat)
+  document.addEventListener('mousedown', handleClickOutside)
 })
 
 // 组件卸载时清理事件监听
@@ -560,6 +582,7 @@ onUnmounted(() => {
   document.removeEventListener('mouseup', stopResize)
   document.removeEventListener('mousemove', handleDrag)
   document.removeEventListener('mouseup', stopDrag)
+  document.removeEventListener('mousedown', handleClickOutside)
   window.removeEventListener('open-ai-chat', openChat)
 })
 </script>
@@ -745,6 +768,11 @@ onUnmounted(() => {
 
 .header-btn:hover {
   background: rgba(255, 255, 255, 0.3);
+}
+
+.header-btn.is-active {
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 
 /* 消息区域 */

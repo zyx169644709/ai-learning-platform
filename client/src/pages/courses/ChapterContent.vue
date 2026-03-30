@@ -74,7 +74,7 @@ import DOMPurify from 'dompurify'
 import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
 import { favoriteService } from '@/services/favoriteService'
 import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
-import QuizModal from '@/components/QuizModal.vue'
+import QuizModal from '@/pages/misc/QuizModal.vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -104,7 +104,7 @@ const md = new MarkdownIt({
     
     if (actualLang && hljs.getLanguage(actualLang)) {
       try {
-        return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${hljs.highlight(str, { language: actualLang }).value}</code></pre>`
+        return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${hljs.highlight(actualLang, str).value}</code></pre>`
       } catch { }
     }
     return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${str.replace(/[&<>"']/g, (char) => {

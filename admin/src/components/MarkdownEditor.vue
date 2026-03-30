@@ -101,7 +101,7 @@ const md = new MarkdownIt({
   highlight: (str: string, lang: string): string => {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return `<pre class="hljs"><code class="hljs">${hljs.highlight(str, { language: lang }).value}</code></pre>`
+        return `<pre class="hljs"><code class="hljs">${hljs.highlight(lang, str).value}</code></pre>`
       } catch { }
     }
     return `<pre class="hljs"><code class="hljs">${str.replace(/[&<>"']/g, (char) => {
