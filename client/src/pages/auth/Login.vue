@@ -68,7 +68,7 @@
 
             <div class="form-options">
               <el-checkbox v-model="rememberMe">记住我</el-checkbox>
-              <el-link type="primary" :underline="false">忘记密码？</el-link>
+              <el-link type="primary" underline="never">忘记密码？</el-link>
             </div>
 
             <el-form-item>
@@ -108,7 +108,7 @@
           <div class="form-footer">
             <p class="register-link">
               还没有账号？
-              <el-link type="primary" :underline="false" @click="goToRegister" title="立即注册 - 点击创建新的 Vue 学习平台账户">
+              <el-link type="primary" underline="never" @click="goToRegister" title="立即注册 - 点击创建新的 Vue 学习平台账户">
                 立即注册
               </el-link>
             </p>

@@ -87,6 +87,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
         joinDate: discussion.author?.createdAt ? formatTimeAgo(discussion.author.createdAt) : '未知时间'
       },
       time: formatTimeAgo(discussion.createdAt),
+      createdAt: discussion.createdAt,
       isLiked: false
     }))
     
@@ -169,6 +170,7 @@ export const createDiscussion = async (req: Request, res: Response) => {
         joinDate: discussion.author?.createdAt ? formatTimeAgo(discussion.author.createdAt) : '未知时间'
       },
       time: formatTimeAgo(discussion.createdAt),
+      createdAt: discussion.createdAt,
       isLiked: false,
       comments: []
     }
@@ -244,6 +246,7 @@ export const getDiscussionById = async (req: Request, res: Response) => {
         joinDate: discussion.author?.createdAt ? formatTimeAgo(discussion.author.createdAt) : '未知时间'
       },
       time: formatTimeAgo(discussion.createdAt),
+      createdAt: discussion.createdAt,
       isLiked: false,
       comments: discussion.comments.map(comment => ({
         id: comment.id,

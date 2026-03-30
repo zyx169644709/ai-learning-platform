@@ -97,25 +97,16 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { useChaptersStore } from '@/stores/chaptersStore'
 import { favoriteService } from '@/services/favoriteService'
 
 const router = useRouter()
 const userStore = useUserStore()
-const chaptersStore = useChaptersStore()
 
 const isLogin = computed(() => userStore.isLogin)
 
 // 学习进度
 const learnedCount = ref(0)
-const totalChapters = computed(() => {
-  let count = 0
-  for (const ch of chaptersStore.chapters) {
-    if (ch.children) count += ch.children.length
-    else count++
-  }
-  return count || 1
-})
+const totalChapters = ref(1)
 const progressPercent = computed(() => Math.min(100, Math.round((learnedCount.value / totalChapters.value) * 100)))
 
 // 最近收藏
@@ -153,29 +144,66 @@ const formatTime = (dateStr: string) => {
   return d.toLocaleDateString('zh-CN')
 }
 
+const getDiscussionTimestamp = (item: any) => {
+  const rawCreatedAt = item?.createdAt ? new Date(item.createdAt).getTime() : NaN
+  if (!Number.isNaN(rawCreatedAt)) {
+    return rawCreatedAt
+  }
+
+  const timeText = String(item?.time || '').trim()
+  const now = Date.now()
+
+  if (!timeText || timeText === '刚刚') {
+    return now
+  }
+
+  const minuteMatch = timeText.match(/(\d+)\s*分钟前/)
+  if (minuteMatch) {
+    return now - Number(minuteMatch[1]) * 60 * 1000
+  }
+
+  const hourMatch = timeText.match(/(\d+)\s*小时前/)
+  if (hourMatch) {
+    return now - Number(hourMatch[1]) * 60 * 60 * 1000
+  }
+
+  const dayMatch = timeText.match(/(\d+)\s*天前/)
+  if (dayMatch) {
+    return now - Number(dayMatch[1]) * 24 * 60 * 60 * 1000
+  }
+
+  return 0
+}
+
 onMounted(async () => {
   // 加载热门资源
   try {
-    const res = await fetch('http://localhost:3000/api/resources?status=published&limit=3&sort=viewCount')
+    const res = await fetch('/api/resources?status=published&limit=3&sort=viewCount')
     const json = await res.json()
     const items = json?.data?.items || json?.data || []
     if (Array.isArray(items)) {
-      hotResources.value = items.slice(0, 3).map((r: any) => ({ id: r.id, title: r.title, viewCount: r.viewCount || 0 }))
+      hotResources.value = items
+        .sort((a: any, b: any) => (b.viewCount || 0) - (a.viewCount || 0))
+        .slice(0, 3)
+        .map((r: any) => ({ id: r.id, title: r.title, viewCount: r.viewCount || 0 }))
     }
   } catch {}
 
   // 加载社区动态
   try {
-    const res = await fetch('http://localhost:3000/api/community?limit=3')
+    const res = await fetch('/api/community?limit=3')
     const json = await res.json()
     // API直接返回数组或 { data: [...] } 或 { data: { items: [...] } }
     const items = Array.isArray(json) ? json : (json?.data?.items || json?.data || [])
     if (Array.isArray(items)) {
-      recentDiscussions.value = items.slice(0, 3).map((d: any) => ({ id: d.id, title: d.title, createdAt: d.time || d.createdAt || '' }))
+      recentDiscussions.value = items
+        .sort((a: any, b: any) => getDiscussionTimestamp(b) - getDiscussionTimestamp(a))
+        .slice(0, 3)
+        .map((d: any) => ({ id: d.id, title: d.title, createdAt: d.time || '' }))
     }
   } catch {}
 
-  // 登录用户：加载收藏
+  // 登录用户：加载收藏 + 学习进度
   if (userStore.isLogin) {
     try {
       const result = await favoriteService.getFavorites()
@@ -189,6 +217,19 @@ onMounted(async () => {
             targetId: f.target.id,
             title: f.target.title || '未知'
           }))
+      }
+    } catch {}
+
+    // 学习进度：从数据库获取已完成小节数
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch('/api/chapters/progress/overview', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const json = await res.json()
+      if (json.success && Array.isArray(json.data)) {
+        learnedCount.value = json.data.reduce((sum: number, ch: any) => sum + (ch.completedCount || 0), 0)
+        totalChapters.value = json.data.reduce((sum: number, ch: any) => sum + (ch.totalSections || 0), 0) || 1
       }
     } catch {}
   }

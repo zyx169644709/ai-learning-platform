@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 // 获取资源列表
 export const getResources = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, title, type, status } = req.query
+    const { page = 1, limit = 20, title, type, status, sort } = req.query
     
     const where: any = {}
     
@@ -25,13 +25,22 @@ export const getResources = async (req: Request, res: Response) => {
     
     const skip = (Number(page) - 1) * Number(limit)
     const take = Number(limit)
+
+    const sortableFields: Record<string, any> = {
+      viewCount: { viewCount: 'desc' },
+      likeCount: { likeCount: 'desc' },
+      favoriteCount: { favoriteCount: 'desc' },
+      createdAt: { createdAt: 'desc' },
+      updatedAt: { updatedAt: 'desc' }
+    }
+    const orderBy = sortableFields[sort as string] || { createdAt: 'desc' }
     
     const [resources, total] = await Promise.all([
       prisma.resource.findMany({
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         select: {
           id: true,
           title: true,

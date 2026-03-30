@@ -99,9 +99,9 @@
             <div class="form-options">
               <el-checkbox v-model="agreeTerms">
                 我已阅读并同意
-                <el-link type="primary" :underline="false">服务条款</el-link>
+                <el-link type="primary" underline="never">服务条款</el-link>
                 和
-                <el-link type="primary" :underline="false">隐私政策</el-link>
+                <el-link type="primary" underline="never">隐私政策</el-link>
               </el-checkbox>
             </div>
 
@@ -142,7 +142,7 @@
           <div class="form-footer">
             <p class="login-link">
               已有账户？
-              <el-link type="primary" :underline="false" @click="goToLogin">
+              <el-link type="primary" underline="never" @click="goToLogin">
                 立即登录
               </el-link>
             </p>
