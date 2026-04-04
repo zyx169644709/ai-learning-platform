@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { favoriteService } from '@/services/favoriteService'
 import { ElMessage } from 'element-plus'
@@ -225,8 +225,11 @@ const toggleFavorite = async () => {
   }
 }
 
-onMounted(async () => {
+// 加载资源详情
+const loadResourceDetail = async () => {
   const resourceId = route.params.id as string
+  if (!resourceId) return
+  
   try {
     const res = await fetch(`http://localhost:3000/api/resources/${resourceId}`)
     const result = await res.json()
@@ -256,6 +259,20 @@ onMounted(async () => {
   } catch (error) {
     console.error('加载资源详情失败:', error)
   }
+}
+
+// 监听路由参数变化
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      loadResourceDetail()
+    }
+  }
+)
+
+onMounted(() => {
+  loadResourceDetail()
 })
 </script>
 

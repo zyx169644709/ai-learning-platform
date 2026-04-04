@@ -11945,6 +11945,7 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
+    category: string | null
     cover: string | null
     icon: string | null
     url: string | null
@@ -11962,6 +11963,7 @@ export namespace Prisma {
     id: string | null
     title: string | null
     description: string | null
+    category: string | null
     cover: string | null
     icon: string | null
     url: string | null
@@ -11979,6 +11981,7 @@ export namespace Prisma {
     id: number
     title: number
     description: number
+    category: number
     cover: number
     icon: number
     url: number
@@ -12011,6 +12014,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    category?: true
     cover?: true
     icon?: true
     url?: true
@@ -12028,6 +12032,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    category?: true
     cover?: true
     icon?: true
     url?: true
@@ -12045,6 +12050,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    category?: true
     cover?: true
     icon?: true
     url?: true
@@ -12150,6 +12156,7 @@ export namespace Prisma {
     id: string
     title: string
     description: string | null
+    category: string | null
     cover: string | null
     icon: string | null
     url: string
@@ -12187,6 +12194,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    category?: boolean
     cover?: boolean
     icon?: boolean
     url?: boolean
@@ -12208,6 +12216,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    category?: boolean
     cover?: boolean
     icon?: boolean
     url?: boolean
@@ -12227,6 +12236,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    category?: boolean
     cover?: boolean
     icon?: boolean
     url?: boolean
@@ -12246,6 +12256,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    category?: boolean
     cover?: boolean
     icon?: boolean
     url?: boolean
@@ -12260,7 +12271,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "cover" | "icon" | "url" | "type" | "status" | "authorId" | "viewCount" | "likeCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["resource"]>
+  export type ResourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "category" | "cover" | "icon" | "url" | "type" | "status" | "authorId" | "viewCount" | "likeCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["resource"]>
   export type ResourceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     favorites?: boolean | Resource$favoritesArgs<ExtArgs>
     author?: boolean | Resource$authorArgs<ExtArgs>
@@ -12283,6 +12294,7 @@ export namespace Prisma {
       id: string
       title: string
       description: string | null
+      category: string | null
       cover: string | null
       icon: string | null
       url: string
@@ -12723,6 +12735,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Resource", 'String'>
     readonly title: FieldRef<"Resource", 'String'>
     readonly description: FieldRef<"Resource", 'String'>
+    readonly category: FieldRef<"Resource", 'String'>
     readonly cover: FieldRef<"Resource", 'String'>
     readonly icon: FieldRef<"Resource", 'String'>
     readonly url: FieldRef<"Resource", 'String'>
@@ -16589,6 +16602,7 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     description: 'description',
+    category: 'category',
     cover: 'cover',
     icon: 'icon',
     url: 'url',
@@ -17468,6 +17482,7 @@ export namespace Prisma {
     id?: StringFilter<"Resource"> | string
     title?: StringFilter<"Resource"> | string
     description?: StringNullableFilter<"Resource"> | string | null
+    category?: StringNullableFilter<"Resource"> | string | null
     cover?: StringNullableFilter<"Resource"> | string | null
     icon?: StringNullableFilter<"Resource"> | string | null
     url?: StringFilter<"Resource"> | string
@@ -17488,6 +17503,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
     cover?: SortOrderInput | SortOrder
     icon?: SortOrderInput | SortOrder
     url?: SortOrder
@@ -17511,6 +17527,7 @@ export namespace Prisma {
     NOT?: ResourceWhereInput | ResourceWhereInput[]
     title?: StringFilter<"Resource"> | string
     description?: StringNullableFilter<"Resource"> | string | null
+    category?: StringNullableFilter<"Resource"> | string | null
     cover?: StringNullableFilter<"Resource"> | string | null
     icon?: StringNullableFilter<"Resource"> | string | null
     url?: StringFilter<"Resource"> | string
@@ -17531,6 +17548,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
     cover?: SortOrderInput | SortOrder
     icon?: SortOrderInput | SortOrder
     url?: SortOrder
@@ -17557,6 +17575,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Resource"> | string
     title?: StringWithAggregatesFilter<"Resource"> | string
     description?: StringNullableWithAggregatesFilter<"Resource"> | string | null
+    category?: StringNullableWithAggregatesFilter<"Resource"> | string | null
     cover?: StringNullableWithAggregatesFilter<"Resource"> | string | null
     icon?: StringNullableWithAggregatesFilter<"Resource"> | string | null
     url?: StringWithAggregatesFilter<"Resource"> | string
@@ -18539,6 +18558,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -18558,6 +18578,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -18577,6 +18598,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -18596,6 +18618,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -18615,6 +18638,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -18633,6 +18657,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -18650,6 +18675,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -19556,6 +19582,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     icon?: SortOrder
     url?: SortOrder
@@ -19580,6 +19607,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     icon?: SortOrder
     url?: SortOrder
@@ -19597,6 +19625,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     icon?: SortOrder
     url?: SortOrder
@@ -21304,6 +21333,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -21322,6 +21352,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -21656,6 +21687,7 @@ export namespace Prisma {
     id?: StringFilter<"Resource"> | string
     title?: StringFilter<"Resource"> | string
     description?: StringNullableFilter<"Resource"> | string | null
+    category?: StringNullableFilter<"Resource"> | string | null
     cover?: StringNullableFilter<"Resource"> | string | null
     icon?: StringNullableFilter<"Resource"> | string | null
     url?: StringFilter<"Resource"> | string
@@ -23319,6 +23351,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -23337,6 +23370,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -23516,6 +23550,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -23534,6 +23569,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -24120,6 +24156,7 @@ export namespace Prisma {
     id?: string
     title: string
     description?: string | null
+    category?: string | null
     cover?: string | null
     icon?: string | null
     url: string
@@ -24406,6 +24443,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -24424,6 +24462,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
@@ -24442,6 +24481,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string

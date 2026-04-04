@@ -178,6 +178,7 @@ model Resource {
   id            String     @id @default(cuid())
   title         String
   description   String?
+  category      String?
   cover         String?
   icon          String?
   url           String
@@ -195,6 +196,7 @@ model Resource {
 
   @@index([type])
   @@index([status])
+  @@index([category])
   @@map("resources")
 }
 

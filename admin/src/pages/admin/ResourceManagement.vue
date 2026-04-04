@@ -58,11 +58,12 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="url" label="链接" width="200" align="center" header-align="center">
+        <el-table-column prop="category" label="资源类别" width="120" align="center" header-align="center">
           <template #default="{ row }">
-            <el-link :href="row.url" target="_blank" type="primary" :title="row.url" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
-              {{ row.url.length > 30 ? row.url.substring(0, 30) + '...' : row.url }}
-            </el-link>
+            <el-tag v-if="row.category" :type="getCategoryTagType(row.category)">
+              {{ getCategoryLabel(row.category) }}
+            </el-tag>
+            <span v-else style="color: var(--el-text-color-secondary)">未分类</span>
           </template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center" header-align="center">
@@ -128,6 +129,16 @@
             :rows="3"
             placeholder="请输入资源描述" 
           />
+        </el-form-item>
+        <el-form-item label="资源类别" prop="category">
+          <el-select v-model="resourceForm.category" placeholder="请选择资源类别">
+            <el-option label="学习文档" value="docs" />
+            <el-option label="项目模板" value="templates" />
+            <el-option label="工具配置" value="configs" />
+            <el-option label="代码片段" value="snippets" />
+            <el-option label="面试资源" value="interview" />
+            <el-option label="插件工具" value="plugins" />
+          </el-select>
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -276,6 +287,7 @@ const resourceForm = reactive({
   id: '',
   title: '',
   description: '',
+  category: '',
   cover: '',
   icon: '',
   url: '',
@@ -330,6 +342,7 @@ const createResource = () => {
     id: '',
     title: '',
     description: '',
+    category: '',
     cover: '',
     icon: '',
     url: '',
@@ -352,6 +365,7 @@ const editResource = async (row: any) => {
         id: data.id,
         title: data.title,
         description: data.description || '',
+        category: data.category || '',
         cover: data.cover || '',
         icon: data.icon || '',
         url: data.url,
@@ -470,6 +484,31 @@ const getStatusLabel = (status: string) => {
     archived: '已归档'
   }
   return map[status] || status
+}
+
+// 资源类别标签
+const getCategoryTagType = (category: string): 'success' | 'info' | 'warning' | 'danger' | '' => {
+  const typeMap: Record<string, 'success' | 'info' | 'warning' | 'danger' | ''> = {
+    'docs': 'success',      // 学习文档 - 
+    'templates': 'danger',    // 项目模板 - 
+    'configs': 'warning',   // 工具配置 - 
+    'snippets': 'success',         // 代码片段 - 
+    'interview': 'warning',  // 面试资源 - 
+    'plugins': 'danger'       // 插件工具 - 
+  }
+  return typeMap[category] || 'info'
+}
+
+const getCategoryLabel = (category: string): string => {
+  const map: Record<string, string> = {
+    'docs': '学习文档',
+    'templates': '项目模板',
+    'configs': '工具配置',
+    'snippets': '代码片段',
+    'interview': '面试资源',
+    'plugins': '插件工具'
+  }
+  return map[category] || category
 }
 
 // 初始化

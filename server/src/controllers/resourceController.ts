@@ -45,6 +45,7 @@ export const getResources = async (req: Request, res: Response) => {
           id: true,
           title: true,
           description: true,
+          category: true,
           cover: true,
           icon: true,
           url: true,
@@ -65,6 +66,7 @@ export const getResources = async (req: Request, res: Response) => {
       id: resource.id,
       title: resource.title,
       description: resource.description || '',
+      category: resource.category || '',
       cover: resource.cover || '',
       icon: resource.icon || '',
       url: resource.url,
@@ -118,7 +120,7 @@ export const getResource = async (req: Request, res: Response) => {
 // 创建资源
 export const createResource = async (req: Request, res: Response) => {
   try {
-    const { title, description, cover, icon, url, type, status, tags } = req.body
+    const { title, description, category, cover, icon, url, type, status, tags } = req.body
     
     if (!title || !url) {
       return res.status(400).json({ success: false, message: '标题和链接不能为空' })
@@ -128,6 +130,7 @@ export const createResource = async (req: Request, res: Response) => {
       data: {
         title,
         description: description || '',
+        category: category || null,
         cover: cover || '',
         icon: icon || '',
         url,
@@ -152,7 +155,7 @@ export const createResource = async (req: Request, res: Response) => {
 export const updateResource = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, description, cover, icon, url, type, status, tags } = req.body
+    const { title, description, category, cover, icon, url, type, status, tags } = req.body
     
     const resource = await prisma.resource.findUnique({
       where: { id }
@@ -167,6 +170,7 @@ export const updateResource = async (req: Request, res: Response) => {
       data: {
         title: title || resource.title,
         description: description !== undefined ? description : resource.description,
+        category: category !== undefined ? category : resource.category,
         cover: cover !== undefined ? cover : resource.cover,
         icon: icon !== undefined ? icon : resource.icon,
         url: url || resource.url,
