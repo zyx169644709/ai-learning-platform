@@ -20,15 +20,15 @@ import SearchResults from '../pages/misc/SearchResults.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/home', name: 'Home', component: Home },
-  { path: '/courses', name: 'Courses', component: Courses },
-  { path: '/course/:id', name: 'CourseDetail', component: CourseDetail },
+  { path: '/courses', name: 'Courses', component: Courses, meta: { layout: 'course' } },
+  { path: '/course/:id', name: 'CourseDetail', component: CourseDetail, meta: { layout: 'course' } },
   { path: '/chapter/:chapterSlug/:sectionSlug?/:subSlug?', name: 'ChapterContent', component: ChapterContent },
-  { path: '/resources', name: 'Resources', component: Resources },
-  { path: '/resource/:id', name: 'ResourceDetail', component: ResourceDetail },
-  { path: '/community', name: 'Community', component: Community },
+  { path: '/resources', name: 'Resources', component: Resources, meta: { layout: 'resource' } },
+  { path: '/resource/:id', name: 'ResourceDetail', component: ResourceDetail, meta: { layout: 'resource' } },
+  { path: '/community', name: 'Community', component: Community, meta: { hideLeftSidebar: true } },
   { path: '/discussion/:id', name: 'DiscussionDetail', component: DiscussionDetail, meta: { hideLeftSidebar: true, hideRightSidebar: true } },
-  { path: '/login', name: 'Login', component: Login },
-  { path: '/register', name: 'Register', component: Register },
+  { path: '/login', name: 'Login', component: Login, meta: { layout: 'auth' } },
+  { path: '/register', name: 'Register', component: Register, meta: { layout: 'auth' } },
   {
     path: '/',
      name: 'Welcome', 

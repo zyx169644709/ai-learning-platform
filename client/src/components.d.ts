@@ -13,6 +13,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     AiChatWidget: typeof import('./components/common/AiChatWidget.vue')['default']
     AiPanel: typeof import('./components/common/AiPanel.vue')['default']
+    CatalogItem: typeof import('./components/common/CatalogItem.vue')['default']
+    CatalogItemCollapsible: typeof import('./components/common/CatalogItemCollapsible.vue')['default']
+    CatalogSidebar: typeof import('./components/common/CatalogSidebar.vue')['default']
     ChapterItem: typeof import('./components/common/ChapterItem.vue')['default']
     ChapterItemCollapsible: typeof import('./components/common/ChapterItemCollapsible.vue')['default']
     CodeEditor: typeof import('./components/common/CodeEditor.vue')['default']

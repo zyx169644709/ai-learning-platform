@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import { favoriteService } from '@/services/favoriteService'
@@ -210,9 +210,12 @@ const toggleFavorite = async () => {
   }
 }
 
-onMounted(async () => {
-  window.addEventListener('keydown', handleKeydown)
+// 加载课程数据
+const loadCourse = async () => {
   const id = route.params.id as string
+  if (!id) return
+  
+  loading.value = true
   try {
     const res = await fetch(`http://localhost:3000/api/courses/${id}`)
     if (res.ok) {
@@ -221,17 +224,33 @@ onMounted(async () => {
       fetch(`http://localhost:3000/api/courses/${id}/view`, { method: 'POST' }).catch(() => {})
       // 检查收藏状态
       await checkFavoriteStatus()
+    } else {
+      course.value = null
     }
   } catch (e) {
     console.error('加载课程详情失败', e)
+    course.value = null
   } finally {
     loading.value = false
   }
+}
+
+// 监听路由参数变化
+watch(() => route.params.id, () => {
+  loadCourse()
+}, { immediate: true })
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
   document.body.style.overflow = ''
+  // 关闭播放器
+  if (showPlayer.value) {
+    showPlayer.value = false
+  }
 })
 </script>
 

@@ -1,29 +1,34 @@
 <template>
   <div id="app">
     <Header />
-    <Sidebar v-if="!route.meta.hideLeftSidebar" />
-    <AiPanel v-if="!route.meta.hideRightSidebar" />
-    <main :class="[
-      'main-content',
-      { 'full-width': !showSidebars, 'no-left': route.meta.hideLeftSidebar, 'no-right': route.meta.hideRightSidebar }
-    ]">
+    <component :is="currentLayout">
       <router-view />
-    </main>
+    </component>
     <!-- 浮动AI聊天助手 -->
     <AiChatWidget />
   </div>
 </template>
 
 <script setup lang="ts">
-import Header from './components/common/Header.vue'
-import Sidebar from './components/common/Sidebar.vue'
-import AiPanel from './components/common/AiPanel.vue'
-import AiChatWidget from './components/common/AiChatWidget.vue'
-import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import Header from './components/common/Header.vue'
+import AiChatWidget from './components/common/AiChatWidget.vue'
+import DefaultLayout from './layouts/DefaultLayout.vue'
+import CourseLayout from './layouts/CourseLayout.vue'
+import ResourceLayout from './layouts/ResourceLayout.vue'
+import AuthLayout from './layouts/AuthLayout.vue'
 
 const route = useRoute()
-const showSidebars = computed(() => !route.meta?.topOnly && !route.meta?.fullScreen)
+
+const layoutMap: Record<string, any> = {
+  default: DefaultLayout,
+  course: CourseLayout,
+  resource: ResourceLayout,
+  auth: AuthLayout,
+}
+
+const currentLayout = computed(() => layoutMap[route.meta?.layout as string] ?? DefaultLayout)
 </script>
 
 <style>

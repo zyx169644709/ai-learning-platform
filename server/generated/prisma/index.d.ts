@@ -9275,6 +9275,7 @@ export namespace Prisma {
     id: string | null
     title: string | null
     level: string | null
+    category: string | null
     cover: string | null
     url: string | null
     status: string | null
@@ -9293,6 +9294,7 @@ export namespace Prisma {
     id: string | null
     title: string | null
     level: string | null
+    category: string | null
     cover: string | null
     url: string | null
     status: string | null
@@ -9311,6 +9313,7 @@ export namespace Prisma {
     id: number
     title: number
     level: number
+    category: number
     cover: number
     url: number
     status: number
@@ -9346,6 +9349,7 @@ export namespace Prisma {
     id?: true
     title?: true
     level?: true
+    category?: true
     cover?: true
     url?: true
     status?: true
@@ -9364,6 +9368,7 @@ export namespace Prisma {
     id?: true
     title?: true
     level?: true
+    category?: true
     cover?: true
     url?: true
     status?: true
@@ -9382,6 +9387,7 @@ export namespace Prisma {
     id?: true
     title?: true
     level?: true
+    category?: true
     cover?: true
     url?: true
     status?: true
@@ -9488,6 +9494,7 @@ export namespace Prisma {
     id: string
     title: string
     level: string | null
+    category: string | null
     cover: string | null
     url: string
     status: string
@@ -9526,6 +9533,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     level?: boolean
+    category?: boolean
     cover?: boolean
     url?: boolean
     status?: boolean
@@ -9548,6 +9556,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     level?: boolean
+    category?: boolean
     cover?: boolean
     url?: boolean
     status?: boolean
@@ -9568,6 +9577,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     level?: boolean
+    category?: boolean
     cover?: boolean
     url?: boolean
     status?: boolean
@@ -9588,6 +9598,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     level?: boolean
+    category?: boolean
     cover?: boolean
     url?: boolean
     status?: boolean
@@ -9603,7 +9614,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "level" | "cover" | "url" | "status" | "duration" | "content" | "order" | "authorId" | "viewCount" | "studentCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "level" | "category" | "cover" | "url" | "status" | "duration" | "content" | "order" | "authorId" | "viewCount" | "studentCount" | "favoriteCount" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
   export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | Course$authorArgs<ExtArgs>
     favorites?: boolean | Course$favoritesArgs<ExtArgs>
@@ -9626,6 +9637,7 @@ export namespace Prisma {
       id: string
       title: string
       level: string | null
+      category: string | null
       cover: string | null
       url: string
       status: string
@@ -10067,6 +10079,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Course", 'String'>
     readonly title: FieldRef<"Course", 'String'>
     readonly level: FieldRef<"Course", 'String'>
+    readonly category: FieldRef<"Course", 'String'>
     readonly cover: FieldRef<"Course", 'String'>
     readonly url: FieldRef<"Course", 'String'>
     readonly status: FieldRef<"Course", 'String'>
@@ -16531,6 +16544,7 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     level: 'level',
+    category: 'category',
     cover: 'cover',
     url: 'url',
     status: 'status',
@@ -17210,6 +17224,7 @@ export namespace Prisma {
     id?: StringFilter<"Course"> | string
     title?: StringFilter<"Course"> | string
     level?: StringNullableFilter<"Course"> | string | null
+    category?: StringNullableFilter<"Course"> | string | null
     cover?: StringNullableFilter<"Course"> | string | null
     url?: StringFilter<"Course"> | string
     status?: StringFilter<"Course"> | string
@@ -17231,6 +17246,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     level?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
     cover?: SortOrderInput | SortOrder
     url?: SortOrder
     status?: SortOrder
@@ -17255,6 +17271,7 @@ export namespace Prisma {
     NOT?: CourseWhereInput | CourseWhereInput[]
     title?: StringFilter<"Course"> | string
     level?: StringNullableFilter<"Course"> | string | null
+    category?: StringNullableFilter<"Course"> | string | null
     cover?: StringNullableFilter<"Course"> | string | null
     url?: StringFilter<"Course"> | string
     status?: StringFilter<"Course"> | string
@@ -17276,6 +17293,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     level?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
     cover?: SortOrderInput | SortOrder
     url?: SortOrder
     status?: SortOrder
@@ -17303,6 +17321,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Course"> | string
     title?: StringWithAggregatesFilter<"Course"> | string
     level?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    category?: StringNullableWithAggregatesFilter<"Course"> | string | null
     cover?: StringNullableWithAggregatesFilter<"Course"> | string | null
     url?: StringWithAggregatesFilter<"Course"> | string
     status?: StringWithAggregatesFilter<"Course"> | string
@@ -18234,6 +18253,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -18254,6 +18274,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -18274,6 +18295,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -18294,6 +18316,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -18314,6 +18337,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -18333,6 +18357,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -18351,6 +18376,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -19365,6 +19391,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     level?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     url?: SortOrder
     status?: SortOrder
@@ -19391,6 +19418,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     level?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     url?: SortOrder
     status?: SortOrder
@@ -19409,6 +19437,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     level?: SortOrder
+    category?: SortOrder
     cover?: SortOrder
     url?: SortOrder
     status?: SortOrder
@@ -21139,6 +21168,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -21158,6 +21188,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -21498,6 +21529,7 @@ export namespace Prisma {
     id?: StringFilter<"Course"> | string
     title?: StringFilter<"Course"> | string
     level?: StringNullableFilter<"Course"> | string | null
+    category?: StringNullableFilter<"Course"> | string | null
     cover?: StringNullableFilter<"Course"> | string | null
     url?: StringFilter<"Course"> | string
     status?: StringFilter<"Course"> | string
@@ -23375,6 +23407,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -23394,6 +23427,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -23582,6 +23616,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -23601,6 +23636,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -24037,6 +24073,7 @@ export namespace Prisma {
     id?: string
     title: string
     level?: string | null
+    category?: string | null
     cover?: string | null
     url: string
     status?: string
@@ -24222,6 +24259,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -24241,6 +24279,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
@@ -24260,6 +24299,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     level?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
     cover?: NullableStringFieldUpdateOperationsInput | string | null
     url?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string

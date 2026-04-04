@@ -1,10 +1,33 @@
 <template>
   <div class="docs">
     <h1 class="title">课程</h1>
+    <p class="page-intro">{{ pageIntro }}</p>
+
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
         <span class="callout-link" @click="openAiChat">不知道学什么？让 Vue 专家助教给你推荐</span>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label class="filter-label">课程类型</label>
+          <select class="filter-select" :value="currentCategory" @change="onCategoryChange">
+            <option value="">全部类型</option>
+            <option v-for="item in COURSE_CATEGORY_OPTIONS" :key="item.key" :value="item.key">
+              {{ item.label }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="filter-label">课程难度</label>
+          <select class="filter-select" :value="currentLevel" @change="onLevelChange">
+            <option value="">全部难度</option>
+            <option value="beginner">初级</option>
+            <option value="intermediate">中级</option>
+            <option value="advanced">高级</option>
+          </select>
+        </div>
       </div>
 
       <div class="grid">
@@ -33,9 +56,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { COURSE_CATEGORY_OPTIONS, inferCourseCategory, type CourseCategoryKey } from '../../../../shared/constants/courseCategories'
 
 const router = useRouter()
+const route = useRoute()
 
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
@@ -47,9 +72,12 @@ interface CourseCard {
   title: string; 
   desc: string; 
   level: Level; 
+  category?: CourseCategoryKey;
+  tags?: unknown;
   cover: string; 
   author: string; 
   authorAvatar: string; 
+
   free?: boolean;
   bilibiliUrl?: string;  // B站视频链接
   url?: string;          // 其他外链
@@ -57,9 +85,45 @@ interface CourseCard {
   videoId?: string;  // 视频ID（用于嵌入）
 }
 
+const currentCategoryMeta = computed(() => {
+  const key = (route.query.category as string) || ''
+  return COURSE_CATEGORY_OPTIONS.find(item => item.key === key)
+})
+
+const pageIntro = computed(() => {
+  if (!currentCategoryMeta.value) {
+    return '课程体系按 6 大方向组织：基础入门、核心语法、进阶实战、项目开发、面试专题、生态工具。可在左侧快速切换并进入对应课程详情。'
+  }
+  return `${currentCategoryMeta.value.title}：${currentCategoryMeta.value.intro}`
+})
+
 const courses = ref<CourseCard[]>([])
 
-type ApiCourse = { id: string; title: string; description?: string; duration?: string; level?: string; cover?: string; url?: string; tags?: any }
+const currentCategory = computed(() => (route.query.category as string) || '')
+const currentLevel = computed(() => (route.query.level as string) || '')
+
+const onCategoryChange = (e: Event) => {
+  const category = (e.target as HTMLSelectElement).value
+  const q: Partial<Record<string, string>> = { ...buildQuery(), category }
+  if (!category) delete q.category
+  router.replace({ query: q as Record<string, string> })
+}
+
+const onLevelChange = (e: Event) => {
+  const level = (e.target as HTMLSelectElement).value
+  const q: Partial<Record<string, string>> = { ...buildQuery(), level }
+  if (!level) delete q.level
+  router.replace({ query: q as Record<string, string> })
+}
+
+const buildQuery = (): Record<string, string> => {
+  const q: Record<string, string> = {}
+  if (currentCategory.value) q.category = currentCategory.value
+  if (currentLevel.value) q.level = currentLevel.value
+  return q
+}
+
+type ApiCourse = { id: string; title: string; description?: string; duration?: string; level?: string; category?: CourseCategoryKey; cover?: string; url?: string; tags?: any }
 
 onMounted(async () => {
   try {
@@ -70,7 +134,10 @@ onMounted(async () => {
       title: c.title,
       desc: c.duration || '',
       level: (c.level as Level) || '',
+      category: c.category,
+      tags: c.tags,
       cover: c.cover ? new URL(c.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/course-beginner-cover.svg', import.meta.url).href,
+
       author: '课程组',
       authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
       bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
@@ -87,6 +154,19 @@ onMounted(async () => {
 const filteredCourses = computed(() => {
   let result = courses.value
 
+  const categoryFilter = (route.query.category as string) || ''
+  const levelFilter = (route.query.level as string) || ''
+
+  if (categoryFilter) {
+    result = result.filter(c => {
+      const category = c.category || inferCourseCategory({ title: c.title, level: c.level, tags: c.tags })
+      return category === categoryFilter
+    })
+  }
+
+  if (levelFilter) {
+    result = result.filter(c => (c.level || '') === levelFilter)
+  }
 
   // 按搜索关键词筛选
   const q = query.value.trim().toLowerCase()
@@ -113,9 +193,15 @@ const getBvId = (url?: string): string | null => {
 }
 
 const openCourse = (course: CourseCard) => {
-  router.push({ name: 'CourseDetail', params: { id: course.id } })
+  const q: Record<string, string> = {}
+  if (route.query.category) q.category = route.query.category as string
+  if (route.query.level) q.level = route.query.level as string
+  router.push({
+    name: 'CourseDetail',
+    params: { id: course.id },
+    query: q
+  })
 }
-
 </script>
 
 <style scoped>
@@ -135,6 +221,13 @@ const openCourse = (course: CourseCard) => {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 60px;
   margin-bottom: 20px;
+}
+
+.page-intro {
+  margin: -4px 45px 20px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 15px;
 }
 
 .main-container {
@@ -184,6 +277,51 @@ a:hover {
 .callout-link:hover {
   color: var(--accent-hover);
   text-decoration: underline;
+}
+
+/* 筛选栏样式 */
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  min-width: 140px;
+  transition: border-color 0.2s;
+}
+
+.filter-select:hover {
+  border-color: var(--accent-color);
+}
+
+.filter-select:focus {
+  border-color: var(--accent-color);
 }
 
 /* 难度筛选按钮样式 */

@@ -23,7 +23,8 @@
   },
   "include": [
     "src/**/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "../shared/**/*.ts"
   ],
   "references": [
     {

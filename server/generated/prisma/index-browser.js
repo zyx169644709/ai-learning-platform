@@ -185,6 +185,7 @@ exports.Prisma.CourseScalarFieldEnum = {
   id: 'id',
   title: 'title',
   level: 'level',
+  category: 'category',
   cover: 'cover',
   url: 'url',
   status: 'status',

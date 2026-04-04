@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "CommonJS",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "..",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,7 +15,8 @@
     "server.ts",
     "src/**/*.ts",
     "config/**/*.ts",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "../shared/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -375,6 +375,7 @@ export const getCourses = async (req: Request, res: Response) => {
           id: true,
           title: true,
           level: true,
+          category: true,
           cover: true,
           url: true,
           status: true,
@@ -396,6 +397,8 @@ export const getCourses = async (req: Request, res: Response) => {
       return {
         id: course.id,
         title: course.title,
+        level: course.level || '',
+        category: course.category || '',
         type: course.level || 'beginner',
         duration: course.duration || '',
         cover: course.cover || '',
@@ -406,7 +409,7 @@ export const getCourses = async (req: Request, res: Response) => {
         studentCount: course.studentCount || 0,
         favoriteCount: course.favoriteCount || 0,
         students: course.studentCount || 0,
-        completionRate: 0, // TODO: 计算完成率
+        completionRate: 0,
         updatedAt: formatDate(course.updatedAt)
       }
     })
@@ -429,7 +432,7 @@ export const getCourses = async (req: Request, res: Response) => {
 // 创建课程
 export const createCourse = async (req: Request, res: Response) => {
   try {
-    const { title, type, duration, cover, url, content, status } = req.body
+    const { title, category, level, duration, cover, url, content, status } = req.body
     
     // 验证必填字段
     if (!title) {
@@ -439,7 +442,8 @@ export const createCourse = async (req: Request, res: Response) => {
     const course = await prisma.course.create({
       data: {
         title,
-        level: type || 'beginner',
+        category: category || null,
+        level: level || null,
         cover: cover || '',
         url: url || '',
         duration: duration || '',
@@ -455,7 +459,9 @@ export const createCourse = async (req: Request, res: Response) => {
         course: {
           id: course.id,
           title: course.title,
-          type: course.level,
+          category: course.category || '',
+          level: course.level || '',
+          type: course.level || '',
           duration: course.duration || '',
           cover: course.cover || '',
           url: course.url || '',
@@ -474,7 +480,7 @@ export const createCourse = async (req: Request, res: Response) => {
 export const updateCourse = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { title, type, duration, cover, url, content, status } = req.body
+    const { title, category, level, duration, cover, url, content, status } = req.body
     
     const course = await prisma.course.findUnique({ where: { id } })
     if (!course) return res.status(404).json({ success: false, message: '课程不存在' })
@@ -482,7 +488,8 @@ export const updateCourse = async (req: Request, res: Response) => {
     // 构建更新数据
     const updateData: any = {}
     if (title !== undefined) updateData.title = title
-    if (type !== undefined) updateData.level = type
+    if (category !== undefined) updateData.category = category
+    if (level !== undefined) updateData.level = level
     if (cover !== undefined) updateData.cover = cover
     if (url !== undefined) updateData.url = url
     if (duration !== undefined) updateData.duration = duration
@@ -501,7 +508,9 @@ export const updateCourse = async (req: Request, res: Response) => {
         course: {
           id: updatedCourse.id,
           title: updatedCourse.title,
-          type: updatedCourse.level,
+          category: updatedCourse.category || '',
+          level: updatedCourse.level || '',
+          type: updatedCourse.level || '',
           duration: updatedCourse.duration || '',
           cover: updatedCourse.cover || '',
           url: updatedCourse.url || '',

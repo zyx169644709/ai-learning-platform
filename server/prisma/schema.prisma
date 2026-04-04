@@ -119,6 +119,7 @@ model Course {
   id            String     @id @default(cuid())
   title         String
   level         String?
+  category      String?
   cover         String?
   url           String
   status        String     @default("draft")
@@ -137,6 +138,7 @@ model Course {
 
   @@index([authorId])
   @@index([level])
+  @@index([category])
   @@index([status])
   @@index([order])
   @@map("courses")

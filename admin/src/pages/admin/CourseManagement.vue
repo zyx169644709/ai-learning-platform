@@ -56,12 +56,12 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="url" label="URL" width="200" align="center" header-align="center">
+        <el-table-column prop="category" label="课程类型" width="120" align="center" header-align="center">
           <template #default="{ row }">
-            <el-link v-if="row.url" :href="row.url" target="_blank" type="primary" :title="row.url" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
-              {{ row.url.length > 30 ? row.url.substring(0, 30) + '...' : row.url }}
-            </el-link>
-            <span v-else>-</span>
+            <el-tag v-if="row.category" :type="getCategoryTagType(row.category)">
+              {{ getCategoryLabel(row.category) }}
+            </el-tag>
+            <span v-else style="color: var(--el-text-color-secondary)">未分类</span>
           </template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center" header-align="center">
@@ -131,11 +131,21 @@
         <el-form-item label="课程标题" prop="title">
           <el-input v-model="courseForm.title" placeholder="请输入课程标题" />
         </el-form-item>
-        <el-form-item label="课程类型" prop="type">
-          <el-select v-model="courseForm.type" placeholder="请选择课程类型">
-            <el-option label="基础课程" value="beginner" />
-            <el-option label="进阶课程" value="intermediate" />
-            <el-option label="高级课程" value="advanced" />
+        <el-form-item label="课程类型" prop="category">
+          <el-select v-model="courseForm.category" placeholder="请选择课程类型">
+            <el-option label="基础入门" value="fundamentals" />
+            <el-option label="核心语法" value="core-syntax" />
+            <el-option label="进阶实战" value="advanced-practice" />
+            <el-option label="项目开发" value="projects" />
+            <el-option label="面试专题" value="interview" />
+            <el-option label="生态工具" value="ecosystem" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="课程难度" prop="level">
+          <el-select v-model="courseForm.level" placeholder="请选择课程难度">
+            <el-option label="初级" value="beginner" />
+            <el-option label="中级" value="intermediate" />
+            <el-option label="高级" value="advanced" />
           </el-select>
         </el-form-item>
         <el-form-item label="课程链接" prop="url">
@@ -234,7 +244,8 @@ const {
 // 课程表单
 const courseForm = reactive({
   title: '',
-  type: '',
+  category: '',
+  level: '',
   url: '',
   duration: '',
   cover: '',
@@ -247,8 +258,11 @@ const courseRules: FormRules = {
   title: [
     { required: true, message: '请输入课程标题', trigger: 'blur' }
   ],
-  type: [
+  category: [
     { required: true, message: '请选择课程类型', trigger: 'change' }
+  ],
+  level: [
+    { required: true, message: '请选择课程难度', trigger: 'change' }
   ],
   content: [
     { required: true, message: '请输入课程内容', trigger: 'blur' }
@@ -263,6 +277,32 @@ const getTypeTagType = getCourseTypeTag
 const getTypeLabel = getCourseTypeLabel
 const getStatusTagType = getCourseStatusTag
 const getStatusLabel = getCourseStatusLabel
+
+// 课程分类标签映射
+const getCategoryLabel = (category: string): string => {
+  const map: Record<string, string> = {
+    'fundamentals': '基础入门',
+    'core-syntax': '核心语法',
+    'advanced-practice': '进阶实战',
+    'projects': '项目开发',
+    'interview': '面试专题',
+    'ecosystem': '生态工具'
+  }
+  return map[category] || category
+}
+
+// 课程分类标签颜色
+const getCategoryTagType = (category: string): 'success' | 'info' | 'warning' | 'danger' | '' => {
+  const typeMap: Record<string, 'success' | 'info' | 'warning' | 'danger' | ''> = {
+    'fundamentals': 'success',      // 基础入门 - 绿色（清新、入门）
+    'core-syntax': 'warning',          // 核心语法 - 蓝色（稳重、核心）
+    'advanced-practice': 'warning', // 进阶实战 - 橙色（进阶、活力）
+    'projects': '',                 // 项目开发 - 默认紫灰（项目、综合）
+    'interview': 'danger',          // 面试专题 - 红色（重要、紧迫）
+    'ecosystem': 'success'          // 生态工具 - 绿色（生态、工具）
+  }
+  return typeMap[category] || ''
+}
 
 // 加载课程列表
 const loadCourses = async () => {
@@ -296,7 +336,8 @@ const createCourse = () => {
 const editCourse = (course: any) => {
   // 先重置表单为默认值
   courseForm.title = ''
-  courseForm.type = ''
+  courseForm.category = ''
+  courseForm.level = ''
   courseForm.url = ''
   courseForm.duration = ''
   courseForm.cover = ''

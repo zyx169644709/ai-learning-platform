@@ -1,6 +1,9 @@
 <template>
   <div class="docs">
     <h1 class="title">资源</h1>
+    <p class="page-intro">
+      这里按资源类型整理了常用资料与工具。先在左侧筛选类型，再点开具体资源查看详情。
+    </p>
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
@@ -36,7 +39,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 type ResType = 'website' | 'document' | 'tool' | 'tutorial'
@@ -54,17 +59,7 @@ interface ResourceCard {
 }
 
 const query = ref('')
-const selectedType = ref('all')
 const sortBy = ref('title')
-
-// 筛选类型选项
-const filterTypes = [
-  { value: 'all', label: '全部' },
-  { value: 'website', label: '网站' },
-  { value: 'document', label: '文档' },
-  { value: 'tool', label: '工具' },
-  { value: 'tutorial', label: '教程' }
-]
 
 // 排序选项
 const sortOptions = [
@@ -103,8 +98,9 @@ const filtered = computed(() => {
   let result = resources.value
 
   // 按类型筛选
-  if (selectedType.value !== 'all') {
-    result = result.filter(r => r.type === selectedType.value)
+  const typeFilter = (route.query.type as string) || ''
+  if (typeFilter) {
+    result = result.filter(r => (r.type || '') === typeFilter)
   }
 
   // 按搜索关键词筛选
@@ -171,6 +167,13 @@ const noop = () => { }
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 60px;
   margin-bottom: 20px;
+}
+
+.page-intro {
+  margin: -4px 45px 20px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 15px;
 }
 
 .main-container {
