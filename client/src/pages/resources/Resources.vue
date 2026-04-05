@@ -38,18 +38,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
-type ResType = 'website' | 'document' | 'tool' | 'tutorial'
+type ResType = 'website' | 'document' | 'tool' | 'tutorial' | 'code'
 interface ResourceCard { 
   id: string; 
   title: string; 
   description: string; 
   type: ResType; 
+  category?: string;
   preview: string; 
   url: string;  // 资源链接
   icon?: string;  // 资源图标
@@ -70,11 +71,11 @@ const sortOptions = [
 
 const resources = ref<ResourceCard[]>([])
 
-interface ApiResource { id: string; title: string; description?: string; url?: string; cover?: string; icon?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string; status?: string }
+interface ApiResource { id: string; title: string; description?: string; url?: string; cover?: string; icon?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string; category?: string; status?: string }
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources?status=published')
+    const res = await fetch('http://localhost:3000/api/resources?status=published&limit=100')
     const result = await res.json()
     const data: ApiResource[] = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = (data || []).map((r) => ({
@@ -82,6 +83,7 @@ onMounted(async () => {
       title: r.title,
       description: r.description || '',
       type: (r.type as ResType) || 'website',
+      category: r.category || '',
       preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
       url: r.url || '',
       icon: r.icon || '',
@@ -97,10 +99,10 @@ onMounted(async () => {
 const filtered = computed(() => {
   let result = resources.value
 
-  // 按类型筛选
-  const typeFilter = (route.query.type as string) || ''
-  if (typeFilter) {
-    result = result.filter(r => (r.type || '') === typeFilter)
+  // 按分类筛选（category 优先，兼容 type）
+  const categoryFilter = (route.query.category as string) || (route.query.type as string) || ''
+  if (categoryFilter) {
+    result = result.filter(r => (r.category || '') === categoryFilter || (r.type || '') === categoryFilter)
   }
 
   // 按搜索关键词筛选
@@ -130,11 +132,13 @@ const filtered = computed(() => {
   return result
 })
 
-const typeText = (t: ResType) => ({ website: '网站', document: '文档', tool: '工具', tutorial: '教程' }[t])
+const typeText = (t: ResType) => ({ website: '网站', document: '文档', tool: '工具', tutorial: '教程', code: '代码' }[t] ?? t)
 
-// 处理资源点击事件：跳转到资源详情页面
+// 处理资源点击事件：直接在新标签页打开外链
 const handleResourceClick = (resource: ResourceCard) => {
-  window.location.href = `/resource/${resource.id}`
+  if (resource.url) {
+    window.open(resource.url, '_blank', 'noopener,noreferrer')
+  }
 }
 
 const handleLike = async (event: Event, resource: ResourceCard) => {
@@ -283,6 +287,10 @@ a:hover {
 
 .badge.tutorial {
   background: #8b5cf6;
+}
+
+.badge.code {
+  background: #6366f1;
 }
 
 .meta {

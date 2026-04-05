@@ -51,7 +51,7 @@ const categoriesWithResources = computed(() => {
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources?status=published')
+    const res = await fetch('http://localhost:3000/api/resources?status=published&limit=100')
     const result = await res.json()
     const items = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = Array.isArray(items) ? items : []
