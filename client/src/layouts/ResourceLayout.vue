@@ -63,7 +63,7 @@ onMounted(async () => {
 
 <style scoped>
 .main-content {
-  left: 320px;
+  left: 300px;
 }
 
 .main-content.no-left,

@@ -7,9 +7,7 @@
         <span class="callout-link" @click="openAiChat">立即咨询 Vue 专家助教</span>
       </div>
 
-      <p>
-        Vue.js 实战平台面向前端开发者与系统学习者，提供“理论讲解 + 习题练习 + 实操项目 + 智能反馈”的闭环学习体验，帮助你从零基础到进阶，系统化掌握 Vue 3 现代化开发的核心能力。
-      </p>
+      <p style="font-size: large ;font-weight: 600;">Vue Learning 学习平台面向前端开发者与系统学习者，提供“理论讲解 + 习题练习 + 实操项目 + 智能反馈”的闭环学习体验，配备丰富的课程和多种配套资源，帮助你从零基础到进阶，系统化掌握 Vue 3 现代化开发的核心能力。</p>
       <p>你可以在这里：</p>
 
       <ul class="features">

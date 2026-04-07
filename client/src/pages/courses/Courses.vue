@@ -1,24 +1,26 @@
 <template>
   <div class="docs">
     <h1 class="title">课程</h1>
-    <p class="page-intro" v-if="currentCategoryMeta">{{ pageIntro }}</p>
-    <div class="page-intro-list" v-else>
-      <p style="font-size: large;">本网站提供了类型齐全、种类多样的完备课程体系，让用户能够系统的学习Vue及其相关生态。课程体系按 6 大方向系统组织，可在左侧目录快速切换分类：</p>
-      <ul>
-        <li><strong>🚀 基础入门</strong>——零基础也能快速上手，建立 Vue 开发信心</li>
-        <li><strong>🔧 核心语法</strong>——深入组件、响应式、生命周期等灵魂知识点</li>
-        <li><strong>⚡ 进阶实战</strong>——组合式 API、路由、状态管理等实战必备技能</li>
-        <li><strong>🏗️ 项目开发</strong>——后台管理、移动端与全栈场景完整项目驱动</li>
-        <li><strong>🎯 面试专题</strong>——高频面试题、源码原理与大厂经验助你脱颖而出</li>
-        <li><strong>🌿 生态工具</strong>——覆盖 Pinia、Nuxt、Element Plus 等主流 Vue 生态</li>
-      </ul>
-    </div>
 
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
         <span class="callout-link" @click="openAiChat">不知道学什么？让 Vue 专家助教给你推荐</span>
       </div>
+
+      <template v-if="!currentCategoryMeta">
+        <p style="font-size: large; font-weight: 600;">本课程体系专为 Vue 3 学习者打造，涵盖从零基础到进阶实战的完整学习路径，助你系统掌握 Vue 3 现代化开发的核心能力。</p>
+        <p>课程按 6 大方向组织，可在左侧目录快速切换分类：</p>
+        <ul class="features">
+          <li><strong>🚀 基础入门</strong>——零基础也能快速上手，建立 Vue 开发信心</li>
+          <li><strong>🔧 核心语法</strong>——深入组件、响应式、生命周期等灵魂知识点</li>
+          <li><strong>⚡ 进阶实战</strong>——组合式 API、路由、状态管理等实战必备技能</li>
+          <li><strong>🏗️ 项目开发</strong>——后台管理、移动端与全栈场景完整项目驱动</li>
+          <li><strong>🎯 面试专题</strong>——高频面试题、源码原理与大厂经验助你脱颖而出</li>
+          <li><strong>🌿 生态工具</strong>——覆盖 Pinia、Nuxt、Element Plus 等主流 Vue 生态</li>
+        </ul>
+      </template>
+      <p v-else>{{ pageIntro }}</p>
 
       <div class="filter-bar">
         <div class="filter-item">
@@ -235,7 +237,7 @@ const openCourse = (course: CourseCard) => {
 <style scoped>
 /* 与 Home.vue 保持一致的基础排版 */
 .docs {
-  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   padding: 28px;
   line-height: 1.7;
@@ -251,32 +253,23 @@ const openCourse = (course: CourseCard) => {
   margin-bottom: 20px;
 }
 
-.page-intro {
-  margin: -4px 45px 20px;
+p {
+  margin: 12px 0;
   color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 16px;
 }
 
-.page-intro-list {
-  margin: -4px 45px 20px;
+.features {
+  margin: 8px 0 0 0;
+  padding-left: 22px;
+}
+
+.features li {
+  margin: 8px 0;
   color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 16px;
 }
 
-.page-intro-list p {
-  margin-bottom: 8px;
-}
-
-.page-intro-list ul {
-  padding-left: 1.5em;
-  margin: 0;
-}
-
-.page-intro-list li {
-  margin-bottom: 4px;
-  line-height: 1.8;
+.features li::marker {
+  color: var(--accent-color);
 }
 
 .main-container {

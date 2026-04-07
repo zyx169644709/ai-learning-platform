@@ -304,12 +304,12 @@ const getCategoryLabel = (category: string): string => {
 // 课程分类标签颜色
 const getCategoryTagType = (category: string): 'success' | 'info' | 'warning' | 'danger' | '' => {
   const typeMap: Record<string, 'success' | 'info' | 'warning' | 'danger' | ''> = {
-    'fundamentals': 'success',      // 基础入门 - 绿色（清新、入门）
-    'core-syntax': 'warning',          // 核心语法 - 蓝色（稳重、核心）
-    'advanced-practice': '', // 进阶实战 - 橙色（进阶、活力）
-    'projects': 'success',                 // 项目开发 - 默认紫灰（项目、综合）
-    'interview': 'warning',          // 面试专题 - 红色（重要、紧迫）
-    'ecosystem': ''          // 生态工具 - 绿色（生态、工具）
+    'fundamentals': 'success', // 基础入门
+    'core-syntax': 'warning', // 核心语法
+    'advanced-practice': '', // 进阶实战
+    'projects': 'success', // 项目开发
+    'interview': 'warning', // 面试专题
+    'ecosystem': '' // 生态工具
   }
   return typeMap[category] || ''
 }

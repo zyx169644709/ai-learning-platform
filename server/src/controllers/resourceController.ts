@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 // 获取资源列表
 export const getResources = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, title, type, status, sort } = req.query
+    const { page = 1, limit = 20, title, type, category, status, sort } = req.query
     
     const where: any = {}
     
@@ -19,12 +19,18 @@ export const getResources = async (req: Request, res: Response) => {
     if (type) {
       where.type = type as string
     }
+    if (category) {
+      where.category = category as string
+    }
     if (status) {
       where.status = status as string
     }
     
-    const skip = (Number(page) - 1) * Number(limit)
-    const take = Number(limit)
+    const pageNum = Number(page)
+    const limitNum = Number(limit)
+
+    // 类别自定义顺序（无 sort 参数时使用）
+    const CATEGORY_ORDER = ['docs', 'templates', 'configs', 'snippets', 'interview', 'plugins']
 
     const sortableFields: Record<string, any> = {
       viewCount: { viewCount: 'desc' },
@@ -33,34 +39,54 @@ export const getResources = async (req: Request, res: Response) => {
       createdAt: { createdAt: 'desc' },
       updatedAt: { updatedAt: 'desc' }
     }
-    const orderBy = sortableFields[sort as string] || { createdAt: 'desc' }
-    
-    const [resources, total] = await Promise.all([
-      prisma.resource.findMany({
-        where,
-        skip,
-        take,
-        orderBy,
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          category: true,
-          cover: true,
-          icon: true,
-          url: true,
-          type: true,
-          status: true,
-          viewCount: true,
-          likeCount: true,
-          favoriteCount: true,
-          tags: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      }),
-      prisma.resource.count({ where })
-    ])
+
+    const selectFields = {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      cover: true,
+      icon: true,
+      url: true,
+      type: true,
+      status: true,
+      viewCount: true,
+      likeCount: true,
+      favoriteCount: true,
+      tags: true,
+      createdAt: true,
+      updatedAt: true
+    }
+
+    let resources: any[]
+    let total: number
+
+    if (!sort) {
+      // 默认按类别自定义顺序：全量取数 → JS 排序 → JS 分页
+      const all = await prisma.resource.findMany({ where, select: selectFields })
+      all.sort((a: any, b: any) => {
+        const ai = CATEGORY_ORDER.indexOf(a.category || '')
+        const bi = CATEGORY_ORDER.indexOf(b.category || '')
+        const ac = ai === -1 ? CATEGORY_ORDER.length : ai
+        const bc = bi === -1 ? CATEGORY_ORDER.length : bi
+        if (ac !== bc) return ac - bc
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
+      total = all.length
+      resources = all.slice((pageNum - 1) * limitNum, pageNum * limitNum)
+    } else {
+      const orderBy = sortableFields[sort as string] || { createdAt: 'desc' }
+      ;[resources, total] = await Promise.all([
+        prisma.resource.findMany({
+          where,
+          skip: (pageNum - 1) * limitNum,
+          take: limitNum,
+          orderBy,
+          select: selectFields
+        }),
+        prisma.resource.count({ where })
+      ])
+    }
     
     const formattedResources = resources.map(resource => ({
       id: resource.id,

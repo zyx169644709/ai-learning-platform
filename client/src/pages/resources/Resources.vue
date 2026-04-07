@@ -1,13 +1,48 @@
 <template>
   <div class="docs">
     <h1 class="title">资源</h1>
-    <p class="page-intro">
-      这里按资源类型整理了常用资料与工具。先在左侧筛选类型，再点开具体资源查看详情。
-    </p>
+
     <div class="main-container">
       <div class="callout">
         <span class="play">▶</span>
         <span class="callout-link" @click="openAiChat">找不到资料？让 Vue 专家助教给你推荐</span>
+      </div>
+
+      <template v-if="!currentCategoryMeta">
+        <p style="font-size: large; font-weight: 600;">本资源库专为 Vue 3 学习者整理，汇集学习文档、项目模板、工具配置、代码片段、面试资源和插件工具六大类别，助你在学习与开发中随时找到所需资料。</p>
+        <p>资源按 6 大类别组织，可在左侧目录快速切换：</p>
+        <ul class="features">
+          <li><strong>📚 学习文档</strong>——Vue 官方文档精选、核心概念笔记与 API 速查表，适合速查和深入理解</li>
+          <li><strong>🚀 项目模板</strong>——开箱即用的 Vue3 项目模板，覆盖基础、管理后台、移动端等多种场景</li>
+          <li><strong>⚙️ 工具配置</strong>——开发环境、代码规范、编辑器插件等配置指南，快速搭建高效开发环境</li>
+          <li><strong>💻 代码片段</strong>——高频复用的请求封装、表单验证、工具函数等代码段，复制即用</li>
+          <li><strong>📝 面试资源</strong>——Vue 面试题、前端八股文、手写代码题与简历模板，助力求职面试</li>
+          <li><strong>🔧 插件工具</strong>——精选 Vue 生态 UI 组件库、工具库与图表库，快速找到合适工具</li>
+        </ul>
+      </template>
+      <p v-else>{{ pageIntro }}</p>
+
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label class="filter-label">资源分类</label>
+          <select class="filter-select" :value="currentCategory" @change="onCategoryChange">
+            <option value="">全部分类</option>
+            <option v-for="item in RESOURCE_CATEGORY_OPTIONS" :key="item.key" :value="item.key">
+              {{ item.label }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label class="filter-label">资源类型</label>
+          <select class="filter-select" :value="currentType" @change="onTypeChange">
+            <option value="">全部类型</option>
+            <option value="website">网站</option>
+            <option value="document">文档</option>
+            <option value="tool">工具</option>
+            <option value="tutorial">教程</option>
+            <option value="code">代码</option>
+          </select>
+        </div>
       </div>
 
       <div class="grid">
@@ -38,11 +73,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { RESOURCE_CATEGORY_OPTIONS, type ResourceCategoryMeta } from '../../../../shared/constants/resourceCategories'
 
 const route = useRoute()
+const router = useRouter()
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
+
+const currentCategory = computed(() => (route.query.category as string) || '')
+const currentType = computed(() => (route.query.restype as string) || '')
+
+const currentCategoryMeta = computed(() =>
+  RESOURCE_CATEGORY_OPTIONS.find((item: ResourceCategoryMeta) => item.key === currentCategory.value)
+)
+
+const pageIntro = computed(() => {
+  if (!currentCategoryMeta.value) return ''
+  return `${currentCategoryMeta.value.title}：${currentCategoryMeta.value.intro}`
+})
+
+const buildQuery = (): Record<string, string> => {
+  const q: Record<string, string> = {}
+  if (currentCategory.value) q.category = currentCategory.value
+  if (currentType.value) q.restype = currentType.value
+  return q
+}
+
+const onCategoryChange = (e: Event) => {
+  const category = (e.target as HTMLSelectElement).value
+  const q: Partial<Record<string, string>> = { ...buildQuery(), category }
+  if (!category) delete q.category
+  router.replace({ query: q as Record<string, string> })
+}
+
+const onTypeChange = (e: Event) => {
+  const restype = (e.target as HTMLSelectElement).value
+  const q: Partial<Record<string, string>> = { ...buildQuery(), restype }
+  if (!restype) delete q.restype
+  router.replace({ query: q as Record<string, string> })
+}
 
 type ResType = 'website' | 'document' | 'tool' | 'tutorial' | 'code'
 interface ResourceCard { 
@@ -99,10 +169,12 @@ onMounted(async () => {
 const filtered = computed(() => {
   let result = resources.value
 
-  // 按分类筛选（category 优先，兼容 type）
-  const categoryFilter = (route.query.category as string) || (route.query.type as string) || ''
-  if (categoryFilter) {
-    result = result.filter(r => (r.category || '') === categoryFilter || (r.type || '') === categoryFilter)
+  if (currentCategory.value) {
+    result = result.filter(r => (r.category || '') === currentCategory.value)
+  }
+
+  if (currentType.value) {
+    result = result.filter(r => (r.type || '') === currentType.value)
   }
 
   // 按搜索关键词筛选
@@ -134,11 +206,12 @@ const filtered = computed(() => {
 
 const typeText = (t: ResType) => ({ website: '网站', document: '文档', tool: '工具', tutorial: '教程', code: '代码' }[t] ?? t)
 
-// 处理资源点击事件：直接在新标签页打开外链
+// 处理资源点击事件：跳转 ResourceDetail 详情页
 const handleResourceClick = (resource: ResourceCard) => {
-  if (resource.url) {
-    window.open(resource.url, '_blank', 'noopener,noreferrer')
-  }
+  const q: Record<string, string> = {}
+  if (currentCategory.value) q.category = currentCategory.value
+  if (currentType.value) q.restype = currentType.value
+  router.push({ name: 'ResourceDetail', params: { id: resource.id }, query: q })
 }
 
 const handleLike = async (event: Event, resource: ResourceCard) => {
@@ -157,7 +230,7 @@ const noop = () => { }
 
 <style scoped>
 .docs {
-  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   padding: 28px;
   line-height: 1.7;
@@ -173,11 +246,23 @@ const noop = () => { }
   margin-bottom: 20px;
 }
 
-.page-intro {
-  margin: -4px 45px 20px;
+p {
+  margin: 12px 0;
   color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 15px;
+}
+
+.features {
+  margin: 8px 0 0 0;
+  padding-left: 22px;
+}
+
+.features li {
+  margin: 8px 0;
+  color: var(--text-secondary);
+}
+
+.features li::marker {
+  color: var(--accent-color);
 }
 
 .main-container {
@@ -227,6 +312,50 @@ a:hover {
 .callout-link:hover {
   color: var(--accent-hover);
   text-decoration: underline;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  cursor: pointer;
+  outline: none;
+  min-width: 140px;
+  transition: border-color 0.2s;
+}
+
+.filter-select:hover {
+  border-color: var(--accent-color);
+}
+
+.filter-select:focus {
+  border-color: var(--accent-color);
 }
 
 .grid {

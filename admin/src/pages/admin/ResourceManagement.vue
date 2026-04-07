@@ -4,38 +4,53 @@
     <PageHeader title="资源管理" />
 
     <!-- 筛选栏 -->
-    <FilterBar 
-      v-model="filterForm" 
-      @search="loadResources" 
+    <FilterBar
+      v-model="filterForm"
+      @search="loadResources"
       @reset="resetFilter"
     >
-      <el-form-item label="资源标题">
-        <el-input 
-          v-model="filterForm.title" 
-          placeholder="请输入资源标题" 
-          clearable 
+      <el-form-item>
+        <el-input
+          v-model="filterForm.title"
+          placeholder="搜索资源标题"
+          clearable
           @input="debouncedSearch"
-          style="width: 200px;"
-        />
+          style="width: 180px;"
+        >
+          <template #prefix><el-icon><Search /></el-icon></template>
+        </el-input>
       </el-form-item>
-      <el-form-item label="资源类型" style="width: 150px;">
-        <el-select v-model="filterForm.type" placeholder="全部" clearable @change="debouncedSearch">
+      <el-form-item>
+        <el-select v-model="filterForm.category" placeholder="资源类别" clearable @change="debouncedSearch" style="width: 120px;">
+          <el-option label="学习文档" value="docs" />
+          <el-option label="项目模板" value="templates" />
+          <el-option label="工具配置" value="configs" />
+          <el-option label="代码片段" value="snippets" />
+          <el-option label="面试资源" value="interview" />
+          <el-option label="插件工具" value="plugins" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="filterForm.type" placeholder="资源类型" clearable @change="debouncedSearch" style="width: 110px;">
           <el-option label="网站" value="website" />
           <el-option label="文档" value="document" />
           <el-option label="工具" value="tool" />
           <el-option label="教程" value="tutorial" />
+          <el-option label="代码" value="code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" style="width: 150px;">
-        <el-select v-model="filterForm.status" placeholder="全部" clearable @change="debouncedSearch">
+      <el-form-item>
+        <el-select v-model="filterForm.status" placeholder="资源状态" clearable @change="debouncedSearch" style="width: 110px;">
           <el-option label="草稿" value="draft" />
           <el-option label="已发布" value="published" />
           <el-option label="已归档" value="archived" />
         </el-select>
       </el-form-item>
       <template #extra-buttons>
-        <el-button type="warning" @click="publishAll" :loading="publishing">一键发布</el-button>
-        <el-button type="success" @click="createResource">创建资源</el-button>
+        <el-button type="warning" :loading="publishing" @click="publishAll">一键发布</el-button>
+        <el-button type="success" @click="createResource">
+          <el-icon><Plus /></el-icon> 创建资源
+        </el-button>
       </template>
     </FilterBar>
 
@@ -148,6 +163,7 @@
                 <el-option label="文档" value="document" />
                 <el-option label="工具" value="tool" />
                 <el-option label="教程" value="tutorial" />
+                <el-option label="代码" value="code" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -194,6 +210,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search, Plus } from '@element-plus/icons-vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
@@ -211,6 +228,7 @@ const { pagination, resetPagination, setTotal, getPaginationParams } = usePagina
 // 筛选表单
 const filterForm = reactive({
   title: '',
+  category: '',
   type: '',
   status: ''
 })
@@ -449,12 +467,13 @@ const publishAll = async () => {
 // 类型标签
 const getTypeTagType = (type: string) => {
   const map: Record<string, string> = {
-    website: 'primary',
+    website: 'info',
     document: 'success',
     tool: 'warning',
-    tutorial: 'info'
+    tutorial: '',
+    code: 'danger'
   }
-  return map[type] || 'info'
+  return map[type] ?? 'info'
 }
 
 const getTypeLabel = (type: string) => {
@@ -462,7 +481,8 @@ const getTypeLabel = (type: string) => {
     website: '网站',
     document: '文档',
     tool: '工具',
-    tutorial: '教程'
+    tutorial: '教程',
+    code: '代码'
   }
   return map[type] || type
 }
@@ -489,14 +509,14 @@ const getStatusLabel = (status: string) => {
 // 资源类别标签
 const getCategoryTagType = (category: string): 'success' | 'info' | 'warning' | 'danger' | '' => {
   const typeMap: Record<string, 'success' | 'info' | 'warning' | 'danger' | ''> = {
-    'docs': 'success',      // 学习文档 - 
-    'templates': 'danger',    // 项目模板 - 
-    'configs': 'warning',   // 工具配置 - 
-    'snippets': 'success',         // 代码片段 - 
-    'interview': 'warning',  // 面试资源 - 
-    'plugins': 'danger'       // 插件工具 - 
+    'docs': 'success', // 学习文档
+    'templates': 'warning', // 项目模板
+    'configs': '',   // 工具配置
+    'snippets': 'success', // 代码片段
+    'interview': 'warning',  // 面试资源
+    'plugins': '' // 插件工具
   }
-  return typeMap[category] || 'info'
+  return typeMap[category] ?? 'info'
 }
 
 const getCategoryLabel = (category: string): string => {

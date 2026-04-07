@@ -1,13 +1,17 @@
 <template>
   <el-card class="filter-card">
-    <el-form :model="modelValue" inline>
-      <slot></slot>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button @click="handleReset">重置</el-button>
+    <div class="filter-bar-row">
+      <el-form :model="modelValue" inline class="filter-form">
+        <slot></slot>
+        <el-form-item style="margin-left: 30px;">
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <div v-if="$slots['extra-buttons']" class="filter-extra">
         <slot name="extra-buttons"></slot>
-      </el-form-item>
-    </el-form>
+      </div>
+    </div>
   </el-card>
 </template>
 
@@ -33,14 +37,31 @@ const handleReset = () => {
 
 <style scoped>
 .filter-card {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.filter-card :deep(.el-form-item) {
-  margin-bottom: 10px;
+.filter-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.filter-card :deep(.el-form-item:last-child) {
-  margin-right: 0;
+.filter-form {
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.filter-form :deep(.el-form-item) {
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+
+.filter-extra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 </style>
