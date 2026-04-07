@@ -4,10 +4,23 @@
       <RouterLink to="/courses">← 返回课程列表</RouterLink>
     </div>
 
+    <!-- 暂不可用提示 -->
+    <div class="unavailable-notice" v-if="isUnavailable">
+      <span class="notice-icon">⚠️</span>
+      <div class="notice-body">
+        <strong>该课程目前暂时无法正常访问</strong>
+        <span>课程资源可能已下架或链接失效，您仍可使用以下功能</span>
+      </div>
+    </div>
+
     <!-- 课程头部 -->
     <div class="course-header">
       <div class="course-cover">
-        <img :src="coverUrl" :alt="course.title" />
+        <img :src="coverUrl" alt="" referrerpolicy="no-referrer" @error="onCoverError" />
+        <div class="cover-unavailable" v-if="isUnavailable">
+          <span>⚠</span>
+          <span>课程暂不可用</span>
+        </div>
       </div>
 
       <div class="course-info">
@@ -38,8 +51,8 @@
         </div>
 
         <div class="course-actions">
-          <button class="action-btn primary" @click="startCourse">
-            立刻学习
+          <button class="action-btn primary" :class="{ disabled: isUnavailable }" @click="startCourse" :title="isUnavailable ? '课程暂时无法访问' : '立刻学习'">
+            {{ isUnavailable ? '⚠ 暂不可用' : '立刻学习' }}
           </button>
           <button 
             class="action-btn favorite" 
@@ -102,6 +115,7 @@ import { useRoute, RouterLink } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import { favoriteService } from '@/services/favoriteService'
 import { ElMessage } from 'element-plus'
+import defaultCourseCoverSrc from '@/assets/images/course-beginner-cover.svg'
 
 interface Course {
   id: string
@@ -126,15 +140,24 @@ const isFavorited = ref(false)
 
 const md = new MarkdownIt({ html: true, linkify: true })
 
+const isUnavailable = computed(() => !course.value?.cover)
+
+const defaultCover = defaultCourseCoverSrc
+const onCoverError = (e: Event) => {
+  const img = e.target as HTMLImageElement
+  if (img.src !== defaultCover) img.src = defaultCover
+}
+
 const coverUrl = computed(() => {
   if (course.value?.cover) {
+    if (course.value.cover.startsWith('http')) return course.value.cover
     try {
       return new URL(course.value.cover.replace('/assets/', '/src/assets/'), import.meta.url).href
     } catch {
       return course.value.cover
     }
   }
-  return new URL('/src/assets/images/course-beginner-cover.svg', import.meta.url).href
+  return defaultCourseCoverSrc
 })
 
 const levelText = computed(() => {
@@ -275,6 +298,75 @@ onUnmounted(() => {
 
 .breadcrumb a:hover {
   text-decoration: underline;
+}
+
+/* 暂不可用提示横幅 */
+.unavailable-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  color: #92400e;
+}
+
+:root.dark .unavailable-notice {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+}
+
+.notice-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.notice-body strong {
+  font-weight: 700;
+}
+
+/* 封面上的不可用遮罩 */
+.cover-unavailable {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.cover-unavailable span:first-child {
+  font-size: 28px;
+  color: #f59e0b;
+}
+
+/* 禁用按钮样式 */
+.action-btn.primary.disabled {
+  background: var(--text-tertiary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.action-btn.primary.disabled:hover {
+  background: var(--text-tertiary);
+  transform: none;
 }
 
 /* 课程头部 */

@@ -42,9 +42,9 @@ export const courseTypeTagMap: Record<string, string> = {
 
 // 课程类型文本映射
 export const courseTypeLabelMap: Record<string, string> = {
-  [CourseType.BEGINNER]: '基础课程',
-  [CourseType.INTERMEDIATE]: '进阶课程',
-  [CourseType.ADVANCED]: '高级课程'
+  [CourseType.BEGINNER]: '初级',
+  [CourseType.INTERMEDIATE]: '中级',
+  [CourseType.ADVANCED]: '高级'
 }
 
 // 课程状态标签映射

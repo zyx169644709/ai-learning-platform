@@ -1,8 +1,11 @@
 import { seedResources } from './seeds/resourceSeeds'
+import { seedCourses } from './seeds/courseSeeds'
 
 async function main() {
   console.log('=== 开始执行数据库种子脚本 ===\n')
   await seedResources()
+  console.log('')
+  await seedCourses()
   console.log('\n=== 种子脚本执行完成 ===')
 }
 

@@ -19,10 +19,20 @@
         />
       </el-form-item>
       <el-form-item label="课程类型" style="width: 180px;">
+        <el-select v-model="filterForm.category" placeholder="全部" clearable @change="debouncedSearch">
+          <el-option label="基础入门" value="fundamentals" />
+          <el-option label="核心语法" value="core-syntax" />
+          <el-option label="进阶实战" value="advanced-practice" />
+          <el-option label="项目开发" value="projects" />
+          <el-option label="面试专题" value="interview" />
+          <el-option label="生态工具" value="ecosystem" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="课程难度" style="width: 180px;">
         <el-select v-model="filterForm.type" placeholder="全部" clearable @change="debouncedSearch">
-          <el-option label="基础课程" value="beginner" />
-          <el-option label="进阶课程" value="intermediate" />
-          <el-option label="高级课程" value="advanced" />
+          <el-option label="初级" value="beginner" />
+          <el-option label="中级" value="intermediate" />
+          <el-option label="高级" value="advanced" />
         </el-select>
       </el-form-item>
       <el-form-item label="课程状态" style="width: 180px;">
@@ -42,10 +52,10 @@
       <el-table :data="courses" stripe style="table-layout: auto" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column prop="title" label="课程标题" min-width="250" />
-        <el-table-column prop="type" label="类型" width="90" align="center" header-align="center">
+        <el-table-column prop="level" label="课程难度" width="100" align="center" header-align="center">
           <template #default="{ row }">
-            <el-tag :type="getTypeTagType(row.type)">
-              {{ getTypeLabel(row.type) }}
+            <el-tag :type="getTypeTagType(row.level || row.type)">
+              {{ getTypeLabel(row.level || row.type) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -238,7 +248,7 @@ const {
 } = useCrud({
   apiPath: '/admin/courses',
   resourceName: '课程',
-  filterFields: ['title', 'type', 'status']
+  filterFields: ['title', 'type', 'status', 'category']
 })
 
 // 课程表单
@@ -296,10 +306,10 @@ const getCategoryTagType = (category: string): 'success' | 'info' | 'warning' | 
   const typeMap: Record<string, 'success' | 'info' | 'warning' | 'danger' | ''> = {
     'fundamentals': 'success',      // 基础入门 - 绿色（清新、入门）
     'core-syntax': 'warning',          // 核心语法 - 蓝色（稳重、核心）
-    'advanced-practice': 'warning', // 进阶实战 - 橙色（进阶、活力）
-    'projects': '',                 // 项目开发 - 默认紫灰（项目、综合）
-    'interview': 'danger',          // 面试专题 - 红色（重要、紧迫）
-    'ecosystem': 'success'          // 生态工具 - 绿色（生态、工具）
+    'advanced-practice': '', // 进阶实战 - 橙色（进阶、活力）
+    'projects': 'success',                 // 项目开发 - 默认紫灰（项目、综合）
+    'interview': 'warning',          // 面试专题 - 红色（重要、紧迫）
+    'ecosystem': ''          // 生态工具 - 绿色（生态、工具）
   }
   return typeMap[category] || ''
 }
@@ -323,6 +333,7 @@ const resetFilter = () => {
   filterForm.title = ''
   filterForm.type = ''
   filterForm.status = ''
+  filterForm.category = ''
   resetPagination()
   loadCourses()
 }

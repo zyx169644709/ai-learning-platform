@@ -13,7 +13,7 @@
       <div class="grid">
         <div class="card" v-for="r in filtered" :key="r.id" @click="handleResourceClick(r)">
           <div class="thumb">
-            <img :src="r.preview" :alt="r.title" />
+            <img :src="r.preview" :alt="r.title" referrerpolicy="no-referrer" />
             <span class="badge" :class="r.type">{{ typeText(r.type) }}</span>
           </div>
           <div class="meta">

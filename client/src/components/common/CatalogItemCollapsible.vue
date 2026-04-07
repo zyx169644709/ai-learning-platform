@@ -130,6 +130,10 @@ const toggle = () => { isExpanded.value = !isExpanded.value }
 .section-title {
   flex: 1;
   line-height: 2.8;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 @media (max-width: 768px) {

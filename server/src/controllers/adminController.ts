@@ -338,7 +338,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 // 获取课程列表
 export const getCourses = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, type, title, status } = req.query
+    const { page = 1, limit = 20, type, title, status, category } = req.query
     
     // 构建查询条件
     const where: any = {}
@@ -351,6 +351,9 @@ export const getCourses = async (req: Request, res: Response) => {
     if (type) {
       where.level = type as string
     }
+    if (category && category.toString().trim()) {
+      where.category = category.toString().trim()
+    }
     if (title && title.toString().trim()) {
       where.title = {
         contains: title.toString().trim()
@@ -360,37 +363,53 @@ export const getCourses = async (req: Request, res: Response) => {
       where.status = status.toString().trim()
     }
     
-    // 计算分页
+    // 分类排序权重（基础入门最前，生态工具最后）
+    const CATEGORY_ORDER: Record<string, number> = {
+      'fundamentals': 0,
+      'core-syntax': 1,
+      'advanced-practice': 2,
+      'projects': 3,
+      'interview': 4,
+      'ecosystem': 5
+    }
+
+    // 取全量数据后在 JS 排序，解决新建课程 order 字段为空的问题
+    const allCourses = await prisma.course.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        level: true,
+        category: true,
+        cover: true,
+        url: true,
+        status: true,
+        duration: true,
+        content: true,
+        viewCount: true,
+        studentCount: true,
+        favoriteCount: true,
+        tags: true,
+        createdAt: true,
+        updatedAt: true,
+        order: true
+      }
+    })
+
+    // 按分类权重 → 分类内按 order（无 order 排最后）
+    allCourses.sort((a, b) => {
+      const catA = CATEGORY_ORDER[a.category ?? ''] ?? 99
+      const catB = CATEGORY_ORDER[b.category ?? ''] ?? 99
+      if (catA !== catB) return catA - catB
+      const orderA = a.order ?? Number.MAX_SAFE_INTEGER
+      const orderB = b.order ?? Number.MAX_SAFE_INTEGER
+      return orderA - orderB
+    })
+
+    const total = allCourses.length
     const skip = (Number(page) - 1) * Number(limit)
     const take = Number(limit)
-    
-    // 查询课程
-    const [courses, total] = await Promise.all([
-      prisma.course.findMany({
-        where,
-        skip,
-        take,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          title: true,
-          level: true,
-          category: true,
-          cover: true,
-          url: true,
-          status: true,
-          duration: true,
-          content: true,
-          viewCount: true,
-          studentCount: true,
-          favoriteCount: true,
-          tags: true,
-          createdAt: true,
-          updatedAt: true
-        }
-      }),
-      prisma.course.count({ where })
-    ])
+    const courses = allCourses.slice(skip, skip + take)
     
     // 格式化返回数据
     const formattedCourses = courses.map(course => {

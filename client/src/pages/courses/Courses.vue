@@ -1,7 +1,18 @@
 <template>
   <div class="docs">
     <h1 class="title">课程</h1>
-    <p class="page-intro">{{ pageIntro }}</p>
+    <p class="page-intro" v-if="currentCategoryMeta">{{ pageIntro }}</p>
+    <div class="page-intro-list" v-else>
+      <p style="font-size: large;">本网站提供了类型齐全、种类多样的完备课程体系，让用户能够系统的学习Vue及其相关生态。课程体系按 6 大方向系统组织，可在左侧目录快速切换分类：</p>
+      <ul>
+        <li><strong>🚀 基础入门</strong>——零基础也能快速上手，建立 Vue 开发信心</li>
+        <li><strong>🔧 核心语法</strong>——深入组件、响应式、生命周期等灵魂知识点</li>
+        <li><strong>⚡ 进阶实战</strong>——组合式 API、路由、状态管理等实战必备技能</li>
+        <li><strong>🏗️ 项目开发</strong>——后台管理、移动端与全栈场景完整项目驱动</li>
+        <li><strong>🎯 面试专题</strong>——高频面试题、源码原理与大厂经验助你脱颖而出</li>
+        <li><strong>🌿 生态工具</strong>——覆盖 Pinia、Nuxt、Element Plus 等主流 Vue 生态</li>
+      </ul>
+    </div>
 
     <div class="main-container">
       <div class="callout">
@@ -31,11 +42,23 @@
       </div>
 
       <div class="grid">
-        <div class="card" v-for="c in filteredCourses" :key="c.id" @click="openCourse(c)">
+        <div class="card" :class="{ unavailable: c.unavailable }" v-for="c in filteredCourses" :key="c.id" @click="openCourse(c)">
           <div class="thumb">
-            <img :src="c.cover" :alt="c.title" />
-            <div class="play-overlay">
+            <img
+              v-if="c.cover && !c.cover.startsWith('/')"
+              :src="c.cover"
+              referrerpolicy="no-referrer"
+              class="thumb-preload"
+              alt=""
+              @load="loadedCovers[c.id] = c.cover"
+            />
+            <div class="thumb-bg" :style="loadedCovers[c.id] ? { backgroundImage: `url('${loadedCovers[c.id]}')` } : {}"></div>
+            <div class="play-overlay" v-if="!c.unavailable">
               <div class="play-icon">▶</div>
+            </div>
+            <div class="unavailable-overlay" v-if="c.unavailable">
+              <span class="unavailable-icon">⚠</span>
+              <span class="unavailable-text">课程暂不可用</span>
             </div>
           </div>
           <div class="meta">
@@ -55,9 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { COURSE_CATEGORY_OPTIONS, inferCourseCategory, type CourseCategoryKey } from '../../../../shared/constants/courseCategories'
+import defaultCourseCover from '@/assets/images/course-beginner-cover.svg'
+import defaultAvatar from '@/assets/images/default.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -65,6 +90,7 @@ const route = useRoute()
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 const query = ref('')
+const loadedCovers = reactive<Record<string, string>>({})
 
 type Level = string
 interface CourseCard { 
@@ -74,7 +100,8 @@ interface CourseCard {
   level: Level; 
   category?: CourseCategoryKey;
   tags?: unknown;
-  cover: string; 
+  cover: string;
+  unavailable?: boolean;
   author: string; 
   authorAvatar: string; 
 
@@ -91,9 +118,7 @@ const currentCategoryMeta = computed(() => {
 })
 
 const pageIntro = computed(() => {
-  if (!currentCategoryMeta.value) {
-    return '课程体系按 6 大方向组织：基础入门、核心语法、进阶实战、项目开发、面试专题、生态工具。可在左侧快速切换并进入对应课程详情。'
-  }
+  if (!currentCategoryMeta.value) return ''
   return `${currentCategoryMeta.value.title}：${currentCategoryMeta.value.intro}`
 })
 
@@ -136,10 +161,13 @@ onMounted(async () => {
       level: (c.level as Level) || '',
       category: c.category,
       tags: c.tags,
-      cover: c.cover ? new URL(c.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/course-beginner-cover.svg', import.meta.url).href,
+      unavailable: !c.cover,
+      cover: c.cover
+        ? (c.cover.startsWith('http') ? c.cover : c.cover)
+        : defaultCourseCover,
 
       author: '课程组',
-      authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,
+      authorAvatar: defaultAvatar,
       bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
       url: c.url,
       videoPlatform: c.url?.includes('bilibili') ? 'bilibili' : undefined,
@@ -227,7 +255,28 @@ const openCourse = (course: CourseCard) => {
   margin: -4px 45px 20px;
   color: var(--text-secondary);
   line-height: 1.8;
-  font-size: 15px;
+  font-size: 16px;
+}
+
+.page-intro-list {
+  margin: -4px 45px 20px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.page-intro-list p {
+  margin-bottom: 8px;
+}
+
+.page-intro-list ul {
+  padding-left: 1.5em;
+  margin: 0;
+}
+
+.page-intro-list li {
+  margin-bottom: 4px;
+  line-height: 1.8;
 }
 
 .main-container {
@@ -297,7 +346,7 @@ a:hover {
 }
 
 .filter-label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -309,7 +358,7 @@ a:hover {
   border-radius: 6px;
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   outline: none;
   min-width: 140px;
@@ -382,10 +431,17 @@ a:hover {
   overflow: hidden;
 }
 
-.thumb img {
+.thumb-preload {
+  display: none;
+}
+
+.thumb-bg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg-secondary);
 }
 
 /* 播放按钮覆盖层 */
@@ -425,14 +481,14 @@ a:hover {
 }
 
 .c-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
 .c-desc {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 14px;
   margin-bottom: 10px;
 }
 
@@ -444,7 +500,7 @@ a:hover {
 
 .author {
   color: var(--text-tertiary);
-  font-size: 12px;
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -461,7 +517,7 @@ a:hover {
   color: #fff;
   border-radius: 4px;
   padding: 2px 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .video-tag {
@@ -469,39 +525,46 @@ a:hover {
   color: #fff;
   border-radius: 4px;
   padding: 2px 6px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
-/* 播放按钮覆盖层 */
-.play-overlay {
+/* 暂不可用遮罩 */
+.unavailable-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  gap: 6px;
 }
 
-.card:hover .play-overlay {
-  opacity: 1;
+.unavailable-icon {
+  font-size: 28px;
+  color: #f59e0b;
 }
 
-.play-icon {
-  width: 50px;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: #333;
-  font-weight: bold;
+.unavailable-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.card.unavailable {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.card.unavailable:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 /* 模态框 */

@@ -105,6 +105,10 @@ const buildRoute = (item: { id: string }) => {
 .section-title {
   flex: 1;
   line-height: 2.8;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .sub-chapter {
