@@ -1,0 +1,128 @@
+{
+  "courseId": "vue-performance-analysis",
+  "courseName": "Vue 性能分析工具",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "为什么需要对 Vue 应用进行系统的性能分析？",
+      "options": [
+        "因为 Vue 应用天生性能较差，必须经过大量优化",
+        "因为前端性能直接影响用户留存率和转化率，且性能问题难以仅凭感官定位",
+        "因为性能分析是 Vue 官方强制要求的开发步骤",
+        "因为只有通过性能分析才能使用 Vue DevTools"
+      ],
+      "correctAnswer": 1,
+      "explanation": "研究表明页面加载时间每增加1秒，转化率可能下降7%。Vue 应用的性能问题隐藏在组件嵌套、响应式数据变更、虚拟 DOM diff 等环节中，仅凭感官难以精准定位，需要通过系统性分析识别真正的瓶颈。"
+    },
+    {
+      "id": 2,
+      "question": "Vue DevTools 中专门用于分析组件渲染性能的标签页是？",
+      "options": [
+        "Components 标签",
+        "Performance 标签",
+        "Timeline 标签",
+        "Profiler 标签"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue DevTools 的 Performance 面板专门用于分析组件渲染性能。录制过程中所有组件的渲染操作都会被记录，并以时间线形式展示组件更新情况。"
+    },
+    {
+      "id": 3,
+      "question": "在 Chrome DevTools Performance 面板的火焰图中，长的红色块表示什么？",
+      "options": [
+        "JavaScript 语法错误",
+        "网络请求超时",
+        "长任务（超过50ms），是导致页面卡顿的主要原因",
+        "内存泄漏警告"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Main 线程区域中长的红色块表示长任务（超过50ms），这些是导致页面卡顿的主要原因。Vue 应用中的长任务通常与大量数据渲染、复杂计算、频繁的响应式更新有关。"
+    },
+    {
+      "id": 4,
+      "question": "在 Vue 3 中开启内置性能追踪的正确配置是？",
+      "options": [
+        "Vue.config.productionTip = true",
+        "app.config.performance = true",
+        "Vue.config.devtools = true",
+        "app.config.globalProperties.$performance = true"
+      ],
+      "correctAnswer": 1,
+      "explanation": "通过设置 app.config.performance = true 可以开启 Vue 3 内置的性能追踪，Vue 会自动追踪组件的挂载、更新和卸载时间。此配置仅在开发环境生效，生产环境自动失效。"
+    },
+    {
+      "id": 5,
+      "question": "Lighthouse 性能评分中，90-100 分对应的等级是？",
+      "options": [
+        "红色（差）",
+        "橙色（需改进）",
+        "黄色（一般）",
+        "绿色（优秀）"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Lighthouse 给出 0-100 的性能评分，90-100 分为绿色（优秀），50-89 分为橙色（需改进），0-49 分为红色（差）。评分基于 FCP、LCP、CLS、TBT、SI 等多个指标综合计算。"
+    },
+    {
+      "id": 6,
+      "question": "Google 推出的 Core Web Vitals 包括哪三个核心指标？",
+      "options": [
+        "FCP、TTI、TBT",
+        "LCP、FID、CLS",
+        "FMP、TTFB、Speed Index",
+        "INP、LCP、FCP"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Core Web Vitals 包括 LCP（ Largest Contentful Paint，衡量主要内容可见时间）、FID（First Input Delay，测量首次交互延迟）、CLS（Cumulative Layout Shift，量化视觉意外偏移）。"
+    },
+    {
+      "id": 7,
+      "question": "关于识别 Vue 组件不必要的重渲染，以下哪项不是常见原因？",
+      "options": [
+        "在模板中使用函数调用",
+        "使用 shallowRef 处理深层数据",
+        "使用普通对象而非 reactive",
+        "在 data 中直接存储大数组"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 shallowRef 是避免深层响应式开销的优化手段，而不是导致不必要重渲染的原因。常见原因包括：在模板中使用函数调用、使用普通对象而非 reactive、在 data 中直接存储大数组等。"
+    },
+    {
+      "id": 8,
+      "question": "处理大量数据时，为了减少深层响应式开销，Vue 3 提供了哪个 API？",
+      "options": [
+        "deepRef",
+        "shallowRef",
+        "reactive",
+        "readonly"
+      ],
+      "correctAnswer": 1,
+      "explanation": "shallowRef 适用于不需要深层响应式的大型数据集，它只对 .value 的访问进行响应式追踪，而不会递归地将内部属性转换为响应式，从而减少开销。"
+    },
+    {
+      "id": 9,
+      "question": "在 Vue 组件中，为了防止内存泄漏，每个 addEventListener 都应该有对应的什么？",
+      "options": [
+        "$off 调用",
+        "removeEventListener 调用",
+        "destroy 方法",
+        "unbind 指令"
+      ],
+      "correctAnswer": 1,
+      "explanation": "务必确保每个 addEventListener 都有对应的 removeEventListener，通常在 beforeUnmount 或 unmounted 生命周期钩子中清理，否则会导致事件监听器泄漏。"
+    },
+    {
+      "id": 10,
+      "question": "VueUse 库中用于监听长任务（longtask）和绘制事件（paint）的 composable 是？",
+      "options": [
+        "usePerformanceObserver",
+        "useMemory",
+        "useRafFn",
+        "useEventListener"
+      ],
+      "correctAnswer": 0,
+      "explanation": "usePerformanceObserver 封装了 Performance Observer API，可以监听长任务、绘制事件等性能条目，并提供响应式数据，比原生 API 更适合 Vue 项目。"
+    }
+  ]
+}

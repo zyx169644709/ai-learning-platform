@@ -1,0 +1,128 @@
+{
+  "courseId": "vitest-component-testing",
+  "courseName": "Vitest 与组件测试",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "关于 Vitest 相比 Jest 的优势，以下描述正确的是？",
+      "options": [
+        "Vitest 需要单独安装测试运行器，而 Jest 内置",
+        "Vitest 基于 Vite 预构建，执行速度更快，零配置即可运行测试",
+        "Vitest 不支持 TypeScript，需要额外配置",
+        "Vitest 只能用于 Vue 项目，不能测试 React 组件"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vitest 由 Vite 团队打造，共享 Vite 配置，基于 Vite 预构建和 ESM 编译，执行速度远超 Jest，且零配置即可运行测试，原生支持 TypeScript。"
+    },
+    {
+      "id": 2,
+      "question": "在 Vitest 配置文件中，设置 environment: 'jsdom' 的作用是？",
+      "options": [
+        "启用全局 API（如 describe、it）",
+        "提供浏览器 DOM 环境模拟，使组件测试可以访问 DOM API",
+        "启用代码覆盖率收集",
+        "开启热模块替换功能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "environment: 'jsdom' 使用 jsdom 模拟浏览器 DOM 环境，使得测试中可以操作 DOM 元素，这对于 Vue 组件测试是必需的。"
+    },
+    {
+      "id": 3,
+      "question": "在 @vue/test-utils 中，shallowMount 与 mount 的主要区别是？",
+      "options": [
+        "shallowMount 会完整挂载所有子组件，mount 会存根子组件",
+        "shallowMount 会存根子组件，mount 完整挂载所有子组件",
+        "shallowMount 只能用于函数式组件，mount 用于单文件组件",
+        "两者没有区别，只是别名"
+      ],
+      "correctAnswer": 1,
+      "explanation": "shallowMount 会存根子组件（只渲染子组件的占位符），而 mount 会完整渲染所有子组件。使用 shallowMount 可以隔离测试目标组件，减少依赖影响。"
+    },
+    {
+      "id": 4,
+      "question": "以下哪个断言方法用于检查对象或数组的深度相等？",
+      "options": [
+        "toBe",
+        "toEqual",
+        "toBeDeepEqual",
+        "toMatchObject"
+      ],
+      "correctAnswer": 1,
+      "explanation": "toEqual 用于深度相等断言，比较对象或数组的内容是否相同。toBe 使用 Object.is 进行严格相等比较，适合原始类型。"
+    },
+    {
+      "id": 5,
+      "question": "在组件测试中，模拟用户点击按钮并验证组件触发了 'update' 事件，正确的代码是？",
+      "options": [
+        "wrapper.find('button').click(); expect(wrapper.emitted('update')).toBe(true)",
+        "await wrapper.find('button').trigger('click'); expect(wrapper.emitted('update')).toHaveLength(1)",
+        "wrapper.find('button').trigger('click'); expect(wrapper.emitted('update')).toBeDefined()",
+        "await wrapper.find('button').simulate('click'); expect(wrapper.emitted('update')).toBeTruthy()"
+      ],
+      "correctAnswer": 1,
+      "explanation": "trigger 方法模拟交互，需要使用 await 等待更新。emitted('update') 返回包含所有触发参数的数组，通过 toHaveLength(1) 验证事件被触发了一次。"
+    },
+    {
+      "id": 6,
+      "question": "测试组件中异步数据加载（例如 onMounted 中调用 API），加载完成后应使用哪个工具等待 DOM 更新？",
+      "options": [
+        "nextTick",
+        "flushPromises",
+        "waitForNextUpdate",
+        "setTimeout"
+      ],
+      "correctAnswer": 1,
+      "explanation": "flushPromises 会等待所有待处理的 Promise 完成，适用于等待异步操作（如 API 请求）完成后组件重新渲染的场景。"
+    },
+    {
+      "id": 7,
+      "question": "以下哪个方法用于创建模拟函数，并可以链式调用 mockResolvedValue 设置异步返回值？",
+      "options": [
+        "vi.mock",
+        "vi.spyOn",
+        "vi.fn",
+        "vi.stub"
+      ],
+      "correctAnswer": 2,
+      "explanation": "vi.fn() 创建模拟函数，可链式调用 mockResolvedValue 设置异步返回值，mockReturnValue 设置同步返回值。"
+    },
+    {
+      "id": 8,
+      "question": "关于 Vue 组件测试的最佳实践，以下哪项是正确的？",
+      "options": [
+        "测试组件的内部状态（如 wrapper.vm.count）而非用户可见行为",
+        "优先使用 mount 而非 shallowMount，确保测试真实环境",
+        "测试用户可见的行为，使用浅层挂载隔离子组件，只对外部依赖进行 Mock",
+        "每个测试应该共享同一个 wrapper 实例，以提高性能"
+      ],
+      "correctAnswer": 2,
+      "explanation": "最佳实践包括：测试用户行为而非实现细节；优先使用 shallowMount 隔离子组件；只 Mock 外部依赖（API、网络）；每个测试独立，使用 beforeEach 重置状态。"
+    },
+    {
+      "id": 9,
+      "question": "在测试 Pinia Store 时，推荐使用以下哪个工具创建测试用 store 实例？",
+      "options": [
+        "createPinia",
+        "createTestingPinia",
+        "usePinia",
+        "mockPinia"
+      ],
+      "correctAnswer": 1,
+      "explanation": "@pinia/testing 提供了 createTestingPinia，它会创建可测试的 store，支持模拟 action 和自动重置状态，适合单元测试。"
+    },
+    {
+      "id": 10,
+      "question": "以下哪项是 Vitest 中配置测试覆盖率报告的正确写法？",
+      "options": [
+        "test: { coverage: { provider: 'istanbul', reporter: ['html'] } }",
+        "test: { coverage: { provider: 'v8', reporter: ['text', 'html'] } }",
+        "coverage: { provider: 'v8', reporters: ['text'] }",
+        "testCoverage: { provider: 'v8', format: ['html'] }"
+      ],
+      "correctAnswer": 1,
+      "explanation": "在 Vitest 配置中，coverage 选项应放在 test 对象内，provider 可选 'v8' 或 'istanbul'，reporter 指定报告格式，如 'text'、'html'。"
+    }
+  ]
+}

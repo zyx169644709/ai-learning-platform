@@ -1,0 +1,128 @@
+{
+  "courseId": "code-splitting-lazy-loading",
+  "courseName": "代码分割与懒加载",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "关于代码分割的主要目的，以下描述正确的是？",
+      "options": [
+        "将代码拆分成多个文件，减少服务器存储空间",
+        "将代码拆分成独立的 chunk，按需加载，减少首屏加载体积",
+        "将 CSS 和 JS 完全分离，便于维护",
+        "将第三方库和业务代码合并到一个文件中，减少请求数"
+      ],
+      "correctAnswer": 1,
+      "explanation": "代码分割的核心目的是将应用代码拆分成多个独立的 chunk，让浏览器先加载首屏必要的代码，其余代码在需要时再加载，从而减少首屏加载体积，提升加载性能。"
+    },
+    {
+      "id": 2,
+      "question": "在 Vue 3 中定义异步组件的正确方式是？",
+      "options": [
+        "Vue.component('AsyncComp', () => import('./Comp.vue'))",
+        "const AsyncComp = defineAsyncComponent(() => import('./Comp.vue'))",
+        "createAsyncComponent(() => import('./Comp.vue'))",
+        "importAsync(() => import('./Comp.vue'))"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 提供了 defineAsyncComponent 函数来定义异步组件，参数是一个返回 import() Promise 的函数。选项 A 是 Vue 2 的全局注册方式。"
+    },
+    {
+      "id": 3,
+      "question": "Webpack 中为动态导入的 chunk 指定名称的魔法注释是？",
+      "options": [
+        "/* chunkName: \"name\" */",
+        "/* webpackChunkName: \"name\" */",
+        "/* chunk-name: \"name\" */",
+        "/* name: \"name\" */"
+      ],
+      "correctAnswer": 1,
+      "explanation": "在 Webpack 中，使用 /* webpackChunkName: \"name\" */ 魔法注释可以为分割后的 chunk 指定名称，便于调试和缓存管理。"
+    },
+    {
+      "id": 4,
+      "question": "Vite 中用于手动控制代码分割策略的配置项是？",
+      "options": [
+        "build.splitChunks",
+        "build.rollupOptions.output.manualChunks",
+        "build.codeSplitting",
+        "optimization.splitChunks"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 基于 Rollup，通过 build.rollupOptions.output.manualChunks 可以手动控制分割策略，例如将特定库打包到独立 chunk。"
+    },
+    {
+      "id": 5,
+      "question": "以下哪个资源预加载指令的优先级最低，适合用于预取可能访问的下一个页面资源？",
+      "options": [
+        "preload",
+        "prefetch",
+        "modulepreload",
+        "preconnect"
+      ],
+      "correctAnswer": 1,
+      "explanation": "prefetch 告诉浏览器在当前页面加载完成后空闲时预取可能被访问的下一个页面的资源，优先级最低；preload 优先级最高，用于当前页面必需的资源。"
+    },
+    {
+      "id": 6,
+      "question": "现代浏览器原生支持的图片懒加载属性是？",
+      "options": [
+        "lazy=\"true\"",
+        "loading=\"lazy\"",
+        "async=\"lazy\"",
+        "defer=\"lazy\""
+      ],
+      "correctAnswer": 1,
+      "explanation": "HTML 标准提供了 loading=\"lazy\" 属性，浏览器会自动实现图片懒加载，当图片进入视口时才发起请求。"
+    },
+    {
+      "id": 7,
+      "question": "在 Vue 中封装图片懒加载功能，最合适的方案是？",
+      "options": [
+        "使用 computed 属性",
+        "使用自定义指令，基于 Intersection Observer API",
+        "使用 watch 监听滚动事件",
+        "使用 provide/inject 传递图片地址"
+      ],
+      "correctAnswer": 1,
+      "explanation": "自定义指令可以封装 Intersection Observer API，当图片进入视口时设置 src，提供更便捷的模板语法，且自动处理清理逻辑。"
+    },
+    {
+      "id": 8,
+      "question": "使用 defineAsyncComponent 定义异步组件时，用于显示加载中状态的配置项是？",
+      "options": [
+        "loading",
+        "loader",
+        "loadingComponent",
+        "fallback"
+      ],
+      "correctAnswer": 2,
+      "explanation": "loadingComponent 配置项用于指定加载过程中显示的组件，避免用户看到空白或闪烁。delay 配置可以控制延迟显示，防止闪烁。"
+    },
+    {
+      "id": 9,
+      "question": "关于 chunk 体积的建议，以下说法正确的是？",
+      "options": [
+        "chunk 体积越大越好，减少请求数",
+        "chunk 体积越小越好，增加并行加载",
+        "单个 chunk 一般建议控制在 30KB-50KB 左右，同一功能模块的代码应打包在一起",
+        "chunk 体积没有建议值，任意大小均可"
+      ],
+      "correctAnswer": 2,
+      "explanation": "chunk 体积过大影响加载速度，过小则增加 HTTP 请求数量。一般建议单个 chunk 控制在 30KB-50KB 左右，同一功能模块的代码应该打包在一起。"
+    },
+    {
+      "id": 10,
+      "question": "以下哪种做法属于代码分割与懒加载的最佳实践？",
+      "options": [
+        "将首屏必需的关键样式也进行懒加载",
+        "将所有第三方库打包到同一个 chunk 中，无论大小",
+        "路由级别懒加载 + 预加载关键路由，非首屏组件懒加载，定期分析打包结果",
+        "所有组件都使用懒加载，包括首屏可见组件"
+      ],
+      "correctAnswer": 2,
+      "explanation": "最佳实践包括：路由级别懒加载配合预加载关键路由；非首屏组件懒加载；首屏必需的资源不应懒加载；定期分析打包结果调整策略。"
+    }
+  ]
+}

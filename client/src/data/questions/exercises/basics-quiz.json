@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-basic-exercises",
+  "courseName": "Vue 3 基础语法练习题",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue 3 中，关于 ref 和 reactive 的选择，以下说法正确的是？",
+      "options": [
+        "ref 只能用于基本类型，reactive 只能用于对象类型",
+        "ref 适合包装基本类型数据，使用时需要通过 .value 访问；reactive 只能用于对象，直接通过属性访问",
+        "ref 和 reactive 可以互相替代，没有区别",
+        "reactive 可以处理基本类型，ref 可以处理对象类型"
+      ],
+      "correctAnswer": 1,
+      "explanation": "ref 适合包装基本类型，使用时需要 .value（模板中自动解包）；reactive 只能用于对象类型，直接通过属性访问。两者各有适用场景，不能完全替代。"
+    },
+    {
+      "id": 2,
+      "question": "分析以下代码：const state = reactive({ count: 0 }); const { count } = state; 点击按钮执行 count++ 后界面不更新。原因是什么？",
+      "options": [
+        "count 变量不是响应式的，解构 reactive 对象会丢失响应式连接",
+        "count++ 语法错误，应该使用 count.value++",
+        "reactive 不能用于数字类型",
+        "需要在模板中使用 state.count 而不是 count"
+      ],
+      "correctAnswer": 0,
+      "explanation": "解构 reactive 对象会得到普通值，失去响应式连接。修改 count 只是修改局部变量，原 reactive 对象未改变，视图不更新。应使用 toRefs 保持响应式。"
+    },
+    {
+      "id": 3,
+      "question": "关于 Vue 3 计算属性（computed）的描述，正确的是？",
+      "options": [
+        "计算属性每次访问都会重新执行函数，没有缓存",
+        "计算属性依赖的响应式数据变化时会重新计算，并且结果会被缓存直到依赖变化",
+        "计算属性只能用于同步计算，不能包含异步逻辑",
+        "计算属性必须返回一个函数"
+      ],
+      "correctAnswer": 1,
+      "explanation": "计算属性的核心特点是缓存机制：只有依赖的响应式数据变化时才重新计算，否则返回缓存结果，性能优于方法调用。"
+    },
+    {
+      "id": 4,
+      "question": "在 Vue 3 的 setup 函数中定义响应式状态和方法，如何让它们在模板中可用？",
+      "options": [
+        "自动可用，无需任何操作",
+        "必须在 setup 中返回包含这些状态和方法的对象",
+        "需要使用 expose 函数暴露",
+        "只能在模板中使用 $setup 前缀访问"
+      ],
+      "correctAnswer": 1,
+      "explanation": "setup 函数返回的对象属性会被暴露给模板。如果不返回，内部定义的变量和方法无法在模板中使用。<script setup> 语法糖会自动暴露顶层变量。"
+    },
+    {
+      "id": 5,
+      "question": "Vue 3 组件首次渲染时，以下生命周期钩子的执行顺序正确的是？",
+      "options": [
+        "setup → onBeforeMount → 模板渲染 → onMounted",
+        "onBeforeMount → setup → onMounted → 模板渲染",
+        "setup → onMounted → onBeforeMount → 模板渲染",
+        "onBeforeMount → setup → 模板渲染 → onMounted"
+      ],
+      "correctAnswer": 0,
+      "explanation": "setup 在组件实例创建后立即同步执行，早于所有生命周期钩子。之后依次是 onBeforeMount、模板渲染、onMounted。"
+    },
+    {
+      "id": 6,
+      "question": "需要监听响应式数据变化，并且希望在回调中获取旧值和新值，应该使用哪个 API？",
+      "options": [
+        "watchEffect",
+        "watch",
+        "computed",
+        "onUpdated"
+      ],
+      "correctAnswer": 1,
+      "explanation": "watch 可以获取旧值和新值，且惰性执行（默认不立即执行）。watchEffect 会自动收集依赖，但不能获取旧值，且立即执行。"
+    },
+    {
+      "id": 7,
+      "question": "在 Vue 3 中定义一个名为 UserCard 的组件，要求 name 为必填字符串，age 为可选数字且默认值为 18。以下正确的 Props 声明是？",
+      "options": [
+        "defineProps(['name', 'age'])",
+        "defineProps({ name: String, age: Number })",
+        "defineProps({ name: { type: String, required: true }, age: { type: Number, default: 18 } })",
+        "defineProps({ name: { type: String }, age: 18 })"
+      ],
+      "correctAnswer": 2,
+      "explanation": "运行时声明语法支持 required 和 default 等验证选项。选项 A 无验证，选项 B 缺少必填和默认值，选项 D 语法错误。"
+    },
+    {
+      "id": 8,
+      "question": "在子组件中触发自定义事件 update:modelValue，父组件应使用哪种方式监听？",
+      "options": [
+        "v-model",
+        "@updateModelValue",
+        "@update:modelValue",
+        "v-bind:modelValue"
+      ],
+      "correctAnswer": 2,
+      "explanation": "v-model 默认会监听 update:modelValue 事件并接收 modelValue prop。自定义组件需要显式触发 update:modelValue 事件。"
+    },
+    {
+      "id": 9,
+      "question": "创建一个 List 组件，需要将每个列表项的数据传递给父组件，由父组件决定渲染方式。应该使用哪种插槽？",
+      "options": [
+        "默认插槽",
+        "具名插槽",
+        "作用域插槽",
+        "动态插槽"
+      ],
+      "correctAnswer": 2,
+      "explanation": "作用域插槽允许子组件通过 slot 属性向父组件传递数据，父组件在模板中接收数据并决定渲染内容，实现了数据与视图的分离。"
+    },
+    {
+      "id": 10,
+      "question": "实现一个 v-focus 自定义指令，在元素挂载后自动获得焦点。应该在哪个钩子中实现？",
+      "options": [
+        "created",
+        "beforeMount",
+        "mounted",
+        "beforeUpdate"
+      ],
+      "correctAnswer": 2,
+      "explanation": "mounted 钩子在元素被插入 DOM 后调用，此时可以安全地调用 focus() 方法。beforeMount 时元素尚未挂载。"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "courseId": "blog-system-spa",
+  "courseName": "项目实战：个人博客系统 (SPA)",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在个人博客系统的路由设计中，后台管理路由统一挂载在 /admin 前缀下，并通过什么机制进行权限隔离？",
+      "options": [
+        "通过路由 meta 字段设置 requiresAuth: true，在路由守卫中检查用户登录状态和角色",
+        "在后台页面组件内部直接判断用户权限",
+        "通过动态添加路由的方式，只有管理员才能看到后台菜单",
+        "使用 Vue Router 的 beforeResolve 钩子拦截所有后台请求"
+      ],
+      "correctAnswer": 0,
+      "explanation": "后台路由通过 meta.requiresAuth 标记需要鉴权，在全局前置守卫 beforeEach 中检查用户登录状态和角色（如 requiresAdmin），未授权则跳转登录或首页。"
+    },
+    {
+      "id": 2,
+      "question": "以下关于 Pinia Store 模块划分的描述，正确的是？",
+      "options": [
+        "所有状态都放在一个 Store 中，便于管理",
+        "按照业务领域划分 Store，如用户状态、文章状态、UI 状态，每个 Store 集中管理相关状态和操作",
+        "Store 只能存储全局状态，不能存储组件临时状态",
+        "Pinia Store 必须持久化存储，否则刷新页面数据会丢失"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Pinia 推荐按领域模块化拆分 Store，如用户、文章、UI 等，每个 Store 独立管理自己的 state、getters、actions，提高可维护性和复用性。"
+    },
+    {
+      "id": 3,
+      "question": "实现前端搜索功能时，为什么要对搜索输入进行防抖处理？",
+      "options": [
+        "防止用户输入过快导致浏览器卡顿",
+        "减少无效请求频率，只在用户停止输入一段时间后才执行搜索",
+        "确保每次输入都能触发搜索，不遗漏关键词",
+        "防抖可以提升搜索结果的准确性"
+      ],
+      "correctAnswer": 1,
+      "explanation": "防抖（debounce）确保用户连续输入时只触发最后一次搜索，避免频繁发起请求，减轻服务器压力，同时提升用户体验。"
+    },
+    {
+      "id": 4,
+      "question": "在文章详情页动态设置页面标题和描述等 meta 信息，Vue 3 中推荐使用哪个库或 API？",
+      "options": [
+        "document.title 直接修改",
+        "vue-router 的 meta 字段静态配置",
+        "@unhead/vue 的 useHead 组合式函数",
+        "vue-meta 插件"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Vue 3 生态中推荐使用 @unhead/vue（或 VueUse 的 useHead）动态更新页面头部信息，支持响应式数据，与 Composition API 无缝集成。"
+    },
+    {
+      "id": 5,
+      "question": "实现评论组件支持嵌套回复时，最合适的组件设计模式是？",
+      "options": [
+        "将评论列表和回复表单分开，通过事件总线通信",
+        "使用递归组件，每个 CommentItem 内部调用自身渲染子评论",
+        "将所有评论扁平化存储，通过 parentId 关联",
+        "使用插槽将回复内容注入到父级"
+      ],
+      "correctAnswer": 1,
+      "explanation": "递归组件能够自然处理任意层级的嵌套评论，每个 CommentItem 接收 comment 数据，内部判断是否有 children，若有则递归渲染 CommentItem。"
+    },
+    {
+      "id": 6,
+      "question": "实现按钮级权限控制（如删除按钮只有管理员可见），最常用的方式是？",
+      "options": [
+        "在模板中使用 v-if 配合用户角色判断",
+        "使用自定义指令 v-permission，根据权限码控制元素渲染",
+        "通过路由守卫判断按钮是否显示",
+        "在组件 mounted 钩子中操作 DOM 隐藏按钮"
+      ],
+      "correctAnswer": 1,
+      "explanation": "自定义指令 v-permission 可以封装权限判断逻辑，使用时简洁明了，且便于统一维护权限码，是按钮级权限控制的最佳实践。"
+    },
+    {
+      "id": 7,
+      "question": "Vite 构建生产环境产物时，以下哪个配置项用于分析产物体积分布？",
+      "options": [
+        "build.analyze = true",
+        "使用 rollup-plugin-visualizer 插件生成可视化报告",
+        "vite build --report",
+        "build.bundleAnalysis = true"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 基于 Rollup，可以添加 rollup-plugin-visualizer 插件，在构建后生成 stats.html 可视化报告，帮助分析各模块体积。"
+    },
+    {
+      "id": 8,
+      "question": "SPA 应用部署到 Nginx 时，需要配置 try_files 将所有请求重写到 index.html 的原因是？",
+      "options": [
+        "为了提高服务器响应速度",
+        "让前端路由接管 URL 处理，避免刷新页面时 404",
+        "实现静态资源缓存",
+        "启用 Gzip 压缩"
+      ],
+      "correctAnswer": 1,
+      "explanation": "SPA 使用前端路由，刷新页面或直接访问子路径时，服务器需要返回 index.html，由前端路由解析路径并渲染对应组件，否则会返回 404。"
+    },
+    {
+      "id": 9,
+      "question": "对于文章列表这种可能包含大量图片的场景，以下哪种优化方式最有效？",
+      "options": [
+        "使用 WebP 格式并设置图片懒加载",
+        "将所有图片内联为 Base64",
+        "使用 CSS Sprite 合并小图",
+        "将图片全部上传到 CDN 但无其他优化"
+      ],
+      "correctAnswer": 0,
+      "explanation": "WebP 格式体积更小，懒加载推迟视口外图片加载，两者结合能大幅减少首屏加载资源量，是图片优化的核心手段。"
+    },
+    {
+      "id": 10,
+      "question": "在个人博客系统中，关于角色权限控制（RBAC）的描述，错误的是？",
+      "options": [
+        "管理员拥有最高权限，可以管理所有内容",
+        "编辑可以创建和修改文章，但不能管理系统设置",
+        "权限控制只需要在路由层面实现，页面内部无需控制",
+        "普通用户只能浏览和评论，不能进入后台"
+      ],
+      "correctAnswer": 2,
+      "explanation": "权限控制需要多层防护：路由守卫控制页面访问，按钮/功能级权限控制具体操作（如编辑、删除按钮的显隐），仅靠路由控制不够安全。"
+    }
+  ]
+}

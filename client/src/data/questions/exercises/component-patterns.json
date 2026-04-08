@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-component-patterns",
+  "courseName": "组件设计模式练习",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "设计一个可复用按钮组件时，以下哪项不是 Props 设计的核心原则？",
+      "options": [
+        "提供合理的默认值以覆盖大部分使用场景",
+        "通过 validator 函数限制可选值，防止传入非法值",
+        "使用 inheritAttrs: false 配合 $attrs 透传原生属性",
+        "将所有样式写在内联 style 中，避免 CSS 类名冲突"
+      ],
+      "correctAnswer": 3,
+      "explanation": "内联样式会降低组件的可定制性和主题切换能力。按钮组件应使用 CSS 类名（如 btn-primary）并通过 props 控制类型变体，样式复用更灵活。"
+    },
+    {
+      "id": 2,
+      "question": "关于动态表单组件的配置驱动设计，以下描述正确的是？",
+      "options": [
+        "表单组件需要为每种表单项类型单独编写一个组件，无法统一渲染",
+        "通过 fields 配置数组驱动渲染，实现表单定义与渲染逻辑分离",
+        "动态表单不支持验证规则，必须手动编写验证代码",
+        "动态表单只能用于简单场景，无法处理嵌套对象"
+      ],
+      "correctAnswer": 1,
+      "explanation": "配置驱动的核心是 fields 数组，每个字段包含 name、type、rules、props 等。表单组件根据配置动态渲染，新增字段类型无需修改组件代码。"
+    },
+    {
+      "id": 3,
+      "question": "在选项卡（Tabs）组件中，实现 TabNav 和 TabPanel 之间通信的最佳方式是？",
+      "options": [
+        "通过 props 和 emit 层层传递",
+        "使用事件总线（EventBus）",
+        "使用 provide / inject 共享状态",
+        "使用全局状态管理（如 Pinia）"
+      ],
+      "correctAnswer": 2,
+      "explanation": "provide/inject 是 Vue 提供的跨层级组件通信机制，适合复合组件内部的状态共享。Tabs 组件 provide 当前激活索引，TabPanel 和 TabNav inject 该状态，避免了 props 逐层传递。"
+    },
+    {
+      "id": 4,
+      "question": "以下关于 Teleport 在模态框（Modal）组件中的作用，错误的是？",
+      "options": [
+        "将模态框渲染到 body 元素，解决父组件 overflow: hidden 导致的定位问题",
+        "模态框打开时自动锁定背景滚动，关闭时恢复",
+        "Teleport 支持条件渲染，当 v-if 为 false 时自动从 body 移除",
+        "Teleport 是 Vue 3 独有的特性，Vue 2 无法实现类似功能"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Teleport 是 Vue 3 新增特性，但 Vue 2 中可通过第三方库（如 portal-vue）或手动挂载实现类似效果。其他三项均为 Teleport 的正确描述。"
+    },
+    {
+      "id": 5,
+      "question": "在手风琴模式的折叠面板（Collapse）组件中，如何实现同时只能展开一个面板？",
+      "options": [
+        "在每个面板内部维护自己的展开状态，父组件不干涉",
+        "父组件维护当前展开的面板名称数组，当用户点击新面板时，将该面板名称作为数组唯一元素",
+        "使用事件总线通知其他面板关闭",
+        "使用 CSS 控制，只显示一个面板"
+      ],
+      "correctAnswer": 1,
+      "explanation": "父组件通过 v-model 绑定当前展开面板的数组，accordion 模式下点击新面板时，若该面板未展开则用 [name] 替换数组，若已展开则清空数组。实现了手风琴效果。"
+    },
+    {
+      "id": 6,
+      "question": "高阶组件（HOC） withLoading 的实现中，以下哪项不是必需的？",
+      "options": [
+        "通过 h() 函数渲染被包装组件和 loading 遮罩",
+        "使用 attrs 和 slots 透传原组件的属性和插槽",
+        "在包装组件中声明与 loading 相关的 props",
+        "使用 <template> 语法编写包装组件的模板"
+      ],
+      "correctAnswer": 3,
+      "explanation": "高阶组件通常使用 defineComponent 和 h() 渲染函数实现，以保持灵活性。<template> 语法也可行，但 h() 更常见。其他三项均为 withLoading 的必要部分。"
+    },
+    {
+      "id": 7,
+      "question": "无渲染组件（Renderless Component）的核心设计思想是？",
+      "options": [
+        "组件内部不包含任何 DOM 元素，完全由父组件通过插槽提供",
+        "组件通过作用域插槽将状态暴露给父组件，父组件决定渲染方式",
+        "组件只能用于逻辑复用，不能渲染任何内容",
+        "组件必须使用 render 函数而非模板"
+      ],
+      "correctAnswer": 1,
+      "explanation": "无渲染组件（如 MouseTracker）管理状态和逻辑，通过作用域插槽（v-slot）将数据传递给父组件，父组件负责具体渲染。实现了逻辑与视图的分离。"
+    },
+    {
+      "id": 8,
+      "question": "在实现全局 Toast 通知组件时，使用 Teleport 和 composable 组合的优势是？",
+      "options": [
+        "Toast 容器可以在任意位置渲染，且命令式调用与组件式调用统一",
+        "Toast 必须放在根组件中，无法在其他组件内调用",
+        "Teleport 使得 Toast 只能渲染一次，无法堆叠",
+        "composable 无法共享响应式状态，必须使用 Pinia"
+      ],
+      "correctAnswer": 0,
+      "explanation": "useToast composable 创建响应式 toasts 数组，ToastContainer 使用 Teleport 渲染到 body，支持命令式调用（show 方法）和组件式渲染，可同时显示多个 Toast。"
+    },
+    {
+      "id": 9,
+      "question": "虚拟列表组件实现高性能渲染大量数据的核心原理是？",
+      "options": [
+        "使用 CSS 隐藏不可见项，但 DOM 节点仍存在",
+        "只渲染可视区域内的列表项，通过占位元素维持滚动高度",
+        "将所有数据渲染到 Canvas 中，避免 DOM 操作",
+        "使用 Web Worker 在后台渲染数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "虚拟列表根据滚动位置计算 startIndex 和 endIndex，只渲染可见区域及缓冲区（overscan）的列表项，其余区域用空白占位保持总高度，DOM 节点数恒定，性能优异。"
+    },
+    {
+      "id": 10,
+      "question": "以下关于 JSON Schema 驱动动态表单生成器的描述，正确的是？",
+      "options": [
+        "Schema 只能定义简单字段类型，不支持嵌套对象和数组",
+        "字段的 if 属性可实现条件显示，根据其他字段的值动态控制可见性",
+        "动态表单无法支持自定义校验函数，只能使用内置规则",
+        "Schema 驱动表单必须使用第三方库，无法手动实现"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Schema 可以定义 object 和 array 类型，通过递归渲染实现嵌套。if 属性支持条件依赖，例如 { if: { field: 'type', equals: 'advanced' } }。自定义校验可通过 custom 函数实现。"
+    }
+  ]
+}

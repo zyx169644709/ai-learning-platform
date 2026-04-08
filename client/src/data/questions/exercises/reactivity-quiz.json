@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-reactivity-deep",
+  "courseName": "Vue 3 响应式原理深度解析题",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Vue 3 响应式系统基于 Proxy 相比 Vue 2 的 Object.defineProperty，以下哪个不是 Proxy 的优势？",
+      "options": [
+        "可以拦截对象属性的添加和删除操作",
+        "可以监听数组索引和 length 的变化",
+        "初始化时不需要深度遍历所有属性，支持惰性响应式",
+        "Proxy 是 ES5 特性，兼容性更好"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Proxy 是 ES6 特性，兼容性不如 Object.defineProperty（ES5）。其他三项均为 Proxy 相比 defineProperty 的优势。"
+    },
+    {
+      "id": 2,
+      "question": "在 Vue 3 的依赖收集中，targetMap、depsMap、dep 三层结构的作用是什么？",
+      "options": [
+        "按对象→属性→副作用函数的结构存储依赖，实现细粒度更新",
+        "用于存储组件的虚拟 DOM 树",
+        "用于缓存计算属性的计算结果",
+        "用于管理异步任务的执行顺序"
+      ],
+      "correctAnswer": 0,
+      "explanation": "targetMap（WeakMap）以响应式对象为键，depsMap（Map）以属性名为键，dep（Set）存储依赖该属性的 effect 函数。这种结构支持按对象、按属性精确触发更新。"
+    },
+    {
+      "id": 3,
+      "question": "关于 Vue 3 中 effect 的嵌套执行和依赖收集，以下说法正确的是？",
+      "options": [
+        "嵌套 effect 会相互干扰，导致依赖收集错误",
+        "Vue 3 使用 effect 栈来管理嵌套关系，内层 effect 的依赖不会影响外层",
+        "嵌套 effect 中，外层 effect 的依赖收集会包含内层 effect 的依赖",
+        "Vue 3 不支持 effect 嵌套"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 使用 effect 栈（activeEffect 栈）管理嵌套。内层 effect 执行时会压栈，完成后恢复外层 effect，确保各自的依赖正确收集，互不干扰。"
+    },
+    {
+      "id": 4,
+      "question": "computed 实现中，dirty 标记的作用是？",
+      "options": [
+        "标记计算属性是否已被销毁",
+        "标记是否需要重新计算，依赖变化时设为 true，访问时若为 true 则重新计算并设为 false",
+        "标记计算属性是否正在计算中",
+        "标记计算属性的值是否有效"
+      ],
+      "correctAnswer": 1,
+      "explanation": "dirty 是缓存机制的核心。依赖变化时 scheduler 将 dirty 设为 true；访问 .value 时若 dirty 为 true 则重新计算并设为 false，否则返回缓存值。"
+    },
+    {
+      "id": 5,
+      "question": "以下关于 watch 和 watchEffect 的区别，描述错误的是？",
+      "options": [
+        "watch 需要显式指定监听源，watchEffect 自动收集依赖",
+        "watch 可以访问变化前后的值，watchEffect 不能",
+        "watch 默认立即执行回调，watchEffect 惰性执行",
+        "watchEffect 的回调会在创建时立即执行一次"
+      ],
+      "correctAnswer": 2,
+      "explanation": "watch 默认是惰性的（只有监听源变化时才执行回调），watchEffect 会立即执行一次。选项 C 说反了。"
+    },
+    {
+      "id": 6,
+      "question": "关于 ref 的自动解包，以下说法正确的是？",
+      "options": [
+        "在模板中使用 ref 必须写 .value，否则无法显示",
+        "在 reactive 对象中访问 ref 属性会自动解包，返回 ref.value",
+        "ref 自动解包是运行时通过 Proxy 的 set 拦截实现的",
+        "数组中的 ref 元素会自动解包"
+      ],
+      "correctAnswer": 1,
+      "explanation": "reactive 的 get 拦截器会检查属性值是否为 ref，若是则返回 ref.value。模板中的自动解包由编译器实现，数组中的 ref 不会自动解包。"
+    },
+    {
+      "id": 7,
+      "question": "shallowRef 与 ref 的主要区别是？",
+      "options": [
+        "shallowRef 只能存储基本类型，ref 可以存储任何类型",
+        "shallowRef 只追踪 .value 的变化，不追踪 value 内部属性的变化",
+        "shallowRef 创建的是只读引用",
+        "shallowRef 的性能比 ref 差"
+      ],
+      "correctAnswer": 1,
+      "explanation": "shallowRef 只对 .value 的替换进行响应式追踪，而 value 内部对象的变化不会触发更新。适用于大型对象整体替换的场景，可提升性能。"
+    },
+    {
+      "id": 8,
+      "question": "当从 reactive 对象解构属性时，为什么得到的变量会失去响应性？应该如何解决？",
+      "options": [
+        "解构得到的是基本类型值的拷贝，不是响应式代理；应使用 toRefs 包裹 reactive 对象后再解构",
+        "解构会破坏 Proxy 代理；应使用 reactive 本身，不能解构",
+        "解构得到的变量是只读的；应使用 ref 代替 reactive",
+        "解构只能在 setup 函数外进行；应在 setup 内使用 computed 包装"
+      ],
+      "correctAnswer": 0,
+      "explanation": "解构 reactive 对象得到的是普通值，失去了与 Proxy 的连接。使用 toRefs 将每个属性转为 ref，解构后仍保持响应式。"
+    },
+    {
+      "id": 9,
+      "question": "effectScope 的主要作用是？",
+      "options": [
+        "限制 effect 的执行次数",
+        "组织和管理一组相关的 effect，支持批量清理",
+        "为 effect 提供独立的响应式数据作用域",
+        "提高 effect 的执行优先级"
+      ],
+      "correctAnswer": 1,
+      "explanation": "effectScope 允许将多个 effect、computed、watch 归入一个作用域，调用 scope.stop() 可批量清理，Vue 3 组件内部用它管理生命周期。"
+    },
+    {
+      "id": 10,
+      "question": "Vue 3 响应式系统中，多次同步修改响应式数据（如连续修改多个属性）会触发几次视图更新？",
+      "options": [
+        "每次修改都触发一次更新",
+        "只触发一次更新，通过 scheduler 和微任务队列实现批量更新",
+        "不触发更新，需要手动调用 nextTick",
+        "取决于修改的属性数量"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 使用微任务队列（Promise.resolve().then 或 queueMicrotask）对同一事件循环中的多次修改进行批量处理，最终只触发一次视图更新，提升性能。"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "courseId": "admin-system-project",
+  "courseName": "项目实战：后台管理系统",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "本项目中采用的权限模型是？该模型通过用户关联角色、角色关联权限的方式简化权限管理。",
+      "options": [
+        "ACL（访问控制列表）",
+        "RBAC（基于角色的访问控制）",
+        "ABAC（基于属性的访问控制）",
+        "DAC（自主访问控制）"
+      ],
+      "correctAnswer": 1,
+      "explanation": "项目采用业界标准的 RBAC（Role-Based Access Control）模型，用户通过角色获得权限，简化了权限管理，包含用户、角色、权限及关联表。"
+    },
+    {
+      "id": 2,
+      "question": "在动态路由实现中，用户登录成功后，获取权限信息后的下一步操作是？",
+      "options": [
+        "直接跳转到首页",
+        "根据权限过滤动态路由，并将可访问路由添加到路由表中",
+        "重新加载整个页面",
+        "清空本地存储的 token"
+      ],
+      "correctAnswer": 1,
+      "explanation": "登录成功后，系统获取用户权限，然后根据权限过滤出可访问的动态路由，使用 router.addRoute() 动态添加，最后跳转到目标页面。"
+    },
+    {
+      "id": 3,
+      "question": "实现按钮级权限控制（如“添加用户”按钮仅管理员可见），推荐使用以下哪种方式？",
+      "options": [
+        "在模板中使用 v-if 配合用户角色判断",
+        "使用自定义指令 v-permission，传入权限码，由指令控制元素渲染",
+        "在组件 mounted 钩子中动态修改按钮的 display 样式",
+        "通过路由守卫控制按钮的显示与隐藏"
+      ],
+      "correctAnswer": 1,
+      "explanation": "自定义指令 v-permission 封装权限判断逻辑，使用时简洁统一（如 v-permission=\"'user:create'\"），便于维护和复用，是按钮级权限控制的最佳实践。"
+    },
+    {
+      "id": 4,
+      "question": "侧边栏菜单支持多级嵌套，渲染多级菜单时最合适的技术是？",
+      "options": [
+        "使用 v-for 平铺所有菜单项，通过缩进表示层级",
+        "使用递归组件，组件内部调用自身渲染子菜单",
+        "将菜单数据扁平化处理后一次性渲染",
+        "使用 Element Plus 的 el-menu 默认支持无限级，无需特殊处理"
+      ],
+      "correctAnswer": 1,
+      "explanation": "递归组件能够处理任意深度的树形结构：MenuItem 组件接收 menu 对象，若 menu.children 存在则递归渲染 el-sub-menu 和 MenuItem，完美匹配多级菜单需求。"
+    },
+    {
+      "id": 5,
+      "question": "在标签页导航功能中，用于缓存页面组件状态、避免重复渲染的 Vue 内置组件是？",
+      "options": [
+        "<Transition>",
+        "<TransitionGroup>",
+        "<KeepAlive>",
+        "<Suspense>"
+      ],
+      "correctAnswer": 2,
+      "explanation": "<KeepAlive> 包裹动态组件或路由视图时，可以缓存不活动的组件实例，保留其状态。标签页切换时，缓存的页面不会重新加载数据或丢失表单填写内容。"
+    },
+    {
+      "id": 6,
+      "question": "关于通用表格组件的封装，以下哪项不是文档中提到的功能或特性？",
+      "options": [
+        "支持分页、排序、筛选",
+        "支持通过 config 配置 columns 和 api，自动请求数据",
+        "内置 Excel 导出功能",
+        "支持自定义列插槽，允许父组件自定义复杂内容渲染"
+      ],
+      "correctAnswer": 2,
+      "explanation": "文档中的通用表格组件主要封装了分页、数据请求、加载状态、自定义列插槽等功能，未提到内置 Excel 导出（导出可作为扩展功能）。"
+    },
+    {
+      "id": 7,
+      "question": "动态表单设计中，通过配置 FormField 数组动态渲染表单项。以下哪个类型不是文档中提到的表单字段类型？",
+      "options": [
+        "input（文本输入框）",
+        "select（下拉选择框）",
+        "date（日期选择器）",
+        "richtext（富文本编辑器）"
+      ],
+      "correctAnswer": 3,
+      "explanation": "文档中 FormField 的 type 支持 input、select、date、upload，没有直接列出 richtext，但富文本编辑器可作为自定义组件集成。"
+    },
+    {
+      "id": 8,
+      "question": "文件上传组件封装时，需要支持的功能包括拖拽上传、进度显示、文件类型/大小限制等。以下哪项不是文档中明确提到的功能？",
+      "options": [
+        "支持拖拽上传",
+        "显示上传进度百分比",
+        "支持图片裁剪后再上传",
+        "配置文件类型和大小限制，不符合时拒绝上传"
+      ],
+      "correctAnswer": 2,
+      "explanation": "文档中提到了拖拽上传、进度显示、文件限制，但未提及图片裁剪。裁剪通常是额外的高级功能，不属于基础上传组件封装范围。"
+    },
+    {
+      "id": 9,
+      "question": "全局错误处理通过 app.config.errorHandler 配置，其主要作用是？",
+      "options": [
+        "仅捕获接口请求的错误",
+        "捕获所有组件渲染和生命周期钩子中未被 try-catch 捕获的错误，并进行统一上报和提示",
+        "只捕获路由跳转错误",
+        "只捕获自定义指令中的错误"
+      ],
+      "correctAnswer": 1,
+      "explanation": "app.config.errorHandler 是 Vue 应用级别的全局错误处理器，可以捕获组件内抛出的错误，配合错误上报和用户友好提示，增强应用健壮性。"
+    },
+    {
+      "id": 10,
+      "question": "对于体积较大的组件（如富文本编辑器、ECharts 等），为了减少首屏加载体积，应该采用什么方式实现懒加载？",
+      "options": [
+        "使用 Vue 的 defineAsyncComponent 函数定义异步组件",
+        "将组件放在 public 目录下，通过 script 标签引入",
+        "使用 v-if 控制组件渲染，配合 nextTick",
+        "使用 Webpack 的 require.ensure"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Vue 3 提供 defineAsyncComponent 函数，可以定义一个异步组件，只有在组件实际需要渲染时才加载其 JavaScript 文件，是实现组件级懒加载的标准方式。"
+    }
+  ]
+}

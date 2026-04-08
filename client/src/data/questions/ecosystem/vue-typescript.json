@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-typescript",
+  "courseName": "TypeScript 在 Vue 中的应用",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Vue 3 与 TypeScript 结合使用时，以下哪个选项不是 TypeScript 带来的核心价值？",
+      "options": [
+        "类型安全，在编译阶段发现类型错误",
+        "智能提示，IDE 提供精准的代码补全",
+        "自动优化打包体积，减少 bundle 大小",
+        "代码文档化，类型定义成为自解释的注释"
+      ],
+      "correctAnswer": 2,
+      "explanation": "TypeScript 带来的核心价值是类型安全、智能提示和代码文档化，但不会自动优化打包体积。打包体积优化需要借助构建工具（如 Vite）的配置。"
+    },
+    {
+      "id": 2,
+      "question": "使用 Vite 创建 Vue 3 + TypeScript 项目的正确命令是？",
+      "options": [
+        "npm create vite@latest my-project -- --template vue",
+        "npm create vite@latest my-project -- --template vue-ts",
+        "vue create my-project --typescript",
+        "npm init vue@latest my-project -- --ts"
+      ],
+      "correctAnswer": 1,
+      "explanation": "通过 --template vue-ts 参数可以创建一个预配置了 TypeScript 的 Vue 3 项目。--template vue 仅创建 JavaScript 项目。"
+    },
+    {
+      "id": 3,
+      "question": "在 Vue 3 单文件组件中启用 TypeScript，需要在 <script> 标签上添加什么属性？",
+      "options": [
+        "type=\"typescript\"",
+        "ts",
+        "lang=\"ts\"",
+        "script=\"ts\""
+      ],
+      "correctAnswer": 2,
+      "explanation": "在 .vue 文件中，使用 <script setup lang=\"ts\"> 或 <script lang=\"ts\"> 即可启用 TypeScript 支持。"
+    },
+    {
+      "id": 4,
+      "question": "关于 defineProps 的泛型语法，以下正确的是？",
+      "options": [
+        "defineProps<{ title: string; count?: number }>()",
+        "defineProps({ title: String, count: Number })",
+        "props: { title: string; count?: number }",
+        "defineProps(['title', 'count'])"
+      ],
+      "correctAnswer": 0,
+      "explanation": "defineProps 支持泛型语法，直接在类型参数中定义 Props 的形状，这是 Vue 3.3+ 推荐的类型安全方式。选项 B 是运行时声明，选项 D 是数组语法。"
+    },
+    {
+      "id": 5,
+      "question": "当使用 defineProps 泛型语法定义 Props 时，如何为可选属性设置默认值？",
+      "options": [
+        "在类型中使用 = 默认值，如 count?: number = 0",
+        "使用 withDefaults 编译器宏",
+        "在 defineProps 的第二个参数中传递默认值对象",
+        "无法设置默认值，只能在组件内部判断"
+      ],
+      "correctAnswer": 1,
+      "explanation": "withDefaults 是专门用于为泛型语法定义的 Props 设置默认值的编译器宏，例如 withDefaults(defineProps<Props>(), { count: 0 })。"
+    },
+    {
+      "id": 6,
+      "question": "以下哪个选项正确声明了 defineEmits 的类型（使用对象语法）？",
+      "options": [
+        "const emit = defineEmits<{ update: [value: string]; delete: [id: number] }>()",
+        "const emit = defineEmits(['update', 'delete'])",
+        "const emit = defineEmits<{ (e: 'update', value: string): void }>()",
+        "const emit = defineEmits({ update: null, delete: null })"
+      ],
+      "correctAnswer": 0,
+      "explanation": "对象语法使用元组类型定义每个事件的参数列表，例如 update: [value: string]。选项 A 正确；选项 C 是函数重载语法；选项 B 和 D 缺乏类型信息。"
+    },
+    {
+      "id": 7,
+      "question": "在 TypeScript 中，如果一个 ref 的初始值为 null，但后续会被赋值为 User 对象，应该如何声明其类型？",
+      "options": [
+        "const user = ref(null)",
+        "const user = ref<User>(null)",
+        "const user = ref<User | null>(null)",
+        "const user = ref<User | undefined>(undefined)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "当 ref 初始为 null 时，TypeScript 会推导为 Ref<null>。要支持后续赋值为 User，需要显式声明联合类型 Ref<User | null>。"
+    },
+    {
+      "id": 8,
+      "question": "在 Vue 3 中使用 provide/inject 时，为了保证类型安全，应该使用哪个工具类型？",
+      "options": [
+        "InjectionKey<T>",
+        "ProvideKey<T>",
+        "InjectKey<T>",
+        "SymbolKey<T>"
+      ],
+      "correctAnswer": 0,
+      "explanation": "InjectionKey<T> 是 Vue 提供的泛型类型，用于创建类型安全的注入键，确保 provide 和 inject 的值类型一致。"
+    },
+    {
+      "id": 9,
+      "question": "对于组合式函数（Composables），以下关于返回类型的建议正确的是？",
+      "options": [
+        "始终使用 any 类型以保持灵活性",
+        "使用泛型参数让用户手动指定类型",
+        "显式声明返回类型，提供清晰的类型提示和文档",
+        "返回类型应该总是使用 Ref<any>"
+      ],
+      "correctAnswer": 2,
+      "explanation": "组合式函数的公共接口应该显式定义返回类型，这既是文档也是契约，便于维护和使用。使用 any 会破坏类型安全。"
+    },
+    {
+      "id": 10,
+      "question": "在 Vue 3 中，如果要创建一个可以处理任意类型列表的泛型组件，应该在 <script setup> 中使用哪个属性声明泛型参数？",
+      "options": [
+        "generic=\"T\"",
+        "type-param=\"T\"",
+        "template=\"T\"",
+        "泛型不能直接在 <script setup> 中声明，必须使用 defineComponent"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Vue 3.3+ 支持在 <script setup> 中使用 generic 属性声明泛型参数，例如 <script setup lang=\"ts\" generic=\"T\">。"
+    }
+  ]
+}

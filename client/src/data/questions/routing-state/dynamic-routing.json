@@ -1,0 +1,128 @@
+{
+  "courseId": "vue-router4-basics",
+  "courseName": "Vue Router 4 基础配置",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue Router 4 中，创建路由实例并启用 HTML5 History 模式的正确代码是？",
+      "options": [
+        "const router = createRouter({ mode: 'history', routes })",
+        "const router = createRouter({ history: createWebHistory(), routes })",
+        "const router = new VueRouter({ mode: 'history', routes })",
+        "const router = createRouter({ history: 'history', routes })"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue Router 4 使用 createRouter 函数创建路由实例，并通过 history 选项指定历史记录模式。createWebHistory() 返回 HTML5 History 模式实例。选项 A、C 是 Vue Router 3 的写法，选项 D 参数类型错误。"
+    },
+    {
+      "id": 2,
+      "question": "关于 Vue Router 4 的三种路由模式，以下描述错误的是？",
+      "options": [
+        "Hash 模式 URL 中包含 #，不需要服务器端特殊配置",
+        "History 模式 URL 简洁，但需要服务器配置支持",
+        "Memory 模式不修改 URL，适用于测试或非浏览器环境",
+        "History 模式在所有环境下都能直接使用，无需任何配置"
+      ],
+      "correctAnswer": 3,
+      "explanation": "History 模式需要服务器配置将所有路由重定向到 index.html，否则刷新页面会导致 404。选项 D 说法错误。A、B、C 均为正确描述。"
+    },
+    {
+      "id": 3,
+      "question": "以下哪个路由配置正确实现了嵌套路由？",
+      "options": [
+        "{ path: '/user', component: User, children: [{ path: '/profile', component: Profile }] }",
+        "{ path: '/user', component: User, children: [{ path: 'profile', component: Profile }] }",
+        "{ path: '/user', component: User, routes: [{ path: 'profile', component: Profile }] }",
+        "{ path: '/user', component: User, children: [{ path: 'profile', component: Profile }], nested: true }"
+      ],
+      "correctAnswer": 1,
+      "explanation": "嵌套路由使用 children 属性，子路由的 path 应使用相对路径（不以 / 开头），这样会自动拼接父路由的路径。选项 A 使用绝对路径会忽略父路径；选项 C 属性名错误（应为 children）；选项 D 语法错误。"
+    },
+    {
+      "id": 4,
+      "question": "在动态路由 /user/:id 中，组件内获取 id 参数的正确方式是？",
+      "options": [
+        "const id = route.params.id",
+        "const id = route.query.id",
+        "const id = route.hash.id",
+        "const id = route.meta.id"
+      ],
+      "correctAnswer": 0,
+      "explanation": "动态路径参数（如 :id）通过 route.params 对象访问。route.query 用于获取查询参数（?key=value），route.hash 获取 URL 哈希，route.meta 获取元信息。"
+    },
+    {
+      "id": 5,
+      "question": "为了让路由组件通过 props 接收动态参数（如 id），且不依赖 route 对象，应该设置？",
+      "options": [
+        "props: { id: Number }",
+        "props: false",
+        "props: true",
+        "props: route => ({ id: route.params.id })"
+      ],
+      "correctAnswer": 2,
+      "explanation": "将 props 设置为 true 时，路由参数（如 :id）会作为组件的 props 传递，组件可通过 props 接收，实现解耦。选项 D 是函数模式，也能实现但不如布尔模式简单直接。题目问的是“让组件通过 props 接收动态参数”，布尔模式是最基础的实现方式。"
+    },
+    {
+      "id": 6,
+      "question": "在 Vue Router 4 中，实现编程式导航并替换当前历史记录（不添加新记录）的方法是？",
+      "options": [
+        "router.push('/about')",
+        "router.replace('/about')",
+        "router.go('/about')",
+        "router.forward('/about')"
+      ],
+      "correctAnswer": 1,
+      "explanation": "router.replace 不会向历史记录栈添加新记录，而是替换当前记录。router.push 会添加新记录；router.go 用于前进/后退指定步数；router.forward 前进一页，不接受路径参数。"
+    },
+    {
+      "id": 7,
+      "question": "以下关于路由懒加载的说法，正确的是？",
+      "options": [
+        "路由懒加载会导致应用启动时加载所有组件，降低性能",
+        "使用 () => import('./views/About.vue') 配合 Webpack 可实现代码分割",
+        "路由懒加载必须配合 defineAsyncComponent 使用，不能单独使用 import()",
+        "懒加载的组件会打包进主 chunk，不会生成独立文件"
+      ],
+      "correctAnswer": 1,
+      "explanation": "动态 import() 语法会被 Webpack/Vite 识别为代码分割点，生成独立的 chunk，在路由访问时按需加载。选项 A 相反；选项 C 错误，Vue Router 可直接使用 import()；选项 D 错误，懒加载会生成独立文件。"
+    },
+    {
+      "id": 8,
+      "question": "在路由配置中使用 meta 字段，主要用途是？",
+      "options": [
+        "定义路由的元数据，如页面标题、权限标识等，可在导航守卫中访问",
+        "存储路由组件的内部状态",
+        "替代 props 传递参数",
+        "定义路由的别名"
+      ],
+      "correctAnswer": 0,
+      "explanation": "meta 是自定义字段，常用于存储页面标题、requiresAuth 等元信息，可在导航守卫或组件中通过 route.meta 访问，用于权限控制、页面标题设置等。"
+    },
+    {
+      "id": 9,
+      "question": "在 Vue Router 4 中，配置 404 页面（捕获所有未匹配路由）的正确 path 是？",
+      "options": [
+        "path: '*'",
+        "path: '/:pathMatch(.*)*'",
+        "path: '/404'",
+        "path: '/:catchAll(.*)'"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue Router 4 推荐使用 /:pathMatch(.*)* 作为通配符路由，可以正确匹配多层嵌套路径。path: '*' 在 Vue Router 4 中已弃用。选项 C 只匹配 /404 路径，无法捕获所有未匹配路由。"
+    },
+    {
+      "id": 10,
+      "question": "关于路由别名（alias）和重定向（redirect）的区别，以下描述正确的是？",
+      "options": [
+        "别名会改变 URL，重定向不会改变 URL",
+        "重定向会改变 URL，别名不会改变 URL",
+        "两者都会改变 URL，区别在于是否保留历史记录",
+        "两者都不会改变 URL，只改变渲染的组件"
+      ],
+      "correctAnswer": 1,
+      "explanation": "重定向（redirect）会将用户导航到新 URL，地址栏会变化；别名（alias）允许通过不同路径访问同一组件，但 URL 保持不变。两者都不影响历史记录方式（默认都会添加记录）。"
+    }
+  ]
+}

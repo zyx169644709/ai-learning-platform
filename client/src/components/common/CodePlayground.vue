@@ -613,7 +613,22 @@ const handleKeydown = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  code.value = templates[selectedLanguage.value] || ''
+  const savedCode = sessionStorage.getItem('playground_code')
+  const savedLang = sessionStorage.getItem('playground_language')
+  if (savedCode) {
+    const lang = savedLang && ['javascript', 'typescript', 'html', 'vue'].includes(savedLang)
+      ? savedLang
+      : 'html'
+    selectedLanguage.value = lang
+    code.value = savedCode
+    if (lang === 'html' || lang === 'vue') {
+      activeTab.value = 'preview'
+    }
+    sessionStorage.removeItem('playground_code')
+    sessionStorage.removeItem('playground_language')
+  } else {
+    code.value = templates[selectedLanguage.value] || ''
+  }
   document.addEventListener('keydown', handleKeydown)
 })
 

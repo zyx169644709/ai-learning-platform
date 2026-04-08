@@ -1,3 +1,4 @@
+//npx tsx prisma/seeds/fetchResourceCovers.ts
 import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()

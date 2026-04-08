@@ -16,6 +16,9 @@
         <button class="action-btn" @click="resetCode" title="重置代码">
           <span>🔄</span>
         </button>
+        <button v-if="showPlayground" class="action-btn playground-btn" @click="openPlayground" title="在演练场中打开">
+          <span>⛶</span>
+        </button>
       </div>
     </div>
     <div class="editor-container" :style="{ height: editorHeight }">
@@ -45,6 +48,9 @@
           </button>
           <button class="action-btn" @click="resetCode" title="重置代码">
             <span>🔄</span>
+          </button>
+          <button v-if="showPlayground" class="action-btn playground-btn" @click="openPlayground" title="在演练场中打开">
+            <span>⛶</span>
           </button>
         </div>
       </div>
@@ -89,6 +95,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, useTemplateRef } from 'vue'
+import { useRouter } from 'vue-router'
 import MonacoEditor from './MonacoEditor.vue'
 import { useResizableSplit } from '@/composables/useResizableSplit'
 import { ElMessage } from 'element-plus'
@@ -102,6 +109,7 @@ interface Props {
   readOnly?: boolean
   height?: number | string
   showPreview?: boolean
+  showPlayground?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -112,7 +120,8 @@ const props = withDefaults(defineProps<Props>(), {
   title: '',
   readOnly: false,
   height: 300,
-  showPreview: undefined
+  showPreview: undefined,
+  showPlayground: false
 })
 
 const emit = defineEmits<{
@@ -194,6 +203,14 @@ const resetCode = () => {
   emit('update:modelValue', base)
   emit('change', base)
   ElMessage.success('代码已重置')
+}
+
+const router = useRouter()
+
+const openPlayground = () => {
+  sessionStorage.setItem('playground_code', internalCode.value)
+  sessionStorage.setItem('playground_language', props.language)
+  router.push('/code-playground')
 }
 
 // 可拖拽分隔条（仅预览模式使用）
@@ -321,6 +338,17 @@ const resetEditorWidth = () => {
 .action-btn:hover {
   background: var(--bg-tertiary, #f1f5f9);
   border-color: var(--accent-color, #42b883);
+}
+
+.playground-btn {
+  font-size: 15px;
+  border-color: var(--accent-color, #42b883);
+  color: var(--accent-color, #42b883);
+}
+
+.playground-btn:hover {
+  background: var(--accent-color, #42b883);
+  color: #fff;
 }
 
 /* ── 可拖动分割线 ── */

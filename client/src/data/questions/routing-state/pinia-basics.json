@@ -1,0 +1,128 @@
+{
+  "courseId": "pinia-basics",
+  "courseName": "Pinia 状态管理入门",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "关于 Pinia 与 Vuex 的对比，以下描述正确的是？",
+      "options": [
+        "Pinia 需要手动配置模块命名空间，Vuex 自动处理",
+        "Pinia 原生支持 TypeScript，无需额外配置",
+        "Pinia 体积比 Vuex 更大，但功能更全面",
+        "Pinia 保留了 mutations 概念，与 Vuex 完全一致"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Pinia 对 TypeScript 的支持是开箱即用的，无需额外配置。选项 A 错误（Pinia 自动处理模块，Vuex 需要手动配置 namespaced）；选项 C 错误（Pinia 体积更小，约 1KB）；选项 D 错误（Pinia 取消了 mutations，统一使用 actions）。"
+    },
+    {
+      "id": 2,
+      "question": "在 Setup Store 中定义响应式状态，应该使用哪个 API？",
+      "options": [
+        "data()",
+        "state 选项",
+        "ref 或 reactive",
+        "computed"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Setup Store 使用 Composition API，状态应通过 ref() 或 reactive() 定义。data() 是组件选项；state 选项属于 Options Store；computed 用于定义计算属性，而非状态。"
+    },
+    {
+      "id": 3,
+      "question": "以下关于 `storeToRefs` 的作用，说法正确的是？",
+      "options": [
+        "将 Store 中的所有属性（包括 actions）转换为 ref",
+        "保持解构后的 state 和 getters 的响应性，忽略 actions",
+        "用于在组件中创建 Store 实例",
+        "将普通对象转换为响应式对象"
+      ],
+      "correctAnswer": 1,
+      "explanation": "storeToRefs 会提取 Store 中的 state 和 getters 并返回响应式的 ref，但会忽略 actions。直接解构 store 会丢失响应性，使用 storeToRefs 可以保持响应性。"
+    },
+    {
+      "id": 4,
+      "question": "在 Options Store 中，以下哪个选项用于定义派生状态（计算属性）？",
+      "options": [
+        "state",
+        "getters",
+        "actions",
+        "computed"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Options Store 中使用 getters 选项定义计算属性，类似于组件的 computed。state 定义状态，actions 定义方法，computed 不是 Options Store 的选项。"
+    },
+    {
+      "id": 5,
+      "question": "在 Options Store 的 action 中，如何正确地修改 state 并同时更新多个属性且只触发一次响应式更新？",
+      "options": [
+        "分别给每个属性赋值",
+        "使用 this.$patch 批量更新",
+        "使用 Object.assign(this, newState)",
+        "使用 storeToRefs 后再修改"
+      ],
+      "correctAnswer": 1,
+      "explanation": "$patch 方法可以批量更新多个状态，且只触发一次响应式更新，性能更好。分别赋值会触发多次更新；Object.assign 不能保证响应式；storeToRefs 用于解构，不是修改方法。"
+    },
+    {
+      "id": 6,
+      "question": "Pinia 中用于监听整个 state 变化并执行副作用（如持久化）的方法是？",
+      "options": [
+        "$watch",
+        "$subscribe",
+        "$onAction",
+        "$patch"
+      ],
+      "correctAnswer": 1,
+      "explanation": "$subscribe 用于监听 state 的变化，适合做持久化、日志等副作用。$watch 用于监听特定状态；$onAction 监听 action 执行；$patch 用于批量更新。"
+    },
+    {
+      "id": 7,
+      "question": "在一个 Store 的 action 中调用另一个 Store 的方法，正确的做法是？",
+      "options": [
+        "在文件顶部导入另一个 Store，然后直接调用其方法",
+        "在 action 内部导入另一个 Store 并调用",
+        "通过全局事件总线通信",
+        "将另一个 Store 作为参数传入 action"
+      ],
+      "correctAnswer": 1,
+      "explanation": "为了避免循环依赖，推荐在 action 内部导入其他 Store（懒加载）。在文件顶部导入可能导致循环依赖问题；事件总线不是 Pinia 推荐的方式；传参方式繁琐。"
+    },
+    {
+      "id": 8,
+      "question": "关于 Pinia 的最佳实践，以下哪个建议是正确的？",
+      "options": [
+        "将所有应用状态都放在一个 Store 中，便于管理",
+        "尽量使用 Options Store，兼容性更好",
+        "按功能模块划分多个 Store，每个 Store 职责单一",
+        "在组件中直接修改 state，不需要通过 actions"
+      ],
+      "correctAnswer": 2,
+      "explanation": "最佳实践是按功能模块划分 Store（用户、购物车、订单等），遵循单一职责原则。将所有状态放在一个 Store 会导致难以维护；两种写法各有优劣，不是兼容性问题；直接修改 state 虽然允许，但复杂业务逻辑应放在 actions 中。"
+    },
+    {
+      "id": 9,
+      "question": "以下哪个场景最适合使用 Pinia？",
+      "options": [
+        "单个组件内部使用的临时状态",
+        "需要跨多个组件共享且可能被修改的应用状态",
+        "只在表单组件内使用的输入值",
+        "静态的、不会变化的数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Pinia 适用于跨组件共享、需要集中管理的状态（如用户信息、购物车）。组件内部状态应使用 ref/reactive；静态数据可用常量或 provide/inject。"
+    },
+    {
+      "id": 10,
+      "question": "在组件中使用 Pinia Store 时，以下哪种写法会导致响应性丢失？",
+      "options": [
+        "const { count } = storeToRefs(store)",
+        "const store = useCounterStore()",
+        "const { increment } = useCounterStore()",
+        "const { count } = useCounterStore()"
+      ],
+      "correctAnswer": 3,
+      "explanation": "直接解构 store（如 const { count } = useCounterStore()）会丢失响应性，因为 count 是普通值。应使用 storeToRefs 保持响应性。actions 可以直接解构，因为它们不是响应式数据。"
+    }
+  ]
+}

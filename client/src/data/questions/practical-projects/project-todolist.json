@@ -1,0 +1,128 @@
+{
+  "courseId": "todolist-project",
+  "courseName": "项目实战：待办事项清单（TodoList）",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在待办事项应用中，Pinia Store 的状态管理设计包含以下哪项？",
+      "options": [
+        "只存储 todos 数组，不存储筛选条件",
+        "存储 todos 数组和 filter 筛选条件，并提供 computed 派生状态和 actions",
+        "使用 Vuex 代替 Pinia 进行状态管理",
+        "将所有状态都放在组件的 data 中"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Pinia Store 集中管理 todos 和 filter 状态，通过 computed 提供 filteredTodos 和 remainingCount，通过 actions 提供增删改查方法，实现状态与 UI 分离。"
+    },
+    {
+      "id": 2,
+      "question": "实现任务数据持久化到 localStorage 时，最推荐的做法是？",
+      "options": [
+        "每次修改后手动调用 localStorage.setItem",
+        "使用 watch 深度监听 todos 数组，自动同步到 localStorage",
+        "仅在页面卸载时保存一次",
+        "使用 sessionStorage 代替 localStorage"
+      ],
+      "correctAnswer": 1,
+      "explanation": "watch 监听 todos 数组（deep: true）可以在任何变更时自动同步，避免手动在每个 action 中调用保存逻辑，代码更简洁且不易遗漏。"
+    },
+    {
+      "id": 3,
+      "question": "TodoItem 组件实现双击编辑功能时，进入编辑模式后需要自动聚焦输入框，应该使用哪个 API？",
+      "options": [
+        "setTimeout 延迟聚焦",
+        "nextTick 配合 ref 调用 focus()",
+        "直接在 mounted 钩子中聚焦",
+        "使用 v-focus 自定义指令"
+      ],
+      "correctAnswer": 1,
+      "explanation": "编辑模式切换时输入框尚未渲染，需要使用 nextTick 等待 DOM 更新后再执行聚焦操作，确保 inputRef 已挂载。"
+    },
+    {
+      "id": 4,
+      "question": "TodoFilter 组件中，显示剩余未完成任务数量的计算属性是？",
+      "options": [
+        "filteredTodos.length",
+        "todos.filter(t => !t.completed).length",
+        "remainingCount（基于 Store 的 getter）",
+        "completedTodos.length"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Store 中定义了 remainingCount 计算属性，返回 todos.value.filter(t => !t.completed).length，TodoFilter 组件直接使用 todoStore.remainingCount 即可。"
+    },
+    {
+      "id": 5,
+      "question": "在 TodoList 组件中实现列表增删动画，应使用哪个 Vue 内置组件？",
+      "options": [
+        "<Transition>",
+        "<TransitionGroup>",
+        "<KeepAlive>",
+        "<Suspense>"
+      ],
+      "correctAnswer": 1,
+      "explanation": "TransitionGroup 专门用于列表元素的进入/离开过渡动画，它会为每个列表项包裹 transition，适合 v-for 渲染的动态列表。"
+    },
+    {
+      "id": 6,
+      "question": "关于 Pinia Store 的 Setup 函数风格，以下描述正确的是？",
+      "options": [
+        "必须使用 state、getters、actions 对象结构",
+        "使用 ref、computed 和函数定义状态与逻辑，返回需要暴露的内容",
+        "只能用于 Options API 项目",
+        "不支持 TypeScript 类型推导"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Setup Store 使用 Composition API 语法：ref 定义状态，computed 定义 getter，普通函数定义 action，最后返回这些内容，与 <script setup> 风格一致。"
+    },
+    {
+      "id": 7,
+      "question": "以下哪个功能不是待办事项应用的核心功能？",
+      "options": [
+        "添加任务",
+        "编辑任务内容",
+        "云端同步",
+        "筛选显示全部/未完成/已完成"
+      ],
+      "correctAnswer": 2,
+      "explanation": "云端同步属于扩展功能，需要后端服务支持。核心功能包括增删改查、完成状态切换、本地筛选和持久化存储。"
+    },
+    {
+      "id": 8,
+      "question": "在 TodoItem 组件中，编辑任务时按下 Escape 键应该执行什么操作？",
+      "options": [
+        "保存修改",
+        "取消编辑，恢复原始内容",
+        "删除当前任务",
+        "清空输入框"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Escape 键用于取消编辑，不保存修改，恢复显示原始任务标题。回车键或 blur 事件则保存修改。"
+    },
+    {
+      "id": 9,
+      "question": "关于筛选功能的实现，以下哪项是正确的？",
+      "options": [
+        "筛选条件存储在组件本地 state 中",
+        "筛选条件存储在 Pinia Store 中，通过 computed 派生 filteredTodos",
+        "筛选通过路由参数传递",
+        "筛选只能在前端内存中过滤，不能与 Store 结合"
+      ],
+      "correctAnswer": 1,
+      "explanation": "filter 状态存储在 Store 中，filteredTodos 计算属性根据 filter 值动态返回 todos 的子集，实现集中式筛选逻辑。"
+    },
+    {
+      "id": 10,
+      "question": "测试 Pinia Store 的添加任务功能时，正确的测试步骤是？",
+      "options": [
+        "直接导入 Store 并调用 addTodo，无需创建 Pinia 实例",
+        "使用 setActivePinia(createPinia()) 创建测试环境，再调用 Store 方法",
+        "需要模拟 localStorage，否则会报错",
+        "不能测试 Store，只能测试组件"
+      ],
+      "correctAnswer": 1,
+      "explanation": "单元测试 Pinia Store 需要先创建 Pinia 实例并通过 setActivePinia 激活，否则无法正确初始化 Store。localStorage 可选择性 mock。"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "courseId": "vite-practice",
+  "courseName": "Vite 构建工具实践",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Vite 在开发环境下实现极速启动的核心原理是什么？",
+      "options": [
+        "使用 Webpack 5 进行增量打包",
+        "利用浏览器原生 ES 模块支持，按需编译，不提前打包",
+        "将所有模块预先打包成单个 bundle 文件",
+        "使用 Service Worker 缓存所有模块"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 在开发模式下作为静态文件服务器运行，利用浏览器原生 ES 模块支持，只有当浏览器请求某个模块时才进行编译，省去了启动前的打包过程，实现毫秒级冷启动。"
+    },
+    {
+      "id": 2,
+      "question": "关于 esbuild 在 Vite 中的作用，以下描述正确的是？",
+      "options": [
+        "esbuild 用于生产环境代码压缩和 Tree Shaking",
+        "esbuild 用于开发环境下对第三方依赖进行预构建，速度快于 JavaScript 工具",
+        "esbuild 是 Vite 的插件系统核心引擎",
+        "esbuild 负责将 Vue 单文件组件编译为 JavaScript"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 使用 esbuild（Go 语言编写）对第三方依赖进行预构建，将 CommonJS 格式转换为 ESM，并合并小型依赖，速度比 JavaScript 编写的工具快 10-100 倍。"
+    },
+    {
+      "id": 3,
+      "question": "使用 Vite 官方脚手架创建一个 Vue + TypeScript 项目，正确的命令是？",
+      "options": [
+        "npm create vite@latest my-app -- --template vue",
+        "npm create vite@latest my-app -- --template vue-ts",
+        "npm create vue@latest my-app -- --template ts",
+        "vite create my-app --template vue-ts"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 npm create vite@latest 并指定 --template vue-ts 即可创建 Vue + TypeScript 项目。--template vue 仅创建 JavaScript 版本的 Vue 项目。"
+    },
+    {
+      "id": 4,
+      "question": "在 Vite 项目中，如何配置开发服务器代理以解决跨域问题？",
+      "options": [
+        "在 vite.config.js 中使用 server.proxy 选项，配置目标地址和路径重写",
+        "在 package.json 中添加 proxy 字段",
+        "在 .env 文件中设置 VITE_PROXY_TARGET",
+        "在 public 目录下创建 proxy.config.json 文件"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Vite 的开发服务器代理配置在 vite.config.js 的 server.proxy 选项中，可以设置 target、changeOrigin、rewrite 等属性，将特定路径的请求转发到目标服务器。"
+    },
+    {
+      "id": 5,
+      "question": "Vite 中如何设置路径别名，使得 @ 指向 src 目录？",
+      "options": [
+        "在 vite.config.js 中使用 alias: { '@': '/src' }",
+        "在 vite.config.js 的 resolve.alias 中配置，并使用 path.resolve(__dirname, './src')",
+        "在 tsconfig.json 中单独配置 paths 字段即可",
+        "在 .env 文件中设置 VITE_ALIAS=@/src"
+      ],
+      "correctAnswer": 1,
+      "explanation": "需要在 vite.config.js 的 resolve.alias 中配置，通常结合 path.resolve(__dirname, './src') 使用。同时还需在 tsconfig.json 中配置 paths 映射以支持 TypeScript 识别。"
+    },
+    {
+      "id": 6,
+      "question": "关于 Vite 环境变量的使用，以下说法正确的是？",
+      "options": [
+        "所有 .env 文件中的变量都会自动暴露给客户端",
+        "只有以 VITE_ 开头的变量才能通过 import.meta.env 在客户端访问",
+        "环境变量只能在 vite.config.js 中使用，不能在组件中直接访问",
+        "生产环境下 import.meta.env 对象为空"
+      ],
+      "correctAnswer": 1,
+      "explanation": "出于安全考虑，Vite 只暴露以 VITE_ 开头的环境变量给客户端代码，通过 import.meta.env.VITE_XXX 访问。其他变量仅用于服务端配置。"
+    },
+    {
+      "id": 7,
+      "question": "在 Vite 中实现路由级别的代码分割，最常用的方式是？",
+      "options": [
+        "在 vite.config.js 中配置 manualChunks 将所有路由打包到一起",
+        "使用动态导入 import() 定义路由组件",
+        "将所有组件放在 public 目录下按需加载",
+        "通过 require.ensure 实现"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 支持动态导入语法 import()，会自动将动态导入的模块分割为独立的 chunk。在路由配置中使用 () => import('./views/Home.vue') 即可实现路由级别的代码分割。"
+    },
+    {
+      "id": 8,
+      "question": "以下哪个插件是 Vue 3 项目在 Vite 中必需的，用于支持单文件组件？",
+      "options": [
+        "@vitejs/plugin-react",
+        "vite-plugin-vue2",
+        "@vitejs/plugin-vue",
+        "vite-svg-loader"
+      ],
+      "correctAnswer": 2,
+      "explanation": "@vitejs/plugin-vue 是官方提供的 Vue 3 插件，提供单文件组件编译、模板处理等功能。React 项目则使用 @vitejs/plugin-react。"
+    },
+    {
+      "id": 9,
+      "question": "关于 Vite 生产构建的优化，以下哪项描述是正确的？",
+      "options": [
+        "Vite 默认使用 terser 进行代码压缩，速度较慢但压缩率更高",
+        "Vite 使用 esbuild 进行默认压缩，速度快；可切换至 terser 以获得更高压缩率",
+        "生产构建时不支持代码压缩，需要额外配置插件",
+        "Vite 只能使用 Webpack 作为生产打包器"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vite 生产构建默认使用 esbuild 进行代码压缩（minify: 'esbuild'），速度极快。如果需要更小的 bundle 体积（如移除 console），可以切换为 terser 并配置 terserOptions。"
+    },
+    {
+      "id": 10,
+      "question": "Vite 5 要求的最低 Node.js 版本是多少？",
+      "options": [
+        "Node.js 10 或更高",
+        "Node.js 12 或更高",
+        "Node.js 14 或更高",
+        "Node.js 18 或更高"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Vite 5 要求 Node.js 18 或更高版本。旧版 Node.js 可能无法正常运行 Vite 5，需要使用 nvm 等工具升级版本。"
+    }
+  ]
+}

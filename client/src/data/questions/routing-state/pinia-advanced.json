@@ -1,0 +1,128 @@
+{
+  "courseId": "pinia-advanced-plugin-persist",
+  "courseName": "Pinia 进阶：插件与持久化",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Pinia 插件中，通过 context 参数可以获取哪些信息？",
+      "options": [
+        "只有 pinia 实例和当前 store",
+        "pinia 实例、Vue 应用实例、当前 store 和配置选项",
+        "仅当前 store 和它的 state",
+        "仅 pinia 实例和 Vue 应用实例"
+      ],
+      "correctAnswer": 1,
+      "explanation": "插件函数的 context 对象包含 pinia 实例、app（Vue 应用实例）、store（当前 Store）、options（Store 定义时的配置）等属性，可用于全面扩展 Store 功能。"
+    },
+    {
+      "id": 2,
+      "question": "通过插件为所有 Store 添加一个名为 `clone` 的方法，以下哪个实现是正确的？",
+      "options": [
+        "在插件中直接修改 store.clone = () => JSON.parse(JSON.stringify(store.$state))",
+        "在插件返回值中返回 { clone: () => JSON.parse(JSON.stringify(store.$state)) }",
+        "在插件中使用 store.$state.clone = () => {}",
+        "在插件中通过 defineStore 的 options 添加"
+      ],
+      "correctAnswer": 1,
+      "explanation": "插件返回的对象会自动合并到 Store 实例上，因此返回 { clone: ... } 可以为每个 Store 添加 clone 方法。直接修改 store.clone 虽然也能工作，但 TypeScript 类型推断会丢失；修改 $state 不合适；defineStore 不能动态添加所有 Store。"
+    },
+    {
+      "id": 3,
+      "question": "在 Pinia 插件中，若想监听所有 Store 的 action 执行并记录错误，应该使用？",
+      "options": [
+        "store.$subscribe",
+        "store.$onAction 并配置 onError 回调",
+        "watch(store.$state, ...)",
+        "pinia.use() 的回调中直接 try-catch"
+      ],
+      "correctAnswer": 1,
+      "explanation": "store.$onAction 可以监听 action 调用，其配置项 onError 会在 action 抛出错误时触发，适合统一错误日志记录。$subscribe 用于监听 state 变化；watch 也是监听状态；try-catch 需要在每个 action 中手动添加，不通用。"
+    },
+    {
+      "id": 4,
+      "question": "在使用 TypeScript 开发时，为插件添加的自定义属性（如 store.createdAt）提供类型提示，需要？",
+      "options": [
+        "在插件函数中直接返回类型标注",
+        "在 main.ts 中声明全局变量",
+        "通过 declare module 'pinia' 扩展 PiniaCustomProperties 接口",
+        "无需额外操作，TypeScript 会自动推导"
+      ],
+      "correctAnswer": 2,
+      "explanation": "TypeScript 中需要利用模块扩展（declare module）来扩展 PiniaCustomProperties 接口，声明插件添加的属性类型，才能在组件中获得正确的类型提示和检查。"
+    },
+    {
+      "id": 5,
+      "question": "以下关于手动实现状态持久化的说法，错误的是？",
+      "options": [
+        "可以使用 watch 或 store.$subscribe 监听状态变化并保存到 localStorage",
+        "需要在 Store 初始化时从存储中读取数据并合并",
+        "必须使用 pinia-plugin-persistedstate 插件，手动实现不可行",
+        "手动实现时需要处理 JSON 序列化和反序列化"
+      ],
+      "correctAnswer": 2,
+      "explanation": "手动实现持久化完全可行（通过 watch + localStorage），只是对于多个 Store 会重复代码，因此推荐使用插件。选项 C 说法错误。"
+    },
+    {
+      "id": 6,
+      "question": "使用 `pinia-plugin-persistedstate` 插件时，若只想持久化 Store 中的 `theme` 和 `language` 字段，应如何配置？",
+      "options": [
+        "persist: { include: ['theme', 'language'] }",
+        "persist: { keys: ['theme', 'language'] }",
+        "persist: { paths: ['theme', 'language'] }",
+        "persist: { only: ['theme', 'language'] }"
+      ],
+      "correctAnswer": 2,
+      "explanation": "该插件使用 paths 选项指定需要持久化的字段白名单（支持点号语法）。其他选项如 include、keys、only 不是插件的标准配置项。"
+    },
+    {
+      "id": 7,
+      "question": "若想使用 sessionStorage 作为持久化存储介质，同时为所有 Store 加密存储，应该？",
+      "options": [
+        "在 Store 的 persist 配置中设置 storage: sessionStorage，并自定义加密存储引擎",
+        "只能使用 localStorage，不能切换到 sessionStorage",
+        "设置 persist: { storage: 'session', encrypt: true }",
+        "在插件中统一修改 window.localStorage 为 sessionStorage"
+      ],
+      "correctAnswer": 0,
+      "explanation": "pinia-plugin-persistedstate 支持通过 storage 选项指定存储引擎（如 sessionStorage），同时可传入自定义存储引擎实现加密。选项 B 错误；选项 C 不是标准配置；选项 D 修改全局对象不可取。"
+    },
+    {
+      "id": 8,
+      "question": "关于 Pinia 的 `$patch` 方法，以下描述错误的是？",
+      "options": [
+        "$patch 可以接受对象进行浅层合并更新",
+        "$patch 可以接受函数，接收 state 参数进行复杂更新",
+        "$patch 批量更新只触发一次响应式更新，性能优于多次单独赋值",
+        "$patch 不能用于修改嵌套对象的深层属性"
+      ],
+      "correctAnswer": 3,
+      "explanation": "$patch 支持修改深层嵌套属性，无论是对象语法（如 `{ user: { name: 'new' } }`）还是函数语法都可实现。选项 D 错误。"
+    },
+    {
+      "id": 9,
+      "question": "测试 Pinia Store 时，使用 Vitest 需要如何初始化环境？",
+      "options": [
+        "直接导入 Store 并调用其方法",
+        "在 beforeEach 中调用 setActivePinia(createPinia())",
+        "在测试用例中手动 new Vue()",
+        "无需初始化，Pinia 自动适配测试环境"
+      ],
+      "correctAnswer": 1,
+      "explanation": "测试 Pinia 需要先创建并激活 Pinia 实例，通常使用 setActivePinia(createPinia()) 在每个测试前初始化，确保 Store 独立运行。"
+    },
+    {
+      "id": 10,
+      "question": "关于 Pinia 持久化的最佳实践和常见陷阱，以下说法正确的是？",
+      "options": [
+        "所有状态都应该持久化，以保证数据不丢失",
+        "localStorage 无存储空间限制，可以放心存储大量数据",
+        "敏感数据（如 token）建议加密后再持久化",
+        "版本升级导致数据结构变化时，无需处理，插件会自动迁移"
+      ],
+      "correctAnswer": 2,
+      "explanation": "敏感数据应加密存储，防止 XSS 等攻击。选项 A 错误（应选择性持久化）；选项 B 错误（localStorage 有容量限制，通常 5-10MB）；选项 D 错误（版本变更需要手动处理数据迁移）。"
+    }
+  ]
+}

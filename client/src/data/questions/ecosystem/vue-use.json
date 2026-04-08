@@ -1,0 +1,128 @@
+{
+  "courseId": "vueuse-core",
+  "courseName": "VueUse 常用库推荐",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "VueUse 的设计核心理念是什么？",
+      "options": [
+        "提供一套完整的 UI 组件库",
+        "将浏览器原生 API 和实用功能封装成可组合的函数，基于 Composition API",
+        "替代 Vuex 进行全局状态管理",
+        "提供一套编译时宏指令"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VueUse 是一个 Composition API 工具集，它将浏览器原生 API 和各种实用功能封装成可组合的函数（composables），让开发者以声明式方式处理常见需求。"
+    },
+    {
+      "id": 2,
+      "question": "关于 VueUse 中 useLocalStorage 的描述，以下正确的是？",
+      "options": [
+        "它只能存储字符串类型的数据",
+        "它创建了一个与 localStorage 自动同步的响应式引用，支持复杂数据类型",
+        "它只能在组件挂载后使用，不支持 SSR",
+        "它需要手动调用保存方法才能持久化数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useLocalStorage 返回一个响应式 ref，修改它会自动同步到 localStorage，支持对象、数组等复杂数据类型（自动序列化/反序列化）。"
+    },
+    {
+      "id": 3,
+      "question": "在 VueUse 中，哪个函数用于监听元素是否进入视口，常用于实现图片懒加载或无限滚动？",
+      "options": [
+        "useElementSize",
+        "useIntersectionObserver",
+        "useMutationObserver",
+        "useResizeObserver"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useIntersectionObserver 封装了 IntersectionObserver API，可以检测元素与视口的交叉状态，非常适合懒加载、无限滚动等场景。"
+    },
+    {
+      "id": 4,
+      "question": "VueUse 中 useFetch 和 useAxios 的共同特点是？",
+      "options": [
+        "都需要手动管理请求的 loading 状态",
+        "都返回包含 data、error、isFinished 等响应式状态的对象",
+        "都只能用于 GET 请求",
+        "都不支持请求取消功能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useFetch 和 useAxios 都将网络请求封装成响应式状态，返回 data、error、isFinished、isFetching 等属性，支持自动取消、手动触发等功能。"
+    },
+    {
+      "id": 5,
+      "question": "以下哪个 VueUse 函数用于创建防抖版本的函数，适合处理搜索输入框的自动补全请求？",
+      "options": [
+        "useThrottleFn",
+        "useDebounceFn",
+        "useInterval",
+        "useTimeout"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useDebounceFn 创建防抖函数，在停止调用一段时间后才执行，适合输入框搜索建议等场景；useThrottleFn 用于节流，适合滚动事件。"
+    },
+    {
+      "id": 6,
+      "question": "usePreferredDark 函数的作用是？",
+      "options": [
+        "切换页面的暗色主题",
+        "检测用户操作系统是否偏好暗色模式，返回响应式布尔值",
+        "将页面背景强制设为暗色",
+        "存储用户的主题偏好到 localStorage"
+      ],
+      "correctAnswer": 1,
+      "explanation": "usePreferredDark 使用 matchMedia 检测 prefers-color-scheme: dark，返回响应式布尔值，反映用户系统的暗色模式偏好，不直接修改页面样式。"
+    },
+    {
+      "id": 7,
+      "question": "关于 VueUse 中 useTransition 的描述，正确的是？",
+      "options": [
+        "用于在路由切换时添加过渡动画",
+        "可以将一个数值响应式地过渡到另一个值，支持缓动函数和颜色插值",
+        "只能用于数字类型的过渡，不支持颜色",
+        "需要配合 Vue 的 Transition 组件使用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useTransition 是强大的数值/颜色过渡工具，接收源值 ref 和配置（duration、transition 缓动曲线），返回过渡过程中的目标值，自动插值。"
+    },
+    {
+      "id": 8,
+      "question": "VueUse 推荐的使用方式是？",
+      "options": [
+        "通过 CDN 全量引入 VueUse 库",
+        "按需导入具体函数，例如 import { useLocalStorage } from '@vueuse/core'",
+        "使用 Vue.use(VueUse) 全局注册",
+        "只使用 VueUse 的 Vue 2 兼容版本"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VueUse 采用 Tree-shakable 架构，推荐按需导入具体函数，这样打包工具可以自动移除未使用的代码，减小 bundle 体积。"
+    },
+    {
+      "id": 9,
+      "question": "在 SSR（服务端渲染）环境中使用 VueUse，需要注意什么？",
+      "options": [
+        "所有 VueUse 函数都完全支持 SSR，无需特殊处理",
+        "某些依赖浏览器 API 的函数在 SSR 时可能返回默认值或需要额外配置",
+        "不能在 SSR 项目中使用 VueUse",
+        "必须使用 VueUse 的 Nuxt 专用版本"
+      ],
+      "correctAnswer": 1,
+      "explanation": "VueUse 会检测运行环境，在 SSR 时对依赖 window/document 的函数返回合理的默认值或禁用功能，但开发者仍需注意某些场景下的兼容性。"
+    },
+    {
+      "id": 10,
+      "question": "以下哪个函数用于管理页面标题的响应式更新？",
+      "options": [
+        "useFavicon",
+        "useTitle",
+        "useMeta",
+        "useHead"
+      ],
+      "correctAnswer": 1,
+      "explanation": "useTitle 返回一个响应式 ref，修改其值即可动态更新页面标题，非常适合单页应用路由切换或数据变化时更新标题。"
+    }
+  ]
+}
