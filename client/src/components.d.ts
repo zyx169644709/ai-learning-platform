@@ -53,7 +53,6 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./components/common/Header.vue')['default']
-    InlineCodeEditor: typeof import('./components/common/InlineCodeEditor.vue')['default']
     MonacoEditor: typeof import('./components/common/MonacoEditor.vue')['default']
     QuizModal: typeof import('./pages/misc/QuizModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

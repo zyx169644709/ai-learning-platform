@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-custom-events-vmodel",
+  "courseName": "Vue 3 自定义事件与 v-model",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue 3 中，关于自定义事件的命名，官方推荐的做法是？",
+      "options": [
+        "统一使用 camelCase（如 itemSelected）",
+        "统一使用 kebab-case（如 item-selected）",
+        "在 JavaScript 中使用 camelCase，在模板中使用 kebab-case",
+        "可以使用任意大小写，Vue 会自动转换"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 推荐使用 kebab-case 命名自定义事件，因为 HTML 特性不区分大小写，使用 kebab-case 可以避免在 DOM 模板中监听事件时出现大小写匹配问题，保持与 HTML 规范一致。"
+    },
+    {
+      "id": 2,
+      "question": "关于 defineEmits 的声明方式，以下说法正确的是？",
+      "options": [
+        "只能使用数组语法声明事件名称，不支持验证",
+        "只能使用对象语法声明事件，数组语法已废弃",
+        "数组语法简单声明，对象语法可以添加验证函数",
+        "必须使用 TypeScript 泛型才能声明事件"
+      ],
+      "correctAnswer": 2,
+      "explanation": "defineEmits 支持数组语法（简单列出事件名）和对象语法（可为每个事件定义验证函数）。数组语法适合简单场景，对象语法可以在开发环境下验证事件载荷的有效性，两者都是有效的。"
+    },
+    {
+      "id": 3,
+      "question": "子组件需要向父组件传递多个数据时，推荐的做法是？",
+      "options": [
+        "连续调用多次 emit，每次传递一个值",
+        "将多个值包装在对象或数组中，通过一次 emit 传递",
+        "使用全局状态管理（如 Pinia）代替事件",
+        "将多个值作为多个参数传递给 emit"
+      ],
+      "correctAnswer": 1,
+      "explanation": "推荐使用对象或数组将多个值打包后通过一次 emit 传递。使用对象可以让每个字段有明确名称，便于父组件理解和处理，也便于后续扩展。emit 的第二个参数只接受一个载荷值，不能传递多个独立参数。"
+    },
+    {
+      "id": 4,
+      "question": "在 Vue 3 中，自定义组件上使用 v-model 默认对应的 prop 和事件是？",
+      "options": [
+        "prop: value, event: input",
+        "prop: modelValue, event: update:modelValue",
+        "prop: value, event: change",
+        "prop: modelValue, event: change"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 中自定义组件的 v-model 默认绑定到 prop `modelValue` 和事件 `update:modelValue`。这是与 Vue 2 的重要区别，Vue 2 默认是 `value` prop 和 `input` 事件。"
+    },
+    {
+      "id": 5,
+      "question": "当一个组件需要支持多个 v-model 绑定时，例如 `v-model:title` 和 `v-model:content`，子组件需要声明哪些 prop 和 emit？",
+      "options": [
+        "props: ['modelValue1', 'modelValue2']; emits: ['update:modelValue1', 'update:modelValue2']",
+        "props: ['title', 'content']; emits: ['update:title', 'update:content']",
+        "props: ['title', 'content']; emits: ['titleChange', 'contentChange']",
+        "props: ['value1', 'value2']; emits: ['update:value1', 'update:value2']"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 `v-model:xxx` 时，子组件需要接收名为 `xxx` 的 prop，并触发名为 `update:xxx` 的事件。因此 `v-model:title` 对应 prop `title` 和事件 `update:title`。"
+    },
+    {
+      "id": 6,
+      "question": "在自定义组件上使用 `v-model.capitalize` 这样的自定义修饰符时，子组件如何访问这个修饰符？",
+      "options": [
+        "通过 props.modelModifiers 对象访问",
+        "通过 emit 的第三个参数访问",
+        "通过 getCurrentInstance().modifiers 访问",
+        "自定义修饰符无法在子组件中检测"
+      ],
+      "correctAnswer": 0,
+      "explanation": "自定义修饰符会通过 props 传递给子组件。对于默认的 v-model，修饰符在 `modelModifiers` prop 中；对于带参数的 v-model（如 v-model:title.capitalize），修饰符在 `titleModifiers` prop 中。子组件可以根据修饰符的存在来改变行为。"
+    },
+    {
+      "id": 7,
+      "question": "实现一个支持 v-model 的自定义输入组件，以下做法正确的是？",
+      "options": [
+        "直接修改 props.modelValue 的值",
+        "将 modelValue 赋值给本地 ref，然后修改本地 ref",
+        "通过 emit('update:modelValue', newValue) 通知父组件更新",
+        "在组件内部使用 reactive 包装 modelValue"
+      ],
+      "correctAnswer": 2,
+      "explanation": "正确做法是在值变化时触发 `update:modelValue` 事件，将新值传递给父组件。直接修改 props 违反单向数据流，会触发警告；仅修改本地 ref 不会同步回父组件；reactive 包装不会解决双向绑定问题。"
+    },
+    {
+      "id": 8,
+      "question": "当使用 defineEmits 对象语法为事件定义验证函数，且验证函数返回 false 时，会发生什么？",
+      "options": [
+        "事件不会被触发，并在控制台输出警告（开发环境）",
+        "事件仍会触发，但验证函数会抛出错误",
+        "事件会被触发，但载荷会被自动修正",
+        "事件会被延迟触发，等待下一次验证通过"
+      ],
+      "correctAnswer": 0,
+      "explanation": "验证函数返回 false 表示验证失败，事件会被阻止触发。Vue 会在开发环境下输出警告信息，帮助开发者发现问题，但不会抛出错误中断应用。生产环境下警告会被移除。"
+    },
+    {
+      "id": 9,
+      "question": "在 Vue 3 中，对于 `<select multiple>` 多选下拉框，使用 v-model 绑定的数据类型应该是？",
+      "options": [
+        "布尔值（true/false）",
+        "字符串",
+        "数组",
+        "对象"
+      ],
+      "correctAnswer": 2,
+      "explanation": "多选 select 元素使用 v-model 时，绑定值应该是一个数组，数组中包含所有选中选项的 value。每个选中的 option 的 value 会被添加到数组中，取消选中则被移除。"
+    },
+    {
+      "id": 10,
+      "question": "在子组件中，使用 computed 配合 v-model 可以实现数据的转换处理，例如将输入值自动转为数字。以下哪个实现是正确的？",
+      "options": [
+        "const value = computed(() => props.modelValue)",
+        "const value = computed({ get: () => props.modelValue, set: (val) => emit('update:modelValue', Number(val)) })",
+        "const value = ref(props.modelValue); watch(value, (val) => emit('update:modelValue', val))",
+        "const value = reactive({ val: props.modelValue })"
+      ],
+      "correctAnswer": 1,
+      "explanation": "使用 computed 的 getter 和 setter 可以创建一个可读写的计算属性，getter 返回 prop 值，setter 中处理转换后通过 emit 更新父组件。这样模板中可以直接使用 v-model 绑定这个计算属性，实现数据转换的同时保持双向绑定。"
+    }
+  ]
+}

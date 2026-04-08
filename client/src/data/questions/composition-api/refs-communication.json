@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-template-refs-communication",
+  "courseName": "Vue 3 Template Refs 与组件通信",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "关于 Vue 3 的 Template Refs，下列说法正确的是？",
+      "options": [
+        "Template Refs 可以在 setup 函数顶层直接访问",
+        "Template Refs 必须使用与响应式 ref 相同的命名约定",
+        "Template Refs 用于直接操作 DOM 或获取组件实例，应在 onMounted 中访问",
+        "Template Refs 只能绑定到原生 HTML 元素，不能绑定到组件"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Template Refs 必须在组件挂载（onMounted）后才能访问，因为此时 DOM 才渲染完成。在 setup 顶层直接访问会得到 null。它们可以绑定到原生元素和子组件，但子组件需使用 defineExpose 暴露成员。最佳实践中建议用命名区分（如 inputRef 表示 Template Ref，count 表示响应式数据）。"
+    },
+    {
+      "id": 2,
+      "question": "在 Vue 3 中，使用 `<script setup>` 的子组件，父组件通过 Template Ref 访问子组件内部方法或属性前，必须执行的操作是？",
+      "options": [
+        "子组件使用 defineExpose 显式暴露成员",
+        "父组件使用 provide 提供注入",
+        "子组件将成员挂载到 window 对象",
+        "父组件使用 emits 声明事件"
+      ],
+      "correctAnswer": 0,
+      "explanation": "在使用 `<script setup>` 时，子组件默认私有，必须通过 defineExpose 编译器宏显式暴露需要被父组件访问的成员（如方法、响应式数据）。否则父组件通过 ref.value 访问时会得到 undefined。"
+    },
+    {
+      "id": 3,
+      "question": "以下关于 `v-for` 中使用 Template Refs 的描述，正确的是？",
+      "options": [
+        "v-for 中的 ref 会绑定到最后一个元素，其他元素无法获取",
+        "v-for 中的 ref 会形成一个数组，包含所有循环元素的引用",
+        "v-for 中的 ref 必须在 onUpdated 钩子中才能访问",
+        "v-for 中不能使用 Template Refs"
+      ],
+      "correctAnswer": 1,
+      "explanation": "当 ref 用在 v-for 渲染的元素上时，ref 的值会是一个数组，按 DOM 顺序包含所有对应元素的引用。该数组在组件挂载后可用，并在数据源变化时自动更新。"
+    },
+    {
+      "id": 4,
+      "question": "函数式 refs 的作用是什么？",
+      "options": [
+        "将 ref 绑定到一个函数，该函数在元素卸载时返回 null",
+        "替代 defineExpose 实现组件实例暴露",
+        "允许通过函数动态决定 ref 的存储位置，并可在挂载/卸载时执行额外逻辑",
+        "用于在模板中直接调用 JavaScript 函数"
+      ],
+      "correctAnswer": 2,
+      "explanation": "函数式 refs 将 ref 属性绑定到一个函数，该函数接收 DOM 元素或组件实例作为参数。它提供更高的灵活性，例如动态将元素存入 Map、在挂载时立即执行逻辑、在卸载时执行清理等。"
+    },
+    {
+      "id": 5,
+      "question": "关于 Vue 3 中 Props 的描述，错误的是？",
+      "options": [
+        "Props 遵循单向数据流，子组件不能直接修改父组件传入的 prop",
+        "解构 defineProps 返回的对象会失去响应性，需要使用 toRefs 保持响应",
+        "Props 验证可以使用 validator 自定义函数，仅在开发环境下生效",
+        "子组件可以通过 props.count++ 直接修改 prop 值并同步到父组件"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Props 是只读的，子组件直接修改 props（如 props.count++）会触发 Vue 警告，且不会同步到父组件。正确的做法是触发 emit 事件，由父组件修改数据。选项 A、B、C 均为正确描述。"
+    },
+    {
+      "id": 6,
+      "question": "以下关于 Emits 的用法，正确的是？",
+      "options": [
+        "子组件触发的事件名必须与父组件监听的名称完全一致（包括大小写）",
+        "defineEmits 声明的事件可以通过 return 返回值给父组件",
+        "子组件通过 emit 可以传递任意类型的数据，父组件通过事件处理函数参数接收",
+        "emits 事件不支持验证功能"
+      ],
+      "correctAnswer": 2,
+      "explanation": "emit 可以传递任意类型的数据，父组件的监听函数通过参数接收。事件命名推荐使用 kebab-case，HTML 属性不区分大小写，但 Vue 会进行转换。emits 也支持验证（通过对象语法）。事件不能 return 返回值给父组件。"
+    },
+    {
+      "id": 7,
+      "question": "在自定义组件上使用 `v-model` 时，默认对应的 prop 和事件是什么？",
+      "options": [
+        "prop: value, event: input",
+        "prop: modelValue, event: update:modelValue",
+        "prop: modelValue, event: change",
+        "prop: value, event: update:value"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 中，自定义组件上的 v-model 默认绑定到 prop `modelValue`，并监听事件 `update:modelValue`。这是实现双向绑定的语法糖。可以通过 `v-model:propName` 的方式绑定其他名称。"
+    },
+    {
+      "id": 8,
+      "question": "以下哪种场景最适合使用 Provide/Inject 而非 Props/Emits？",
+      "options": [
+        "简单父子组件之间的数据传递",
+        "兄弟组件之间的通信",
+        "深层嵌套组件树中传递主题配置（如暗黑模式）",
+        "父组件需要主动调用子组件方法"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Provide/Inject 主要用于解决深层嵌套组件之间的 prop drilling 问题，如主题、语言、用户信息等全局或半全局数据。简单父子通信应优先使用 Props/Emits；兄弟通信推荐状态管理或事件总线；主动调用子组件方法应使用 Template Refs。"
+    },
+    {
+      "id": 9,
+      "question": "以下关于组件通信最佳实践的说法，正确的是？",
+      "options": [
+        "优先使用 Template Refs 代替 Props 和 Emits，可以简化代码",
+        "应当尽可能使用 Provide/Inject 传递所有数据，避免 props 层层传递",
+        "遵循“props down, events up”的单向数据流原则，优先使用 Props + Emits",
+        "v-model 适用于所有父子组件通信场景，包括复杂数据逻辑"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Vue 官方推荐的单向数据流是 props down, events up，优先使用 Props + Emits，它们清晰且易于调试。Template Refs 应仅在必要时使用（如 DOM 操作），过度使用会破坏封装性。Provide/Inject 仅适合特定场景。v-model 本质也是 props + emits，适用于表单等双向绑定，但并非所有场景都需要双向绑定。"
+    },
+    {
+      "id": 10,
+      "question": "当组件使用 `v-if` 条件渲染一个输入框，并通过按钮点击使输入框显示并自动聚焦，正确的实现方式是？",
+      "options": [
+        "在按钮点击处理函数中直接调用 inputRef.value.focus()",
+        "先设置 showInput = true，然后在同一函数中立即调用 focus()",
+        "先设置 showInput = true，然后使用 nextTick 等待 DOM 更新后再调用 focus()",
+        "使用 watch 监听 showInput，在回调中聚焦"
+      ],
+      "correctAnswer": 2,
+      "explanation": "v-if 控制元素显示后，DOM 更新是异步的。设置 showInput = true 后，输入框尚未渲染，直接调用 focus() 会失败。需要先等待 DOM 更新，使用 nextTick 或 setTimeout 确保输入框已挂载后再调用聚焦方法。watch 也可以实现，但 nextTick 更直接。"
+    }
+  ]
+}

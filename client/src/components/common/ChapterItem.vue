@@ -6,7 +6,7 @@
     <div class="sub-chapters">
       <RouterLink v-for="sec in chapter.children || []" :key="sec.id"
         :class="['sub-chapter', { active: isActiveSection(sec) }]"
-        :to="{ path: `/chapter/${chapter.slug}/${sec.slug}` }">
+        :to="{ path: `/chapter/${chapter.slug.replace(/^chapter-/, '')}/${sec.slug.replace('section-' + chapter.slug.replace(/^chapter-/, '') + '-', '')}` }">
         <div class="section-content">
           <span class="section-title">{{ sec.title }}</span>
         </div>
@@ -33,10 +33,12 @@ const prefs = useUserPrefs()
 const isExpanded = ref(true)
 const route = useRoute()
 
-const isActiveChapter = computed(() => String(route.params.chapterSlug || '') === props.chapter.slug)
+const chParam = computed(() => props.chapter.slug.replace(/^chapter-/, ''))
+const isActiveChapter = computed(() => String(route.params.chapterSlug || '') === chParam.value)
 
 const isActiveSection = (sec: { slug: string }) => {
-  return isActiveChapter.value && String(route.params.sectionSlug || '') === sec.slug
+  const secParam = sec.slug.replace(`section-${chParam.value}-`, '')
+  return isActiveChapter.value && String(route.params.sectionSlug || '') === secParam
 }
 
 // 总是展开，不再响应点击折叠

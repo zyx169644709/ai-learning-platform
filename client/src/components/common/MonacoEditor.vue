@@ -110,6 +110,14 @@ watch(() => props.language, (newLang) => {
 onBeforeUnmount(() => {
   editorInstance?.dispose()
 })
+
+const format = async () => {
+  if (editorInstance) {
+    await editorInstance.getAction('editor.action.formatDocument')?.run()
+  }
+}
+
+defineExpose({ format })
 </script>
 
 <style scoped>

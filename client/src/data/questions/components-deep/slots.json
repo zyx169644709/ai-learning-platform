@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-slots",
+  "courseName": "Vue 3 插槽 Slots 全解",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue 3 中，关于插槽（Slots）的作用，以下描述正确的是？",
+      "options": [
+        "插槽用于在组件之间传递事件",
+        "插槽是一种组件通信方式，允许父组件向子组件传递 HTML 内容",
+        "插槽只能用于传递文本，不能传递 HTML 结构",
+        "插槽只能在根组件中使用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "插槽是 Vue 的内容分发机制，父组件可以向子组件传入任意 HTML 内容，子组件通过 <slot> 标签确定内容渲染位置。插槽可以传递复杂结构，且可在任何组件中使用。"
+    },
+    {
+      "id": 2,
+      "question": "在子组件中，如果希望在没有提供插槽内容时显示“默认文本”，应该怎么做？",
+      "options": [
+        "在父组件中使用 v-if 判断是否提供内容",
+        "在子组件的 <slot> 标签内直接写入默认内容",
+        "在子组件中使用 v-slot 指令设置默认值",
+        "通过 defineProps 设置默认值"
+      ],
+      "correctAnswer": 1,
+      "explanation": "插槽支持后备内容（fallback），直接在 <slot> 标签内写入默认内容即可。当父组件未提供对应插槽内容时，默认内容会被渲染。"
+    },
+    {
+      "id": 3,
+      "question": "如果一个组件需要同时接收头部、主体、底部三个不同的内容区域，应该使用哪种插槽？",
+      "options": [
+        "三个默认插槽",
+        "作用域插槽",
+        "具名插槽（name 属性）",
+        "动态插槽"
+      ],
+      "correctAnswer": 2,
+      "explanation": "具名插槽通过 name 属性区分不同内容区域，父组件使用 v-slot:header / #header 等方式分发内容到对应位置。"
+    },
+    {
+      "id": 4,
+      "question": "关于 Vue 3 中具名插槽的简写语法，以下正确的是？",
+      "options": [
+        "v-slot:header 可以简写为 :header",
+        "v-slot:header 可以简写为 #header",
+        "v-slot:header 可以简写为 slot.header",
+        "具名插槽没有简写形式"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 为 v-slot 提供了 # 简写，如 #header 等同于 v-slot:header。注意 # 后必须跟插槽名称，不能单独使用。"
+    },
+    {
+      "id": 5,
+      "question": "作用域插槽（Scoped Slots）的主要用途是？",
+      "options": [
+        "让父组件可以向子组件传递样式作用域",
+        "让子组件能够向插槽内容传递数据，父组件可以基于这些数据渲染内容",
+        "限制插槽内容的访问权限",
+        "提高插槽的渲染性能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "作用域插槽允许子组件通过 slot 属性向父组件传递数据（如 item、index），父组件在 v-slot 中接收这些数据并用于渲染，实现了子组件数据与父组件模板的结合。"
+    },
+    {
+      "id": 6,
+      "question": "在父组件中使用作用域插槽时，接收子组件传递的 slot props，以下解构写法正确的是？",
+      "options": [
+        "<template v-slot=\"{ item, index }\">",
+        "<template v-slot:default=\"{ item, index }\">",
+        "以上两种都可以",
+        "<template v-slot=\"{ item }\"> 但不能同时解构 index"
+      ],
+      "correctAnswer": 2,
+      "explanation": "无论是默认插槽还是具名插槽，都可以使用解构语法。v-slot=\"{ item, index }\" 和 v-slot:default=\"{ item, index }\" 都是合法的，解构支持多个属性。"
+    },
+    {
+      "id": 7,
+      "question": "在 Vue 3 的 <script setup> 中，如何获取当前组件的所有插槽对象以便判断某个插槽是否有内容？",
+      "options": [
+        "使用 getCurrentInstance() 获取",
+        "使用 useSlots() 组合式函数",
+        "通过 $slots 直接在模板中访问，不能在 script 中访问",
+        "使用 defineSlots 宏"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 提供了 useSlots() 组合式函数，可在 <script setup> 中获取插槽对象，进而判断 slots.default 等是否存在，用于条件渲染。"
+    },
+    {
+      "id": 8,
+      "question": "关于动态插槽名（v-slot:[dynamicSlotName]），以下说法正确的是？",
+      "options": [
+        "动态插槽名只能在运行时确定，无法在编译时优化，不推荐使用",
+        "动态插槽名必须使用 v-slot: 完整语法，不能使用 # 简写",
+        "动态插槽名中的变量必须在父组件模板作用域内可访问",
+        "动态插槽名只能用于默认插槽，不能用于具名插槽"
+      ],
+      "correctAnswer": 2,
+      "explanation": "动态插槽名使用方括号语法（#[slotName] 或 v-slot:[slotName]），其中的 slotName 变量必须在父组件模板中可访问。可以使用 # 简写（如 #[dynamicName]）。"
+    },
+    {
+      "id": 9,
+      "question": "关于插槽内容的作用域，以下描述正确的是？",
+      "options": [
+        "插槽内容可以访问子组件内部的所有数据",
+        "插槽内容只能访问父组件的数据，除非使用作用域插槽传递",
+        "插槽内容同时拥有父组件和子组件的数据作用域",
+        "插槽内容不能访问任何组件的数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "普通插槽内容的作用域是父组件，无法访问子组件的数据。如果需要访问子组件数据，必须使用作用域插槽，由子组件显式传递数据。"
+    },
+    {
+      "id": 10,
+      "question": "以下哪项是 Vue 3 插槽的最佳实践？",
+      "options": [
+        "尽量使用默认插槽，减少具名插槽的使用以保持简洁",
+        "为插槽提供有意义的默认内容，使用具名插槽提高可读性",
+        "避免在插槽中使用复杂逻辑，将所有逻辑都放在子组件中",
+        "使用作用域插槽时，将 slot props 命名为 a、b 等简短字母"
+      ],
+      "correctAnswer": 1,
+      "explanation": "最佳实践包括：为插槽提供默认内容保证组件健壮性；多内容区域使用具名插槽让意图清晰；作用域插槽的 props 命名应具有描述性（如 item、index）；插槽内容如果过于复杂应拆分为子组件。"
+    }
+  ]
+}

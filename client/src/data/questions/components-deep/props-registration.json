@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-component-registration-props",
+  "courseName": "Vue 3 组件注册与 Props",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "关于 Vue 3 的组件注册方式，以下说法正确的是？",
+      "options": [
+        "全局注册的组件即使未被使用也会被打包，局部注册支持 tree-shaking",
+        "局部注册的组件必须通过 app.component() 进行注册",
+        "全局注册的组件只能在根组件中使用，子组件无法访问",
+        "使用 <script setup> 时，导入的组件需要手动在 components 选项中注册"
+      ],
+      "correctAnswer": 0,
+      "explanation": "全局注册（app.component）的组件即使未被使用也会进入最终打包，而局部注册（在组件内导入）支持 tree-shaking，未使用的组件不会被打包。B 错误：局部注册应在组件内部使用 components 选项或 <script setup> 自动注册；C 错误：全局注册的组件可在整个应用任何组件中使用；D 错误：<script setup> 中导入的组件会自动注册，无需手动添加 components。"
+    },
+    {
+      "id": 2,
+      "question": "在 Vue 3 中，推荐的组件命名规范是？",
+      "options": [
+        "文件名使用 kebab-case，注册时使用 camelCase，模板中使用 PascalCase",
+        "文件名使用 PascalCase，JavaScript 代码中使用 PascalCase，模板中使用 kebab-case",
+        "所有地方统一使用 kebab-case，避免大小写问题",
+        "所有地方统一使用 PascalCase，提高代码一致性"
+      ],
+      "correctAnswer": 1,
+      "explanation": "官方推荐：组件文件名使用 PascalCase（如 UserProfile.vue），在 JavaScript 代码（导入、注册）中使用 PascalCase，在模板中使用 kebab-case（如 <user-profile />）。这样既符合各环境的规范（JS 类命名、HTML 属性命名），又避免大小写敏感问题。"
+    },
+    {
+      "id": 3,
+      "question": "在 <script setup> 中声明 Props，推荐使用哪种语法以获取类型检查和验证？",
+      "options": [
+        "字符串数组语法：defineProps(['title', 'count'])",
+        "对象语法：defineProps({ title: String, count: Number })",
+        "直接使用 TypeScript 类型注解：defineProps<{ title: string; count: number }>()",
+        "使用 ref 代替 props 传递数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "对象语法（如 { title: String }）可以在开发环境下提供类型检查和验证警告，且无需额外配置。虽然 TypeScript 泛型语法也能提供类型，但对象语法更通用（兼容 JS 和 TS），并支持必填、默认值、自定义验证等高级选项。字符串数组语法无法进行类型检查。"
+    },
+    {
+      "id": 4,
+      "question": "关于 Props 的响应性和修改规则，以下说法错误的是？",
+      "options": [
+        "Props 是只读的，子组件不能直接修改 props 的值",
+        "直接解构 defineProps 返回的对象会失去响应性，需要使用 toRefs 保持",
+        "子组件可以通过 props.count++ 直接修改数字类型的 prop，但会触发警告",
+        "子组件应该通过 emit 事件请求父组件修改数据，遵循单向数据流"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Props 是只读的，任何直接修改（包括 props.count++）都会触发 Vue 警告，且修改不会同步到父组件，这是错误做法。正确做法是通过 emit 事件。A、B、D 均为正确描述。"
+    },
+    {
+      "id": 5,
+      "question": "以下关于 Props 类型验证的描述，正确的是？",
+      "options": [
+        "Object 和 Array 类型的默认值可以直接写成 {} 或 []，Vue 会自动深拷贝",
+        "validator 自定义验证函数只在生产环境下生效",
+        "required: true 的 prop 如果父组件未传递，Vue 会在开发环境下发出警告",
+        "Props 的类型检查在运行时始终执行，会影响性能"
+      ],
+      "correctAnswer": 2,
+      "explanation": "required: true 的 prop 如果父组件未提供，Vue 会在开发环境下发出警告，帮助发现错误。A 错误：Object/Array 默认值必须使用工厂函数（() => ({})），直接提供会导致所有实例共享同一引用；B 错误：validator 验证仅在开发环境下执行；D 错误：类型检查仅在开发环境下进行，生产环境下会被移除，不影响性能。"
+    },
+    {
+      "id": 6,
+      "question": "在父组件中，如何将一个对象的所有属性作为独立的 Props 传递给子组件？",
+      "options": [
+        "使用 v-bind 不带参数：<Child v-bind=\"obj\" />",
+        "使用展开运算符：<Child {...obj} />",
+        "逐个属性绑定：<Child :a=\"obj.a\" :b=\"obj.b\" />",
+        "使用 v-bind:object=\"obj\""
+      ],
+      "correctAnswer": 0,
+      "explanation": "使用不带参数的 v-bind（即 v-bind=\"obj\"）可以将对象的所有属性展开为独立的 props。这是 Vue 提供的便捷语法。B 是 React 写法；C 虽然可行但繁琐；D 会将整个对象作为单个 prop 传递，而不是展开属性。"
+    },
+    {
+      "id": 7,
+      "question": "当子组件需要修改从父组件传入的 prop 时，正确的做法是？",
+      "options": [
+        "直接修改 prop 的值，Vue 会自动同步到父组件",
+        "将 prop 赋值给本地 ref，然后修改本地 ref",
+        "通过 emit 触发事件，由父组件修改数据后再通过 prop 传回",
+        "使用 provide/inject 代替 props"
+      ],
+      "correctAnswer": 2,
+      "explanation": "遵循单向数据流，子组件应通过 emit 事件通知父组件修改数据，父组件更新后再通过 prop 传回。直接修改 prop 会触发警告且不会同步。将 prop 赋值给本地 ref 可以创建副本，但不会同步回父组件，适用于不需要同步的场景。provide/inject 是另一种通信方式，但不适用于简单的父子 prop 修改场景。"
+    },
+    {
+      "id": 8,
+      "question": "关于 v-model 在自定义组件上的工作原理，描述正确的是？",
+      "options": [
+        "v-model 默认绑定到 value prop 和 input 事件",
+        "v-model 默认绑定到 modelValue prop 和 update:modelValue 事件",
+        "v-model 是单向数据流，只能从子组件流向父组件",
+        "v-model 不能用于自定义组件，只能用于原生表单元素"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 中，自定义组件上的 v-model 默认使用 prop `modelValue` 和事件 `update:modelValue`，这是语法糖。A 是 Vue 2 的默认行为；C 错误，v-model 是双向绑定；D 错误，v-model 可以用于自定义组件。"
+    },
+    {
+      "id": 9,
+      "question": "以下关于 Props 默认值（default）的说法，错误的是？",
+      "options": [
+        "可以为 Number 类型的 prop 提供数字默认值",
+        "可以为 Boolean 类型的 prop 提供 true/false 默认值",
+        "可以为 Array 类型的 prop 直接提供数组字面量作为默认值，如 default: []",
+        "可以为 Object 类型的 prop 使用工厂函数返回默认对象"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Array 和 Object 类型的默认值不能直接使用字面量（如 [] 或 {}），因为这样会导致所有组件实例共享同一个引用。必须使用工厂函数，如 default: () => []。A、B、D 均正确。"
+    },
+    {
+      "id": 10,
+      "question": "在 Vue 3 中，为了保持解构后的 Props 的响应性，应该使用哪个工具函数？",
+      "options": [
+        "toRef 或 toRefs",
+        "ref 或 reactive",
+        "computed",
+        "unref"
+      ],
+      "correctAnswer": 0,
+      "explanation": "直接解构 defineProps 返回的对象会失去响应性，因为解构得到的是值的副本。使用 toRefs 可以将整个 props 对象转换为每个属性都是 ref 的普通对象，使用 toRef 可以转换单个属性。ref/reactive 用于创建新的响应式数据；computed 用于创建计算属性；unref 用于获取 ref 的值。"
+    }
+  ]
+}

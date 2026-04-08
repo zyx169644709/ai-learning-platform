@@ -41,9 +41,9 @@ export function useResizableSplit(initialRatio = 0.5) {
     if (e?.target instanceof HTMLElement) {
       e.target.releasePointerCapture(e.pointerId)
     }
-    document.removeEventListener('pointermove', handleResize as any)
-    document.removeEventListener('pointerup', stopResize as any)
-    document.removeEventListener('pointercancel', stopResize as any)
+    document.documentElement.removeEventListener('pointermove', handleResize)
+    document.documentElement.removeEventListener('pointerup', stopResize)
+    document.documentElement.removeEventListener('pointercancel', stopResize)
   }
 
   const resetToDefaultRatio = () => {
@@ -52,7 +52,7 @@ export function useResizableSplit(initialRatio = 0.5) {
   }
 
   const showResizeCursor = () => {
-    document.body.style.cursor = 'col-resize'
+    document.body.style.cursor = window.innerWidth <= 1200 ? 'row-resize' : 'col-resize'
   }
 
   const hideResizeCursor = () => {
@@ -60,9 +60,9 @@ export function useResizableSplit(initialRatio = 0.5) {
   }
 
   onUnmounted(() => {
-    document.removeEventListener('pointermove', handleResize as any)
-    document.removeEventListener('pointerup', stopResize as any)
-    document.removeEventListener('pointercancel', stopResize as any)
+    document.documentElement.removeEventListener('pointermove', handleResize)
+    document.documentElement.removeEventListener('pointerup', stopResize)
+    document.documentElement.removeEventListener('pointercancel', stopResize)
   })
 
   return {

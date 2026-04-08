@@ -27,12 +27,13 @@
           以下是 Vue 3 Composition API 的基础示例，展示了响应式数据和生命周期钩子的使用：
         </p>
 
-        <InlineCodeEditor
-          :initialCode="defaultCode"
-          language="javascript"
-          title="Vue 3 Composition API"
-          :readOnly="false"
-        />
+        <div class="code-preview-wrapper">
+          <CodePreview
+            v-model="defaultCode"
+            language="html"
+            fileName="vue-demo.html"
+          />
+        </div>
 
         <div class="learning-features">
           <h3>平台特性</h3>
@@ -50,31 +51,62 @@
 </template>
 
 <script setup lang="ts">
-import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
+import { ref } from 'vue'
+import CodePreview from '@/components/common/CodePreview.vue'
 
 const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
-// 默认代码示例
-const defaultCode = `// Vue 3 Composition API 示例
-import { ref, onMounted } from 'vue';
+// 默认代码示例（完整 HTML + Vue 3 CDN，可直接运行）
+const defaultCode = ref(`<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vue 3 示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"><\/script>
+  <style>
+    body { font-family: sans-serif; padding: 24px; background: #f9fafb; }
+    h2   { color: #42b883; }
+    button {
+      margin-top: 12px; padding: 8px 20px;
+      background: #42b883; color: #fff;
+      border: none; border-radius: 6px;
+      cursor: pointer; font-size: 15px;
+    }
+    button:hover { background: #33a06f; }
+    p { color: #374151; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>{{ message }}</h2>
+    <p>计数：<strong>{{ count }}</strong></p>
+    <button @click="increment">点击 +1</button>
+    <p style="margin-top:16px;color:#6b7280">已点击 {{ count }} 次</p>
+  </div>
 
-export default {
-  setup() {
-    const count = ref(0);
-    const message = ref("Hello Vue 3!");
+  <script>
+    const { createApp, ref, onMounted } = Vue
 
-    const increment = () => {
-      count.value++;
-    };
+    createApp({
+      setup() {
+        const count = ref(0)
+        const message = ref('Hello, Vue 3!')
 
-    onMounted(() => {
-      console.log("组件已挂载");
-    });
+        const increment = () => {
+          count.value++
+        }
 
-    return { count, message, increment };
-  }
-};
-`
+        onMounted(() => {
+          console.log('组件已挂载，初始计数：', count.value)
+        })
+
+        return { count, message, increment }
+      }
+    }).mount('#app')
+  <\/script>
+</body>
+</html>
+`)
 </script>
 
 <style scoped>
@@ -162,6 +194,15 @@ p {
 
 .features li::marker {
   color: var(--accent-color);
+}
+
+/* 代码预览容器 */
+.code-preview-wrapper {
+  height: 460px;
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 /* 代码示例部分 */

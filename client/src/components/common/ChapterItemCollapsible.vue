@@ -7,7 +7,7 @@
     <div class="sub-chapters" v-show="isExpanded">
       <RouterLink v-for="sec in chapter.children || []" :key="sec.id"
         :class="['sub-chapter', { active: isActiveSection(sec) }]"
-        :to="{ path: `/chapter/${chapter.slug}/${sec.slug}` }">
+        :to="{ path: `/chapter/${chapter.slug.replace(/^chapter-/, '')}/${sec.slug.replace('section-' + chapter.slug.replace(/^chapter-/, '') + '-', '')}` }">
         <div class="section-content">
           <span class="section-title">{{ sec.title }}</span>
         </div>
@@ -30,7 +30,8 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const isActiveChapter = computed(() => String(route.params.chapterSlug || '') === props.chapter.slug)
+const chParam = computed(() => props.chapter.slug.replace(/^chapter-/, ''))
+const isActiveChapter = computed(() => String(route.params.chapterSlug || '') === chParam.value)
 const isExpanded = ref(false)
 
 watch(isActiveChapter, (active) => {
@@ -38,7 +39,8 @@ watch(isActiveChapter, (active) => {
 }, { immediate: true })
 
 const isActiveSection = (sec: { slug: string }) => {
-  return isActiveChapter.value && String(route.params.sectionSlug || '') === sec.slug
+  const secParam = sec.slug.replace(`section-${chParam.value}-`, '')
+  return isActiveChapter.value && String(route.params.sectionSlug || '') === secParam
 }
 
 const toggle = () => { isExpanded.value = !isExpanded.value }

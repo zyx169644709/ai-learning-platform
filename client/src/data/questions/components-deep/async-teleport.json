@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-async-teleport",
+  "courseName": "Vue 3 异步组件与 Teleport",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "在 Vue 3 中，创建异步组件的正确方式是？",
+      "options": [
+        "使用 defineComponent 并设置 async: true",
+        "使用 defineAsyncComponent 函数，传入返回 Promise 的加载器",
+        "使用 new AsyncComponent() 构造函数",
+        "直接在 components 选项中标记 async"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 3 提供了 defineAsyncComponent 函数用于创建异步组件，通常配合动态导入 `() => import('./Component.vue')` 使用。其他选项均不是 Vue 3 的标准 API。"
+    },
+    {
+      "id": 2,
+      "question": "关于 defineAsyncComponent 的配置对象，以下哪个选项用于设置加载超时时间？",
+      "options": [
+        "delay",
+        "timeout",
+        "loader",
+        "errorComponent"
+      ],
+      "correctAnswer": 1,
+      "explanation": "配置对象中的 `timeout` 选项用于设置加载超时时间（毫秒），超时后触发错误状态。`delay` 控制 loading 组件延迟显示；`loader` 指定加载函数；`errorComponent` 指定错误组件。"
+    },
+    {
+      "id": 3,
+      "question": "在使用异步组件时，为了避免组件加载很快时 loading 组件短暂闪烁，应该配置哪个选项？",
+      "options": [
+        "timeout",
+        "suspense",
+        "delay",
+        "immediate"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`delay` 选项用于设置 loading 组件显示的延迟时间（默认 200ms）。如果组件在 delay 时间内加载完成，则不会显示 loading 组件，从而避免闪烁。"
+    },
+    {
+      "id": 4,
+      "question": "Vue 3 中，Suspense 组件的主要作用是？",
+      "options": [
+        "包裹异步组件并统一处理加载状态",
+        "替代 defineAsyncComponent 创建异步组件",
+        "将组件内容传送到 DOM 树的其他位置",
+        "实现组件的代码分割和懒加载"
+      ],
+      "correctAnswer": 0,
+      "explanation": "Suspense 组件用于处理组件树中多个异步依赖（如异步组件的 setup 函数返回 Promise），它提供了 `default` 和 `fallback` 插槽，在异步依赖全部完成前显示 fallback 内容。"
+    },
+    {
+      "id": 5,
+      "question": "Teleport 组件的主要使用场景是？",
+      "options": [
+        "实现组件的按需加载",
+        "将组件模板渲染到 DOM 树的任意位置",
+        "在组件之间传递事件",
+        "优化组件的响应式性能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Teleport 允许将组件的内容传送到 DOM 树的其他位置（如 body），常用于解决模态框、通知等组件的样式层叠和定位问题，避免受父容器 overflow 等样式影响。"
+    },
+    {
+      "id": 6,
+      "question": "在使用 Teleport 时，`to` 属性的作用是？",
+      "options": [
+        "指定传送的目标 DOM 元素选择器或元素",
+        "指定传送的组件名称",
+        "指定传送的数据类型",
+        "指定是否启用传送"
+      ],
+      "correctAnswer": 0,
+      "explanation": "`to` 属性接收一个 DOM 选择器字符串（如 '#target'）或直接 DOM 元素，表示组件内容将被传送到该目标元素内部。"
+    },
+    {
+      "id": 7,
+      "question": "关于 Teleport 的事件冒泡行为，以下说法正确的是？",
+      "options": [
+        "Teleport 内部的事件不会冒泡到父组件",
+        "事件冒泡遵循组件树结构，而非实际 DOM 树",
+        "事件冒泡会同时沿组件树和 DOM 树传播",
+        "Teleport 会完全阻止事件冒泡"
+      ],
+      "correctAnswer": 1,
+      "explanation": "虽然 Teleport 将内容移动到了 DOM 的其他位置，但事件冒泡仍然遵循 Vue 的组件树结构，而非实际 DOM 层级。例如，Teleport 内的按钮点击事件会沿着原组件树向上冒泡。"
+    },
+    {
+      "id": 8,
+      "question": "Teleport 组件的 `disabled` 属性设置为 `true` 时，会发生什么？",
+      "options": [
+        "Teleport 内容不会被渲染",
+        "Teleport 内容会渲染在原位置，不进行传送",
+        "Teleport 内容会被传送到 document 根节点",
+        "Teleport 会抛出错误"
+      ],
+      "correctAnswer": 1,
+      "explanation": "当 `disabled` 为 `true` 时，Teleport 禁用传送功能，内容会正常渲染在当前组件位置（即原位置）。这可以用于根据条件动态控制是否传送。"
+    },
+    {
+      "id": 9,
+      "question": "以下哪个选项是 Vue 3 异步组件的最佳实践？",
+      "options": [
+        "将所有组件都定义为异步组件以减小初始包体积",
+        "为异步组件配置 loadingComponent 和 errorComponent，提升用户体验",
+        "异步组件不能与 Suspense 一起使用",
+        "异步组件只能在路由中使用"
+      ],
+      "correctAnswer": 1,
+      "explanation": "最佳实践包括：为异步组件配置 loading 和 error 状态组件，避免加载过程出现空白或失败后无反馈；根据实际场景合理使用异步加载，并非所有组件都需要异步。"
+    },
+    {
+      "id": 10,
+      "question": "使用 Teleport 时，如果 `to` 指定的目标容器在 DOM 中不存在，Vue 会如何处理？",
+      "options": [
+        "抛出错误并停止渲染",
+        "忽略 Teleport，内容渲染在原位置",
+        "创建一个新的 div 元素作为容器（开发环境下会警告）",
+        "自动查找最近的 body 元素作为目标"
+      ],
+      "correctAnswer": 2,
+      "explanation": "如果目标容器不存在，Vue 会在开发环境下发出警告，并创建一个新的 div 元素作为目标容器。为避免意外行为，应确保目标容器在 Teleport 挂载前已存在（如传送至 body）。"
+    }
+  ]
+}

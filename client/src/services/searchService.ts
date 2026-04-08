@@ -33,7 +33,7 @@ const fetchChapterSearchData = async (): Promise<SearchResult[]> => {
         title: chapter.title,
         description: `${chapter.title} - 完整的章节内容`,
         type: 'chapter',
-        url: `/chapter/${chapter.slug}`,
+        url: `/chapter/${chapter.slug.replace(/^chapter-/, '')}`,
         relevance: 0.9,
         content: chapter.title,
         tags: ['章节', '教程']
@@ -44,7 +44,7 @@ const fetchChapterSearchData = async (): Promise<SearchResult[]> => {
           title: section.title,
           description: `${section.title} - ${chapter.title} 的一部分`,
           type: 'section',
-          url: `/chapter/${chapter.slug}/${section.slug}`,
+          url: `/chapter/${chapter.slug.replace(/^chapter-/, '')}/${section.slug.replace('section-' + chapter.slug.replace(/^chapter-/, '') + '-', '')}`,
           relevance: 0.8,
           content: `${section.title} ${chapter.title}`,
           tags: ['小节', '教程', chapter.title]

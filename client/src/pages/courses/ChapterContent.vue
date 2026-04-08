@@ -28,7 +28,7 @@
     <!-- 代码示例区域 -->
     <div v-if="codeEditors.length > 0 && !hasInlineEditors" class="code-editors-section">
       <h3>💻 代码示例</h3>
-      <InlineCodeEditor
+      <CodePreview
         v-for="(editor, index) in codeEditors"
         :key="index"
         :initialCode="editor.code"
@@ -73,14 +73,23 @@ import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/chaptersStore'
 import { favoriteService } from '@/services/favoriteService'
-import InlineCodeEditor from '@/components/common/InlineCodeEditor.vue'
+import CodePreview from '@/components/common/CodePreview.vue'
 import QuizModal from '@/pages/misc/QuizModal.vue'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const chaptersStore = useChaptersStore()
-const chapterSlug = computed(() => String(route.params.chapterSlug || ''))
-const sectionSlug = computed(() => String(route.params.sectionSlug || ''))
+
+// URL 参数为精简形式（去掉 chapter-/section-xxx- 前缀），重建完整 slug 供 store 查询
+const chapterSlug = computed(() => {
+  const raw = String(route.params.chapterSlug || '')
+  return raw ? `chapter-${raw}` : ''
+})
+const sectionSlug = computed(() => {
+  const rawCh = String(route.params.chapterSlug || '')
+  const rawSec = String(route.params.sectionSlug || '')
+  return rawSec ? `section-${rawCh}-${rawSec}` : ''
+})
 
 const chapter = computed<ChapterNode | undefined>(() =>
   chaptersStore.chapters.find(c => c.slug === chapterSlug.value)
@@ -123,20 +132,19 @@ const quizPassed = ref(false)
 const quizData = ref<any>(null)
 
 // 动态加载小节测验数据
-const quizModules = import.meta.glob('@/data/questions/**/section-*.json')
+const quizModules = import.meta.glob('@/data/questions/**/*.json')
 
 const loadQuizData = async () => {
   quizData.value = null
   quizPassed.value = false
 
-  const chSlug = chapterSlug.value
-  const secSlug = sectionSlug.value
-  if (!chSlug || !secSlug) return
+  // 直接使用 URL 中的精简参数（与 JSON 目录/文件名一一对应）
+  const chParam = String(route.params.chapterSlug || '')
+  const secParam = String(route.params.sectionSlug || '')
+  if (!chParam || !secParam) return
 
-  // 数据库 slug 已包含前缀：chSlug = "chapter-vue-basics", secSlug = "section-vue-basics-introduction"
-  // JSON 目录名即 chSlug，文件名即 secSlug.json
   const key = Object.keys(quizModules).find(k =>
-    k.includes(`/${chSlug}/`) && k.includes(`${secSlug}.json`)
+    k.includes(`/${chParam}/`) && k.includes(`${secParam}.json`)
   )
   if (!key) return
 
@@ -383,7 +391,11 @@ const currentIndex = computed(() => siblings.value.findIndex(n => n.slug === sec
 const prev = computed(() => currentIndex.value > 0 ? siblings.value[currentIndex.value - 1] : undefined)
 const next = computed(() => currentIndex.value >= 0 && currentIndex.value < siblings.value.length - 1 ? siblings.value[currentIndex.value + 1] : undefined)
 
-const linkOf = (n: SectionNode) => ({ path: `/chapter/${chapterSlug.value}/${n.slug}` })
+const linkOf = (n: SectionNode) => {
+  const rawCh = String(route.params.chapterSlug || '')
+  const secParam = n.slug.replace(`section-${rawCh}-`, '')
+  return { path: `/chapter/${rawCh}/${secParam}` }
+}
 
 // 检查收藏状态
 const checkFavoriteStatus = async () => {

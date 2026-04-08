@@ -1,0 +1,128 @@
+{
+  "courseId": "vue3-provide-inject",
+  "courseName": "Vue3 依赖注入（Provide/Inject）核心知识点",
+  "passingScore": 60,
+  "questionCount": 10,
+  "questions": [
+    {
+      "id": 1,
+      "question": "以下关于 Vue3 依赖注入（Provide/Inject）的核心概念描述，错误的是？",
+      "options": [
+        "解决跨层级组件通信的“prop drilling”问题",
+        "祖先组件通过 provide 发布数据，后代组件通过 inject 订阅数据",
+        "支持兄弟组件之间直接通过 Provide/Inject 通信",
+        "遵循“就近原则”，后代组件注入最近祖先提供的同 key 数据"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Provide/Inject 仅支持**祖先→后代**的跨层级通信，无法直接实现兄弟组件通信；兄弟组件通信应使用状态管理（Pinia/Vuex）或事件总线，或通过共同父组件中转。A、B、D 均为依赖注入的核心特性。"
+    },
+    {
+      "id": 2,
+      "question": "关于 Vue3 中 provide 函数的使用规范，正确的是？",
+      "options": [
+        "可在 setTimeout 异步回调中调用 provide 提供数据",
+        "必须在组件的 setup() 函数中同步调用",
+        "key 仅支持字符串类型，值仅支持静态数据",
+        "提供的普通值会被 Vue 自动转换为响应式数据"
+      ],
+      "correctAnswer": 1,
+      "explanation": "provide 必须在 setup() 中同步调用（Vue 需要在组件实例化时建立依赖关系），A 错误；key 支持字符串/Symbol，值支持任意类型（包括 ref/reactive 响应式数据），C 错误；Vue 不会自动将普通值转为响应式，仅当提供 ref/reactive 时注入数据才具备响应性，D 错误。"
+    },
+    {
+      "id": 3,
+      "question": "在 Vue3 中使用 inject 注入数据时，以下处理方式错误的是？",
+      "options": [
+        "为可选依赖提供默认值：const theme = inject('theme', 'light')",
+        "动态默认值通过工厂函数实现：const config = inject('config', () => ({ apiUrl: '/api' }))",
+        "直接解构 reactive 对象的属性注入：const { theme } = inject('state')",
+        "注入必需依赖时增加空值检查：if (!user) throw new Error('缺少 user 依赖')"
+      ],
+      "correctAnswer": 2,
+      "explanation": "解构 reactive 对象的属性会丢失响应性（解构后为普通值，不再被代理追踪），正确做法是注入整个 reactive 对象、使用 computed 或 toRef 包裹单个属性，C 错误；A/B 是默认值的正确用法，D 是避免运行时 undefined 错误的最佳实践。"
+    },
+    {
+      "id": 4,
+      "question": "Vue3 中使用 Provide/Inject 实现响应式数据传递，以下正确的示例是？",
+      "options": [
+        "提供方：let theme = 'light'; provide('theme', theme); theme = 'dark'；注入方：const theme = inject('theme')",
+        "提供方：const theme = ref('light'); provide('theme', theme)；注入方：const theme = inject('theme')",
+        "提供方：const state = reactive({ theme: 'light' }); provide('theme', state.theme)；注入方：const theme = inject('theme')",
+        "提供方：const theme = reactive('light'); provide('theme', theme)；注入方：const theme = inject('theme')"
+      ],
+      "correctAnswer": 1,
+      "explanation": "只有提供 ref/reactive 类型的数据，注入方才能获得响应性：\n- A：提供普通变量，修改后注入方无更新，错误；\n- B：提供 ref 响应式数据，注入方获取 ref 并保持响应性，正确；\n- C：解构 reactive 属性后提供，丢失响应性，错误；\n- D：reactive 仅支持对象/数组，不支持基础类型，语法错误。"
+    },
+    {
+      "id": 5,
+      "question": "关于 Vue3 依赖注入的 Key 设计，以下最佳实践是？",
+      "options": [
+        "全局使用相同字符串 Key（如 'config'），简化代码",
+        "使用 Symbol 作为 Key，并集中在单独文件管理",
+        "为每个组件单独定义随机 Symbol Key，避免冲突",
+        "优先使用数字作为 Key，提升查找性能"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Symbol 具备唯一性，可避免命名冲突（Vue 官方推荐）；集中管理 Key 便于查找/重构，且配合 TypeScript 的 InjectionKey 可实现类型校验。A 易导致 Key 冲突，C 分散管理增加维护成本，D 数字 Key 无语义且不符合规范。"
+    },
+    {
+      "id": 6,
+      "question": "以下场景中，不适合使用 Provide/Inject 的是？",
+      "options": [
+        "深层嵌套组件共享用户认证状态",
+        "全局主题配置的跨层级传递",
+        "简单父子组件的一次性数据传递",
+        "组件库的全局配置参数传递"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Provide/Inject 适用于**跨层级、非简单父子**的通信场景：A（用户状态）、B（主题配置）、D（组件库配置）均为典型适用场景；简单父子通信应优先使用 Props/Emit，更清晰、易调试，C 不适合。"
+    },
+    {
+      "id": 7,
+      "question": "Vue3 中 Provide/Inject 与 Pinia（状态管理）的核心区别，错误的是？",
+      "options": [
+        "Provide/Inject 作用域为组件树，Pinia 为全局",
+        "Provide/Inject 数据随组件销毁消失，Pinia 可配置持久化",
+        "Provide/Inject 支持 Devtools 调试，Pinia 不支持",
+        "Provide/Inject 学习成本低，Pinia 需理解 Store/Action 等概念"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Pinia 具备完整的 Devtools 调试支持（可追踪状态变化、触发 Action 等），而 Provide/Inject 无原生 Devtools 支持，C 错误；A/B/D 均为两者的核心区别：Provide/Inject 侧重局部组件树通信，Pinia 侧重全局状态管理。"
+    },
+    {
+      "id": 8,
+      "question": "Vue3 依赖注入的最佳实践中，关于数据修改的规范，正确的是？",
+      "options": [
+        "注入方直接修改 provide 提供的 ref 数据：count.value = 10",
+        "提供方暴露只读数据 + 修改方法，注入方通过方法修改",
+        "为所有注入数据提供可修改的 reactive 对象，简化操作",
+        "注入方通过 emit 通知提供方修改数据，模拟双向绑定"
+      ],
+      "correctAnswer": 1,
+      "explanation": "依赖注入的最佳实践是**单向数据流**：提供方通过 readonly() 包装响应式数据，仅暴露修改方法（如 increment/decrement），注入方只能通过方法修改数据，保证数据流可追溯、易维护。A/C 会导致数据修改逻辑分散，D 混淆了 Props/Emit 与 Provide/Inject 的设计逻辑。"
+    },
+    {
+      "id": 9,
+      "question": "以下关于 Vue3 依赖注入作用域的描述，正确的是？",
+      "options": [
+        "应用级注入（app.provide）仅能被根组件的直接子组件注入",
+        "多个祖先提供同 key 数据时，后代注入最远祖先的数据",
+        "组件无法注入其兄弟组件提供的依赖",
+        "组件级注入的数据可被整个应用的任意组件访问"
+      ],
+      "correctAnswer": 2,
+      "explanation": "依赖注入的作用域严格遵循组件树：仅能注入**祖先链上**的依赖，兄弟组件无祖先-后代关系，无法互相注入，C 正确；A 错误（应用级注入可被所有组件访问）；B 错误（遵循“就近原则”，注入最近祖先的数据）；D 错误（组件级注入仅能被该组件的后代访问）。"
+    },
+    {
+      "id": 10,
+      "question": "在 TypeScript 中使用 Vue3 依赖注入，提升类型安全的核心方式是？",
+      "options": [
+        "依赖 TypeScript 自动推导，无需额外类型标注",
+        "使用 InjectionKey 泛型定义 Symbol Key，统一提供/注入类型",
+        "为每个 inject 调用手动标注 any 类型，避免报错",
+        "仅使用字符串 Key，配合接口定义注入数据类型"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Vue 提供的 InjectionKey<T> 是继承自 Symbol 的泛型类型，可在提供/注入两端统一类型，是官方推荐的 TypeScript 最佳实践。A 自动推导会包含 undefined，类型不精确；C 使用 any 失去类型校验意义；D 字符串 Key 无法保证唯一性，且类型关联松散。"
+    }
+  ]
+}
