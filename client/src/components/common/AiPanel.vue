@@ -1,10 +1,11 @@
 <template>
   <div class="ai-panel">
+  <QuizSelectModal v-model:visible="quizSelectVisible" />
     <!-- AI 智能工具 -->
     <div class="section">
       <h3 class="section-title">🤖 理论实操</h3>
       <div class="ai-buttons">
-        <button class="ai-btn" @click="router.push('/api/deepseek')">
+        <button class="ai-btn" @click="quizSelectVisible = true">
           <span class="ai-btn-icon">💬</span>
           <span class="ai-btn-text">知识问答</span>
         </button>
@@ -96,11 +97,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import QuizSelectModal from '@/pages/misc/QuizSelectModal.vue'
 import { useUserStore } from '@/stores/userStore'
 import { favoriteService } from '@/services/favoriteService'
 
 const router = useRouter()
 const userStore = useUserStore()
+const quizSelectVisible = ref(false)
 
 const isLogin = computed(() => userStore.isLogin)
 

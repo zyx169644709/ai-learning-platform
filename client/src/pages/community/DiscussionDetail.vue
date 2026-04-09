@@ -34,7 +34,7 @@
           <!-- 帖子内容 -->
           <div class="post-body">
             <div class="content-wrapper">
-              <div class="post-text">{{ discussion.content }}</div>
+              <div class="post-text markdown-body" v-html="renderedContent"></div>
             </div>
           </div>
 
@@ -191,6 +191,8 @@
 import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import MarkdownIt from 'markdown-it'
+import DOMPurify from 'dompurify'
 import { 
   getDiscussionById, 
   createComment, 
@@ -205,6 +207,13 @@ import {
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+
+const _md = new MarkdownIt({ html: false, linkify: true, typographer: true })
+const renderedContent = computed(() =>
+  discussion.value?.content
+    ? DOMPurify.sanitize(_md.render(discussion.value.content))
+    : ''
+)
 
 const discussion = ref<Discussion | null>(null)
 const loading = ref(false)
@@ -578,10 +587,9 @@ watch(
 }
 
 .post-text {
-  white-space: pre-wrap;
   word-wrap: break-word;
   font-family: inherit;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.8;
   margin: 0;
   color: var(--text-primary);
@@ -594,6 +602,80 @@ watch(
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
+
+.post-text :deep(h1),
+.post-text :deep(h2),
+.post-text :deep(h3),
+.post-text :deep(h4) {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin: 20px 0 10px 0;
+  line-height: 1.4;
+}
+.post-text :deep(h1) { font-size: 22px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+.post-text :deep(h2) { font-size: 18px; }
+.post-text :deep(h3) { font-size: 16px; }
+
+.post-text :deep(p) { margin: 10px 0; color: var(--text-primary); }
+
+.post-text :deep(ul),
+.post-text :deep(ol) {
+  margin: 10px 0;
+  padding-left: 24px;
+  color: var(--text-primary);
+}
+
+.post-text :deep(li) { margin: 4px 0; }
+
+.post-text :deep(blockquote) {
+  margin: 14px 0;
+  padding: 10px 16px;
+  border-left: 4px solid var(--accent-color);
+  background: var(--bg-primary);
+  border-radius: 0 8px 8px 0;
+  color: var(--text-secondary);
+}
+
+.post-text :deep(code) {
+  padding: 2px 6px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  color: var(--accent-color);
+}
+
+.post-text :deep(pre) {
+  margin: 14px 0;
+  padding: 16px;
+  background: #1e293b;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.post-text :deep(pre code) {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.post-text :deep(a) {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+.post-text :deep(a:hover) { text-decoration: underline; }
+
+.post-text :deep(hr) {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid var(--border-color);
+}
+
+.post-text :deep(strong) { font-weight: 700; }
+.post-text :deep(em) { font-style: italic; }
 
 .post-text::before {
   content: '';

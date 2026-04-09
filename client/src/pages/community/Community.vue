@@ -27,7 +27,7 @@
         </div>
         <div class="form-group">
           <label>内容</label>
-          <textarea v-model="newPost.content" placeholder="请输入帖子内容..." rows="6"></textarea>
+          <MarkdownEditor v-model="newPost.content" placeholder="支持 Markdown 语法，可使用工具栏快速排版..." height="280px" />
         </div>
         <div class="form-actions">
           <button @click="submitPost" class="submit-btn">发布</button>
@@ -79,6 +79,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import MarkdownEditor from '@/components/common/MarkdownEditor.vue'
 import {
   getDiscussions,
   createDiscussion,
@@ -304,10 +305,6 @@ a:hover {
   font-size: 14px;
 }
 
-.form-group textarea {
-  resize: vertical;
-  min-height: 120px;
-}
 
 .form-actions {
   display: flex;

@@ -6,7 +6,7 @@
         <button class="close-btn" @click="closeModal">✕</button>
       </div>
 
-      <div v-if="!showResult" class="quiz-content">
+      <div v-if="!showResult && currentQuestion" class="quiz-content">
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
         </div>
@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 interface Question {
   id: number
@@ -180,6 +180,12 @@ const passed = computed(() => score.value >= props.quizData.passingScore)
 
 watch(() => props.visible, (newVal) => {
   if (newVal) {
+    resetQuiz()
+  }
+})
+
+onMounted(() => {
+  if (props.visible) {
     resetQuiz()
   }
 })
