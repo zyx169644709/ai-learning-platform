@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import QuizSelectModal from '@/pages/misc/QuizSelectModal.vue'
 import { useUserStore } from '@/stores/userStore'
@@ -178,7 +178,10 @@ const getDiscussionTimestamp = (item: any) => {
   return 0
 }
 
+const openQuizSelect = () => { quizSelectVisible.value = true }
+
 onMounted(async () => {
+  window.addEventListener('open-quiz-select', openQuizSelect)
   // 加载热门资源
   try {
     const res = await fetch('/api/resources?status=published&limit=3&sort=viewCount')
@@ -206,6 +209,7 @@ onMounted(async () => {
     }
   } catch {}
 
+  
   // 登录用户：加载收藏 + 学习进度
   if (userStore.isLogin) {
     try {
@@ -236,6 +240,10 @@ onMounted(async () => {
       }
     } catch {}
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('open-quiz-select', openQuizSelect)
 })
 </script>
 

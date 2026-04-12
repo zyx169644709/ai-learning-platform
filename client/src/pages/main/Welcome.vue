@@ -59,32 +59,32 @@
     <!-- Feature grid -->
     <section class="features">
       <div class="grid">
-        <div class="card">
+        <div class="card" @click="router.push('/home')">
           <div class="card-icon">📖</div>
           <div class="card-title">理论学习</div>
           <div class="card-desc">Vue3基础 / Composition API / 响应式原理 / 组件通信，系统化掌握核心概念</div>
         </div>
-        <div class="card">
+        <div class="card" @click="openQuiz">
           <div class="card-icon">✏️</div>
           <div class="card-title">习题练习</div>
           <div class="card-desc">精选编程题 + 选择题 + 填空题，巩固知识点，实时查看答案与解析</div>
         </div>
-        <div class="card">
+        <div class="card" @click="router.push('/chapter/practical-projects/project-todolist')">
           <div class="card-icon">💻</div>
           <div class="card-title">实战项目</div>
           <div class="card-desc">从TodoList到完整SPA，真实项目驱动，在编码中提升Vue3开发技能</div>
         </div>
-        <div class="card">
+        <div class="card" @click="openAssistant">
           <div class="card-icon">🤖</div>
           <div class="card-title">专家助教</div>
           <div class="card-desc">Vue 专家助教实时答疑，提供代码诊断与性能优化建议，攻克开发难点</div>
         </div>
-        <div class="card">
+        <div class="card" @click="router.push('/code-playground')">
           <div class="card-icon">🛠️</div>
           <div class="card-title">开发工具</div>
           <div class="card-desc">在线IDE + Vue DevTools教程 + Vite配置，打造高效开发环境</div>
         </div>
-        <div class="card">
+        <div class="card" @click="router.push('/community')">
           <div class="card-icon">👥</div>
           <div class="card-title">学习社区</div>
           <div class="card-desc">交流学习心得，分享项目经验，参与代码review，共同成长进步</div>
@@ -141,6 +141,16 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const showLevelModal = ref(false)
+
+const openQuiz = async () => {
+  await router.push('/home')
+  setTimeout(() => window.dispatchEvent(new CustomEvent('open-quiz-select')), 300)
+}
+
+const openAssistant = async () => {
+  await router.push('/home')
+  setTimeout(() => window.dispatchEvent(new CustomEvent('open-ai-chat')), 300)
+}
 
 const handleLevelSelect = (level: 'beginner' | 'basic' | 'intermediate') => {
   showLevelModal.value = false
@@ -498,6 +508,7 @@ const handleLevelSelect = (level: 'beginner' | 'basic' | 'intermediate') => {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
+  cursor: pointer;
   padding: 18px;
   transition: transform .2s ease, box-shadow .2s ease;
 }

@@ -59,5 +59,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./components/common/Sidebar.vue')['default']
+    TourGuide: typeof import('./components/common/TourGuide.vue')['default']
   }
 }
