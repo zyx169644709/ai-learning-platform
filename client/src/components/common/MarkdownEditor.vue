@@ -15,6 +15,15 @@
         <button type="button" class="toolbar-btn" @click="insertCodeBlock" title="代码块">{ } 代码</button>
         <div class="toolbar-divider"></div>
         <button type="button" class="toolbar-btn" @click="insertLink" title="链接">🔗</button>
+        <div class="toolbar-divider"></div>
+        <button type="button" class="toolbar-btn import-btn" @click="triggerFileImport" title="导入 .md 文件">📂 导入</button>
+        <input
+          ref="fileInputRef"
+          type="file"
+          accept=".md,.markdown"
+          style="display:none"
+          @change="handleFileImport"
+        />
       </div>
 
       <div class="toolbar-right">
@@ -88,6 +97,7 @@ const cursorLine = ref(1)
 const cursorCol = ref(1)
 const textareaRef = ref<HTMLTextAreaElement>()
 const previewRef = ref<HTMLDivElement>()
+const fileInputRef = ref<HTMLInputElement>()
 
 const md = new MarkdownIt({
   html: false,
@@ -209,6 +219,26 @@ const togglePreview = () => {
 const toggleFullscreen = () => {
   isFullscreen.value = !isFullscreen.value
   document.body.style.overflow = isFullscreen.value ? 'hidden' : ''
+}
+
+const triggerFileImport = () => {
+  fileInputRef.value?.click()
+}
+
+const handleFileImport = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = (ev) => {
+    const text = ev.target?.result as string
+    if (text !== undefined) {
+      content.value = text
+      emit('update:modelValue', text)
+    }
+  }
+  reader.readAsText(file, 'UTF-8')
+  // reset so same file can be re-imported
+  ;(e.target as HTMLInputElement).value = ''
 }
 
 const syncScroll = () => {
