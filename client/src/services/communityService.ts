@@ -112,7 +112,7 @@ export const createComment = async (discussionId: string, data: CreateCommentDat
 }
 
 // 点赞讨论帖子
-export const likeDiscussion = async (id: string): Promise<{ likes: number }> => {
+export const likeDiscussion = async (id: string): Promise<{ likes: number; isLiked: boolean }> => {
   try {
     const response = await api.post(`/${id}/like`)
     return response.data
@@ -123,7 +123,7 @@ export const likeDiscussion = async (id: string): Promise<{ likes: number }> => 
 }
 
 // 点赞评论
-export const likeComment = async (id: string): Promise<{ likes: number }> => {
+export const likeComment = async (id: string): Promise<{ likes: number; isLiked: boolean }> => {
   try {
     const response = await api.post(`/comments/${id}/like`)
     return response.data

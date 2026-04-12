@@ -271,7 +271,7 @@ const toggleLike = async () => {
   try {
     const result = await likeDiscussion(discussion.value.id)
     discussion.value.likes = result.likes
-    discussion.value.isLiked = !discussion.value.isLiked
+    discussion.value.isLiked = result.isLiked
   } catch (error) {
     console.error('点赞失败:', error)
     alert('点赞失败，请稍后重试')
@@ -291,7 +291,7 @@ const toggleCommentLike = async (comment: Comment) => {
   try {
     const result = await likeComment(comment.id)
     comment.likes = result.likes
-    comment.isLiked = !comment.isLiked
+    comment.isLiked = result.isLiked
   } catch (error) {
     console.error('点赞评论失败:', error)
     alert('点赞评论失败，请稍后重试')

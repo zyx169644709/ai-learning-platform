@@ -36,16 +36,6 @@
             :showPlayground="true"
           />
         </div>
-
-        <div class="learning-features">
-          <h3>平台特性</h3>
-          <ul>
-            <li><strong>系统化学习：</strong>从基础到进阶的完整 Vue 3 学习路径</li>
-            <li><strong>智能助教：</strong>AI 驱动的 Vue 专家助教，实时解答你的问题</li>
-            <li><strong>实战练习：</strong>每章配套习题与实操挑战，即学即练</li>
-            <li><strong>社区交流：</strong>与其他学习者分享心得，共同进步</li>
-          </ul>
-        </div>
       </div>
     </div>
 

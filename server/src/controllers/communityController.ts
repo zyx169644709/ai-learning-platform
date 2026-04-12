@@ -25,6 +25,7 @@ function getUserIdFromRequest(req: Request): string | null {
 // 获取所有讨论帖子
 export const getDiscussions = async (req: Request, res: Response) => {
   try {
+    const userId = getUserIdFromRequest(req)
     const { category, search } = req.query
     
     let whereClause: any = { status: 'published' }
@@ -67,7 +68,7 @@ export const getDiscussions = async (req: Request, res: Response) => {
     })
     
     // 转换数据格式以匹配前端
-    const formattedDiscussions = discussions.map(discussion => ({
+    const formattedDiscussions = await Promise.all(discussions.map(async discussion => ({
       id: discussion.id,
       title: discussion.title,
       excerpt: discussion.content.length > 100 ? discussion.content.substring(0, 100) + '...' : discussion.content,
@@ -88,8 +89,10 @@ export const getDiscussions = async (req: Request, res: Response) => {
       },
       time: formatTimeAgo(discussion.createdAt),
       createdAt: discussion.createdAt,
-      isLiked: false
-    }))
+      isLiked: userId
+        ? !!(await prisma.discussionLike.findUnique({ where: { userId_discussionId: { userId, discussionId: discussion.id } } }))
+        : false
+    })))
     
     res.json(formattedDiscussions)
   } catch (error) {
@@ -186,6 +189,7 @@ export const createDiscussion = async (req: Request, res: Response) => {
 export const getDiscussionById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
+    const userId = getUserIdFromRequest(req)
     
     const discussion = await prisma.discussion.findUnique({
       where: { id },
@@ -247,8 +251,10 @@ export const getDiscussionById = async (req: Request, res: Response) => {
       },
       time: formatTimeAgo(discussion.createdAt),
       createdAt: discussion.createdAt,
-      isLiked: false,
-      comments: discussion.comments.map(comment => ({
+      isLiked: userId
+        ? !!(await prisma.discussionLike.findUnique({ where: { userId_discussionId: { userId, discussionId: discussion.id } } }))
+        : false,
+      comments: await Promise.all(discussion.comments.map(async comment => ({
         id: comment.id,
         content: comment.content,
         author: comment.author?.username || '匿名用户',
@@ -262,12 +268,12 @@ export const getDiscussionById = async (req: Request, res: Response) => {
         },
         time: formatTimeAgo(comment.createdAt),
         likes: comment.likes,
-        isLiked: false
-      }))
+        isLiked: userId
+          ? !!(await prisma.commentLike.findUnique({ where: { userId_commentId: { userId, commentId: comment.id } } }))
+          : false
+      })))
     }
     
-    console.log('返回的帖子数据:', JSON.stringify(formattedDiscussion, null, 2))
-    console.log('authorInfo字段:', formattedDiscussion.authorInfo)
     res.json(formattedDiscussion)
   } catch (error) {
     console.error('获取讨论帖子详情失败:', error)
@@ -346,50 +352,82 @@ export const createComment = async (req: Request, res: Response) => {
   }
 }
 
-// 点赞讨论帖子
+// 点赞/取消点赞讨论帖子
 export const likeDiscussion = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    
-    const discussion = await prisma.discussion.findUnique({
-      where: { id }
-    })
-    
+    const userId = getUserIdFromRequest(req)
+    if (!userId) {
+      return res.status(401).json({ error: '未授权：请先登录' })
+    }
+
+    const discussion = await prisma.discussion.findUnique({ where: { id } })
     if (!discussion) {
       return res.status(404).json({ error: '讨论帖子不存在' })
     }
-    
-    const updatedDiscussion = await prisma.discussion.update({
-      where: { id },
-      data: { likes: discussion.likes + 1 }
+
+    const existing = await prisma.discussionLike.findUnique({
+      where: { userId_discussionId: { userId, discussionId: id } }
     })
-    
-    res.json({ likes: updatedDiscussion.likes })
+
+    let isLiked: boolean
+    let updatedLikes: number
+
+    if (existing) {
+      // 已点赞 → 取消
+      await prisma.discussionLike.delete({ where: { userId_discussionId: { userId, discussionId: id } } })
+      const updated = await prisma.discussion.update({ where: { id }, data: { likes: Math.max(0, discussion.likes - 1) } })
+      isLiked = false
+      updatedLikes = updated.likes
+    } else {
+      // 未点赞 → 点赞
+      await prisma.discussionLike.create({ data: { userId, discussionId: id } })
+      const updated = await prisma.discussion.update({ where: { id }, data: { likes: discussion.likes + 1 } })
+      isLiked = true
+      updatedLikes = updated.likes
+    }
+
+    res.json({ likes: updatedLikes, isLiked })
   } catch (error) {
     console.error('点赞讨论帖子失败:', error)
     res.status(500).json({ error: '点赞讨论帖子失败' })
   }
 }
 
-// 点赞评论
+// 点赞/取消点赞评论
 export const likeComment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    
-    const comment = await prisma.comment.findUnique({
-      where: { id }
-    })
-    
+    const userId = getUserIdFromRequest(req)
+    if (!userId) {
+      return res.status(401).json({ error: '未授权：请先登录' })
+    }
+
+    const comment = await prisma.comment.findUnique({ where: { id } })
     if (!comment) {
       return res.status(404).json({ error: '评论不存在' })
     }
-    
-    const updatedComment = await prisma.comment.update({
-      where: { id },
-      data: { likes: comment.likes + 1 }
+
+    const existing = await prisma.commentLike.findUnique({
+      where: { userId_commentId: { userId, commentId: id } }
     })
-    
-    res.json({ likes: updatedComment.likes })
+
+    let isLiked: boolean
+    let updatedLikes: number
+
+    if (existing) {
+      await prisma.commentLike.delete({ where: { userId_commentId: { userId, commentId: id } } })
+      const updated = await prisma.comment.update({ where: { id }, data: { likes: Math.max(0, comment.likes - 1) } })
+      isLiked = false
+      updatedLikes = updated.likes
+    } else {
+      await prisma.commentLike.create({ data: { userId, commentId: id } })
+      const updated = await prisma.comment.update({ where: { id }, data: { likes: comment.likes + 1 } })
+      isLiked = true
+      updatedLikes = updated.likes
+    }
+
+    res.json({ likes: updatedLikes, isLiked })
   } catch (error) {
     console.error('点赞评论失败:', error)
     res.status(500).json({ error: '点赞评论失败' })

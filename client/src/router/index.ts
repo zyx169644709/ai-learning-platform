@@ -15,7 +15,6 @@ import ResourceDetail from '../pages/resources/ResourceDetail.vue'
 import Community from '../pages/community/Community.vue'
 import DiscussionDetail from '../pages/community/DiscussionDetail.vue'
 import BeginnerGuide from '../pages/learn/BeginnerGuide.vue'
-import TeachingAssistant from '../pages/api/DeepSeek.vue'
 import SearchResults from '../pages/misc/SearchResults.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -58,12 +57,6 @@ const routes: RouteRecordRaw[] = [
     name: 'MyFavorites',
     component: MyFavorites,
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/api/deepseek',
-    name: 'VueAssistant',
-    component: () => import('../pages/api/DeepSeek.vue'),
-    meta: { hideLeftSidebar: true, hideRightSidebar: false, title: 'Vue 专家助教' }
   },
   {
     path: '/search',
