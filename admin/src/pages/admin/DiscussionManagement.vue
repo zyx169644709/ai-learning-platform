@@ -28,6 +28,7 @@
         </el-select>
       </el-form-item>
       <template #extra-buttons>
+        <el-button type="warning" @click="openPendingReview">🔍 待审核</el-button>
         <el-button type="success" @click="createDiscussion">创建帖子</el-button>
       </template>
     </FilterBar>
@@ -136,11 +137,14 @@
         </el-button>
       </template>
     </el-dialog>
+    <!-- 审核弹窗 -->
+    <PendingReviewModal ref="pendingReviewRef" default-tab="discussions" @reviewed="loadDiscussions" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import StatsDisplay from '@/components/StatsDisplay.vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -149,8 +153,14 @@ import request from '@/utils/request'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
+import PendingReviewModal from '@/components/PendingReviewModal.vue'
 import { useFilter } from '@/composables/useFilter'
 import { ArrowDown } from '@element-plus/icons-vue'
+
+const pendingReviewRef = ref<InstanceType<typeof PendingReviewModal>>()
+const openPendingReview = () => pendingReviewRef.value?.open('discussions')
+
+const route = useRoute()
 
 const discussions = ref<any[]>([])
 const selectedItems = ref<any[]>([])
@@ -321,8 +331,13 @@ const getCategoryLabel = (category: string) => {
   return map[category] || category
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadDiscussions()
+  const reviewTab = route.query.review as string
+  if (reviewTab === 'discussions' || reviewTab === 'comments') {
+    await nextTick()
+    pendingReviewRef.value?.open(reviewTab as 'discussions' | 'comments')
+  }
 })
 </script>
 

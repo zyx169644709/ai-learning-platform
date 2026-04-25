@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/chapter/:chapterSlug/:sectionSlug?/:subSlug?', name: 'ChapterContent', component: ChapterContent },
   { path: '/resources', name: 'Resources', component: Resources, meta: { layout: 'resource' } },
   { path: '/resource/:id', name: 'ResourceDetail', component: ResourceDetail, meta: { layout: 'resource' } },
-  { path: '/community', name: 'Community', component: Community, meta: { hideLeftSidebar: true } },
+  { path: '/community', name: 'Community', component: Community, meta: { layout: 'community' } },
   { path: '/discussion/:id', name: 'DiscussionDetail', component: DiscussionDetail, meta: { hideLeftSidebar: true, hideRightSidebar: true } },
   { path: '/login', name: 'Login', component: Login, meta: { layout: 'auth' } },
   { path: '/register', name: 'Register', component: Register, meta: { layout: 'auth' } },

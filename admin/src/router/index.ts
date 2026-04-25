@@ -10,6 +10,7 @@ const CourseManagement = () => import('@/pages/admin/CourseManagement.vue')
 const UserManagement = () => import('@/pages/admin/UserManagement.vue')
 const ChapterManagement = () => import('@/pages/admin/ChapterManagement.vue')
 const ResourceManagement = () => import('@/pages/admin/ResourceManagement.vue')
+const QuizManagement = () => import('@/pages/admin/QuizManagement.vue')
 const DiscussionManagement = () => import('@/pages/admin/DiscussionManagement.vue')
 const CommentManagement = () => import('@/pages/admin/CommentManagement.vue')
 const Login = () => import('@/pages/auth/Login.vue')
@@ -60,6 +61,11 @@ const routes: RouteRecordRaw[] = [
         path: 'resources',
         name: 'ResourceManagement',
         component: ResourceManagement
+      },
+      {
+        path: 'quizzes',
+        name: 'QuizManagement',
+        component: QuizManagement
       },
       {
         path: 'community/discussions',

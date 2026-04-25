@@ -66,8 +66,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
@@ -75,7 +76,9 @@ import { useChaptersStore, type ChapterNode, type SectionNode } from '@/stores/c
 import { favoriteService } from '@/services/favoriteService'
 import CodePreview from '@/components/common/CodePreview.vue'
 import QuizModal from '@/pages/misc/QuizModal.vue'
+import { getQuizBySlug, submitAttempt } from '@/services/quizService'
 import { ElMessage } from 'element-plus'
+import { useQuizState } from '@/composables/useQuizState'
 
 const route = useRoute()
 const chaptersStore = useChaptersStore()
@@ -130,51 +133,69 @@ const isFavorited = ref(false)
 const showQuiz = ref(false)
 const quizPassed = ref(false)
 const quizData = ref<any>(null)
+const { quizOpen } = useQuizState()
 
-// 动态加载小节测验数据
-const quizModules = import.meta.glob('@/data/questions/**/*.json')
+watch(showQuiz, (val) => {
+  quizOpen.value = val
+})
 
+onUnmounted(() => {
+  quizOpen.value = false
+})
+
+// 动态加载小节测验数据（从数据库 API 获取）
 const loadQuizData = async () => {
   quizData.value = null
   quizPassed.value = false
 
-  // 直接使用 URL 中的精简参数（与 JSON 目录/文件名一一对应）
   const chParam = String(route.params.chapterSlug || '')
   const secParam = String(route.params.sectionSlug || '')
   if (!chParam || !secParam) return
 
-  const key = Object.keys(quizModules).find(k =>
-    k.includes(`/${chParam}/`) && k.includes(`${secParam}.json`)
-  )
-  if (!key) return
-
   try {
-    const mod: any = await quizModules[key]()
-    const originalQuizData = mod.default || mod
-    
-    if (originalQuizData && originalQuizData.questions && originalQuizData.questions.length >= 5) {
-      // 从原始题目中随机选择5道题
-      const shuffled = [...originalQuizData.questions].sort(() => 0.5 - Math.random())
-      const selectedQuestions = shuffled.slice(0, 5)
-      
-      // 构建新的测验数据
+    const quiz = await getQuizBySlug(chParam, secParam)
+    if (!quiz || !quiz.questions?.length) return
+
+    const questions = quiz.questions
+    if (questions.length >= 5) {
+      const shuffled = [...questions].sort(() => 0.5 - Math.random())
       quizData.value = {
-        ...originalQuizData,
+        quizId: quiz.id,
+        courseId: quiz.courseId ?? chParam,
+        courseName: quiz.title,
+        passingScore: quiz.passingScore,
         questionCount: 5,
-        passingScore: 60,
-        questions: selectedQuestions
+        questions: shuffled.slice(0, 5)
       }
     } else {
-      // 如果题目不足5道，直接使用原数据
-      quizData.value = originalQuizData
+      quizData.value = {
+        quizId: quiz.id,
+        courseId: quiz.courseId ?? chParam,
+        courseName: quiz.title,
+        passingScore: quiz.passingScore,
+        questions
+      }
     }
   } catch (e) {
     console.error('加载测验数据失败:', e)
   }
 }
 
-const handleQuizCompleted = async (result: { score: number; passed: boolean; answers: number[] }) => {
+const handleQuizCompleted = async (result: { score: number; passed: boolean; answers: Array<number | number[]> }) => {
   quizPassed.value = result.passed
+
+  if (quizData.value?.quizId) {
+    try {
+      await submitAttempt({
+        quizId: quizData.value.quizId,
+        score: result.score,
+        passed: result.passed,
+        answers: result.answers
+      })
+    } catch (e) {
+      console.warn('保存答题记录失败（可能未登录）:', e)
+    }
+  }
 
   if (result.passed) {
     ElMessage.success(`恭喜通过！得分：${result.score} 分`)

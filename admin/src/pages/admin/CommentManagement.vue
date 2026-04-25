@@ -19,6 +19,7 @@
         </el-select>
       </el-form-item>
       <template #extra-buttons>
+        <el-button type="warning" @click="openPendingReview">🔍 待审核</el-button>
         <el-button type="success" @click="createComment">创建评论</el-button>
       </template>
     </FilterBar>
@@ -82,6 +83,9 @@
       </template>
     </el-dialog>
 
+    <!-- 审核弹窗 -->
+    <PendingReviewModal ref="pendingReviewRef" default-tab="comments" @reviewed="loadComments" />
+
     <!-- 创建评论对话框 -->
     <el-dialog v-model="showDialog" title="创建评论" width="600px">
       <el-form :model="commentForm" :rules="formRules" ref="formRef" label-width="90px">
@@ -129,7 +133,11 @@ import request from '@/utils/request'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
+import PendingReviewModal from '@/components/PendingReviewModal.vue'
 import { useFilter } from '@/composables/useFilter'
+
+const pendingReviewRef = ref<InstanceType<typeof PendingReviewModal>>()
+const openPendingReview = () => pendingReviewRef.value?.open('comments')
 
 const comments = ref<any[]>([])
 const selectedItems = ref<any[]>([])

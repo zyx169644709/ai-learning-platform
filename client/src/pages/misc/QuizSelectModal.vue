@@ -42,9 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import QuizModal from '@/pages/misc/QuizModal.vue'
 import { useQuizState } from '@/composables/useQuizState'
+import { getQuizzesByCategory, getCategoryStats } from '@/services/quizService'
 
 interface Props {
   visible: boolean
@@ -55,14 +56,12 @@ const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void
 }>()
 
-// Eagerly load all question JSON files
-const allModules = import.meta.glob('/src/data/questions/**/*.json', { eager: true })
-
 interface Question {
-  id: number
-  question: string
+  id: string
+  content: string
   options: string[]
-  correctAnswer: number
+  correctAnswer: number | number[]
+  questionType?: 'single' | 'multiple' | 'judge'
   explanation: string
 }
 
@@ -72,17 +71,6 @@ interface QuizData {
   passingScore: number
   questions: Question[]
   questionCount?: number
-}
-
-const getQuestionsFromFolder = (folder: string): Question[] => {
-  const prefix = `/src/data/questions/${folder}/`
-  return Object.entries(allModules)
-    .filter(([path]) => path.startsWith(prefix))
-    .flatMap(([, mod]) => {
-      const data = (mod as { default?: { questions?: Question[] }; questions?: Question[] })
-      const src = data.default || data
-      return Array.isArray((src as any).questions) ? (src as any).questions : []
-    })
 }
 
 const chapterDefs = [
@@ -96,10 +84,21 @@ const chapterDefs = [
   { id: 'practical-projects',  icon: '🏗️', name: '实战项目演练',     desc: 'Todo 应用、博客、后台管理系统',    color: '#ec4899' },
 ]
 
-const chapters = chapterDefs.map(ch => ({
-  ...ch,
-  totalCount: getQuestionsFromFolder(ch.id).length
-}))
+const categoryStats = ref<Record<string, number>>({})
+const chapters = ref(chapterDefs.map(ch => ({ ...ch, totalCount: 0 })))
+
+onMounted(async () => {
+  try {
+    const stats = await getCategoryStats()
+    categoryStats.value = stats
+    chapters.value = chapterDefs.map(ch => ({
+      ...ch,
+      totalCount: stats[ch.id] ?? 0
+    }))
+  } catch (e) {
+    console.error('获取题库统计失败:', e)
+  }
+})
 
 const quizVisible = ref(false)
 const { quizOpen } = useQuizState()
@@ -115,19 +114,32 @@ const currentQuizData = ref<QuizData>({
   questionCount: 20
 })
 
-const startQuiz = (ch: typeof chapters[number]) => {
-  const questions = getQuestionsFromFolder(ch.id)
-  currentQuizData.value = {
-    courseId: ch.id,
-    courseName: ch.name,
-    passingScore: 60,
-    questions,
-    questionCount: Math.min(20, questions.length)
+const startQuiz = async (ch: typeof chapters.value[number]) => {
+  try {
+    const quizzes = await getQuizzesByCategory(ch.id)
+    const questions: Question[] = quizzes.flatMap(q =>
+      q.questions.map(item => ({
+        id: item.id,
+        content: item.content,
+        options: item.options as string[],
+        correctAnswer: item.correctAnswer,
+        explanation: item.explanation
+      }))
+    )
+    currentQuizData.value = {
+      courseId: ch.id,
+      courseName: ch.name,
+      passingScore: 60,
+      questions,
+      questionCount: Math.min(20, questions.length)
+    }
+    quizVisible.value = true
+  } catch (e) {
+    console.error('加载题目失败:', e)
   }
-  quizVisible.value = true
 }
 
-const onCompleted = (_result: { score: number; passed: boolean; answers: number[] }) => {
+const onCompleted = (_result: { score: number; passed: boolean; answers: Array<number | number[]> }) => {
   // Quiz finished — category selection reappears automatically
 }
 

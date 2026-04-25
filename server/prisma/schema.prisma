@@ -31,6 +31,7 @@ model User {
   userPreferences    UserPreferences?
   courseCompletions  CourseCompletion[]
   sectionCompletions SectionCompletion[]
+  quizAttempts       QuizAttempt[]
 
   @@index([email])
   @@index([username])
@@ -239,6 +240,59 @@ enum DiscussionCategory {
   EXPERIENCE
   PROJECT
   HELP
+}
+
+model Quiz {
+  id           String        @id @default(cuid())
+  category     String
+  courseId     String?       @map("course_id")
+  title        String
+  passingScore Int           @default(60) @map("passing_score")
+  status       String        @default("published")
+  chapterId    String?       @map("chapter_id")
+  slug         String?       // 对应 JSON 文件名（不含 .json），用于精确匹配
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  questions    Question[]
+  attempts     QuizAttempt[]
+
+  @@index([category])
+  @@index([chapterId])
+  @@index([status])
+  @@map("quizzes")
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  quizId        String   @map("quiz_id")
+  questionType  String   @default("single") @map("question_type")
+  content       String
+  options       Json
+  correctAnswer Json     @map("correct_answer")
+  explanation   String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@map("questions")
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  quizId    String   @map("quiz_id")
+  score     Int
+  passed    Boolean
+  answers   Json
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@map("quiz_attempts")
 }
 
 model CourseCompletion {

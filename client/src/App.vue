@@ -18,6 +18,7 @@ import DefaultLayout from './layouts/DefaultLayout.vue'
 import CourseLayout from './layouts/CourseLayout.vue'
 import ResourceLayout from './layouts/ResourceLayout.vue'
 import AuthLayout from './layouts/AuthLayout.vue'
+import CommunityLayout from './layouts/CommunityLayout.vue'
 
 const route = useRoute()
 
@@ -26,6 +27,7 @@ const layoutMap: Record<string, any> = {
   course: CourseLayout,
   resource: ResourceLayout,
   auth: AuthLayout,
+  community: CommunityLayout,
 }
 
 const currentLayout = computed(() => layoutMap[route.meta?.layout as string] ?? DefaultLayout)

@@ -40,6 +40,7 @@
           <el-menu-item index="/admin/courses">课程管理</el-menu-item>
           <el-menu-item index="/admin/chapters">章节管理</el-menu-item>
           <el-menu-item index="/admin/resources">资源管理</el-menu-item>
+          <el-menu-item index="/admin/quizzes">习题管理</el-menu-item>
         </el-sub-menu>
         
         <el-sub-menu index="community">

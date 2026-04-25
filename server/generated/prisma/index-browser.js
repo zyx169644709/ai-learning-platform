@@ -249,6 +249,41 @@ exports.Prisma.FavoriteScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.QuizScalarFieldEnum = {
+  id: 'id',
+  category: 'category',
+  courseId: 'courseId',
+  title: 'title',
+  passingScore: 'passingScore',
+  status: 'status',
+  chapterId: 'chapterId',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuestionScalarFieldEnum = {
+  id: 'id',
+  quizId: 'quizId',
+  content: 'content',
+  options: 'options',
+  correctAnswer: 'correctAnswer',
+  explanation: 'explanation',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuizAttemptScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  quizId: 'quizId',
+  score: 'score',
+  passed: 'passed',
+  answers: 'answers',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CourseCompletionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -270,6 +305,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -312,6 +351,9 @@ exports.Prisma.ModelName = {
   Chapter: 'Chapter',
   Resource: 'Resource',
   Favorite: 'Favorite',
+  Quiz: 'Quiz',
+  Question: 'Question',
+  QuizAttempt: 'QuizAttempt',
   CourseCompletion: 'CourseCompletion',
   SectionCompletion: 'SectionCompletion'
 };

@@ -451,7 +451,7 @@ const showQuiz = ref(false)
 const quizPassed = ref(false)
 const courseCompleted = ref(false)
 
-const handleQuizCompleted = (result: { score: number; passed: boolean; answers: number[] }) => {
+const handleQuizCompleted = (result: { score: number; passed: boolean; answers: Array<number | number[]> }) => {
   console.log('测试完成:', result)
   quizPassed.value = result.passed
   
