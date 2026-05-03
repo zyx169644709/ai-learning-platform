@@ -47,12 +47,13 @@
         <div class="card" :class="{ unavailable: c.unavailable }" v-for="c in filteredCourses" :key="c.id" @click="openCourse(c)">
           <div class="thumb">
             <img
-              v-if="c.cover && !c.cover.startsWith('/')"
+              v-if="c.cover"
               :src="c.cover"
               referrerpolicy="no-referrer"
               class="thumb-preload"
               alt=""
               @load="loadedCovers[c.id] = c.cover"
+              @error="loadedCovers[c.id] = defaultCourseCover"
             />
             <div class="thumb-bg" :style="loadedCovers[c.id] ? { backgroundImage: `url('${loadedCovers[c.id]}')` } : {}"></div>
             <div class="play-overlay" v-if="!c.unavailable">
@@ -93,6 +94,7 @@ const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 const query = ref('')
 const loadedCovers = reactive<Record<string, string>>({})
+const courseApiBase = 'http://localhost:3000'
 
 type Level = string
 interface CourseCard { 
@@ -152,30 +154,58 @@ const buildQuery = (): Record<string, string> => {
 
 type ApiCourse = { id: string; title: string; description?: string; duration?: string; level?: string; category?: CourseCategoryKey; cover?: string; url?: string; tags?: any }
 
+const resolveCourseCover = (cover?: string) => {
+  const value = String(cover || '').trim()
+
+  if (!value) return defaultCourseCover
+  if (value.startsWith('http://') || value.startsWith('https://')) return value
+
+  if (value.startsWith('/uploads/')) {
+    return `${courseApiBase}${value}`
+  }
+
+  if (value.startsWith('/assets/')) {
+    try {
+      return new URL(value.replace('/assets/', '/src/assets/'), import.meta.url).href
+    } catch {
+      return value
+    }
+  }
+
+  try {
+    return new URL(value, `${courseApiBase}/`).href
+  } catch {
+    return value
+  }
+}
+
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/courses')
+    const res = await fetch(`${courseApiBase}/api/courses`)
     const data: ApiCourse[] = await res.json()
-    courses.value = (data || []).map((c) => ({
-      id: c.id,
-      title: c.title,
-      desc: c.duration || '',
-      level: (c.level as Level) || '',
-      category: c.category,
-      tags: c.tags,
-      unavailable: !c.cover,
-      cover: c.cover
-        ? (c.cover.startsWith('http') ? c.cover : c.cover)
-        : defaultCourseCover,
+    courses.value = (data || []).map((c) => {
+      const normalizedCover = resolveCourseCover(c.cover)
+      loadedCovers[c.id] = normalizedCover
 
-      author: '课程组',
-      authorAvatar: defaultAvatar,
-      bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
-      url: c.url,
-      videoPlatform: c.url?.includes('bilibili') ? 'bilibili' : undefined,
-      videoId: undefined,
-      free: undefined
-    }))
+      return {
+        id: c.id,
+        title: c.title,
+        desc: c.duration || '',
+        level: (c.level as Level) || '',
+        category: c.category,
+        tags: c.tags,
+        unavailable: !c.url,
+        cover: normalizedCover,
+
+        author: '课程组',
+        authorAvatar: defaultAvatar,
+        bilibiliUrl: c.url?.includes('bilibili') ? c.url : undefined,
+        url: c.url,
+        videoPlatform: c.url?.includes('bilibili') ? 'bilibili' : undefined,
+        videoId: undefined,
+        free: undefined
+      }
+    })
   } catch (e) {
     console.error('加载课程失败', e)
   }

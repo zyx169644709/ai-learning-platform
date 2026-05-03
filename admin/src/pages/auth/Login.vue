@@ -13,10 +13,10 @@
         class="login-form"
         size="large"
       >
-        <el-form-item prop="email">
+        <el-form-item prop="username">
           <el-input
-            v-model="loginForm.email"
-            placeholder="请输入邮箱"
+            v-model="loginForm.username"
+            placeholder="请输入用户名"
             prefix-icon="User"
             clearable
           />
@@ -46,7 +46,7 @@
       </el-form>
       
       <div class="login-footer">
-        <p>测试账号：admin@example.com / 123456</p>
+        <p>测试账号：admin / 123456</p>
       </div>
     </div>
     
@@ -72,14 +72,13 @@ const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
 
 const loginForm = reactive({
-  email: 'admin@example.com',
+  username: 'admin',
   password: '123456'
 })
 
 const loginRules: FormRules = {
-  email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
@@ -98,13 +97,13 @@ const handleLogin = async () => {
     userStore.clearToken()
     
     // 调用真实的登录 API
-    await userStore.login(loginForm.email, loginForm.password)
+    await userStore.login(loginForm.username, loginForm.password)
     
     ElMessage.success('登录成功')
     router.push('/admin')
   } catch (error: any) {
     console.error('登录失败:', error)
-    ElMessage.error(error.response?.data?.message || '登录失败，请检查邮箱和密码')
+    ElMessage.error(error.response?.data?.message || '登录失败，请检查用户名和密码')
   } finally {
     loading.value = false
   }

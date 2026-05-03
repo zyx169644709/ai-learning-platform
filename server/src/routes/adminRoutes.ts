@@ -60,7 +60,7 @@ import {
   rejectComment
 } from '../controllers/communityController'
 import authMiddleware from '../middleware/authMiddleware'
-import { requireAdmin } from '../middleware/adminAuth'
+import { requireAdmin, requireStaff } from '../middleware/adminAuth'
 
 const router = Router()
 
@@ -68,7 +68,7 @@ const router = Router()
 router.post('/auth/login', login)
 
 // 获取管理员信息（需要认证）
-router.get('/auth/info', authMiddleware, requireAdmin, getAdminInfo)
+router.get('/auth/info', authMiddleware, requireStaff, getAdminInfo)
 
 // 用户管理
 router.get('/users', authMiddleware, requireAdmin, getUsers)
@@ -81,58 +81,58 @@ router.post('/users/batch-delete', authMiddleware, requireAdmin, batchDeleteUser
 router.post('/users/export', authMiddleware, requireAdmin, exportUsers)
 
 // 课程管理
-router.get('/courses', authMiddleware, requireAdmin, getCourses)
-router.post('/courses', authMiddleware, requireAdmin, createCourse)
-router.post('/courses/publish-all', authMiddleware, requireAdmin, publishAllCourses)
-router.put('/courses/:id', authMiddleware, requireAdmin, updateCourse)
-router.post('/courses/:id/duplicate', authMiddleware, requireAdmin, duplicateCourse)
-router.delete('/courses/:id', authMiddleware, requireAdmin, deleteCourse)
-router.post('/courses/batch-delete', authMiddleware, requireAdmin, batchDeleteCourses)
-router.post('/courses/batch-publish', authMiddleware, requireAdmin, batchPublishCourses)
-router.post('/courses/export', authMiddleware, requireAdmin, exportCourses)
+router.get('/courses', authMiddleware, requireStaff, getCourses)
+router.post('/courses', authMiddleware, requireStaff, createCourse)
+router.post('/courses/publish-all', authMiddleware, requireStaff, publishAllCourses)
+router.put('/courses/:id', authMiddleware, requireStaff, updateCourse)
+router.post('/courses/:id/duplicate', authMiddleware, requireStaff, duplicateCourse)
+router.delete('/courses/:id', authMiddleware, requireStaff, deleteCourse)
+router.post('/courses/batch-delete', authMiddleware, requireStaff, batchDeleteCourses)
+router.post('/courses/batch-publish', authMiddleware, requireStaff, batchPublishCourses)
+router.post('/courses/export', authMiddleware, requireStaff, exportCourses)
 
 // 统计数据
-router.get('/stats', authMiddleware, requireAdmin, getStats)
+router.get('/stats', authMiddleware, requireStaff, getStats)
 
 // 数据分析
-router.get('/analytics', authMiddleware, requireAdmin, getAnalytics)
+router.get('/analytics', authMiddleware, requireStaff, getAnalytics)
 
 // 章节管理
-router.get('/chapters', authMiddleware, requireAdmin, getChapters)
-router.get('/chapters/:id', authMiddleware, requireAdmin, getChapter)
-router.post('/chapters', authMiddleware, requireAdmin, createChapter)
-router.put('/chapters/:id', authMiddleware, requireAdmin, updateChapter)
-router.delete('/chapters/:id', authMiddleware, requireAdmin, deleteChapter)
-router.post('/chapters/batch-delete', authMiddleware, requireAdmin, batchDeleteChapters)
-router.post('/chapters/batch-publish', authMiddleware, requireAdmin, batchPublishChapters)
+router.get('/chapters', authMiddleware, requireStaff, getChapters)
+router.get('/chapters/:id', authMiddleware, requireStaff, getChapter)
+router.post('/chapters', authMiddleware, requireStaff, createChapter)
+router.put('/chapters/:id', authMiddleware, requireStaff, updateChapter)
+router.delete('/chapters/:id', authMiddleware, requireStaff, deleteChapter)
+router.post('/chapters/batch-delete', authMiddleware, requireStaff, batchDeleteChapters)
+router.post('/chapters/batch-publish', authMiddleware, requireStaff, batchPublishChapters)
 
 // 资源管理
-router.get('/resources', authMiddleware, requireAdmin, getResources)
-router.get('/resources/:id', authMiddleware, requireAdmin, getResource)
-router.post('/resources', authMiddleware, requireAdmin, createResource)
-router.post('/resources/publish-all', authMiddleware, requireAdmin, publishAllResources)
-router.put('/resources/:id', authMiddleware, requireAdmin, updateResource)
-router.delete('/resources/:id', authMiddleware, requireAdmin, deleteResource)
-router.post('/resources/batch-delete', authMiddleware, requireAdmin, batchDeleteResources)
-router.post('/resources/batch-publish', authMiddleware, requireAdmin, batchPublishResources)
+router.get('/resources', authMiddleware, requireStaff, getResources)
+router.get('/resources/:id', authMiddleware, requireStaff, getResource)
+router.post('/resources', authMiddleware, requireStaff, createResource)
+router.post('/resources/publish-all', authMiddleware, requireStaff, publishAllResources)
+router.put('/resources/:id', authMiddleware, requireStaff, updateResource)
+router.delete('/resources/:id', authMiddleware, requireStaff, deleteResource)
+router.post('/resources/batch-delete', authMiddleware, requireStaff, batchDeleteResources)
+router.post('/resources/batch-publish', authMiddleware, requireStaff, batchPublishResources)
 
 // 社区管理
-router.get('/community/discussions', authMiddleware, requireAdmin, adminGetDiscussions)
-router.post('/community/discussions', authMiddleware, requireAdmin, adminCreateDiscussion)
-router.post('/community/discussions/batch-delete', authMiddleware, requireAdmin, batchDeleteDiscussions)
-router.post('/community/discussions/:id/toggle-status', authMiddleware, requireAdmin, toggleDiscussionStatus)
-router.post('/community/discussions/:id/toggle-pin', authMiddleware, requireAdmin, toggleDiscussionPin)
-router.post('/community/discussions/:id/approve', authMiddleware, requireAdmin, approveDiscussion)
-router.post('/community/discussions/:id/reject', authMiddleware, requireAdmin, rejectDiscussion)
-router.put('/community/discussions/:id', authMiddleware, requireAdmin, adminUpdateDiscussion)
-router.delete('/community/discussions/:id', authMiddleware, requireAdmin, adminDeleteDiscussion)
-router.get('/community/comments', authMiddleware, requireAdmin, adminGetComments)
-router.post('/community/comments', authMiddleware, requireAdmin, adminCreateComment)
-router.post('/community/comments/batch-delete', authMiddleware, requireAdmin, batchDeleteComments)
-router.post('/community/comments/:id/toggle-status', authMiddleware, requireAdmin, toggleCommentStatus)
-router.post('/community/comments/:id/approve', authMiddleware, requireAdmin, approveComment)
-router.post('/community/comments/:id/reject', authMiddleware, requireAdmin, rejectComment)
-router.delete('/community/comments/:id', authMiddleware, requireAdmin, adminDeleteComment)
+router.get('/community/discussions', authMiddleware, requireStaff, adminGetDiscussions)
+router.post('/community/discussions', authMiddleware, requireStaff, adminCreateDiscussion)
+router.post('/community/discussions/batch-delete', authMiddleware, requireStaff, batchDeleteDiscussions)
+router.post('/community/discussions/:id/toggle-status', authMiddleware, requireStaff, toggleDiscussionStatus)
+router.post('/community/discussions/:id/toggle-pin', authMiddleware, requireStaff, toggleDiscussionPin)
+router.post('/community/discussions/:id/approve', authMiddleware, requireStaff, approveDiscussion)
+router.post('/community/discussions/:id/reject', authMiddleware, requireStaff, rejectDiscussion)
+router.put('/community/discussions/:id', authMiddleware, requireStaff, adminUpdateDiscussion)
+router.delete('/community/discussions/:id', authMiddleware, requireStaff, adminDeleteDiscussion)
+router.get('/community/comments', authMiddleware, requireStaff, adminGetComments)
+router.post('/community/comments', authMiddleware, requireStaff, adminCreateComment)
+router.post('/community/comments/batch-delete', authMiddleware, requireStaff, batchDeleteComments)
+router.post('/community/comments/:id/toggle-status', authMiddleware, requireStaff, toggleCommentStatus)
+router.post('/community/comments/:id/approve', authMiddleware, requireStaff, approveComment)
+router.post('/community/comments/:id/reject', authMiddleware, requireStaff, rejectComment)
+router.delete('/community/comments/:id', authMiddleware, requireStaff, adminDeleteComment)
 
 export default router
 module.exports = router

@@ -28,9 +28,9 @@ export const roleTagTypeMap: Record<string, string> = {
 
 // 角色标签文本映射
 export const roleLabelMap: Record<string, string> = {
-  [UserRole.USER]: '学生',
-  [UserRole.MODERATOR]: '教师',
-  [UserRole.ADMIN]: '管理员'
+  [UserRole.USER]: '用户',
+  [UserRole.MODERATOR]: '管理员',
+  [UserRole.ADMIN]: '超级管理员'
 }
 
 // 课程类型标签映射
@@ -68,7 +68,7 @@ export function getRoleTagType(role: string): string {
 
 // 工具函数：获取角色标签文本
 export function getRoleLabel(role: string): string {
-  return roleLabelMap[role] || '学生'
+  return roleLabelMap[role] || '用户'
 }
 
 // 工具函数：获取课程类型标签

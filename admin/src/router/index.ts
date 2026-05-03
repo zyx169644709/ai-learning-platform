@@ -50,7 +50,8 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'users',
         name: 'UserManagement',
-        component: UserManagement
+        component: UserManagement,
+        meta: { roles: ['ADMIN'] }
       },
       {
         path: 'chapters',
@@ -116,10 +117,17 @@ router.beforeEach(async (to: any, _from: any, next: any) => {
       }
     }
     
-    // 检查管理员权限
-    if (!userStore.isAdmin) {
+    // 检查后台权限
+    if (!userStore.isStaff) {
       ElMessage.error('您没有权限访问管理后台')
       next('/login')
+      return
+    }
+
+    const routeRoles = to.meta.roles as string[] | undefined
+    if (routeRoles?.length && !userStore.hasAnyRole(...routeRoles)) {
+      ElMessage.error('您没有权限访问该页面')
+      next('/admin')
       return
     }
   }

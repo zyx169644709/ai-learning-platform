@@ -4,12 +4,23 @@ import { AuthRequest } from '../middleware/authMiddleware'
 
 const prisma = new PrismaClient()
 
-const normalizeQuestionType = (value: unknown): 'single' | 'multiple' | 'judge' => {
+type QuestionType = 'single' | 'multiple' | 'judge'
+
+interface PreparedQuestionData {
+  questionType: QuestionType
+  content: string
+  options: string[]
+  correctAnswer: number | number[]
+  explanation: string
+  order: number
+}
+
+const normalizeQuestionType = (value: unknown): QuestionType => {
   if (value === 'multiple' || value === 'judge' || value === 'single') return value
   return 'single'
 }
 
-const normalizeCorrectAnswer = (questionType: 'single' | 'multiple' | 'judge', value: unknown) => {
+const normalizeCorrectAnswer = (questionType: QuestionType, value: unknown) => {
   if (questionType === 'multiple') {
     if (Array.isArray(value)) {
       return value
@@ -22,6 +33,65 @@ const normalizeCorrectAnswer = (questionType: 'single' | 'multiple' | 'judge', v
 
   const answer = Number(value)
   return Number.isInteger(answer) && answer >= 0 ? answer : 0
+}
+
+const normalizeQuestionOptions = (questionType: QuestionType, value: unknown) => {
+  if (questionType === 'judge') {
+    return ['正确', '错误']
+  }
+
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .map((item) => String(item ?? '').trim())
+    .filter(Boolean)
+}
+
+const prepareQuestionData = (payload: any, defaultOrder: number, label = '题目'):
+  | { data: PreparedQuestionData; message?: never }
+  | { data?: never; message: string } => {
+  const questionType = normalizeQuestionType(payload?.questionType)
+  const content = String(payload?.content ?? '').trim()
+
+  if (!content) {
+    return { message: `${label}题干不能为空` }
+  }
+
+  const options = normalizeQuestionOptions(questionType, payload?.options)
+  if (options.length < 2) {
+    return { message: `${label}至少需要两个选项` }
+  }
+
+  const correctAnswer = normalizeCorrectAnswer(questionType, payload?.correctAnswer)
+
+  if (questionType === 'multiple') {
+    if (!Array.isArray(correctAnswer) || !correctAnswer.length) {
+      return { message: `${label}多选题至少需要一个正确答案` }
+    }
+
+    const hasInvalidAnswer = correctAnswer.some((item) => item < 0 || item >= options.length)
+    if (hasInvalidAnswer) {
+      return { message: `${label}存在超出选项范围的正确答案序号` }
+    }
+  } else if (typeof correctAnswer !== 'number' || correctAnswer < 0 || correctAnswer >= options.length) {
+    return { message: `${label}正确答案序号超出选项范围` }
+  }
+
+  const rawOrder = Number(payload?.order)
+  const order = Number.isInteger(rawOrder) && rawOrder >= 0 ? rawOrder : defaultOrder
+
+  return {
+    data: {
+      questionType,
+      content,
+      options,
+      correctAnswer,
+      explanation: String(payload?.explanation ?? '').trim(),
+      order
+    }
+  }
 }
 
 // ─── 公开接口 ───────────────────────────────────────────────
@@ -347,24 +417,50 @@ export const adminDeleteQuiz = async (req: Request, res: Response) => {
   }
 }
 
+export const adminRenameQuizCategory = async (req: Request, res: Response) => {
+  try {
+    const oldCategory = String(req.body?.oldCategory ?? '').trim()
+    const newCategory = String(req.body?.newCategory ?? '').trim()
+
+    if (!oldCategory || !newCategory) {
+      return res.status(400).json({ message: '原分类和新分类不能为空' })
+    }
+
+    if (oldCategory === newCategory) {
+      return res.json({ success: true, data: { count: 0 } })
+    }
+
+    const result = await prisma.quiz.updateMany({
+      where: { category: oldCategory },
+      data: { category: newCategory }
+    })
+
+    if (!result.count) {
+      return res.status(404).json({ message: '未找到对应分类的题库' })
+    }
+
+    res.json({ success: true, data: { count: result.count } })
+  } catch (error) {
+    console.error('adminRenameQuizCategory error:', error)
+    res.status(500).json({ message: '更新分类失败' })
+  }
+}
+
 // 新增题目到题库
 export const adminAddQuestion = async (req: Request, res: Response) => {
   try {
     const { quizId } = req.params
-    const { content, options, correctAnswer, explanation, questionType } = req.body
-    const normalizedType = normalizeQuestionType(questionType)
-    const normalizedAnswer = normalizeCorrectAnswer(normalizedType, correctAnswer)
 
     const count = await prisma.question.count({ where: { quizId } })
+    const prepared = prepareQuestionData(req.body, count)
+    if (prepared.message) {
+      return res.status(400).json({ message: prepared.message })
+    }
+
     const question = await prisma.question.create({
       data: {
         quizId,
-        questionType: normalizedType,
-        content,
-        options,
-        correctAnswer: normalizedAnswer,
-        explanation: explanation ?? '',
-        order: count
+        ...prepared.data
       } as any
     })
 
@@ -372,6 +468,60 @@ export const adminAddQuestion = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('adminAddQuestion error:', error)
     res.status(500).json({ message: '添加题目失败' })
+  }
+}
+
+export const adminImportQuestions = async (req: Request, res: Response) => {
+  try {
+    const { quizId } = req.params
+    const rawQuestions = Array.isArray(req.body)
+      ? req.body
+      : Array.isArray(req.body?.questions)
+        ? req.body.questions
+        : null
+
+    if (!rawQuestions?.length) {
+      return res.status(400).json({ message: '导入数据不能为空，且必须包含 questions 数组' })
+    }
+
+    const quiz = await prisma.quiz.findUnique({ where: { id: quizId }, select: { id: true } })
+    if (!quiz) {
+      return res.status(404).json({ message: '题库不存在' })
+    }
+
+    const count = await prisma.question.count({ where: { quizId } })
+    const preparedQuestions: PreparedQuestionData[] = []
+
+    for (let index = 0; index < rawQuestions.length; index += 1) {
+      const prepared = prepareQuestionData(rawQuestions[index], count + index, `第${index + 1}题`)
+      if (prepared.message) {
+        return res.status(400).json({ message: prepared.message })
+      }
+      if (!prepared.data) {
+        return res.status(400).json({ message: `第${index + 1}题数据无效` })
+      }
+      preparedQuestions.push(prepared.data)
+    }
+
+    const createdQuestions = await prisma.$transaction(
+      preparedQuestions.map((item) => prisma.question.create({
+        data: {
+          quizId,
+          ...item
+        } as any
+      }))
+    )
+
+    res.json({
+      success: true,
+      data: {
+        count: createdQuestions.length,
+        questions: createdQuestions
+      }
+    })
+  } catch (error) {
+    console.error('adminImportQuestions error:', error)
+    res.status(500).json({ message: '导入题目失败' })
   }
 }
 

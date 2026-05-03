@@ -29,9 +29,9 @@
       </el-form-item>
       <el-form-item label="用户角色" style="width: 180px;">
         <el-select v-model="filterForm.role" placeholder="全部" clearable @change="debouncedSearch">
-          <el-option label="学生" value="USER" />
-          <el-option label="教师" value="MODERATOR" />
-          <el-option label="管理员" value="ADMIN" />
+          <el-option label="用户" value="USER" />
+          <el-option label="管理员" value="MODERATOR" />
+          <el-option label="超级管理员" value="ADMIN" />
         </el-select>
       </el-form-item>
     </FilterBar>
@@ -166,9 +166,9 @@
         </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="editForm.role">
-            <el-option label="学生" value="USER" />
-            <el-option label="教师" value="MODERATOR" />
-            <el-option label="管理员" value="ADMIN" />
+            <el-option label="用户" value="USER" />
+            <el-option label="管理员" value="MODERATOR" />
+            <el-option label="超级管理员" value="ADMIN" />
           </el-select>
         </el-form-item>
       </el-form>

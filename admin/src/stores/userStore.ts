@@ -7,9 +7,10 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref<any>(null)
   
   const isLogin = computed(() => !!token.value)
-  const isAdmin = computed(() => {
-    return userInfo.value?.role === 'ADMIN' || userInfo.value?.email === 'admin@example.com'
-  })
+  const role = computed(() => userInfo.value?.role || '')
+  const isSuperAdmin = computed(() => role.value === 'ADMIN')
+  const isStaff = computed(() => ['ADMIN', 'MODERATOR'].includes(role.value))
+  const hasAnyRole = (...roles: string[]) => roles.includes(role.value)
   
   // 设置 token
   const setToken = (newToken: string) => {
@@ -36,10 +37,10 @@ export const useUserStore = defineStore('user', () => {
   }
   
   // 登录
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
       const response = await request.post('/admin/auth/login', {
-        email,
+        username,
         password
       })
       
@@ -62,8 +63,11 @@ export const useUserStore = defineStore('user', () => {
   return {
     token,
     userInfo,
+    role,
     isLogin,
-    isAdmin,
+    isStaff,
+    isSuperAdmin,
+    hasAnyRole,
     setToken,
     clearToken,
     getUserInfo,

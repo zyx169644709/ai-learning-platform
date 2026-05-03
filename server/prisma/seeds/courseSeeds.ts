@@ -2,7 +2,20 @@ import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()
 
-export const courseSeeds = [
+type CourseSeed = {
+  title: string
+  category: string
+  level: string
+  url: string
+  status: string
+  duration: string
+  content: string
+  tags: string[]
+  order: number
+  cover?: string
+}
+
+export const courseSeeds: CourseSeed[] = [
   // ========== 基础入门 (fundamentals) ==========
   {
     title: 'Vue3 零基础入门（黑马程序员）',
@@ -259,22 +272,55 @@ export const courseSeeds = [
 ]
 
 export async function seedCourses() {
-  console.log('开始创建课程数据...')
+  console.log('开始同步课程数据...')
 
-  // 清除旧的分类数据，避免重复插入
-  await prisma.course.deleteMany({
+  const seedCategories = ['fundamentals', 'core-syntax', 'advanced-practice', 'projects', 'interview', 'ecosystem']
+  const existingCourses = await prisma.course.findMany({
     where: {
-      category: { in: ['fundamentals', 'core-syntax', 'advanced-practice', 'projects', 'interview', 'ecosystem'] }
+      category: { in: seedCategories }
+    },
+    select: {
+      id: true,
+      title: true,
+      cover: true
     }
   })
-  console.log('已清除旧的分类课程数据\n')
+  const existingCourseMap = new Map(existingCourses.map(course => [course.title, course]))
+
+  let createdCount = 0
+  let updatedCount = 0
+  let preservedCoverCount = 0
 
   for (const course of courseSeeds) {
-    await prisma.course.create({ data: course })
+    const existingCourse = existingCourseMap.get(course.title)
+    const nextCover = existingCourse?.cover || course.cover || null
+
+    if (existingCourse) {
+      if (existingCourse.cover && !course.cover) preservedCoverCount++
+
+      await prisma.course.update({
+        where: { id: existingCourse.id },
+        data: {
+          ...course,
+          cover: nextCover
+        }
+      })
+      updatedCount++
+      console.log(`↻ ${course.title}`)
+      continue
+    }
+
+    await prisma.course.create({
+      data: {
+        ...course,
+        cover: nextCover
+      }
+    })
+    createdCount++
     console.log(`✓ ${course.title}`)
   }
 
-  console.log(`\n成功创建 ${courseSeeds.length} 个课程数据！`)
+  console.log(`\n课程同步完成！新增 ${createdCount} 个，更新 ${updatedCount} 个，保留封面 ${preservedCoverCount} 个`)
   console.log('  基础入门 (fundamentals): 3 个')
   console.log('  核心语法 (core-syntax): 3 个')
   console.log('  进阶实战 (advanced-practice): 3 个')

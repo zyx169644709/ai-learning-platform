@@ -137,10 +137,11 @@ const course = ref<Course | null>(null)
 const loading = ref(true)
 const showPlayer = ref(false)
 const isFavorited = ref(false)
+const courseApiBase = 'http://localhost:3000'
 
 const md = new MarkdownIt({ html: true, linkify: true })
 
-const isUnavailable = computed(() => !course.value?.cover)
+const isUnavailable = computed(() => !course.value?.url)
 
 const defaultCover = defaultCourseCoverSrc
 const onCoverError = (e: Event) => {
@@ -148,16 +149,33 @@ const onCoverError = (e: Event) => {
   if (img.src !== defaultCover) img.src = defaultCover
 }
 
-const coverUrl = computed(() => {
-  if (course.value?.cover) {
-    if (course.value.cover.startsWith('http')) return course.value.cover
+const resolveCourseCover = (cover?: string) => {
+  const value = String(cover || '').trim()
+
+  if (!value) return defaultCourseCoverSrc
+  if (value.startsWith('http://') || value.startsWith('https://')) return value
+
+  if (value.startsWith('/uploads/')) {
+    return `${courseApiBase}${value}`
+  }
+
+  if (value.startsWith('/assets/')) {
     try {
-      return new URL(course.value.cover.replace('/assets/', '/src/assets/'), import.meta.url).href
+      return new URL(value.replace('/assets/', '/src/assets/'), import.meta.url).href
     } catch {
-      return course.value.cover
+      return value
     }
   }
-  return defaultCourseCoverSrc
+
+  try {
+    return new URL(value, `${courseApiBase}/`).href
+  } catch {
+    return value
+  }
+}
+
+const coverUrl = computed(() => {
+  return resolveCourseCover(course.value?.cover)
 })
 
 const levelText = computed(() => {
@@ -240,11 +258,11 @@ const loadCourse = async () => {
   
   loading.value = true
   try {
-    const res = await fetch(`http://localhost:3000/api/courses/${id}`)
+    const res = await fetch(`${courseApiBase}/api/courses/${id}`)
     if (res.ok) {
       course.value = await res.json()
       // 浏览量+1
-      fetch(`http://localhost:3000/api/courses/${id}/view`, { method: 'POST' }).catch(() => {})
+      fetch(`${courseApiBase}/api/courses/${id}/view`, { method: 'POST' }).catch(() => {})
       // 检查收藏状态
       await checkFavoriteStatus()
     } else {

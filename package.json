@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\" \"npm run dev:admin\"",
     "dev:client": "cd client && npm run dev",
-    "dev:server": "cd server && npx tsx watch server.ts",
+    "dev:server": "cd server && npm run dev:watch",
     "dev:admin": "cd admin && npm run dev",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cd client && npm run build",

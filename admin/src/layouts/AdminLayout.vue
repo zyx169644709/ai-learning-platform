@@ -27,7 +27,7 @@
           <span>数据分析</span>
         </el-menu-item>
 
-        <el-menu-item index="/admin/users">
+        <el-menu-item v-if="userStore.isSuperAdmin" index="/admin/users">
           <el-icon><User /></el-icon>
           <span>用户管理</span>
         </el-menu-item>
@@ -53,6 +53,12 @@
         </el-sub-menu>
         
       </el-menu>
+
+      <div class="sidebar-footer">
+        <el-button class="logout-btn" :icon="SwitchButton" @click="handleLogout">
+          <span v-show="!sidebarCollapsed">退出登录</span>
+        </el-button>
+      </div>
     </div>
 
     <!-- 主内容区 -->
@@ -64,6 +70,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/userStore'
 import {
   Expand,
   Fold,
@@ -72,12 +81,21 @@ import {
   User,
   TrendCharts,
   ChatDotRound,
+  SwitchButton,
 } from '@element-plus/icons-vue'
 
+const router = useRouter()
+const userStore = useUserStore()
 const sidebarCollapsed = ref(false)
 
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value
+}
+
+const handleLogout = () => {
+  userStore.logout()
+  ElMessage.success('已退出登录')
+  router.push('/login')
 }
 </script>
 
@@ -93,6 +111,8 @@ const toggleSidebar = () => {
   background: #304156;
   transition: width 0.3s;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-sidebar.collapsed {
@@ -130,6 +150,8 @@ const toggleSidebar = () => {
 .sidebar-menu {
   border: none;
   background: #304156;
+  flex: 1;
+  min-height: 0;
 }
 
 .sidebar-menu :deep(.el-menu-item) {
@@ -155,6 +177,32 @@ const toggleSidebar = () => {
 .sidebar-menu :deep(.el-sub-menu__title:hover) {
   background: #263445 !important;
   color: #409eff;
+}
+
+.sidebar-footer {
+  padding: 16px 12px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logout-btn {
+  width: 100%;
+  height: 40px;
+  border: none;
+  background: rgba(245, 108, 108, 0.12);
+  color: #f56c6c;
+}
+
+.logout-btn:hover {
+  background: rgba(245, 108, 108, 0.2);
+  color: #ff8f8f;
+}
+
+.admin-sidebar.collapsed .sidebar-footer {
+  padding: 16px 8px 20px;
+}
+
+.admin-sidebar.collapsed .logout-btn {
+  padding: 0;
 }
 
 .admin-main {

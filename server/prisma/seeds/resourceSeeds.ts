@@ -2,7 +2,19 @@ import { PrismaClient } from '../../generated/prisma'
 
 const prisma = new PrismaClient()
 
-export const resourceSeeds = [
+type ResourceSeed = {
+  title: string
+  description: string
+  category: string
+  type: string
+  url: string
+  tags: string[]
+  status: string
+  cover?: string
+  icon?: string
+}
+
+export const resourceSeeds: ResourceSeed[] = [
   // ========== 学习文档 (docs) ==========
   {
     title: 'Vue 3 官方文档中文版',
@@ -521,22 +533,55 @@ export const resourceSeeds = [
 ]
 
 export async function seedResources() {
-  console.log('开始创建资源数据...')
+  console.log('开始同步资源数据...')
 
-  // 清除旧的分类数据，避免重复插入
-  await prisma.resource.deleteMany({
+  const seedCategories = ['docs', 'templates', 'configs', 'snippets', 'interview', 'plugins']
+  const existingResources = await prisma.resource.findMany({
     where: {
-      category: { in: ['docs', 'templates', 'configs', 'snippets', 'interview', 'plugins'] }
+      category: { in: seedCategories }
+    },
+    select: {
+      id: true,
+      title: true,
+      cover: true
     }
   })
-  console.log('已清除旧的分类资源数据\n')
+  const existingResourceMap = new Map(existingResources.map(resource => [resource.title, resource]))
+
+  let createdCount = 0
+  let updatedCount = 0
+  let preservedCoverCount = 0
 
   for (const resource of resourceSeeds) {
-    await prisma.resource.create({ data: resource })
+    const existingResource = existingResourceMap.get(resource.title)
+    const nextCover = existingResource?.cover || resource.cover || null
+
+    if (existingResource) {
+      if (existingResource.cover && !resource.cover) preservedCoverCount++
+
+      await prisma.resource.update({
+        where: { id: existingResource.id },
+        data: {
+          ...resource,
+          cover: nextCover
+        }
+      })
+      updatedCount++
+      console.log(`↻ ${resource.title}`)
+      continue
+    }
+
+    await prisma.resource.create({
+      data: {
+        ...resource,
+        cover: nextCover
+      }
+    })
+    createdCount++
     console.log(`✓ ${resource.title}`)
   }
 
-  console.log(`\n成功创建 ${resourceSeeds.length} 个资源数据！`)
+  console.log(`\n资源同步完成！新增 ${createdCount} 个，更新 ${updatedCount} 个，保留封面 ${preservedCoverCount} 个`)
   console.log('  学习文档 (docs): 7 个')
   console.log('  项目模板 (templates): 7 个')
   console.log('  工具配置 (configs): 9 个')

@@ -1,7 +1,10 @@
 //npx tsx prisma/seeds/fetchBiliCovers.ts
 import { PrismaClient } from '../../generated/prisma'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 
 const prisma = new PrismaClient()
+const uploadsDir = path.resolve(__dirname, '../../uploads')
 
 // 从 BiliBili URL 提取 BV 号
 function extractBV(url: string): string | null {
@@ -33,13 +36,32 @@ async function fetchBiliCover(bv: string): Promise<string | null> {
   }
 }
 
+async function saveRemoteCoverToUploads(imageUrl: string, prefix: string, entityId: string) {
+  const response = await fetch(imageUrl)
+  if (!response.ok) {
+    throw new Error(`下载封面失败: ${response.status} ${response.statusText}`)
+  }
+
+  const arrayBuffer = await response.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+  const parsedUrl = new URL(imageUrl)
+  const extFromPath = path.extname(parsedUrl.pathname)
+  const contentType = response.headers.get('content-type') || ''
+  const ext = extFromPath || (contentType.includes('png') ? '.png' : contentType.includes('webp') ? '.webp' : '.jpg')
+  const fileName = `${prefix}-${entityId}${ext}`
+
+  await mkdir(uploadsDir, { recursive: true })
+  await writeFile(path.join(uploadsDir, fileName), buffer)
+
+  return `/uploads/${fileName}`
+}
+
 // 延迟函数，避免请求过快
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 async function fetchAndUpdateCovers() {
   console.log('开始批量获取 BiliBili 课程封面...\n')
 
-  // 获取所有有 BiliBili URL 的课程
   const courses = await prisma.course.findMany({
     where: {
       url: { contains: 'bilibili.com' }
@@ -64,11 +86,12 @@ async function fetchAndUpdateCovers() {
     const coverUrl = await fetchBiliCover(bv)
 
     if (coverUrl) {
+      const localCoverUrl = await saveRemoteCoverToUploads(coverUrl, 'course-cover', course.id)
       await prisma.course.update({
         where: { id: course.id },
-        data: { cover: coverUrl }
+        data: { cover: localCoverUrl }
       })
-      console.log(`  ✓ 封面已更新: ${coverUrl.substring(0, 60)}...`)
+      console.log(`  ✓ 封面已更新: ${localCoverUrl}`)
       successCount++
     } else {
       console.log(`  ✗ 获取封面失败，跳过`)

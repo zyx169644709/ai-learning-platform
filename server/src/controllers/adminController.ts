@@ -5,19 +5,111 @@ import { formatDate } from '../utils/format'
 
 const prisma = new PrismaClient()
 const JWT_SECRET: string = process.env.JWT_SECRET || 'your-secret-key'
+const DAY_MS = 24 * 60 * 60 * 1000
+
+type TrendBucket = {
+  label: string
+  start: Date
+  end: Date
+}
+
+const startOfDay = (date: Date) => {
+  const nextDate = new Date(date)
+  nextDate.setHours(0, 0, 0, 0)
+  return nextDate
+}
+
+const endOfDay = (date: Date) => {
+  const nextDate = new Date(date)
+  nextDate.setHours(23, 59, 59, 999)
+  return nextDate
+}
+
+const buildRecentDailyBuckets = (days: number): TrendBucket[] => {
+  return Array.from({ length: days }, (_, index) => {
+    const targetDate = new Date(Date.now() - (days - 1 - index) * DAY_MS)
+    const start = startOfDay(targetDate)
+    const end = endOfDay(targetDate)
+    return {
+      label: `${start.getMonth() + 1}/${start.getDate()}`,
+      start,
+      end
+    }
+  })
+}
+
+const buildRecentWeeklyBuckets = (bucketCount: number): TrendBucket[] => {
+  return Array.from({ length: bucketCount }, (_, index) => {
+    const bucketEnd = new Date(Date.now() - (bucketCount - 1 - index) * 7 * DAY_MS)
+    const end = endOfDay(bucketEnd)
+    const start = startOfDay(new Date(bucketEnd.getTime() - 6 * DAY_MS))
+    return {
+      label: `${start.getMonth() + 1}/${start.getDate()}\n-${end.getMonth() + 1}/${end.getDate()}`,
+      start,
+      end
+    }
+  })
+}
+
+const buildRecentMonthlyBuckets = (bucketCount: number): TrendBucket[] => {
+  const now = new Date()
+  return Array.from({ length: bucketCount }, (_, index) => {
+    const targetMonth = new Date(now.getFullYear(), now.getMonth() - (bucketCount - 1 - index), 1)
+    const start = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1, 0, 0, 0, 0)
+    const end = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0, 23, 59, 59, 999)
+    return {
+      label: `${targetMonth.getMonth() + 1}月`,
+      start,
+      end
+    }
+  })
+}
+
+const getActivityLabel = (activityRate: number) => {
+  if (activityRate >= 50) return '优秀'
+  if (activityRate >= 30) return '良好'
+  if (activityRate >= 10) return '一般'
+  return '较低'
+}
+
+const countUsersCreatedInRange = (start: Date, end: Date) => {
+  return prisma.user.count({
+    where: {
+      createdAt: {
+        gte: start,
+        lte: end
+      }
+    }
+  })
+}
+
+const countUsersActiveInRange = (start: Date, end: Date) => {
+  return prisma.user.count({
+    where: {
+      lastLoginAt: {
+        gte: start,
+        lte: end
+      }
+    }
+  })
+}
+
+const countUsersCreatedInBuckets = async (buckets: TrendBucket[]) => {
+  return Promise.all(buckets.map(bucket => countUsersCreatedInRange(bucket.start, bucket.end)))
+}
 
 // 管理员登录
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body as { email?: string; password?: string }
+    const { username, password } = req.body as { username?: string; password?: string }
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: '邮箱和密码不能为空' })
+    if (!username || !password) {
+      return res.status(400).json({ success: false, message: '用户名和密码不能为空' })
     }
 
-    // 查找管理员用户
-    const user = await prisma.user.findUnique({ 
-      where: { email },
+    // 查找后台用户
+    const user = await prisma.user.findUnique({
+      where: { username },
       select: {
         id: true,
         email: true,
@@ -27,36 +119,36 @@ export const login = async (req: Request, res: Response) => {
         avatar: true
       }
     })
-    
-    if (!user) return res.status(400).json({ success: false, message: '邮箱或密码错误' })
+
+    if (!user) return res.status(400).json({ success: false, message: '用户名或密码错误' })
 
     // 验证密码
     const bcrypt = require('bcryptjs')
     const passwordValid = await bcrypt.compare(password, user.password)
     if (!passwordValid) {
-      return res.status(400).json({ success: false, message: '邮箱或密码错误' })
+      return res.status(400).json({ success: false, message: '用户名或密码错误' })
     }
 
-    // 检查是否是管理员
-    if (user.role !== 'ADMIN' && user.email !== 'admin@example.com') {
+    // 检查是否有后台权限
+    if (user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
       return res.status(403).json({ success: false, message: '权限不足' })
     }
 
-    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ userId: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
 
-    res.json({ 
-      success: true, 
-      message: '登录成功', 
-      data: { 
-        user: { 
-          id: user.id, 
-          email: user.email, 
+    res.json({
+      success: true,
+      message: '登录成功',
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
           name: user.username,
           role: user.role,
           avatar: user.avatar || ''
-        }, 
-        token 
-      } 
+        },
+        token
+      }
     })
   } catch (error: any) {
     console.error('管理员登录错误:', error)
@@ -78,12 +170,12 @@ export const getAdminInfo = async (req: Request & { user?: any }, res: Response)
         avatar: true
       }
     })
-    
+
     if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
-    
-    res.json({ 
-      success: true, 
-      data: { 
+
+    res.json({
+      success: true,
+      data: {
         user: {
           id: user.id,
           email: user.email,
@@ -91,7 +183,7 @@ export const getAdminInfo = async (req: Request & { user?: any }, res: Response)
           role: user.role,
           avatar: user.avatar || ''
         }
-      } 
+      }
     })
   } catch (error: any) {
     console.error('获取管理员信息错误:', error)
@@ -103,10 +195,10 @@ export const getAdminInfo = async (req: Request & { user?: any }, res: Response)
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const { page = 1, limit = 20, role, name, email } = req.query
-    
+
     // 构建查询条件
     const where: any = {}
-    
+
     if (role) {
       where.role = role as string
     }
@@ -120,11 +212,11 @@ export const getUsers = async (req: Request, res: Response) => {
         contains: email.toString().trim()
       }
     }
-    
+
     // 计算分页
     const skip = (Number(page) - 1) * Number(limit)
     const take = Number(limit)
-    
+
     // 查询用户
     const [users, total] = await Promise.all([
       prisma.user.findMany({
@@ -154,7 +246,7 @@ export const getUsers = async (req: Request, res: Response) => {
       }),
       prisma.user.count({ where })
     ])
-    
+
     // 获取每个用户的完成小节数
     const userIds = users.map(user => user.id)
     const sectionCompletions = await prisma.sectionCompletion.groupBy({
@@ -168,13 +260,13 @@ export const getUsers = async (req: Request, res: Response) => {
         sectionId: true
       }
     })
-    
+
     // 创建完成小节数映射
     const completedSectionsMap = new Map<string, number>()
     sectionCompletions.forEach(completion => {
       completedSectionsMap.set(completion.userId, completion._count.sectionId)
     })
-    
+
     // 格式化返回数据
     const formattedUsers = users.map(user => ({
       id: user.id,
@@ -192,7 +284,7 @@ export const getUsers = async (req: Request, res: Response) => {
       discussionsCount: user._count.discussions,
       commentsCount: user._count.comments
     }))
-    
+
     res.json({
       success: true,
       data: {
@@ -213,18 +305,17 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const { name, email, role } = req.body
-    
+
     const user = await prisma.user.findUnique({ where: { id } })
     if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
-    
-    // 检查邮箱是否已被其他用户使用
+
     if (email && email !== user.email) {
       const existingUser = await prisma.user.findUnique({ where: { email } })
       if (existingUser) {
         return res.status(400).json({ success: false, message: '邮箱已被使用' })
       }
     }
-    
+
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
@@ -240,11 +331,11 @@ export const updateUser = async (req: Request, res: Response) => {
         avatar: true
       }
     })
-    
-    res.json({ 
-      success: true, 
-      message: '更新成功', 
-      data: { 
+
+    res.json({
+      success: true,
+      message: '更新成功',
+      data: {
         user: {
           id: updatedUser.id,
           name: updatedUser.username,
@@ -252,7 +343,7 @@ export const updateUser = async (req: Request, res: Response) => {
           role: updatedUser.role,
           avatar: updatedUser.avatar || ''
         }
-      } 
+      }
     })
   } catch (error: any) {
     console.error('更新用户错误:', error)
@@ -317,17 +408,16 @@ export const enableUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    
+
     const user = await prisma.user.findUnique({ where: { id } })
     if (!user) return res.status(404).json({ success: false, message: '用户不存在' })
-    
-    // 防止删除管理员账号
+
     if (user.role === 'ADMIN') {
       return res.status(403).json({ success: false, message: '不能删除管理员账号' })
     }
-    
+
     await prisma.user.delete({ where: { id } })
-    
+
     res.json({ success: true, message: '删除成功' })
   } catch (error: any) {
     console.error('删除用户错误:', error)
@@ -339,15 +429,13 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const getCourses = async (req: Request, res: Response) => {
   try {
     const { page = 1, limit = 20, type, title, status, category } = req.query
-    
-    // 构建查询条件
+
     const where: any = {}
-    
-    // 排除从 Markdown 导入的课程（ID 以 course- 开头）
+
     where.NOT = {
       id: { startsWith: 'course-' }
     }
-    
+
     if (type) {
       where.level = type as string
     }
@@ -362,8 +450,7 @@ export const getCourses = async (req: Request, res: Response) => {
     if (status && status.toString().trim()) {
       where.status = status.toString().trim()
     }
-    
-    // 分类排序权重（基础入门最前，生态工具最后）
+
     const CATEGORY_ORDER: Record<string, number> = {
       'fundamentals': 0,
       'core-syntax': 1,
@@ -373,7 +460,6 @@ export const getCourses = async (req: Request, res: Response) => {
       'ecosystem': 5
     }
 
-    // 取全量数据后在 JS 排序，解决新建课程 order 字段为空的问题
     const allCourses = await prisma.course.findMany({
       where,
       select: {
@@ -396,7 +482,6 @@ export const getCourses = async (req: Request, res: Response) => {
       }
     })
 
-    // 按分类权重 → 分类内按 order（无 order 排最后）
     allCourses.sort((a, b) => {
       const catA = CATEGORY_ORDER[a.category ?? ''] ?? 99
       const catB = CATEGORY_ORDER[b.category ?? ''] ?? 99
@@ -408,39 +493,35 @@ export const getCourses = async (req: Request, res: Response) => {
 
     const total = allCourses.length
     const skip = (Number(page) - 1) * Number(limit)
-    const take = Number(limit)
-    const courses = allCourses.slice(skip, skip + take)
-    
-    // 格式化返回数据
-    const formattedCourses = courses.map(course => {
-      return {
-        id: course.id,
-        title: course.title,
-        level: course.level || '',
-        category: course.category || '',
-        type: course.level || 'beginner',
-        duration: course.duration || '',
-        cover: course.cover || '',
-        url: course.url || '',
-        content: course.content || '',
-        status: course.status || 'draft',
-        viewCount: course.viewCount || 0,
-        studentCount: course.studentCount || 0,
-        favoriteCount: course.favoriteCount || 0,
-        students: course.studentCount || 0,
-        completionRate: 0,
-        updatedAt: formatDate(course.updatedAt)
-      }
-    })
-    
-    res.json({ 
-      success: true, 
-      data: { 
-        items: formattedCourses, 
+    const courses = allCourses.slice(skip, skip + Number(limit))
+
+    const formattedCourses = courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      level: course.level || '',
+      category: course.category || '',
+      type: course.level || 'beginner',
+      duration: course.duration || '',
+      cover: course.cover || '',
+      url: course.url || '',
+      content: course.content || '',
+      status: course.status || 'draft',
+      viewCount: course.viewCount || 0,
+      studentCount: course.studentCount || 0,
+      favoriteCount: course.favoriteCount || 0,
+      students: course.studentCount || 0,
+      completionRate: 0,
+      updatedAt: formatDate(course.updatedAt)
+    }))
+
+    res.json({
+      success: true,
+      data: {
+        items: formattedCourses,
         total,
         page: Number(page),
         limit: Number(limit)
-      } 
+      }
     })
   } catch (error: any) {
     console.error('获取课程列表错误:', error)
@@ -452,12 +533,11 @@ export const getCourses = async (req: Request, res: Response) => {
 export const createCourse = async (req: Request, res: Response) => {
   try {
     const { title, category, level, duration, cover, url, content, status } = req.body
-    
-    // 验证必填字段
+
     if (!title) {
       return res.status(400).json({ success: false, message: '课程标题不能为空' })
     }
-    
+
     const course = await prisma.course.create({
       data: {
         title,
@@ -470,11 +550,11 @@ export const createCourse = async (req: Request, res: Response) => {
         status: status || 'draft'
       }
     })
-    
-    res.json({ 
-      success: true, 
-      message: '创建成功', 
-      data: { 
+
+    res.json({
+      success: true,
+      message: '创建成功',
+      data: {
         course: {
           id: course.id,
           title: course.title,
@@ -487,7 +567,7 @@ export const createCourse = async (req: Request, res: Response) => {
           content: course.content || '',
           status: course.status || 'draft'
         }
-      } 
+      }
     })
   } catch (error: any) {
     console.error('创建课程错误:', error)
@@ -500,11 +580,10 @@ export const updateCourse = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const { title, category, level, duration, cover, url, content, status } = req.body
-    
+
     const course = await prisma.course.findUnique({ where: { id } })
     if (!course) return res.status(404).json({ success: false, message: '课程不存在' })
-    
-    // 构建更新数据
+
     const updateData: any = {}
     if (title !== undefined) updateData.title = title
     if (category !== undefined) updateData.category = category
@@ -514,16 +593,16 @@ export const updateCourse = async (req: Request, res: Response) => {
     if (duration !== undefined) updateData.duration = duration
     if (content !== undefined) updateData.content = content
     if (status !== undefined) updateData.status = status
-    
+
     const updatedCourse = await prisma.course.update({
       where: { id },
       data: updateData
     })
-    
-    res.json({ 
-      success: true, 
-      message: '更新成功', 
-      data: { 
+
+    res.json({
+      success: true,
+      message: '更新成功',
+      data: {
         course: {
           id: updatedCourse.id,
           title: updatedCourse.title,
@@ -536,7 +615,7 @@ export const updateCourse = async (req: Request, res: Response) => {
           content: updatedCourse.content || '',
           status: updatedCourse.status || 'draft'
         }
-      } 
+      }
     })
   } catch (error: any) {
     console.error('更新课程错误:', error)
@@ -591,12 +670,12 @@ export const duplicateCourse = async (req: Request, res: Response) => {
 export const deleteCourse = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    
+
     const course = await prisma.course.findUnique({ where: { id } })
     if (!course) return res.status(404).json({ success: false, message: '课程不存在' })
-    
+
     await prisma.course.delete({ where: { id } })
-    
+
     res.json({ success: true, message: '删除成功' })
   } catch (error: any) {
     console.error('删除课程错误:', error)
@@ -629,30 +708,134 @@ export const publishAllCourses = async (req: Request, res: Response) => {
 // 获取统计数据
 export const getStats = async (req: Request, res: Response) => {
   try {
-    // 并行查询所有统计数据
-    const [totalUsers, totalCourses, totalDiscussions, recentUsers] = await Promise.all([
+    const dailyBuckets = buildRecentDailyBuckets(7)
+    const todayBucket = dailyBuckets[dailyBuckets.length - 1]
+    const yesterdayBucket = dailyBuckets[dailyBuckets.length - 2]
+
+    const [
+      totalUsers,
+      totalCourses,
+      totalDiscussions,
+      recentUsers,
+      newUsersToday,
+      newUsersYesterday,
+      todayActiveUsers,
+      adminCount,
+      moderatorCount,
+      userCount,
+      weeklyUsersData,
+      weeklyActiveUsersData
+    ] = await Promise.all([
       prisma.user.count(),
       prisma.course.count(),
       prisma.discussion.count(),
-      prisma.user.count({
-        where: {
-          lastLoginAt: {
-            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 最近7天
-          }
-        }
+      countUsersActiveInRange(dailyBuckets[0].start, todayBucket.end),
+      countUsersCreatedInRange(todayBucket.start, todayBucket.end),
+      countUsersCreatedInRange(yesterdayBucket.start, yesterdayBucket.end),
+      countUsersActiveInRange(todayBucket.start, todayBucket.end),
+      prisma.user.count({ where: { role: 'ADMIN' } }),
+      prisma.user.count({ where: { role: 'MODERATOR' } }),
+      prisma.user.count({ where: { role: 'USER' } }),
+      countUsersCreatedInBuckets(dailyBuckets),
+      Promise.all(dailyBuckets.map(bucket => countUsersActiveInRange(bucket.start, bucket.end)))
+    ])
+
+    // 计算实际的质量指标（基于最近30天的数据）
+    const monthStart = startOfDay(new Date(Date.now() - 30 * DAY_MS))
+    
+    // 1. 平均课程完成率
+    const [totalCourseCompletions, totalCourseStudents] = await Promise.all([
+      prisma.courseCompletion.count({
+        where: { completedAt: { gte: monthStart } }
+      }),
+      prisma.course.aggregate({
+        _sum: { studentCount: true },
+        where: { status: 'published' }
       })
     ])
+    const courseCompletion = totalCourseStudents._sum.studentCount && totalCourseStudents._sum.studentCount > 0
+      ? Math.round((totalCourseCompletions / totalCourseStudents._sum.studentCount) * 100)
+      : 0
     
-    // TODO: 计算实际完成率（需要学习记录表）
-    const completionRate = 78
+    // 2. 用户活跃度 (DAU/MAU)
+    const [dauUsers, mauUsers] = await Promise.all([
+      countUsersActiveInRange(todayBucket.start, todayBucket.end),
+      countUsersActiveInRange(monthStart, todayBucket.end)
+    ])
+    const userActivity = mauUsers > 0 ? Math.round((dauUsers / mauUsers) * 100) : 0
+    const userActivityLabel = getActivityLabel(userActivity)
     
+    // 3. 讨论互动率
+    const [discussionStats, commentStats] = await Promise.all([
+      prisma.discussion.aggregate({
+        _sum: { views: true, likes: true },
+        _count: { id: true },
+        where: { createdAt: { gte: monthStart } }
+      }),
+      prisma.comment.aggregate({
+        _sum: { likes: true },
+        _count: { id: true },
+        where: { createdAt: { gte: monthStart } }
+      })
+    ])
+    const totalDiscussionViews = discussionStats._sum.views || 0
+    const totalDiscussionLikes = discussionStats._sum.likes || 0
+    const totalCommentLikes = commentStats._sum.likes || 0
+    const totalDiscussionsCount = discussionStats._count.id
+    const totalComments = commentStats._count.id
+    const discussionEngagement = totalDiscussionsCount > 0
+      ? Math.min(Math.round(((totalDiscussionLikes + totalCommentLikes) / totalDiscussionsCount) * 10), 100)
+      : 0
+    
+    // 4. 资源利用率
+    const resourceStats = await prisma.resource.aggregate({
+      _sum: { viewCount: true, likeCount: true, favoriteCount: true },
+      _count: { id: true },
+      where: { status: 'published' }
+    })
+    const totalResourceViews = resourceStats._sum.viewCount || 0
+    const totalResourceLikes = resourceStats._sum.likeCount || 0
+    const totalResourceFavorites = resourceStats._sum.favoriteCount || 0
+    const totalResources = resourceStats._count.id
+    const resourceUtilization = totalResources > 0
+      ? Math.min(Math.round(((totalResourceViews + totalResourceLikes + totalResourceFavorites) / (totalResources * 100)) * 100), 100)
+      : 0
+    const weeklyActivityData = weeklyActiveUsersData.map(count => totalUsers > 0 ? Math.round((count / totalUsers) * 100) : 0)
+
     const stats = {
       totalUsers,
       totalCourses,
-      completionRate,
-      activeUsers: recentUsers
+      completionRate: courseCompletion,
+      activeUsers: recentUsers,
+      dashboard: {
+        newUsersToday,
+        newUsersYesterday,
+        todayActiveUsers,
+        activityRate: userActivity,
+        activityLabel: userActivityLabel,
+        qualityMetrics: {
+          courseCompletion,
+          userActivity,
+          userActivityLabel,
+          discussionEngagement,
+          resourceUtilization
+        },
+        roleDistribution: {
+          admin: adminCount,
+          moderator: moderatorCount,
+          user: userCount
+        },
+        weeklyTrend: {
+          usersData: weeklyUsersData,
+          usersTotal: weeklyUsersData.reduce((sum, count) => sum + count, 0),
+          activityData: weeklyActivityData,
+          activityAvg: weeklyActivityData.length > 0
+            ? Math.round(weeklyActivityData.reduce((sum, count) => sum + count, 0) / weeklyActivityData.length)
+            : 0
+        }
+      }
     }
-    
+
     res.json({ success: true, data: stats })
   } catch (error: any) {
     console.error('获取统计数据错误:', error)
@@ -663,14 +846,45 @@ export const getStats = async (req: Request, res: Response) => {
 // 获取分析数据
 export const getAnalytics = async (req: Request, res: Response) => {
   try {
-    // TODO: 实现更详细的数据分析
-    // 用户增长趋势、课程热度、学习时长等
+    const dailyBuckets = buildRecentDailyBuckets(7)
+    const weeklyBuckets = buildRecentWeeklyBuckets(5)
+    const monthlyBuckets = buildRecentMonthlyBuckets(6)
+    const todayBucket = dailyBuckets[dailyBuckets.length - 1]
+    const monthStart = startOfDay(new Date(Date.now() - 30 * DAY_MS))
+
+    const [totalUsers, newUsersToday, newUsersWeek, newUsersMonth, weekUsers, monthUsers, halfYearUsers] = await Promise.all([
+      prisma.user.count(),
+      countUsersCreatedInRange(todayBucket.start, todayBucket.end),
+      countUsersCreatedInRange(dailyBuckets[0].start, todayBucket.end),
+      countUsersCreatedInRange(monthStart, todayBucket.end),
+      countUsersCreatedInBuckets(dailyBuckets),
+      countUsersCreatedInBuckets(weeklyBuckets),
+      countUsersCreatedInBuckets(monthlyBuckets)
+    ])
+
     const analytics = {
-      userGrowth: [],
-      courseProgress: [],
-      revenueData: []
+      totalUsers,
+      newUsers: {
+        today: newUsersToday,
+        week: newUsersWeek,
+        month: newUsersMonth
+      },
+      trends: {
+        week: {
+          labels: dailyBuckets.map(bucket => bucket.label),
+          users: weekUsers
+        },
+        month: {
+          labels: weeklyBuckets.map(bucket => bucket.label),
+          users: monthUsers
+        },
+        halfYear: {
+          labels: monthlyBuckets.map(bucket => bucket.label),
+          users: halfYearUsers
+        }
+      }
     }
-    
+
     res.json({ success: true, data: analytics })
   } catch (error: any) {
     console.error('获取分析数据错误:', error)
@@ -774,7 +988,7 @@ export const exportUsers = async (req: Request, res: Response) => {
       id: (user: any) => user.id,
       username: (user: any) => user.username,
       email: (user: any) => user.email,
-      role: (user: any) => user.role === 'ADMIN' ? '管理员' : user.role === 'MODERATOR' ? '教师' : '学生',
+      role: (user: any) => user.role === 'ADMIN' ? '超级管理员' : user.role === 'MODERATOR' ? '管理员' : '用户',
       status: (user: any) => user.status === 'active' ? '正常' : user.status === 'disabled' ? '禁用' : '封禁',
       lastLoginAt: (user: any) => user.lastLoginAt ? user.lastLoginAt.toLocaleString('zh-CN') : '从未登录',
       createdAt: (user: any) => user.createdAt.toLocaleString('zh-CN'),
@@ -1011,30 +1225,4 @@ export const exportCourses = async (req: Request, res: Response) => {
     console.error('导出课程错误:', error)
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
-}
-
-// CommonJS exports for compatibility
-module.exports = {
-  login,
-  getAdminInfo,
-  getUsers,
-  updateUser,
-  resetUserPassword,
-  disableUser,
-  enableUser,
-  deleteUser,
-  getCourses,
-  createCourse,
-  updateCourse,
-  deleteCourse,
-  duplicateCourse,
-  publishAllCourses,
-  getStats,
-  getAnalytics,
-  publishAllResources,
-  batchDeleteUsers,
-  exportUsers,
-  batchDeleteCourses,
-  batchPublishCourses,
-  exportCourses
 }

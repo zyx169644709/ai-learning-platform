@@ -92,7 +92,7 @@
           </template>
           <div class="todo-list">
             <div 
-              v-for="todo in todos" 
+              v-for="todo in visibleTodos" 
               :key="todo.type"
               class="todo-item"
               :class="{ urgent: todo.count > 5 }"
@@ -170,6 +170,7 @@
               添加资源
             </el-button>
             <el-button 
+              v-if="userStore.isSuperAdmin"
               type="info" 
               :icon="User" 
               @click="$router.push('/admin/users')"
@@ -189,7 +190,10 @@
         <!-- 内容质量监控 -->
         <el-card class="quality-card">
           <template #header>
-            <span>📈 内容质量指标</span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>📈 内容质量指标</span>
+              <span style="font-size: 12px; color: #909399;">基于近30天数据</span>
+            </div>
           </template>
           <div class="quality-metrics">
             <div class="metric-item">
@@ -239,7 +243,7 @@
               <el-icon><Avatar /></el-icon>
             </div>
             <div class="role-info">
-              <div class="role-name">管理员</div>
+              <div class="role-name">超级管理员</div>
               <div class="role-count">{{ userRoles.admin }} 人</div>
             </div>
           </div>
@@ -248,7 +252,7 @@
               <el-icon><User /></el-icon>
             </div>
             <div class="role-info">
-              <div class="role-name">版主</div>
+              <div class="role-name">管理员</div>
               <div class="role-count">{{ userRoles.moderator }} 人</div>
             </div>
           </div>
@@ -257,7 +261,7 @@
               <el-icon><UserFilled /></el-icon>
             </div>
             <div class="role-info">
-              <div class="role-name">普通用户</div>
+              <div class="role-name">用户</div>
               <div class="role-count">{{ userRoles.user.toLocaleString() }} 人</div>
             </div>
           </div>
@@ -331,6 +335,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 import request from '@/utils/request'
 import { ElMessage } from 'element-plus'
 import { 
@@ -353,6 +358,7 @@ import {
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
+const userStore = useUserStore()
 const loading = ref(false)
 
 // 今日统计数据
@@ -416,7 +422,12 @@ const todos = ref([
 ])
 
 const totalTodos = computed(() => {
-  return todos.value.reduce((sum, todo) => sum + todo.count, 0)
+  return visibleTodos.value.reduce((sum, todo) => sum + todo.count, 0)
+})
+
+const visibleTodos = computed(() => {
+  if (userStore.isSuperAdmin) return todos.value
+  return todos.value.filter(todo => todo.type !== 'newUsers')
 })
 
 // 实时活动流
@@ -456,8 +467,8 @@ const loadDashboardData = async () => {
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
     
-    const [usersRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, commentsRes] = await Promise.all([
-      request.get('/admin/users?page=1&limit=1000'),
+    const [statsRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, commentsRes] = await Promise.all([
+      request.get('/admin/stats'),
       request.get('/admin/courses?page=1&limit=1000'),
       request.get('/admin/resources?page=1&limit=1000'),
       request.get('/admin/community/discussions?page=1&limit=1000'),
@@ -465,21 +476,19 @@ const loadDashboardData = async () => {
       request.get('/admin/community/comments?page=1&limit=1000')
     ])
 
-    const allUsers = usersRes.data?.data?.items || []
+    const statsData = statsRes.data?.data || {}
+    const dashboardStats = statsData.dashboard || {}
+    const userRoleDistribution = dashboardStats.roleDistribution || {}
+    const userWeeklyTrend = dashboardStats.weeklyTrend || {}
     const allCourses = coursesRes.data?.data?.items || []
     const allResources = resourcesRes.data?.data?.items || []
     const allDiscussions = discussionsRes.data?.data?.items || []
     const allChapters = chaptersRes.data?.data?.items || []
     const allComments = commentsRes.data?.data?.items || []
-
-    // 计算今日新增（兼容registeredAt和createdAt字段）
-    const todayUsers = allUsers.filter((u: any) => {
-      const dateStr = u.registeredAt || u.createdAt
-      if (!dateStr) return false
-      // 处理格式化的日期字符串 "2026-03-05 09:12" 或 ISO 格式
-      const userDate = new Date(dateStr.replace(' ', 'T'))
-      return userDate >= todayStart
-    })
+    const todayUsersCount = Number(dashboardStats.newUsersToday || 0)
+    const yesterdayUsersCount = Number(dashboardStats.newUsersYesterday || 0)
+    const activityRate = Number(dashboardStats.activityRate || 0)
+    const activityLabel = dashboardStats.activityLabel || '较低'
     
     const todayContent = [
       ...allCourses.filter((c: any) => {
@@ -502,17 +511,9 @@ const loadDashboardData = async () => {
       })
     ]
 
-    // 计算昨日数据用于增长率
+    // 计算昨日新增内容
     const yesterdayStart = new Date(todayStart)
     yesterdayStart.setDate(yesterdayStart.getDate() - 1)
-    const yesterdayUsers = allUsers.filter((u: any) => {
-      const dateStr = u.registeredAt || u.createdAt
-      if (!dateStr) return false
-      const userDate = new Date(dateStr.replace(' ', 'T'))
-      return userDate >= yesterdayStart && userDate < todayStart
-    })
-    
-    // 计算昨日新增内容
     const yesterdayContent = [
       ...allCourses.filter((c: any) => {
         const dateStr = c.updatedAt || c.createdAt
@@ -533,34 +534,12 @@ const loadDashboardData = async () => {
         return chapterDate >= yesterdayStart && chapterDate < todayStart
       })
     ]
-    
-    // 计算今日登录用户数（基于lastLogin字段）
-    const todayActiveUsers = allUsers.filter((u: any) => {
-      const lastLogin = u.lastLogin
-      if (!lastLogin || lastLogin === '-') return false
-      // 处理格式化的日期字符串 "2026-03-05 09:12"
-      const loginDate = new Date(lastLogin.replace(' ', 'T'))
-      return loginDate >= todayStart
-    })
-
-    // 用户活跃度 = 今日登录用户数 / 总用户数 × 100%
-    const activityRate = allUsers.length > 0 ? Math.round((todayActiveUsers.length / allUsers.length) * 100) : 0
-    
-    // 活跃度评级标准
-    let activityLabel = '较低'
-    if (activityRate >= 50) {
-      activityLabel = '优秀'
-    } else if (activityRate >= 30) {
-      activityLabel = '良好'
-    } else if (activityRate >= 10) {
-      activityLabel = '一般'
-    }
 
     todayStats.value = {
-      newUsers: todayUsers.length,
-      userGrowth: yesterdayUsers.length > 0 
-        ? Math.round(((todayUsers.length - yesterdayUsers.length) / yesterdayUsers.length) * 100)
-        : (todayUsers.length > 0 ? 100 : 0),
+      newUsers: todayUsersCount,
+      userGrowth: yesterdayUsersCount > 0 
+        ? Math.round(((todayUsersCount - yesterdayUsersCount) / yesterdayUsersCount) * 100)
+        : (todayUsersCount > 0 ? 100 : 0),
       newContent: todayContent.length,
       contentGrowth: yesterdayContent.length > 0
         ? Math.round(((todayContent.length - yesterdayContent.length) / yesterdayContent.length) * 100)
@@ -574,25 +553,12 @@ const loadDashboardData = async () => {
     // 更新待办事项
     todos.value[0].count = allDiscussions.filter((d: any) => d.status === 'pending').length
     todos.value[1].count = allComments.filter((c: any) => c.status === 'pending').length
-    todos.value[2].count = todayUsers.length
+    todos.value[2].count = todayUsersCount
     todos.value[3].count = allCourses.filter((c: any) => c.status === 'draft').length
     todos.value[4].count = allResources.filter((r: any) => r.status === 'draft').length
 
     // 生成实时活动流
     const activities: any[] = []
-    
-    // 所有用户注册活动
-    allUsers.forEach((user: any) => {
-      activities.push({
-        id: `user-${user.id}`,
-        content: `用户 "${user.name || user.username}" 注册了账号`,
-        timestamp: formatTime(user.registeredAt || user.createdAt),
-        type: 'success',
-        icon: markRaw(UserFilled),
-        tag: '新用户',
-        tagType: 'success'
-      })
-    })
 
     // 所有讨论发布活动
     allDiscussions.forEach((discussion: any) => {
@@ -626,25 +592,22 @@ const loadDashboardData = async () => {
     activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     recentActivities.value = activities.slice(0, 10)
 
-    // 计算质量指标
-    const totalCourses = allCourses.length
-    const totalUsers = allUsers.length
-    const totalDiscussions = allDiscussions.length
-    const totalResources = allResources.length
-
-    qualityMetrics.value = {
-      courseCompletion: totalCourses > 0 ? Math.min(Math.round((totalCourses / (totalCourses + 10)) * 100), 100) : 0,
-      userActivity: activityRate,
-      userActivityLabel: activityLabel,
-      discussionEngagement: totalDiscussions > 0 ? Math.min(Math.round((allComments.length / totalDiscussions) * 10), 100) : 0,
-      resourceUtilization: totalResources > 0 ? Math.min(Math.round((totalResources / (totalResources + 5)) * 100), 100) : 0
+    // 使用后端计算的质量指标
+    if (dashboardStats.qualityMetrics) {
+      qualityMetrics.value = {
+        courseCompletion: dashboardStats.qualityMetrics.courseCompletion || 0,
+        userActivity: dashboardStats.qualityMetrics.userActivity || 0,
+        userActivityLabel: dashboardStats.qualityMetrics.userActivityLabel || '良好',
+        discussionEngagement: dashboardStats.qualityMetrics.discussionEngagement || 0,
+        resourceUtilization: dashboardStats.qualityMetrics.resourceUtilization || 0
+      }
     }
 
     // 用户角色分布
     userRoles.value = {
-      admin: allUsers.filter((u: any) => u.role === 'ADMIN').length,
-      moderator: allUsers.filter((u: any) => u.role === 'MODERATOR').length,
-      user: allUsers.filter((u: any) => u.role === 'USER').length
+      admin: Number(userRoleDistribution.admin || 0),
+      moderator: Number(userRoleDistribution.moderator || 0),
+      user: Number(userRoleDistribution.user || 0)
     }
 
     // 本周趋势 - 计算最近7天的每日数据
@@ -655,17 +618,7 @@ const loadDashboardData = async () => {
       return date
     })
     
-    // 计算每天的新增用户数
-    const dailyUsersData = last7Days.map(day => {
-      const nextDay = new Date(day)
-      nextDay.setDate(nextDay.getDate() + 1)
-      return allUsers.filter((u: any) => {
-        const dateStr = u.registeredAt || u.createdAt
-        if (!dateStr) return false
-        const userDate = new Date(dateStr.replace(' ', 'T'))
-        return userDate >= day && userDate < nextDay
-      }).length
-    })
+    const dailyUsersData = Array.isArray(userWeeklyTrend.usersData) ? userWeeklyTrend.usersData : []
     
     // 计算每天的新增内容数
     const dailyContentData = last7Days.map(day => {
@@ -694,28 +647,17 @@ const loadDashboardData = async () => {
       return dayContent.length
     })
     
-    // 计算每天的活跃度
-    const dailyActivityData = last7Days.map(day => {
-      const nextDay = new Date(day)
-      nextDay.setDate(nextDay.getDate() + 1)
-      const dayActiveUsers = allUsers.filter((u: any) => {
-        const lastLogin = u.lastLogin
-        if (!lastLogin || lastLogin === '-') return false
-        const loginDate = new Date(lastLogin.replace(' ', 'T'))
-        return loginDate >= day && loginDate < nextDay
-      }).length
-      return totalUsers > 0 ? Math.round((dayActiveUsers / totalUsers) * 100) : 0
-    })
+    const dailyActivityData = Array.isArray(userWeeklyTrend.activityData) ? userWeeklyTrend.activityData : []
 
     weeklyTrend.value = {
       usersData: dailyUsersData,
-      usersTotal: dailyUsersData.reduce((a, b) => a + b, 0),
+      usersTotal: Number(userWeeklyTrend.usersTotal || dailyUsersData.reduce((a: number, b: number) => a + b, 0)),
       contentData: dailyContentData,
       contentTotal: dailyContentData.reduce((a, b) => a + b, 0),
       activityData: dailyActivityData,
-      activityAvg: dailyActivityData.length > 0 
-        ? Math.round(dailyActivityData.reduce((a, b) => a + b, 0) / dailyActivityData.length) 
-        : 0
+      activityAvg: Number(userWeeklyTrend.activityAvg || (dailyActivityData.length > 0 
+        ? Math.round(dailyActivityData.reduce((a: number, b: number) => a + b, 0) / dailyActivityData.length) 
+        : 0))
     }
 
   } catch (error) {
@@ -746,7 +688,7 @@ const handleTodoClick = (type: string) => {
   } else if (type === 'pendingComments') {
     router.push('/admin/community/discussions?review=comments')
   } else {
-    const todo = todos.value.find(t => t.type === type)
+    const todo = visibleTodos.value.find(t => t.type === type)
     if (todo && todo.route) router.push(todo.route)
   }
 }

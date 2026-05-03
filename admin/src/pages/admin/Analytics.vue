@@ -505,8 +505,8 @@ const filterByTimeRange = (items: any[], dateField: string = 'createdAt') => {
 const loadAllData = async () => {
   loading.value = true
   try {
-    const [usersRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, sectionsRes, commentsRes] = await Promise.all([
-      request.get('/admin/users?page=1&limit=1000'),
+    const [analyticsRes, coursesRes, resourcesRes, discussionsRes, chaptersRes, sectionsRes, commentsRes] = await Promise.all([
+      request.get('/admin/analytics'),
       request.get('/admin/courses?page=1&limit=1000'),
       request.get('/admin/resources?page=1&limit=1000'),
       request.get('/admin/community/discussions?page=1&limit=1000'),
@@ -516,7 +516,7 @@ const loadAllData = async () => {
     ])
     
     // 获取所有数据
-    const allUsers = usersRes.data?.data?.items || []
+    const analyticsData = analyticsRes.data?.data || {}
     const allCourses = coursesRes.data?.data?.items || []
     const allResources = resourcesRes.data?.data?.items || []
     const allDiscussions = discussionsRes.data?.data?.items || []
@@ -525,7 +525,6 @@ const loadAllData = async () => {
     const allComments = commentsRes.data?.data?.items || []
     
     // 根据时间周期筛选数据（使用正确的日期字段）
-    const filteredUsers = filterByTimeRange(allUsers, 'registeredAt')
     const filteredCourses = filterByTimeRange(allCourses, 'updatedAt')
     const filteredResources = filterByTimeRange(allResources, 'updatedAt')
     const filteredDiscussions = filterByTimeRange(allDiscussions, 'createdAt')
@@ -542,10 +541,15 @@ const loadAllData = async () => {
       return newCount > 0 ? `+${rate}%` : '0%'
     }
     
-    const totalUsers = usersRes.data?.data?.total || 0
+    const totalUsers = analyticsData.totalUsers || 0
+    const newUsersCount = timePeriod.value === '今日'
+      ? Number(analyticsData.newUsers?.today || 0)
+      : timePeriod.value === '本周'
+        ? Number(analyticsData.newUsers?.week || 0)
+        : Number(analyticsData.newUsers?.month || 0)
     statsCards.value[0].value = totalUsers
-    statsCards.value[0].subtext = `${periodText}新增 ${filteredUsers.length}`
-    statsCards.value[0].trend = calculateGrowthRate(filteredUsers.length, totalUsers)
+    statsCards.value[0].subtext = `${periodText}新增 ${newUsersCount}`
+    statsCards.value[0].trend = calculateGrowthRate(newUsersCount, totalUsers)
     
     const totalCourses = coursesRes.data?.data?.total || 0
     statsCards.value[1].value = totalCourses
@@ -582,7 +586,7 @@ const loadAllData = async () => {
     generateRankData(allCourses, allResources, allSections, allDiscussions)
     
     // 生成趋势数据
-    generateTrendData(allUsers, allCourses, allDiscussions, allChapters, allComments)
+    generateTrendData(analyticsData.trends?.[trendPeriod.value]?.users || [], allCourses, allDiscussions, allChapters, allComments)
     
   } catch (error) {
     console.error('Failed to load analytics data:', error)
@@ -593,9 +597,8 @@ const loadAllData = async () => {
 }
 
 // 生成趋势数据
-const generateTrendData = (users: any[], courses: any[], discussions: any[], chapters: any[], comments: any[]) => {
+const generateTrendData = (userTrendCounts: number[], courses: any[], discussions: any[], chapters: any[], comments: any[]) => {
   const dates: string[] = []
-  const userCounts: number[] = []
   const courseCounts: number[] = []
   const discussionCounts: number[] = []
   const chapterCounts: number[] = []
@@ -612,11 +615,6 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[], cha
       startDate.setHours(0, 0, 0, 0)
       const endDate = new Date(startDate)
       endDate.setHours(23, 59, 59, 999)
-      
-      userCounts.push(users.filter(u => {
-        const d = new Date(u.registeredAt || u.createdAt)
-        return d >= startDate && d <= endDate
-      }).length)
       
       courseCounts.push(courses.filter(c => {
         const d = new Date(c.updatedAt || c.createdAt)
@@ -652,11 +650,6 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[], cha
       weekStart.setHours(0, 0, 0, 0)
       weekEnd.setHours(23, 59, 59, 999)
       
-      userCounts.push(users.filter(u => {
-        const d = new Date(u.registeredAt || u.createdAt)
-        return d >= weekStart && d <= weekEnd
-      }).length)
-      
       courseCounts.push(courses.filter(c => {
         const d = new Date(c.updatedAt || c.createdAt)
         return d >= weekStart && d <= weekEnd
@@ -686,11 +679,6 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[], cha
       const monthStart = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
       const monthEnd = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0, 23, 59, 59, 999)
       
-      userCounts.push(users.filter(u => {
-        const d = new Date(u.registeredAt || u.createdAt)
-        return d >= monthStart && d <= monthEnd
-      }).length)
-      
       courseCounts.push(courses.filter(c => {
         const d = new Date(c.updatedAt || c.createdAt)
         return d >= monthStart && d <= monthEnd
@@ -715,7 +703,7 @@ const generateTrendData = (users: any[], courses: any[], discussions: any[], cha
   
   trendDates.value = dates
   trendData.value = {
-    '新增用户': userCounts,
+    '新增用户': userTrendCounts,
     '新增课程': courseCounts,
     '新增讨论': discussionCounts,
     '新增章节': chapterCounts,

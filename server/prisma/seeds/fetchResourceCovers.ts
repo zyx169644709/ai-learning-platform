@@ -1,7 +1,10 @@
 //npx tsx prisma/seeds/fetchResourceCovers.ts
 import { PrismaClient } from '../../generated/prisma'
+import { mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 
 const prisma = new PrismaClient()
+const uploadsDir = path.resolve(__dirname, '../../uploads')
 
 // 通过 Microlink API 获取网站封面图（优先 og:image，降级 logo）
 async function fetchCoverFromMicrolink(url: string): Promise<string | null> {
@@ -36,25 +39,40 @@ async function fetchCoverFromMicrolink(url: string): Promise<string | null> {
   }
 }
 
+async function saveRemoteCoverToUploads(imageUrl: string, prefix: string, entityId: string) {
+  const response = await fetch(imageUrl)
+  if (!response.ok) {
+    throw new Error(`下载封面失败: ${response.status} ${response.statusText}`)
+  }
+
+  const arrayBuffer = await response.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+  const parsedUrl = new URL(imageUrl)
+  const extFromPath = path.extname(parsedUrl.pathname)
+  const contentType = response.headers.get('content-type') || ''
+  const ext = extFromPath || (contentType.includes('png') ? '.png' : contentType.includes('webp') ? '.webp' : '.jpg')
+  const fileName = `${prefix}-${entityId}${ext}`
+
+  await mkdir(uploadsDir, { recursive: true })
+  await writeFile(path.join(uploadsDir, fileName), buffer)
+
+  return `/uploads/${fileName}`
+}
+
 // 延迟函数，避免请求过快触发限流
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 async function fetchAndUpdateResourceCovers() {
   console.log('开始批量获取资源封面（Microlink API）...\n')
 
-  // 获取所有没有封面、但有 URL 的已发布资源
   const resources = await prisma.resource.findMany({
     where: {
-      url: { not: '' },
-      OR: [
-        { cover: null },
-        { cover: '' }
-      ]
+      url: { not: '' }
     },
     select: { id: true, title: true, url: true, cover: true }
   })
 
-  console.log(`找到 ${resources.length} 个需要获取封面的资源\n`)
+  console.log(`找到 ${resources.length} 个候选资源\n`)
 
   let successCount = 0
   let failCount = 0
@@ -67,17 +85,24 @@ async function fetchAndUpdateResourceCovers() {
       continue
     }
 
+    if (resource.cover?.startsWith('/uploads/')) {
+      console.log(`- 已是本地封面，跳过: ${resource.title}`)
+      skipCount++
+      continue
+    }
+
     console.log(`正在获取: ${resource.title}`)
     console.log(`  URL: ${resource.url}`)
 
     const coverUrl = await fetchCoverFromMicrolink(resource.url)
 
     if (coverUrl) {
+      const localCoverUrl = await saveRemoteCoverToUploads(coverUrl, 'resource-cover', resource.id)
       await prisma.resource.update({
         where: { id: resource.id },
-        data: { cover: coverUrl }
+        data: { cover: localCoverUrl }
       })
-      console.log(`  ✓ 封面已更新: ${coverUrl.substring(0, 80)}`)
+      console.log(`  ✓ 封面已更新: ${localCoverUrl}`)
       successCount++
     } else {
       console.log(`  ✗ 未获取到封面，跳过`)

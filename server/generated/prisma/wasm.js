@@ -265,6 +265,7 @@ exports.Prisma.QuizScalarFieldEnum = {
 exports.Prisma.QuestionScalarFieldEnum = {
   id: 'id',
   quizId: 'quizId',
+  questionType: 'questionType',
   content: 'content',
   options: 'options',
   correctAnswer: 'correctAnswer',

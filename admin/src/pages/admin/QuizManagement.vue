@@ -15,13 +15,21 @@
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-input
+        <el-select
           v-model="filterForm.category"
-          placeholder="分类（如 vue-basics）"
+          placeholder="分类"
           clearable
-          @input="debouncedSearch"
+          filterable
+          @change="debouncedSearch"
           style="width: 200px"
-        />
+        >
+          <el-option
+            v-for="option in quizCategoryOptions"
+            :key="option.value"
+            :label="option.label"
+            :value="option.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-select
@@ -39,50 +47,32 @@
         <el-button type="success" @click="openCreateDialog">
           <el-icon><Plus /></el-icon> 新建题库
         </el-button>
-        <el-button type="primary" @click="openQuickAddQuestionDialog">
-          <el-icon><Plus /></el-icon> 新增题目
-        </el-button>
+        <el-button type="primary" @click="openQuestionManagementEntry">题目管理</el-button>
       </template>
     </FilterBar>
 
     <el-card>
       <el-table
+        class="quiz-tree-table"
+        ref="quizTreeTableRef"
         :data="quizTreeData"
         stripe
         row-key="id"
         :tree-props="{ children: 'children' }"
         style="table-layout: auto"
+        @expand-change="handleQuizTreeExpandChange"
       >
-        <el-table-column prop="title" label="题目类型 / 标题" min-width="320">
+        <el-table-column prop="title" label="标题" min-width="320">
           <template #default="{ row }">
             <template v-if="row.nodeType === 'category'">
-              <el-tag type="warning" size="small" style="margin-right: 8px;">题目类型</el-tag>
-              <strong>{{ row.title }}</strong>
+              <span class="category-row-title">{{ row.title }}</span>
             </template>
             <template v-else-if="row.nodeType === 'quiz'">
               {{ row.title }}
             </template>
             <template v-else>
-              <span class="question-row-text">Q{{ (row.order ?? 0) + 1 }}. {{ row.content || row.title }}</span>
+              <span class="question-row-text">{{ row.content || row.title }}</span>
             </template>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="category" label="分类" min-width="140">
-          <template #default="{ row }">
-            {{ row.nodeType === 'question' ? '-' : row.category }}
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="slug" label="Slug" min-width="150">
-          <template #default="{ row }">
-            {{ row.nodeType === 'quiz' ? row.slug || '-' : '-' }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="及格线" width="90" align="center" header-align="center">
-          <template #default="{ row }">
-            {{ row.nodeType === 'quiz' ? row.passingScore : '-' }}
           </template>
         </el-table-column>
 
@@ -98,7 +88,7 @@
               {{ row.status === 'published' ? '已发布' : '草稿' }}
             </el-tag>
             <el-tag v-else-if="row.nodeType === 'question'" type="info">题目</el-tag>
-            <el-tag v-else type="warning">类型</el-tag>
+            <span v-else>-</span>
           </template>
         </el-table-column>
 
@@ -110,7 +100,10 @@
 
         <el-table-column label="操作" width="260" fixed="right">
           <template #default="{ row }">
-            <template v-if="row.nodeType === 'quiz'">
+            <template v-if="row.nodeType === 'category'">
+              <el-button type="primary" link @click="handleEditCategory(row)">编辑</el-button>
+            </template>
+            <template v-else-if="row.nodeType === 'quiz'">
               <el-button type="primary" link @click="openEditDialog(row)">编辑</el-button>
               <el-button type="warning" link @click="openQuestionsDialog(row)">管理题目</el-button>
               <el-button type="danger" link @click="handleDeleteQuiz(row)">删除</el-button>
@@ -118,7 +111,6 @@
             <template v-else-if="row.nodeType === 'question'">
               <el-button type="primary" link @click="editQuestionFromTree(row)">编辑题目</el-button>
             </template>
-            <span v-else style="color: var(--el-text-color-secondary);">-</span>
           </template>
         </el-table-column>
       </el-table>
@@ -147,7 +139,14 @@
           <el-input v-model="quizForm.title" placeholder="请输入题库标题" />
         </el-form-item>
         <el-form-item label="分类" prop="category">
-          <el-input v-model="quizForm.category" placeholder="例如：vue-basics" />
+          <el-select v-model="quizForm.category" placeholder="请选择分类" filterable allow-create default-first-option style="width: 100%">
+            <el-option
+              v-for="option in quizCategoryOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
         </el-form-item>
         <el-row :gutter="16">
           <el-col :span="12">
@@ -185,13 +184,45 @@
 
     <el-dialog v-model="showQuestionsDialog" width="980px" :title="`${currentQuiz?.title || ''} · 题目管理`">
       <div class="question-toolbar">
-        <el-button type="primary" @click="openQuestionEditor()">
-          <el-icon><Plus /></el-icon> 新增题目
-        </el-button>
+        <div class="question-toolbar-left">
+          <input
+            ref="questionImportInputRef"
+            type="file"
+            accept=".json,application/json"
+            style="display: none"
+            @change="handleQuestionJsonImport"
+          />
+          <el-button @click="downloadQuestionJsonTemplate">
+            <el-icon><Download /></el-icon> 下载JSON模板
+          </el-button>
+          <el-button :loading="importingQuestions" @click="triggerQuestionJsonImport">
+            <el-icon><Upload /></el-icon> 导入JSON
+          </el-button>
+        </div>
+        <div class="question-toolbar-right">
+          <el-radio-group v-model="questionSortMode" size="small">
+            <el-radio-button label="order">按录入顺序</el-radio-button>
+            <el-radio-button label="type">按题型分组</el-radio-button>
+          </el-radio-group>
+          <el-button type="primary" @click="openQuestionEditor()">
+            <el-icon><Plus /></el-icon> 新增题目
+          </el-button>
+        </div>
       </div>
 
-      <el-table :data="questions" stripe style="table-layout: auto">
-        <el-table-column prop="order" label="#" width="60" align="center" header-align="center" />
+      <el-table
+        class="question-table"
+        ref="questionTableRef"
+        :data="sortedQuestions"
+        stripe
+        row-key="id"
+        style="table-layout: auto"
+        @selection-change="handleQuestionSelectionChange"
+      >
+        <el-table-column type="selection" width="52" reserve-selection />
+        <el-table-column label="#" width="60" align="center" header-align="center">
+          <template #default="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
         <el-table-column label="题型" width="90" align="center" header-align="center">
           <template #default="{ row }">
             {{ row.questionType === 'multiple' ? '多选' : row.questionType === 'judge' ? '判断' : '单选' }}
@@ -213,6 +244,10 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <BatchActionBar :count="selectedQuestions.length" label="题目">
+        <el-button type="danger" @click="handleBatchDeleteQuestions">批量删除</el-button>
+      </BatchActionBar>
     </el-dialog>
 
     <el-dialog
@@ -244,7 +279,7 @@
           <el-input value="正确\n错误" type="textarea" :rows="2" disabled />
         </el-form-item>
         <el-row :gutter="16">
-          <el-col :span="12" v-if="isMultipleQuestion">
+          <el-col :span="24" v-if="isMultipleQuestion">
             <el-form-item label="正确序号" prop="multipleCorrectAnswers">
               <el-select
                 v-model="questionForm.multipleCorrectAnswers"
@@ -263,7 +298,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-else>
+          <el-col :span="24" v-else>
             <el-form-item label="正确序号" prop="correctAnswer">
               <el-select v-model="questionForm.correctAnswer" style="width: 100%" placeholder="请选择正确答案">
                 <el-option
@@ -273,11 +308,6 @@
                   :value="index"
                 />
               </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="排序" prop="order">
-              <el-input-number v-model="questionForm.order" :min="0" :max="999" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -291,14 +321,14 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showQuickAddQuestion" title="选择题库后新增题目" width="520px">
+    <el-dialog v-model="showQuickAddQuestion" title="选择题库后进入题目管理" width="520px">
       <el-form label-width="90px">
         <el-form-item label="目标题库" required>
           <el-select v-model="quickAddQuizId" placeholder="请选择题库" filterable style="width: 100%">
             <el-option
               v-for="quiz in quizzes"
               :key="quiz.id"
-              :label="`${quiz.category} / ${quiz.title}`"
+              :label="`${getQuizCategoryLabel(quiz.category)} / ${quiz.title}`"
               :value="quiz.id"
             />
           </el-select>
@@ -306,7 +336,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showQuickAddQuestion = false">取消</el-button>
-        <el-button type="primary" @click="confirmQuickAddQuestion">下一步</el-button>
+        <el-button type="primary" @click="confirmQuestionManagementEntry">进入题目管理</el-button>
       </template>
     </el-dialog>
   </div>
@@ -316,8 +346,9 @@
 import { reactive, ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Plus, Search } from '@element-plus/icons-vue'
+import { Download, Plus, Search, Upload } from '@element-plus/icons-vue'
 import request from '@/utils/request'
+import BatchActionBar from '@/components/BatchActionBar.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import FilterBar from '@/components/FilterBar.vue'
 import { usePagination } from '@/composables/usePagination'
@@ -346,6 +377,18 @@ interface QuestionItem {
   explanation?: string
   order: number
   updatedAt: string
+}
+
+interface QuestionImportPayload {
+  questionType: 'single' | 'multiple' | 'judge'
+  content: string
+  options: string[]
+  correctAnswer: number | number[]
+  explanation?: string
+}
+
+interface QuestionImportFile {
+  questions: QuestionImportPayload[]
 }
 
 interface QuizTreeNode {
@@ -379,6 +422,7 @@ const filterForm = reactive({
 
 const quizzes = ref<QuizItem[]>([])
 const quizTreeData = ref<QuizTreeNode[]>([])
+const quizTreeTableRef = ref<any>()
 const showQuizDialog = ref(false)
 const isEdit = ref(false)
 const savingQuiz = ref(false)
@@ -405,10 +449,15 @@ const quizRules: FormRules = {
 const showQuestionsDialog = ref(false)
 const currentQuiz = ref<QuizItem | null>(null)
 const questions = ref<QuestionItem[]>([])
+const selectedQuestions = ref<QuestionItem[]>([])
 const showQuestionEditor = ref(false)
 const savingQuestion = ref(false)
 const questionFormRef = ref<FormInstance>()
+const questionTableRef = ref<any>()
 const editingQuestion = ref<QuestionItem | null>(null)
+const importingQuestions = ref(false)
+const questionImportInputRef = ref<HTMLInputElement>()
+const questionSortMode = ref<'order' | 'type'>('order')
 const showQuickAddQuestion = ref(false)
 const quickAddQuizId = ref('')
 
@@ -419,8 +468,7 @@ const questionForm = reactive({
   optionsText: '',
   correctAnswer: 0,
   multipleCorrectAnswers: [] as number[],
-  explanation: '',
-  order: 0
+  explanation: ''
 })
 
 const questionRules: FormRules = {
@@ -441,6 +489,98 @@ const parsedOptions = computed(() => {
 
 const isMultipleQuestion = computed(() => questionForm.questionType === 'multiple')
 const isJudgeQuestion = computed(() => questionForm.questionType === 'judge')
+
+const questionImportTemplate: QuestionImportFile = {
+  questions: [
+    {
+      questionType: 'single',
+      content: 'Vue 3 更推荐使用哪种 API 来组织复杂组件逻辑？',
+      options: ['Options API', 'Composition API', 'Mixin', 'Filter'],
+      correctAnswer: 1,
+      explanation: 'Vue 3 更推荐使用 Composition API 组织复杂逻辑。'
+    },
+    {
+      questionType: 'multiple',
+      content: '下面哪些属于 Vue 的核心能力？',
+      options: ['响应式系统', '组件化开发', '虚拟 DOM', '只支持服务端渲染'],
+      correctAnswer: [0, 1, 2],
+      explanation: '响应式、组件化和虚拟 DOM 都是 Vue 的核心能力。'
+    },
+    {
+      questionType: 'judge',
+      content: '判断题的 correctAnswer 只能是 0 或 1，其中 0 表示“正确”，1 表示“错误”。',
+      options: ['正确', '错误'],
+      correctAnswer: 0,
+      explanation: '当前系统中判断题选项固定为“正确/错误”。'
+    }
+  ]
+}
+
+const questionTypeSortWeight: Record<QuestionItem['questionType'], number> = {
+  single: 0,
+  multiple: 1,
+  judge: 2
+}
+
+const quizCategoryLabelMap: Record<string, string> = {
+  basics: '前端核心基础',
+  'vue-basics': 'Vue 3 基础入门',
+  exercises: '专项习题练习',
+  'composition-api': 'Composition API',
+  'components-deep': '组件深入',
+  'routing-state': '路由与状态管理',
+  ecosystem: 'Vue 生态工具',
+  'performance-testing': '性能与测试',
+  'practical-projects': '实战项目演练'
+}
+
+function getQuizCategoryLabel(category?: string) {
+  if (!category) return '未分类'
+  return quizCategoryLabelMap[category] || category
+}
+
+const quizCategoryOptions = computed(() => {
+  const categories = new Set<string>([
+    ...Object.keys(quizCategoryLabelMap),
+    ...quizzes.value.map((quiz) => quiz.category).filter(Boolean)
+  ])
+
+  return Array.from(categories).map((value) => ({
+    value,
+    label: getQuizCategoryLabel(value)
+  }))
+})
+
+const sortedQuestions = computed(() => {
+  const list = [...questions.value]
+
+  if (questionSortMode.value === 'type') {
+    return list.sort((a, b) => {
+      const typeDiff = questionTypeSortWeight[a.questionType] - questionTypeSortWeight[b.questionType]
+      if (typeDiff !== 0) return typeDiff
+      return a.order - b.order
+    })
+  }
+
+  return list.sort((a, b) => a.order - b.order)
+})
+
+function pickLatestDate(...values: Array<string | undefined>) {
+  return values.reduce<string | undefined>((latest, current) => {
+    if (!current) return latest
+    if (!latest) return current
+
+    const latestTime = new Date(latest).getTime()
+    const currentTime = new Date(current).getTime()
+
+    if (Number.isNaN(currentTime)) return latest
+    if (Number.isNaN(latestTime) || currentTime > latestTime) {
+      return current
+    }
+
+    return latest
+  }, undefined)
+}
 
 function handleQuestionTypeChange(type: 'single' | 'multiple' | 'judge') {
   questionForm.correctAnswer = 0
@@ -485,12 +625,14 @@ async function loadQuizzes() {
       const categoryMap: Record<string, QuizTreeNode> = {}
       for (const item of quizDetails) {
         const category = item.quiz.category || '未分类'
+        const categoryTitle = getQuizCategoryLabel(category)
         if (!categoryMap[category]) {
           categoryMap[category] = {
             id: `cat-${category}`,
             nodeType: 'category',
-            title: category,
+            title: categoryTitle,
             category,
+            updatedAt: undefined,
             questionCount: 0,
             children: []
           }
@@ -524,8 +666,14 @@ async function loadQuizzes() {
           children: questionChildren
         }
 
+        const latestUpdatedAt = pickLatestDate(
+          item.quiz.updatedAt,
+          ...questionChildren.map((question) => question.updatedAt)
+        )
+
         categoryMap[category].children!.push(quizNode)
         categoryMap[category].questionCount = (categoryMap[category].questionCount || 0) + questionChildren.length
+        categoryMap[category].updatedAt = pickLatestDate(categoryMap[category].updatedAt, latestUpdatedAt)
       }
 
       quizTreeData.value = Object.values(categoryMap)
@@ -554,6 +702,70 @@ function editQuestionFromTree(row: QuizTreeNode) {
   })
 }
 
+async function openQuestionsDialogFromTree(row: QuizTreeNode) {
+  const quiz = quizzes.value.find((item) => item.id === row.id)
+  if (!quiz) {
+    ElMessage.warning('题库不存在，请刷新后重试')
+    return
+  }
+
+  await openQuestionsDialog(quiz)
+}
+
+async function handleQuizTreeExpandChange(row: QuizTreeNode, expanded: QuizTreeNode[] | boolean) {
+  if (row.nodeType !== 'quiz') return
+
+  const isExpanded = Array.isArray(expanded)
+    ? expanded.some((item) => item.id === row.id)
+    : Boolean(expanded)
+
+  if (!isExpanded) return
+
+  quizTreeTableRef.value?.toggleRowExpansion?.(row, false)
+  quizTreeTableRef.value?.store?.toggleTreeExpansion?.(row, false)
+  await openQuestionsDialogFromTree(row)
+}
+
+async function handleEditCategory(row: QuizTreeNode) {
+  if (row.nodeType !== 'category') return
+
+  try {
+    const promptResult = await ElMessageBox.prompt('请输入新的分类名称', '编辑分类', {
+      inputValue: row.category,
+      confirmButtonText: '保存',
+      cancelButtonText: '取消',
+      inputValidator: (inputValue) => {
+        if (!String(inputValue || '').trim()) {
+          return '分类名称不能为空'
+        }
+        return true
+      }
+    })
+
+    const newCategory = String((promptResult as any)?.value ?? '').trim()
+    if (!newCategory || newCategory === row.category) {
+      return
+    }
+
+    const response = await request.put('/quiz/admin/categories/rename', {
+      oldCategory: row.category,
+      newCategory
+    })
+
+    if (response.data.success) {
+      if (currentQuiz.value?.category === row.category) {
+        currentQuiz.value.category = newCategory
+      }
+      ElMessage.success(`分类更新成功，共影响 ${response.data.data?.count || 0} 个题库`)
+      await loadQuizzes()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '更新分类失败')
+    }
+  }
+}
+
 function resetFilter() {
   Object.assign(filterForm, { title: '', category: '', status: '' })
   resetPagination()
@@ -574,17 +786,26 @@ function openCreateDialog() {
   showQuizDialog.value = true
 }
 
-function openQuickAddQuestionDialog() {
+async function openQuestionManagementEntry() {
   if (!quizzes.value.length) {
-    ElMessage.warning('请先创建题库后再新增题目')
+    ElMessage.warning('请先创建题库后再管理题目')
     return
   }
 
-  quickAddQuizId.value = currentQuiz.value?.id || quizzes.value[0].id
+  const activeQuiz = currentQuiz.value
+    ? quizzes.value.find((item) => item.id === currentQuiz.value?.id)
+    : null
+
+  if (activeQuiz) {
+    await openQuestionsDialog(activeQuiz)
+    return
+  }
+
+  quickAddQuizId.value = quizzes.value[0].id
   showQuickAddQuestion.value = true
 }
 
-async function confirmQuickAddQuestion() {
+async function confirmQuestionManagementEntry() {
   if (!quickAddQuizId.value) {
     ElMessage.warning('请选择题库')
     return
@@ -598,7 +819,10 @@ async function confirmQuickAddQuestion() {
 
   showQuickAddQuestion.value = false
   await openQuestionsDialog(quiz)
-  openQuestionEditor()
+}
+
+function handleQuestionSelectionChange(selection: QuestionItem[]) {
+  selectedQuestions.value = selection
 }
 
 function getQuestionAnswerLabel(row: QuestionItem): string {
@@ -610,6 +834,65 @@ function getQuestionAnswerLabel(row: QuestionItem): string {
   }
 
   return row.options?.[row.correctAnswer] || '-'
+}
+
+function downloadQuestionJsonTemplate() {
+  const blob = new Blob([JSON.stringify(questionImportTemplate, null, 2)], { type: 'application/json;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'quiz-questions-template.json'
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+function triggerQuestionJsonImport() {
+  questionImportInputRef.value?.click()
+}
+
+async function handleQuestionJsonImport(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  const quizId = currentQuiz.value?.id
+
+  if (!file) return
+  if (!quizId) {
+    ElMessage.warning('请先选择题库')
+    input.value = ''
+    return
+  }
+
+  importingQuestions.value = true
+  try {
+    const content = await file.text()
+    const parsed = JSON.parse(content)
+    const questions = Array.isArray(parsed)
+      ? parsed
+      : Array.isArray(parsed?.questions)
+        ? parsed.questions
+        : null
+
+    if (!questions?.length) {
+      ElMessage.warning('JSON 文件格式不正确，必须为数组或包含 questions 数组')
+      return
+    }
+
+    const response = await request.post(`/quiz/admin/${quizId}/questions/import`, parsed)
+    if (response.data.success) {
+      ElMessage.success(`成功导入 ${response.data.data?.count || questions.length} 道题目`)
+      await loadQuizDetail(quizId)
+      await loadQuizzes()
+    }
+  } catch (error: any) {
+    if (error instanceof SyntaxError) {
+      ElMessage.error('JSON 文件解析失败，请检查文件格式')
+    } else {
+      ElMessage.error(error.response?.data?.message || '导入题目失败')
+    }
+  } finally {
+    importingQuestions.value = false
+    input.value = ''
+  }
 }
 
 function openEditDialog(row: QuizItem) {
@@ -678,6 +961,7 @@ async function handleDeleteQuiz(row: QuizItem) {
 
 async function openQuestionsDialog(row: QuizItem) {
   currentQuiz.value = row
+  selectedQuestions.value = []
   showQuestionsDialog.value = true
   await loadQuizDetail(row.id)
 }
@@ -687,6 +971,8 @@ async function loadQuizDetail(quizId: string) {
     const response = await request.get(`/quiz/admin/${quizId}`)
     if (response.data.success) {
       questions.value = response.data.data.questions || []
+      selectedQuestions.value = []
+      questionTableRef.value?.clearSelection?.()
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '加载题目失败')
@@ -708,8 +994,7 @@ function openQuestionEditor(row?: QuestionItem) {
       optionsText: type === 'judge' ? '' : (row.options || []).join('\n'),
       correctAnswer: answerIndexes[0] ?? 0,
       multipleCorrectAnswers: answerIndexes,
-      explanation: row.explanation || '',
-      order: row.order
+      explanation: row.explanation || ''
     })
   } else {
     Object.assign(questionForm, {
@@ -719,8 +1004,7 @@ function openQuestionEditor(row?: QuestionItem) {
       optionsText: '',
       correctAnswer: 0,
       multipleCorrectAnswers: [],
-      explanation: '',
-      order: questions.value.length
+      explanation: ''
     })
   }
   showQuestionEditor.value = true
@@ -771,8 +1055,7 @@ async function handleSaveQuestion() {
         correctAnswer: questionForm.questionType === 'multiple'
           ? [...questionForm.multipleCorrectAnswers].sort((a, b) => a - b)
           : questionForm.correctAnswer,
-        explanation: questionForm.explanation,
-        order: questionForm.order
+        explanation: questionForm.explanation
       }
 
       if (editingQuestion.value?.id) {
@@ -813,6 +1096,35 @@ async function handleDeleteQuestion(row: QuestionItem) {
   }
 }
 
+async function handleBatchDeleteQuestions() {
+  const ids = selectedQuestions.value.map((item) => item.id)
+
+  if (!ids.length) {
+    ElMessage.warning('请先选择要删除的题目')
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(`确定批量删除已选中的 ${ids.length} 道题目吗？`, '批量删除确认', {
+      type: 'warning',
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消'
+    })
+
+    await Promise.all(ids.map((id) => request.delete(`/quiz/admin/questions/${id}`)))
+    ElMessage.success(`已删除 ${ids.length} 道题目`)
+
+    if (currentQuiz.value?.id) {
+      await loadQuizDetail(currentQuiz.value.id)
+      await loadQuizzes()
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '批量删除失败')
+    }
+  }
+}
+
 onMounted(loadQuizzes)
 </script>
 
@@ -821,19 +1133,105 @@ onMounted(loadQuizzes)
   padding: 20px;
 }
 
+.quiz-management :deep(.el-card) {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.quiz-management :deep(.el-table) {
+  --el-table-border-color: #ebeef5;
+}
+
+.quiz-management :deep(.el-table th.el-table__cell) {
+  background-color: #f5f7fa !important;
+  padding: 12px 8px !important;
+}
+
+.quiz-management :deep(.el-table td.el-table__cell) {
+  padding: 12px 8px !important;
+}
+
+.quiz-management :deep(.el-table .cell) {
+  padding: 0 4px;
+  word-break: break-word;
+}
+
+.quiz-management :deep(.el-table__fixed-right) {
+  right: 0 !important;
+}
+
 .pagination-wrapper {
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 20px;
+}
+
+.quiz-management :deep(.quiz-tree-table .el-table__cell:nth-child(1)),
+.quiz-management :deep(.quiz-tree-table th.el-table__cell:nth-child(1)) {
+  text-align: left !important;
+}
+
+.quiz-management :deep(.quiz-tree-table .el-table__cell:not(:nth-child(1)):not(:last-child)),
+.quiz-management :deep(.quiz-tree-table th.el-table__cell:not(:nth-child(1)):not(:last-child)) {
+  text-align: center !important;
+}
+
+.quiz-management :deep(.question-table .el-table__cell:nth-child(1)),
+.quiz-management :deep(.question-table th.el-table__cell:nth-child(1)) {
+  text-align: center !important;
+}
+
+.quiz-management :deep(.question-table .el-table__cell:nth-child(4)),
+.quiz-management :deep(.question-table th.el-table__cell:nth-child(4)) {
+  text-align: left !important;
+}
+
+.quiz-management :deep(.question-table .el-table__cell:not(:nth-child(1)):not(:nth-child(4)):not(:last-child)),
+.quiz-management :deep(.question-table th.el-table__cell:not(:nth-child(1)):not(:nth-child(4)):not(:last-child)) {
+  text-align: center !important;
+}
+
+.quiz-management :deep(.el-table .el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+.quiz-management :deep(.el-table th.el-table__cell:last-child) {
+  text-align: left !important;
+  padding-left: 12px !important;
+}
+
+.quiz-management :deep(.el-table .el-table__cell:last-child .el-button) {
+  margin-right: 8px;
+}
+
+.quiz-management :deep(.el-table .el-table__cell:last-child .el-button:last-child) {
+  margin-right: 0;
 }
 
 .question-toolbar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
+}
+
+.question-toolbar-left,
+.question-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .question-row-text {
   color: var(--el-text-color-regular);
+}
+
+.category-row-title {
+  color: var(--el-text-color-primary);
+  font-size: var(--el-font-size-base);
 }
 </style>

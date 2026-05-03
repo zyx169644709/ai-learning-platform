@@ -15924,20 +15924,18 @@ export namespace Prisma {
   }
 
   export type QuestionAvgAggregateOutputType = {
-    correctAnswer: number | null
     order: number | null
   }
 
   export type QuestionSumAggregateOutputType = {
-    correctAnswer: number | null
     order: number | null
   }
 
   export type QuestionMinAggregateOutputType = {
     id: string | null
     quizId: string | null
+    questionType: string | null
     content: string | null
-    correctAnswer: number | null
     explanation: string | null
     order: number | null
     createdAt: Date | null
@@ -15947,8 +15945,8 @@ export namespace Prisma {
   export type QuestionMaxAggregateOutputType = {
     id: string | null
     quizId: string | null
+    questionType: string | null
     content: string | null
-    correctAnswer: number | null
     explanation: string | null
     order: number | null
     createdAt: Date | null
@@ -15958,6 +15956,7 @@ export namespace Prisma {
   export type QuestionCountAggregateOutputType = {
     id: number
     quizId: number
+    questionType: number
     content: number
     options: number
     correctAnswer: number
@@ -15970,20 +15969,18 @@ export namespace Prisma {
 
 
   export type QuestionAvgAggregateInputType = {
-    correctAnswer?: true
     order?: true
   }
 
   export type QuestionSumAggregateInputType = {
-    correctAnswer?: true
     order?: true
   }
 
   export type QuestionMinAggregateInputType = {
     id?: true
     quizId?: true
+    questionType?: true
     content?: true
-    correctAnswer?: true
     explanation?: true
     order?: true
     createdAt?: true
@@ -15993,8 +15990,8 @@ export namespace Prisma {
   export type QuestionMaxAggregateInputType = {
     id?: true
     quizId?: true
+    questionType?: true
     content?: true
-    correctAnswer?: true
     explanation?: true
     order?: true
     createdAt?: true
@@ -16004,6 +16001,7 @@ export namespace Prisma {
   export type QuestionCountAggregateInputType = {
     id?: true
     quizId?: true
+    questionType?: true
     content?: true
     options?: true
     correctAnswer?: true
@@ -16103,9 +16101,10 @@ export namespace Prisma {
   export type QuestionGroupByOutputType = {
     id: string
     quizId: string
+    questionType: string
     content: string
     options: JsonValue
-    correctAnswer: number
+    correctAnswer: JsonValue
     explanation: string | null
     order: number
     createdAt: Date
@@ -16134,6 +16133,7 @@ export namespace Prisma {
   export type QuestionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     quizId?: boolean
+    questionType?: boolean
     content?: boolean
     options?: boolean
     correctAnswer?: boolean
@@ -16147,6 +16147,7 @@ export namespace Prisma {
   export type QuestionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     quizId?: boolean
+    questionType?: boolean
     content?: boolean
     options?: boolean
     correctAnswer?: boolean
@@ -16160,6 +16161,7 @@ export namespace Prisma {
   export type QuestionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     quizId?: boolean
+    questionType?: boolean
     content?: boolean
     options?: boolean
     correctAnswer?: boolean
@@ -16173,6 +16175,7 @@ export namespace Prisma {
   export type QuestionSelectScalar = {
     id?: boolean
     quizId?: boolean
+    questionType?: boolean
     content?: boolean
     options?: boolean
     correctAnswer?: boolean
@@ -16182,7 +16185,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quizId" | "content" | "options" | "correctAnswer" | "explanation" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["question"]>
+  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quizId" | "questionType" | "content" | "options" | "correctAnswer" | "explanation" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["question"]>
   export type QuestionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     quiz?: boolean | QuizDefaultArgs<ExtArgs>
   }
@@ -16201,9 +16204,10 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       quizId: string
+      questionType: string
       content: string
       options: Prisma.JsonValue
-      correctAnswer: number
+      correctAnswer: Prisma.JsonValue
       explanation: string | null
       order: number
       createdAt: Date
@@ -16634,9 +16638,10 @@ export namespace Prisma {
   interface QuestionFieldRefs {
     readonly id: FieldRef<"Question", 'String'>
     readonly quizId: FieldRef<"Question", 'String'>
+    readonly questionType: FieldRef<"Question", 'String'>
     readonly content: FieldRef<"Question", 'String'>
     readonly options: FieldRef<"Question", 'Json'>
-    readonly correctAnswer: FieldRef<"Question", 'Int'>
+    readonly correctAnswer: FieldRef<"Question", 'Json'>
     readonly explanation: FieldRef<"Question", 'String'>
     readonly order: FieldRef<"Question", 'Int'>
     readonly createdAt: FieldRef<"Question", 'DateTime'>
@@ -20459,6 +20464,7 @@ export namespace Prisma {
   export const QuestionScalarFieldEnum: {
     id: 'id',
     quizId: 'quizId',
+    questionType: 'questionType',
     content: 'content',
     options: 'options',
     correctAnswer: 'correctAnswer',
@@ -21619,9 +21625,10 @@ export namespace Prisma {
     NOT?: QuestionWhereInput | QuestionWhereInput[]
     id?: StringFilter<"Question"> | string
     quizId?: StringFilter<"Question"> | string
+    questionType?: StringFilter<"Question"> | string
     content?: StringFilter<"Question"> | string
     options?: JsonFilter<"Question">
-    correctAnswer?: IntFilter<"Question"> | number
+    correctAnswer?: JsonFilter<"Question">
     explanation?: StringNullableFilter<"Question"> | string | null
     order?: IntFilter<"Question"> | number
     createdAt?: DateTimeFilter<"Question"> | Date | string
@@ -21632,6 +21639,7 @@ export namespace Prisma {
   export type QuestionOrderByWithRelationInput = {
     id?: SortOrder
     quizId?: SortOrder
+    questionType?: SortOrder
     content?: SortOrder
     options?: SortOrder
     correctAnswer?: SortOrder
@@ -21648,9 +21656,10 @@ export namespace Prisma {
     OR?: QuestionWhereInput[]
     NOT?: QuestionWhereInput | QuestionWhereInput[]
     quizId?: StringFilter<"Question"> | string
+    questionType?: StringFilter<"Question"> | string
     content?: StringFilter<"Question"> | string
     options?: JsonFilter<"Question">
-    correctAnswer?: IntFilter<"Question"> | number
+    correctAnswer?: JsonFilter<"Question">
     explanation?: StringNullableFilter<"Question"> | string | null
     order?: IntFilter<"Question"> | number
     createdAt?: DateTimeFilter<"Question"> | Date | string
@@ -21661,6 +21670,7 @@ export namespace Prisma {
   export type QuestionOrderByWithAggregationInput = {
     id?: SortOrder
     quizId?: SortOrder
+    questionType?: SortOrder
     content?: SortOrder
     options?: SortOrder
     correctAnswer?: SortOrder
@@ -21681,9 +21691,10 @@ export namespace Prisma {
     NOT?: QuestionScalarWhereWithAggregatesInput | QuestionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Question"> | string
     quizId?: StringWithAggregatesFilter<"Question"> | string
+    questionType?: StringWithAggregatesFilter<"Question"> | string
     content?: StringWithAggregatesFilter<"Question"> | string
     options?: JsonWithAggregatesFilter<"Question">
-    correctAnswer?: IntWithAggregatesFilter<"Question"> | number
+    correctAnswer?: JsonWithAggregatesFilter<"Question">
     explanation?: StringNullableWithAggregatesFilter<"Question"> | string | null
     order?: IntWithAggregatesFilter<"Question"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Question"> | Date | string
@@ -22954,9 +22965,10 @@ export namespace Prisma {
 
   export type QuestionCreateInput = {
     id?: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -22967,9 +22979,10 @@ export namespace Prisma {
   export type QuestionUncheckedCreateInput = {
     id?: string
     quizId: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -22978,9 +22991,10 @@ export namespace Prisma {
 
   export type QuestionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22991,9 +23005,10 @@ export namespace Prisma {
   export type QuestionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quizId?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23003,9 +23018,10 @@ export namespace Prisma {
   export type QuestionCreateManyInput = {
     id?: string
     quizId: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -23014,9 +23030,10 @@ export namespace Prisma {
 
   export type QuestionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -23026,9 +23043,10 @@ export namespace Prisma {
   export type QuestionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     quizId?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24143,6 +24161,7 @@ export namespace Prisma {
   export type QuestionCountOrderByAggregateInput = {
     id?: SortOrder
     quizId?: SortOrder
+    questionType?: SortOrder
     content?: SortOrder
     options?: SortOrder
     correctAnswer?: SortOrder
@@ -24153,15 +24172,14 @@ export namespace Prisma {
   }
 
   export type QuestionAvgOrderByAggregateInput = {
-    correctAnswer?: SortOrder
     order?: SortOrder
   }
 
   export type QuestionMaxOrderByAggregateInput = {
     id?: SortOrder
     quizId?: SortOrder
+    questionType?: SortOrder
     content?: SortOrder
-    correctAnswer?: SortOrder
     explanation?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
@@ -24171,8 +24189,8 @@ export namespace Prisma {
   export type QuestionMinOrderByAggregateInput = {
     id?: SortOrder
     quizId?: SortOrder
+    questionType?: SortOrder
     content?: SortOrder
-    correctAnswer?: SortOrder
     explanation?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
@@ -24180,7 +24198,6 @@ export namespace Prisma {
   }
 
   export type QuestionSumOrderByAggregateInput = {
-    correctAnswer?: SortOrder
     order?: SortOrder
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> =
@@ -28565,9 +28582,10 @@ export namespace Prisma {
 
   export type QuestionCreateWithoutQuizInput = {
     id?: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -28576,9 +28594,10 @@ export namespace Prisma {
 
   export type QuestionUncheckedCreateWithoutQuizInput = {
     id?: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -28643,9 +28662,10 @@ export namespace Prisma {
     NOT?: QuestionScalarWhereInput | QuestionScalarWhereInput[]
     id?: StringFilter<"Question"> | string
     quizId?: StringFilter<"Question"> | string
+    questionType?: StringFilter<"Question"> | string
     content?: StringFilter<"Question"> | string
     options?: JsonFilter<"Question">
-    correctAnswer?: IntFilter<"Question"> | number
+    correctAnswer?: JsonFilter<"Question">
     explanation?: StringNullableFilter<"Question"> | string | null
     order?: IntFilter<"Question"> | number
     createdAt?: DateTimeFilter<"Question"> | Date | string
@@ -30058,9 +30078,10 @@ export namespace Prisma {
 
   export type QuestionCreateManyQuizInput = {
     id?: string
+    questionType?: string
     content: string
     options: JsonNullValueInput | InputJsonValue
-    correctAnswer: number
+    correctAnswer: JsonNullValueInput | InputJsonValue
     explanation?: string | null
     order?: number
     createdAt?: Date | string
@@ -30078,9 +30099,10 @@ export namespace Prisma {
 
   export type QuestionUpdateWithoutQuizInput = {
     id?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30089,9 +30111,10 @@ export namespace Prisma {
 
   export type QuestionUncheckedUpdateWithoutQuizInput = {
     id?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30100,9 +30123,10 @@ export namespace Prisma {
 
   export type QuestionUncheckedUpdateManyWithoutQuizInput = {
     id?: StringFieldUpdateOperationsInput | string
+    questionType?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     options?: JsonNullValueInput | InputJsonValue
-    correctAnswer?: IntFieldUpdateOperationsInput | number
+    correctAnswer?: JsonNullValueInput | InputJsonValue
     explanation?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
