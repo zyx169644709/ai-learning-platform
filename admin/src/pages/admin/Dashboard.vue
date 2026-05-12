@@ -219,10 +219,11 @@
               />
             </div>
             <div class="metric-item">
-              <div class="metric-label">资源利用率</div>
+              <div class="metric-label">资源收藏率</div>
               <el-progress 
                 :percentage="qualityMetrics.resourceUtilization" 
                 :color="getProgressColor(qualityMetrics.resourceUtilization)"
+                :format="() => `${qualityMetrics.resourceUtilization}%`"
               />
             </div>
           </div>

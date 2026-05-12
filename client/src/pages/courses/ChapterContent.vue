@@ -11,13 +11,8 @@
       <div v-if="section?.duration" class="section-meta">
         <span class="reading-time">⏱ 大约阅读时间：{{ section.duration }}</span>
       </div>
-      <button 
-        v-if="section"
-        class="favorite-btn" 
-        :class="{ 'favorited': isFavorited }"
-        @click="toggleFavorite"
-        :title="isFavorited ? '取消收藏' : '收藏章节'"
-      >
+      <button v-if="section" class="favorite-btn" :class="{ 'favorited': isFavorited }" @click="toggleFavorite"
+        :title="isFavorited ? '取消收藏' : '收藏章节'">
         {{ isFavorited ? '★ 取消收藏' : '☆ 收藏' }}
       </button>
     </div>
@@ -28,22 +23,36 @@
     <!-- 代码示例区域 -->
     <div v-if="codeEditors.length > 0 && !hasInlineEditors" class="code-editors-section">
       <h3>💻 代码示例</h3>
-      <CodePreview
-        v-for="(editor, index) in codeEditors"
-        :key="index"
-        :initialCode="editor.code"
-        :language="editor.language"
-        :title="`示例 ${index + 1}`"
-      />
+      <CodePreview v-for="(editor, index) in codeEditors" :key="index" :initialCode="editor.code"
+        :language="editor.language" :title="`示例 ${index + 1}`" />
     </div>
-
+    <!-- AI生题区域 -->
+    <div v-if="section" class="ai-quiz-section">
+      <div class="quiz-card">
+        <div class="quiz-card-icon">🤖</div>
+        <div class="quiz-card-info">
+          <h3>AI即时练习</h3>
+          <p>AI根据本节内容生成题目，通过测验即可完成该小节的学习</p>
+        </div>
+        <div class="ai-quiz-actions">
+          <select v-model="aiQuestionCount" class="question-count-select" :disabled="generating">
+            <option :value="5">5题 (每题20分)</option>
+            <option :value="10">10题 (每题10分)</option>
+            <option :value="20">20题 (每题5分)</option>
+          </select>
+          <button class="quiz-btn ai-btn" @click="generateAIQuiz" :disabled="generating">
+            {{ generating ? '生成中...' : 'AI生题' }}
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- 小节测验区域 -->
     <div v-if="quizData && section" class="quiz-section">
       <div class="quiz-card">
         <div class="quiz-card-icon">📝</div>
         <div class="quiz-card-info">
           <h3>小节测验</h3>
-          <p>完成本节测验，检验你的学习成果</p>
+          <p>使用本地数据库中的题目，通过测验即可完成该小节的学习</p>
         </div>
         <button class="quiz-btn" @click="showQuiz = true">
           {{ quizPassed ? '✅ 已通过 · 再测一次' : '开始测验' }}
@@ -51,12 +60,12 @@
       </div>
     </div>
 
-    <QuizModal
-      v-if="quizData"
-      v-model:visible="showQuiz"
-      :quiz-data="quizData"
-      @completed="handleQuizCompleted"
-    />
+
+
+    <QuizModal v-if="quizData" v-model:visible="showQuiz" :quiz-data="quizData" @completed="handleQuizCompleted" />
+
+    <QuizModal v-if="aiQuizData" v-model:visible="showAIQuiz" :quiz-data="aiQuizData"
+      @completed="handleAIQuizCompleted" />
 
     <div class="nav">
       <RouterLink v-if="prev" :to="linkOf(prev)">← 上一节：{{ prev.title }}</RouterLink>
@@ -68,6 +77,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
+import axios from 'axios'
 
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
@@ -111,9 +121,9 @@ const md = new MarkdownIt({
       'jsx': 'javascript',
       'tsx': 'typescript'
     }
-    
+
     const actualLang = langMap[lang] || lang
-    
+
     if (actualLang && hljs.getLanguage(actualLang)) {
       try {
         return `<pre class="hljs" data-lang="${lang}"><code class="hljs">${hljs.highlight(actualLang, str).value}</code></pre>`
@@ -134,6 +144,12 @@ const showQuiz = ref(false)
 const quizPassed = ref(false)
 const quizData = ref<any>(null)
 const { quizOpen } = useQuizState()
+
+// AI生题相关状态
+const generating = ref(false)
+const showAIQuiz = ref(false)
+const aiQuizData = ref<any>(null)
+const aiQuestionCount = ref(5)
 
 watch(showQuiz, (val) => {
   quizOpen.value = val
@@ -204,23 +220,23 @@ const handleQuizCompleted = async (result: { score: number; passed: boolean; ans
       try {
         const token = localStorage.getItem('token')
         const userInfo = localStorage.getItem('userInfo')
-        console.log('🔍 Debug info:', { 
-          hasToken: !!token, 
+        console.log('🔍 Debug info:', {
+          hasToken: !!token,
           tokenLength: token?.length || 0,
           hasUserInfo: !!userInfo,
           chapterId: chapter.value.id,
           sectionId: section.value.id
         })
-        
+
         if (!token) {
           console.warn('未找到登录令牌，无法标记小节完成')
           ElMessage.warning('请先登录以记录学习进度')
           return
         }
-        
+
         const apiUrl = `/api/chapters/${chapter.value.id}/sections/${section.value.id}/complete`
         console.log('🌐 API URL:', apiUrl)
-        
+
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -228,11 +244,11 @@ const handleQuizCompleted = async (result: { score: number; passed: boolean; ans
             'Content-Type': 'application/json'
           }
         })
-        
+
         console.log('📡 API Response:', { status: response.status, statusText: response.statusText })
         const responseData = await response.json()
         console.log('📋 Response Data:', responseData)
-        
+
         if (response.ok && responseData.success) {
           ElMessage.success('小节已标记为完成！')
         } else {
@@ -248,6 +264,138 @@ const handleQuizCompleted = async (result: { score: number; passed: boolean; ans
     }
   } else {
     ElMessage.warning(`得分：${result.score} 分，继续加油！`)
+  }
+}
+
+const handleAIQuizCompleted = (result: { score: number; passed: boolean }) => {
+  if (result.passed) {
+    ElMessage.success(`恭喜通过！得分：${result.score} 分`)
+  } else {
+    ElMessage.warning(`得分：${result.score} 分，继续加油！`)
+  }
+  // AI练习不保存到数据库，用完即销毁
+}
+
+// AI生题功能
+const generateAIQuiz = async () => {
+  if (!section.value || !html.value) {
+    ElMessage.warning('当前小节没有内容，无法生成题目')
+    return
+  }
+
+  const env = (import.meta as any)?.env || {}
+  const DEEPSEEK_API_KEY = (env.VITE_DEEPSEEK_API_KEY as string | undefined)?.toString().trim() || 'sk-c37c157ea3fd4f02b71e14f9e3e23698'
+  const FLAG_RAW = (env.VITE_ENABLE_DEEPSEEK as string | undefined)?.toString().trim().toLowerCase() ?? 'true'
+  const DEEPSEEK_ENABLED = Boolean((FLAG_RAW === 'true' || FLAG_RAW === '1' || FLAG_RAW === 'yes') && DEEPSEEK_API_KEY)
+
+  if (!DEEPSEEK_ENABLED) {
+    ElMessage.warning('AI功能未启用')
+    return
+  }
+
+  generating.value = true
+
+  try {
+    const systemPrompt = `你是一名专业出题助手。请严格根据输入的小节内容，生成高质量测验题。
+要求：
+1) 仅生成「单选题(single)」、「多选题(multiple)」和「判断题(judge)」，三种题型都要覆盖。
+2) 输出必须是 JSON 数组，不要包含 markdown 代码块或其他说明文字。
+3) 每题字段：questionType, content, options, correctAnswer, explanation。
+4) single 题：options 至少 4 个，correctAnswer 必须是单个数字索引。
+5) multiple 题：options 至少 4 个，correctAnswer 必须是 number[] 且至少 1 个索引。
+6) judge 题：options 固定为 ["正确","错误"],correctAnswer 必须是 0 或 1。
+7) 题目必须可由内容直接推导，不要编造不存在的信息。`
+
+    // 使用HTML内容，去除HTML标签获取纯文本
+    const plainText = html.value.replace(/<[^>]*>/g, '').trim()
+    const count = aiQuestionCount.value
+    const singleCount = Math.floor(count * 0.4)
+    const multipleCount = Math.floor(count * 0.4)
+    const judgeCount = count - singleCount - multipleCount
+    const userPrompt = `请为以下小节生成 ${count} 道题（建议 ${singleCount} 道单选 + ${multipleCount} 道多选 + ${judgeCount} 道判断）：\n\n小节标题：${section.value.title}\n\n小节内容：\n${plainText}`
+
+    const response = await axios.post(
+      'https://api.deepseek.com/v1/chat/completions',
+      {
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.4,
+        max_tokens: count <= 10 ? 3000 : 5000,
+        stream: false
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 45000
+      }
+    )
+
+    const content = String(response.data?.choices?.[0]?.message?.content || '').trim()
+    if (!content) {
+      throw new Error('AI 返回为空')
+    }
+
+    const cleaned = content
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```$/i, '')
+      .trim()
+
+    let parsed: any
+    try {
+      parsed = JSON.parse(cleaned)
+    } catch {
+      throw new Error('AI 返回格式无法解析为 JSON')
+    }
+
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      throw new Error('AI 未返回有效题目数组')
+    }
+
+    // 转换为quiz格式
+    const questions = parsed.map((item: any) => {
+      const questionType = item?.questionType === 'judge' ? 'judge' : (item?.questionType === 'multiple' ? 'multiple' : 'single')
+      const options = questionType === 'judge' ? ['正确', '错误'] : (Array.isArray(item?.options) ? item.options.map(String) : [])
+
+      let correctAnswer: number | number[]
+      if (questionType === 'single') {
+        correctAnswer = Number(item?.correctAnswer) || 0
+      } else if (questionType === 'multiple') {
+        correctAnswer = Array.isArray(item?.correctAnswer) ? item.correctAnswer.map(Number) : []
+      } else {
+        correctAnswer = Number(item?.correctAnswer) === 1 ? 1 : 0
+      }
+
+      return {
+        questionType,
+        content: item?.content || '',
+        options,
+        correctAnswer,
+        explanation: item?.explanation || ''
+      }
+    })
+
+    // 计算每题分数：5题=20分，10题=10分，20题=5分
+    const scorePerQuestion = Math.floor(100 / count)
+
+    aiQuizData.value = {
+      title: `${section.value.title} - AI即时练习`,
+      passingScore: 60,
+      scorePerQuestion,
+      questions
+    }
+
+    showAIQuiz.value = true
+  } catch (error: any) {
+    console.error('生成题目失败:', error)
+    ElMessage.error(error?.message || '生成题目失败，请稍后重试')
+  } finally {
+    generating.value = false
   }
 }
 
@@ -765,6 +913,10 @@ watch([section], async () => {
   background: #ffe5e5;
 }
 
+.ai-quiz-section {
+  margin-top: 3rem;
+}
+
 /* 小节测验区域 */
 .quiz-section {
   margin-top: 3rem;
@@ -824,6 +976,38 @@ watch([section], async () => {
   background: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.ai-quiz-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.question-count-select {
+  padding: 8px 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1e40af;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.question-count-select:hover {
+  border-color: #3b82f6;
+}
+
+.question-count-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.question-count-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 导航区域布局 */

@@ -126,22 +126,15 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { courseProgressService } from '@/services/courseProgressService'
 
 const router = useRouter()
 
 const courseCompleted = ref(false)
 
-// 检查课程是否已完成
-const checkCourseStatus = async () => {
-  try {
-    const completed = await courseProgressService.checkCourseCompleted('project-basics')
-    courseCompleted.value = completed
-  } catch (error) {
-    console.error('检查课程状态失败:', error)
-  }
+const checkCourseStatus = () => {
+  const saved = localStorage.getItem('project-basics-passed')
+  if (saved === 'true') courseCompleted.value = true
 }
-
 checkCourseStatus()
 
 // 综合实战项目代码
@@ -286,15 +279,10 @@ const goToVue = () => {
   router.push('/learn/vue-intro')
 }
 
-const completeCourse = async () => {
-  try {
-    await courseProgressService.completeCourse('project-basics')
-    router.push('/learn/vue-intro')
-  } catch (error) {
-    console.error('记录课程完成失败:', error)
-    // 即使记录失败也允许继续
-    router.push('/learn/vue-intro')
-  }
+const completeCourse = () => {
+  localStorage.setItem('project-basics-passed', 'true')
+  courseCompleted.value = true
+  router.push('/learn/vue-intro')
 }
 </script>
 

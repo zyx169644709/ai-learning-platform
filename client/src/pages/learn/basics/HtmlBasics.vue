@@ -441,7 +441,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { courseProgressService } from '@/services/courseProgressService'
 import QuizModal from '@/pages/misc/QuizModal.vue'
 import quizData from '@/data/questions/basics/html-basics-quiz.json'
 
@@ -462,20 +461,14 @@ const handleQuizCompleted = (result: { score: number; passed: boolean; answers: 
   }
 }
 
-// 检查课程是否已完成
-const checkCourseStatus = async () => {
-  try {
-    const completed = await courseProgressService.checkCourseCompleted('html-basics')
-    courseCompleted.value = completed
-    if (completed) {
-      quizPassed.value = true // 如果已完成，则自动设置测试通过
-    }
-  } catch (error) {
-    console.error('检查课程状态失败:', error)
+// 页面加载时检查测验通过状态（本地保存）
+const checkCourseStatus = () => {
+  const saved = localStorage.getItem('html-basics-passed')
+  if (saved === 'true') {
+    quizPassed.value = true
+    courseCompleted.value = true
   }
 }
-
-// 页面加载时检查课程状态
 checkCourseStatus()
 
 // 步骤管理
@@ -729,17 +722,11 @@ const goBack = () => {
   router.push('/learn/basics')
 }
 
-const completeCourse = async () => {
-  try {
-    await courseProgressService.completeCourse('html-basics')
-    alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
-    router.push('/learn/css-basics')
-  } catch (error) {
-    console.error('记录课程完成失败:', error)
-    // 即使记录失败也允许继续
-    alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
-    router.push('/learn/css-basics')
-  }
+const completeCourse = () => {
+  localStorage.setItem('html-basics-passed', 'true')
+  courseCompleted.value = true
+  alert('🎉 恭喜完成 HTML 核心基础课程！\n\n接下来可以学习 CSS 课程，让网页变得更漂亮！')
+  router.push('/learn/css-basics')
 }
 </script>
 

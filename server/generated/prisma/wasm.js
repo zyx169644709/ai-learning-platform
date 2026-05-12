@@ -285,13 +285,6 @@ exports.Prisma.QuizAttemptScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.CourseCompletionScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  courseId: 'courseId',
-  completedAt: 'completedAt'
-};
-
 exports.Prisma.SectionCompletionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -355,7 +348,6 @@ exports.Prisma.ModelName = {
   Quiz: 'Quiz',
   Question: 'Question',
   QuizAttempt: 'QuizAttempt',
-  CourseCompletion: 'CourseCompletion',
   SectionCompletion: 'SectionCompletion'
 };
 

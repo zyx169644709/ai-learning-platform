@@ -61,9 +61,13 @@
             {{ formatRelativeTime(row.updatedAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="editItem(row)">编辑</el-button>
+            <!-- 只在小节类型显示管理题目按钮 -->
+            <el-button v-if="row.type === 'section'" type="success" link @click="manageSectionQuestions(row)">
+              管理题目
+            </el-button>
             <StatsDisplay
               mode="dialog"
               title="统计信息"
@@ -171,6 +175,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
@@ -510,6 +515,19 @@ const handleDelete = async (row: any) => {
       ElMessage.error(error.response?.data?.message || '删除失败')
     }
   }
+}
+
+// 管理小节题目
+const manageSectionQuestions = (row: any) => {
+  // 跳转到题目管理页面，并带上小节ID作为筛选条件
+  const router = useRouter()
+  router.push({
+    path: '/admin/quiz-management',
+    query: {
+      chapterId: row.id,
+      chapterTitle: row.title
+    }
+  })
 }
 
 // 批量删除

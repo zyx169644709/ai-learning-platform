@@ -464,7 +464,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { courseProgressService } from '@/services/courseProgressService'
 import QuizModal from '@/pages/misc/QuizModal.vue'
 import quizData from '@/data/questions/basics/css-basics-quiz.json'
 
@@ -485,19 +484,13 @@ const handleQuizCompleted = (result: { score: number; passed: boolean; answers: 
   }
 }
 
-// 检查课程是否已完成
-const checkCourseStatus = async () => {
-  try {
-    const completed = await courseProgressService.checkCourseCompleted('css-basics')
-    courseCompleted.value = completed
-    if (completed) {
-      quizPassed.value = true
-    }
-  } catch (error) {
-    console.error('检查课程状态失败:', error)
+const checkCourseStatus = () => {
+  const saved = localStorage.getItem('css-basics-passed')
+  if (saved === 'true') {
+    quizPassed.value = true
+    courseCompleted.value = true
   }
 }
-
 checkCourseStatus()
 
 // 步骤管理
@@ -827,16 +820,11 @@ const goBack = () => {
   router.push('/learn/basics')
 }
 
-const completeCourse = async () => {
-  try {
-    await courseProgressService.completeCourse('css-basics')
-    alert('🎉 恭喜完成 CSS 核心基础课程！\n\n接下来可以学习 JavaScript 课程，让网页动起来！')
-    router.push('/learn/js-basics')
-  } catch (error) {
-    console.error('记录课程完成失败:', error)
-    alert('🎉 恭喜完成 CSS 核心基础课程！\n\n接下来可以学习 JavaScript 课程，让网页动起来！')
-    router.push('/learn/js-basics')
-  }
+const completeCourse = () => {
+  localStorage.setItem('css-basics-passed', 'true')
+  courseCompleted.value = true
+  alert('🎉 恭喜完成 CSS 核心基础课程！\n\n接下来可以学习 JavaScript 课程，让网页动起来！')
+  router.push('/learn/js-basics')
 }
 </script>
 

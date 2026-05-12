@@ -15,6 +15,7 @@ import {
   adminRenameQuizCategory,
   adminAddQuestion,
   adminImportQuestions,
+  adminGenerateQuestions,
   adminUpdateQuestion,
   adminDeleteQuestion
 } from '../controllers/quizController'
@@ -30,6 +31,7 @@ router.put('/admin/:id', authMiddleware as any, requireStaff as any, adminUpdate
 router.delete('/admin/:id', authMiddleware as any, requireStaff as any, adminDeleteQuiz)
 router.post('/admin/:quizId/questions', authMiddleware as any, requireStaff as any, adminAddQuestion)
 router.post('/admin/:quizId/questions/import', authMiddleware as any, requireStaff as any, adminImportQuestions)
+router.post('/admin/:quizId/questions/generate', authMiddleware as any, requireStaff as any, adminGenerateQuestions)
 router.put('/admin/questions/:id', authMiddleware as any, requireStaff as any, adminUpdateQuestion)
 router.delete('/admin/questions/:id', authMiddleware as any, requireStaff as any, adminDeleteQuestion)
 

@@ -47,7 +47,6 @@
         <el-button type="success" @click="openCreateDialog">
           <el-icon><Plus /></el-icon> 新建题库
         </el-button>
-        <el-button type="primary" @click="openQuestionManagementEntry">题目管理</el-button>
       </template>
     </FilterBar>
 
@@ -344,6 +343,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Download, Plus, Search, Upload } from '@element-plus/icons-vue'
@@ -359,6 +359,7 @@ interface QuizItem {
   id: string
   category: string
   courseId?: string
+  chapterId?: string
   slug?: string
   title: string
   passingScore: number
@@ -391,7 +392,7 @@ interface QuestionImportFile {
   questions: QuestionImportPayload[]
 }
 
-interface QuizTreeNode {
+type QuizTreeNode = {
   id: string
   nodeType: 'category' | 'quiz' | 'question'
   title: string
@@ -460,6 +461,9 @@ const questionImportInputRef = ref<HTMLInputElement>()
 const questionSortMode = ref<'order' | 'type'>('order')
 const showQuickAddQuestion = ref(false)
 const quickAddQuizId = ref('')
+
+const route = useRoute()
+const router = useRouter()
 
 const questionForm = reactive({
   id: '',
@@ -786,25 +790,6 @@ function openCreateDialog() {
   showQuizDialog.value = true
 }
 
-async function openQuestionManagementEntry() {
-  if (!quizzes.value.length) {
-    ElMessage.warning('请先创建题库后再管理题目')
-    return
-  }
-
-  const activeQuiz = currentQuiz.value
-    ? quizzes.value.find((item) => item.id === currentQuiz.value?.id)
-    : null
-
-  if (activeQuiz) {
-    await openQuestionsDialog(activeQuiz)
-    return
-  }
-
-  quickAddQuizId.value = quizzes.value[0].id
-  showQuickAddQuestion.value = true
-}
-
 async function confirmQuestionManagementEntry() {
   if (!quickAddQuizId.value) {
     ElMessage.warning('请选择题库')
@@ -970,6 +955,12 @@ async function loadQuizDetail(quizId: string) {
   try {
     const response = await request.get(`/quiz/admin/${quizId}`)
     if (response.data.success) {
+      if (currentQuiz.value?.id === quizId) {
+        currentQuiz.value = {
+          ...currentQuiz.value,
+          chapterId: response.data.data?.chapterId || currentQuiz.value.chapterId
+        }
+      }
       questions.value = response.data.data.questions || []
       selectedQuestions.value = []
       questionTableRef.value?.clearSelection?.()
@@ -1125,7 +1116,86 @@ async function handleBatchDeleteQuestions() {
   }
 }
 
-onMounted(loadQuizzes)
+onMounted(async () => {
+  // 检查是否从小节管理页面跳转过来
+  if (route.query.chapterId && route.query.chapterTitle) {
+    const chapterId = route.query.chapterId as string
+    const chapterTitle = route.query.chapterTitle as string
+    
+    try {
+      // 检查是否已存在该小节的题库
+      const response = await request.get('/quiz/admin/list', {
+        params: {
+          chapterId,
+          page: 1,
+          limit: 1
+        }
+      })
+      
+      const list = Array.isArray(response.data?.data)
+        ? response.data.data
+        : (response.data?.data?.items || [])
+
+      if (response.data.success && list.length > 0) {
+        // 如果已存在题库，直接展开并进入题目管理
+        const existingQuiz = list[0]
+        await loadQuizzes()
+        // 找到并展开对应的题库
+        setTimeout(() => {
+          const quizNode = quizTreeData.value.find((node: any) => node.id === existingQuiz.id)
+          if (quizNode) {
+            handleQuizTreeExpandChange(quizNode, [quizNode])
+          }
+        }, 100)
+      } else {
+        // 如果不存在，提示用户创建题库
+        try {
+          await ElMessageBox.confirm(
+            `小节"${chapterTitle}"还没有题库，是否立即创建？`,
+            '创建题库',
+            {
+              confirmButtonText: '立即创建',
+              cancelButtonText: '稍后创建',
+              type: 'info'
+            }
+          )
+          
+          // 创建新题库
+          const createResponse = await request.post('/quiz/admin', {
+            title: `${chapterTitle} - 练习题`,
+            category: 'chapter',
+            chapterId,
+            status: 'published'
+          })
+          
+          if (createResponse.data.success) {
+            ElMessage.success('题库创建成功')
+            await loadQuizzes()
+            // 展开新创建的题库
+            setTimeout(() => {
+              const newQuiz = createResponse.data.data
+              const quizNode = quizTreeData.value.find((node: any) => node.id === newQuiz.id)
+              if (quizNode) {
+                handleQuizTreeExpandChange(quizNode, [quizNode])
+              }
+            }, 100)
+          }
+        } catch (error: any) {
+          if (error !== 'cancel') {
+            ElMessage.error('创建题库失败')
+          }
+          // 清除URL参数
+          router.replace({ query: {} })
+        }
+      }
+    } catch (error) {
+      console.error('检查题库失败:', error)
+    }
+  } else {
+    // 正常加载所有题库
+    loadQuizzes()
+  }
+})
 </script>
 
 <style scoped>

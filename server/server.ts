@@ -10,7 +10,6 @@ import adminRoutes from './src/routes/adminRoutes'
 import uploadRoutes from './src/routes/uploadRoutes'
 import chapterRoutes from './src/routes/chapterRoutes'
 import favoriteRoutes from './src/routes/favoriteRoutes'
-import courseProgressRoutes from './src/routes/courseProgressRoutes'
 import quizRoutes from './src/routes/quizRoutes'
 
 dotenv.config()
@@ -31,7 +30,6 @@ app.use('/api/admin', adminRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/chapters', chapterRoutes)
 app.use('/api/favorites', favoriteRoutes)
-app.use('/api/course-progress', courseProgressRoutes)
 app.use('/api/quiz', quizRoutes)
 
 // 静态文件服务 - 提供上传的图片访问

@@ -29,7 +29,6 @@ model User {
   favorites          Favorite[]
   resources          Resource[]
   userPreferences    UserPreferences?
-  courseCompletions  CourseCompletion[]
   sectionCompletions SectionCompletion[]
   quizAttempts       QuizAttempt[]
 
@@ -293,19 +292,6 @@ model QuizAttempt {
   @@index([userId])
   @@index([quizId])
   @@map("quiz_attempts")
-}
-
-model CourseCompletion {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  courseId    String   @map("course_id")
-  completedAt DateTime @default(now()) @map("completed_at")
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, courseId])
-  @@index([userId])
-  @@index([courseId])
-  @@map("course_completions")
 }
 
 model SectionCompletion {

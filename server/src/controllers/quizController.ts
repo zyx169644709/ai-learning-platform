@@ -15,6 +15,14 @@ interface PreparedQuestionData {
   order: number
 }
 
+interface AiGeneratedQuestion {
+  questionType: 'multiple' | 'judge'
+  content: string
+  options: string[]
+  correctAnswer: number[] | number
+  explanation: string
+}
+
 const normalizeQuestionType = (value: unknown): QuestionType => {
   if (value === 'multiple' || value === 'judge' || value === 'single') return value
   return 'single'
@@ -92,6 +100,118 @@ const prepareQuestionData = (payload: any, defaultOrder: number, label = '题目
       order
     }
   }
+}
+
+const DEEPSEEK_API_BASE = (process.env.DEEPSEEK_API_BASE || 'https://api.deepseek.com/v1').trim()
+const DEEPSEEK_API_KEY = (process.env.DEEPSEEK_API_KEY || '').trim()
+
+const generateQuestionsWithDeepSeek = async (
+  sectionTitle: string,
+  sectionContent: string,
+  count = 5
+): Promise<AiGeneratedQuestion[]> => {
+  if (!DEEPSEEK_API_KEY) {
+    throw new Error('AI 功能未启用，请在服务端配置 DEEPSEEK_API_KEY')
+  }
+
+  const systemPrompt = `你是一名专业出题助手。请严格根据输入的小节内容，生成高质量测验题。要求：1) 仅生成“多选题(multiple)”和“判断题(judge)”，两种题型都要覆盖。2) 输出必须是 JSON 数组，不要包含 markdown 代码块或其他说明文字。3) 每题字段：questionType, content, options, correctAnswer, explanation。4) multiple 题：options 至少 4 个，correctAnswer 必须是 number[] 且至少 1 个索引。5) judge 题：options 固定为 ["正确","错误"]，correctAnswer 必须是 0 或 1。6) 题目必须可由内容直接推导，不要编造不存在的信息。`
+
+  const userPrompt = `请为以下小节生成 ${count} 道题（建议 3 道多选 + 2 道判断）：\n\n小节标题：${sectionTitle}\n\n小节内容：\n${sectionContent}`
+
+  const response = await fetch(`${DEEPSEEK_API_BASE}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.4,
+      max_tokens: 2200,
+      stream: false
+    })
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(errorText || 'AI 服务请求失败')
+  }
+
+  const responseData = await response.json()
+  const content = String(responseData?.choices?.[0]?.message?.content || '').trim()
+  if (!content) {
+    throw new Error('AI 返回为空')
+  }
+
+  const cleaned = content
+    .replace(/^```json\s*/i, '')
+    .replace(/^```\s*/i, '')
+    .replace(/```$/i, '')
+    .trim()
+
+  let parsed: any
+  try {
+    parsed = JSON.parse(cleaned)
+  } catch {
+    throw new Error('AI 返回格式无法解析为 JSON')
+  }
+
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    throw new Error('AI 未返回有效题目数组')
+  }
+
+  const normalized = parsed
+    .map((item: any): AiGeneratedQuestion | null => {
+      const questionType: 'multiple' | 'judge' = item?.questionType === 'judge' ? 'judge' : 'multiple'
+      const contentText = String(item?.content || '').trim()
+      const explanation = String(item?.explanation || '').trim()
+
+      if (!contentText) return null
+
+      if (questionType === 'judge') {
+        const answer = Number(item?.correctAnswer)
+        return {
+          questionType,
+          content: contentText,
+          options: ['正确', '错误'],
+          correctAnswer: answer === 1 ? 1 : 0,
+          explanation
+        }
+      }
+
+      const options = Array.isArray(item?.options)
+        ? item.options
+            .map((opt: any) => String(opt || '').trim())
+            .filter((opt: string) => Boolean(opt))
+        : []
+
+      const answerArray = Array.isArray(item?.correctAnswer)
+        ? item.correctAnswer
+            .map((n: any) => Number(n))
+            .filter((n: number) => Number.isInteger(n) && n >= 0)
+        : []
+
+      if (options.length < 2 || answerArray.length === 0) return null
+
+      return {
+        questionType,
+        content: contentText,
+        options,
+        correctAnswer: Array.from(new Set(answerArray)),
+        explanation
+      }
+    })
+    .filter((item): item is AiGeneratedQuestion => item !== null)
+
+  if (!normalized.length) {
+    throw new Error('AI 结果无法转换为有效题目')
+  }
+
+  return normalized
 }
 
 // ─── 公开接口 ───────────────────────────────────────────────
@@ -309,11 +429,12 @@ export const getMyAttempts = async (req: AuthRequest, res: Response) => {
 // 获取所有题库列表（分页）
 export const adminGetQuizzes = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 20, category, title, status } = req.query
+    const { page = 1, limit = 20, category, title, status, chapterId } = req.query
 
     const where: any = {}
     if (category && String(category).trim()) where.category = String(category).trim()
     if (status && String(status).trim()) where.status = String(status).trim()
+    if (chapterId && String(chapterId).trim()) where.chapterId = String(chapterId).trim()
     if (title && String(title).trim()) {
       where.title = { contains: String(title).trim() }
     }
@@ -356,12 +477,13 @@ export const adminGetQuizDetail = async (req: Request, res: Response) => {
 // 创建题库
 export const adminCreateQuiz = async (req: Request, res: Response) => {
   try {
-    const { category, courseId, slug, title, passingScore, status, questions } = req.body
+    const { category, courseId, chapterId, slug, title, passingScore, status, questions } = req.body
 
     const quiz = await prisma.quiz.create({
       data: {
         category,
         courseId,
+        chapterId,
         slug,
         title,
         passingScore: passingScore ?? 60,
@@ -391,11 +513,11 @@ export const adminCreateQuiz = async (req: Request, res: Response) => {
 export const adminUpdateQuiz = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
-    const { category, courseId, slug, title, passingScore, status } = req.body
+    const { category, courseId, chapterId, slug, title, passingScore, status } = req.body
 
     const quiz = await prisma.quiz.update({
       where: { id },
-      data: { category, courseId, slug, title, passingScore, status }
+      data: { category, courseId, chapterId, slug, title, passingScore, status }
     })
 
     res.json({ success: true, data: quiz })
@@ -526,6 +648,60 @@ export const adminImportQuestions = async (req: Request, res: Response) => {
 }
 
 // 更新题目
+export const adminGenerateQuestions = async (req: Request, res: Response) => {
+  try {
+    const { quizId } = req.params
+    const requestedCount = Number(req.body?.count)
+    const count = Number.isInteger(requestedCount) && requestedCount > 0 ? requestedCount : 5
+
+    const quiz = await prisma.quiz.findUnique({
+      where: { id: quizId },
+      select: {
+        id: true,
+        title: true,
+        chapterId: true
+      }
+    })
+
+    if (!quiz) {
+      return res.status(404).json({ message: '题库不存在' })
+    }
+
+    let chapterTitle = quiz.title || '题库'
+    let chapterContent = `这是关于“${chapterTitle}”的题库，请生成相关的练习题目。`
+    let basedOnChapter = false
+
+    if (quiz.chapterId) {
+      const chapter = await prisma.chapter.findUnique({
+        where: { id: quiz.chapterId },
+        select: {
+          title: true,
+          content: true
+        }
+      })
+
+      if (chapter?.content?.trim()) {
+        chapterTitle = chapter.title?.trim() || chapterTitle
+        chapterContent = chapter.content.trim()
+        basedOnChapter = true
+      }
+    }
+
+    const questions = await generateQuestionsWithDeepSeek(chapterTitle, chapterContent, count)
+
+    res.json({
+      success: true,
+      data: {
+        questions,
+        basedOnChapter
+      }
+    })
+  } catch (error: any) {
+    console.error('adminGenerateQuestions error:', error)
+    res.status(500).json({ message: error?.message || '生成题目失败' })
+  }
+}
+
 export const adminUpdateQuestion = async (req: Request, res: Response) => {
   try {
     const { id } = req.params

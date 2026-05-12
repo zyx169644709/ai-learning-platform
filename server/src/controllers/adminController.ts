@@ -743,18 +743,17 @@ export const getStats = async (req: Request, res: Response) => {
     // 计算实际的质量指标（基于最近30天的数据）
     const monthStart = startOfDay(new Date(Date.now() - 30 * DAY_MS))
     
-    // 1. 平均课程完成率
-    const [totalCourseCompletions, totalCourseStudents] = await Promise.all([
-      prisma.courseCompletion.count({
+    // 1. 小节完成率（基于SectionCompletion）
+    const [totalSectionCompletions, totalSections] = await Promise.all([
+      prisma.sectionCompletion.count({
         where: { completedAt: { gte: monthStart } }
       }),
-      prisma.course.aggregate({
-        _sum: { studentCount: true },
-        where: { status: 'published' }
+      prisma.chapter.count({
+        where: { type: 'section', status: 'published' }
       })
     ])
-    const courseCompletion = totalCourseStudents._sum.studentCount && totalCourseStudents._sum.studentCount > 0
-      ? Math.round((totalCourseCompletions / totalCourseStudents._sum.studentCount) * 100)
+    const sectionCompletionRate = totalSections > 0
+      ? Math.round((totalSectionCompletions / totalSections) * 100)
       : 0
     
     // 2. 用户活跃度 (DAU/MAU)
@@ -787,25 +786,23 @@ export const getStats = async (req: Request, res: Response) => {
       ? Math.min(Math.round(((totalDiscussionLikes + totalCommentLikes) / totalDiscussionsCount) * 10), 100)
       : 0
     
-    // 4. 资源利用率
+    // 4. 资源收藏率（收藏量/浏览量）
     const resourceStats = await prisma.resource.aggregate({
-      _sum: { viewCount: true, likeCount: true, favoriteCount: true },
+      _sum: { viewCount: true, favoriteCount: true },
       _count: { id: true },
       where: { status: 'published' }
     })
     const totalResourceViews = resourceStats._sum.viewCount || 0
-    const totalResourceLikes = resourceStats._sum.likeCount || 0
     const totalResourceFavorites = resourceStats._sum.favoriteCount || 0
-    const totalResources = resourceStats._count.id
-    const resourceUtilization = totalResources > 0
-      ? Math.min(Math.round(((totalResourceViews + totalResourceLikes + totalResourceFavorites) / (totalResources * 100)) * 100), 100)
+    const resourceUtilization = totalResourceViews > 0
+      ? Math.round((totalResourceFavorites / totalResourceViews) * 100)
       : 0
     const weeklyActivityData = weeklyActiveUsersData.map(count => totalUsers > 0 ? Math.round((count / totalUsers) * 100) : 0)
 
     const stats = {
       totalUsers,
       totalCourses,
-      completionRate: courseCompletion,
+      completionRate: sectionCompletionRate,
       activeUsers: recentUsers,
       dashboard: {
         newUsersToday,
@@ -814,7 +811,7 @@ export const getStats = async (req: Request, res: Response) => {
         activityRate: userActivity,
         activityLabel: userActivityLabel,
         qualityMetrics: {
-          courseCompletion,
+          sectionCompletionRate,
           userActivity,
           userActivityLabel,
           discussionEngagement,

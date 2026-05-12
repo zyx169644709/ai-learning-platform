@@ -2,7 +2,7 @@
   <div v-if="visible" class="quiz-modal-overlay" @click.self="closeModal">
     <div class="quiz-modal">
       <div class="quiz-header">
-        <h2>{{ quizData.courseName }} - 小测试</h2>
+        <h2>{{ quizData.title || quizData.courseName || '小测试' }}</h2>
         <button class="close-btn" @click="closeModal">✕</button>
       </div>
 
@@ -115,11 +115,13 @@ interface Question {
 }
 
 interface QuizData {
-  courseId: string
-  courseName: string
+  courseId?: string
+  courseName?: string
+  title?: string
   passingScore: number
   questions: Question[]
   questionCount?: number // 可选：要抽取的题目数量，不设置则使用全部题目
+  scorePerQuestion?: number // 可选：每题分数，不设置则按100/题目数计算
 }
 
 interface Props {
@@ -266,7 +268,14 @@ const correctCount = computed(() => {
 })
 
 const wrongCount = computed(() => selectedQuestions.value.length - correctCount.value)
-const score = computed(() => Math.round((correctCount.value / selectedQuestions.value.length) * 100))
+const score = computed(() => {
+  // 如果指定了每题分数，则使用每题分数计算
+  if (props.quizData.scorePerQuestion) {
+    return correctCount.value * props.quizData.scorePerQuestion
+  }
+  // 否则按100/题目数计算
+  return Math.round((correctCount.value / selectedQuestions.value.length) * 100)
+})
 const passed = computed(() => score.value >= props.quizData.passingScore)
 const currentQuestionType = computed<QuestionType>(() => {
   const question = currentQuestion.value
