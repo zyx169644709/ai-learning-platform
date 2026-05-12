@@ -267,13 +267,30 @@ const handleQuizCompleted = async (result: { score: number; passed: boolean; ans
   }
 }
 
-const handleAIQuizCompleted = (result: { score: number; passed: boolean }) => {
+const handleAIQuizCompleted = async (result: { score: number; passed: boolean }) => {
   if (result.passed) {
     ElMessage.success(`恭喜通过！得分：${result.score} 分`)
+    // 通过AI测验后同样标记小节完成
+    if (chapter.value?.id && section.value?.id) {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) return
+        const apiUrl = `/api/chapters/${chapter.value.id}/sections/${section.value.id}/complete`
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        })
+        const data = await response.json()
+        if (response.ok && data.success) {
+          ElMessage.success('小节已标记为完成！')
+        }
+      } catch (e) {
+        console.error('标记小节完成失败:', e)
+      }
+    }
   } else {
     ElMessage.warning(`得分：${result.score} 分，继续加油！`)
   }
-  // AI练习不保存到数据库，用完即销毁
 }
 
 // AI生题功能
