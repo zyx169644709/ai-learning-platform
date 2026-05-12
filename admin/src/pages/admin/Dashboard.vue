@@ -197,10 +197,10 @@
           </template>
           <div class="quality-metrics">
             <div class="metric-item">
-              <div class="metric-label">平均课程完成率</div>
+              <div class="metric-label">平均小节完成率</div>
               <el-progress 
-                :percentage="qualityMetrics.courseCompletion" 
-                :color="getProgressColor(qualityMetrics.courseCompletion)"
+                :percentage="qualityMetrics.sectionCompletionRate" 
+                :color="getProgressColor(qualityMetrics.sectionCompletionRate)"
               />
             </div>
             <div class="metric-item">
@@ -436,7 +436,7 @@ const recentActivities = ref<any[]>([])
 
 // 内容质量指标
 const qualityMetrics = ref({
-  courseCompletion: 0,
+  sectionCompletionRate: 0,
   userActivity: 0,
   userActivityLabel: '良好',
   discussionEngagement: 0,
@@ -596,7 +596,7 @@ const loadDashboardData = async () => {
     // 使用后端计算的质量指标
     if (dashboardStats.qualityMetrics) {
       qualityMetrics.value = {
-        courseCompletion: dashboardStats.qualityMetrics.courseCompletion || 0,
+        sectionCompletionRate: dashboardStats.qualityMetrics.sectionCompletionRate || 0,
         userActivity: dashboardStats.qualityMetrics.userActivity || 0,
         userActivityLabel: dashboardStats.qualityMetrics.userActivityLabel || '良好',
         discussionEngagement: dashboardStats.qualityMetrics.discussionEngagement || 0,

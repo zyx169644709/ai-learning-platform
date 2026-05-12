@@ -65,7 +65,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="completedCourses" label="完成课程" width="90" align="center" header-align="center" />
+        <el-table-column prop="completedSections" label="完成小节" width="90" align="center" header-align="center" />
         <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="viewUser(row)">查看</el-button>
@@ -124,7 +124,6 @@
               {{ getRoleLabel(selectedUser.role) }}
             </el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="完成课程">{{ selectedUser.completedCourses || 0 }} 门</el-descriptions-item>
           <el-descriptions-item label="收藏数">{{ selectedUser.favoritesCount || 0 }} 个</el-descriptions-item>
           <el-descriptions-item label="发帖数">{{ selectedUser.discussionsCount || 0 }} 篇</el-descriptions-item>
           <el-descriptions-item label="评论数">{{ selectedUser.commentsCount || 0 }} 条</el-descriptions-item>
@@ -135,22 +134,14 @@
           </el-descriptions-item>
         </el-descriptions>
 
-        <h3 style="margin-top: 20px;">学习记录</h3>
-        <el-table :data="selectedUser.courses" size="small">
-          <el-table-column prop="title" label="课程名称" />
-          <el-table-column prop="progress" label="进度" width="100">
-            <template #default="{ row }">
-              {{ row.progress }}%
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态" width="100">
-            <template #default="{ row }">
-              <el-tag :type="row.status === 'completed' ? 'success' : 'warning'">
-                {{ row.status === 'completed' ? '已完成' : '学习中' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="completedAt" label="完成时间" />
+        <h3 style="margin-top: 20px;">学习记录（已完成小节）</h3>
+        <el-table :data="selectedUser.courses" size="small" max-height="300">
+          <el-table-column prop="sectionTitle" label="小节名称" min-width="160" />
+          <el-table-column prop="chapterTitle" label="所属章节" min-width="140" />
+          <el-table-column prop="completedAt" label="完成时间" width="120" />
+          <template #empty>
+            <span style="color: #909399;">暂无学习记录</span>
+          </template>
         </el-table>
       </div>
     </el-dialog>
@@ -291,14 +282,11 @@ const viewUser = async (user: any) => {
       // 更新用户数据，包含真实的学习统计
       selectedUser.value = {
         ...user,
-        completedCourses: stats.completedCount,
         completedSections: stats.completedSections,
-        progress: stats.completionRate,
-        courses: stats.completedCourses.map((c: any) => ({
-          title: c.courseName,
-          progress: 100,
-          status: 'completed',
-          completedAt: new Date(c.completedAt).toLocaleDateString('zh-CN')
+        courses: stats.sections.map((s: any) => ({
+          sectionTitle: s.sectionTitle,
+          chapterTitle: s.chapterTitle,
+          completedAt: new Date(s.completedAt).toLocaleDateString('zh-CN')
         }))
       }
       

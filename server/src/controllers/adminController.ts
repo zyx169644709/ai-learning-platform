@@ -1223,3 +1223,39 @@ export const exportCourses = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: '服务器错误', error: error.message })
   }
 }
+
+export const getUserStats = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+
+    const sectionCompletions = await prisma.sectionCompletion.findMany({
+      where: { userId: id },
+      include: {
+        section: {
+          select: {
+            title: true,
+            parent: {
+              select: { title: true }
+            }
+          }
+        }
+      },
+      orderBy: { completedAt: 'desc' }
+    })
+
+    res.json({
+      success: true,
+      data: {
+        completedSections: sectionCompletions.length,
+        sections: sectionCompletions.map(sc => ({
+          sectionTitle: sc.section.title,
+          chapterTitle: sc.section.parent?.title || '-',
+          completedAt: sc.completedAt
+        }))
+      }
+    })
+  } catch (error: any) {
+    console.error('获取用户学习统计失败:', error)
+    res.status(500).json({ success: false, message: '服务器错误' })
+  }
+}

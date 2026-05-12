@@ -16,7 +16,7 @@
       <div class="toolbar-center">
         <div class="language-selector">
           <label>语言：</label>
-          <select v-model="selectedLanguage" @change="onLanguageChange">
+          <select v-model="selectedLanguage">
             <option value="javascript">JavaScript</option>
             <option value="typescript">TypeScript</option>
             <option value="html">HTML</option>
@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import MonacoEditor from '@/components/common/MonacoEditor.vue'
 import { transform as sucraseTransform } from 'sucrase'
@@ -142,6 +142,9 @@ const router = useRouter()
 // 状态
 const selectedLanguage = ref('javascript')
 const code = ref('')
+
+// 每语言代码缓冲区
+const codeBuffers = reactive<Record<string, string>>({})
 const isRunning = ref(false)
 const activeTab = ref('console')
 const editorWidth = ref(50)
@@ -467,10 +470,11 @@ const goBack = () => {
   router.back()
 }
 
-const onLanguageChange = () => {
-  code.value = templates[selectedLanguage.value] || ''
+watch(selectedLanguage, (newLang, oldLang) => {
+  codeBuffers[oldLang] = code.value
+  code.value = codeBuffers[newLang] ?? templates[newLang] ?? ''
   consoleOutput.value = []
-}
+})
 
 const copyCode = async () => {
   try {

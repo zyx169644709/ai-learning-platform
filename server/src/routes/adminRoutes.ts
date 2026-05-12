@@ -21,7 +21,8 @@ import {
   exportUsers,
   batchDeleteCourses,
   batchPublishCourses,
-  exportCourses
+  exportCourses,
+  getUserStats
 } from '../controllers/adminController'
 import {
   getChapters,
@@ -78,6 +79,7 @@ router.post('/users/:id/disable', authMiddleware, requireAdmin, disableUser)
 router.post('/users/:id/enable', authMiddleware, requireAdmin, enableUser)
 router.delete('/users/:id', authMiddleware, requireAdmin, deleteUser)
 router.post('/users/batch-delete', authMiddleware, requireAdmin, batchDeleteUsers)
+router.get('/users/:id/stats', authMiddleware, requireAdmin, getUserStats)
 router.post('/users/export', authMiddleware, requireAdmin, exportUsers)
 
 // 课程管理
