@@ -72,8 +72,6 @@
               mode="dialog"
               title="统计信息"
               :items="row.type === 'chapter' ? [
-                { label: '浏览量', value: row.viewCount },
-                { label: '收藏量', value: row.favoriteCount },
                 { label: '小节数', value: row.childrenCount }
               ] : [
                 { label: '浏览量', value: row.viewCount },
@@ -187,6 +185,8 @@ import BatchActionBar from '@/components/BatchActionBar.vue'
 import StatsDisplay from '@/components/StatsDisplay.vue'
 import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import request from '@/utils/request'
+
+const router = useRouter()
 
 // 选中的章节
 const selectedChapters = ref<any[]>([])
@@ -520,7 +520,6 @@ const handleDelete = async (row: any) => {
 // 管理小节题目
 const manageSectionQuestions = (row: any) => {
   // 跳转到题目管理页面，并带上小节ID作为筛选条件
-  const router = useRouter()
   router.push({
     path: '/admin/quiz-management',
     query: {

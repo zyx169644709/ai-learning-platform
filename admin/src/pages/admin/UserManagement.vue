@@ -405,13 +405,12 @@ const showExportDialog = ref(false)
 const exportUser = ref<any>(null)
 const exportFields = [
   { label: '用户ID', value: 'id' },
-  { label: '用户名', value: 'username' },
+  { label: '用户名', value: 'name' },
   { label: '邮箱', value: 'email' },
   { label: '角色', value: 'role' },
   { label: '状态', value: 'status' },
-  { label: '最后登录', value: 'lastLoginAt' },
-  { label: '注册时间', value: 'createdAt' },
-  { label: '最后更新', value: 'updatedAt' },
+  { label: '最后登录', value: 'lastLogin' },
+  { label: '注册时间', value: 'registeredAt' },
   { label: '收藏数', value: 'favoritesCount' },
   { label: '发帖数', value: 'discussionsCount' },
   { label: '评论数', value: 'commentsCount' }

@@ -676,7 +676,7 @@ export const toggleCommentStatus = async (req: Request, res: Response) => {
     const comment = await prisma.comment.findUnique({ where: { id } })
     if (!comment) return res.status(404).json({ success: false, message: '评论不存在' })
 
-    const newStatus = comment.status === 'visible' ? 'hidden' : 'visible'
+    const newStatus = comment.status === 'hidden' ? 'visible' : 'hidden'
     await prisma.comment.update({ where: { id }, data: { status: newStatus } })
     res.json({ success: true, message: newStatus === 'hidden' ? '评论已隐藏' : '评论已显示', data: { status: newStatus } })
   } catch (error: any) {

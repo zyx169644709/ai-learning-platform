@@ -54,7 +54,7 @@
       <el-table
         class="quiz-tree-table"
         ref="quizTreeTableRef"
-        :data="quizTreeData"
+        :data="pagedQuizTreeData"
         stripe
         row-key="id"
         :tree-props="{ children: 'children' }"
@@ -121,8 +121,8 @@
           :total="pagination.total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
-          @size-change="loadQuizzes"
-          @current-change="loadQuizzes"
+          @size-change="() => { pagination.page = 1 }"
+          @current-change="() => {}"
         />
       </div>
     </el-card>
@@ -423,6 +423,11 @@ const filterForm = reactive({
 
 const quizzes = ref<QuizItem[]>([])
 const quizTreeData = ref<QuizTreeNode[]>([])
+const allQuizTreeData = ref<QuizTreeNode[]>([])
+const pagedQuizTreeData = computed(() => {
+  const start = (pagination.page - 1) * pagination.size
+  return allQuizTreeData.value.slice(start, start + pagination.size)
+})
 const quizTreeTableRef = ref<any>()
 const showQuizDialog = ref(false)
 const isEdit = ref(false)
@@ -604,14 +609,15 @@ async function loadQuizzes() {
   try {
     const response = await request.get('/quiz/admin/list', {
       params: {
-        ...getPaginationParams(),
+        limit: 9999,
+        page: 1,
         ...filterForm
       }
     })
 
     if (response.data.success) {
       quizzes.value = response.data.data || []
-      setTotal(response.data.total || 0)
+      pagination.page = 1
 
       // 树形数据：分类(题目类型) -> 题库 -> 题目
       const quizDetails = await Promise.all(
@@ -680,7 +686,9 @@ async function loadQuizzes() {
         categoryMap[category].updatedAt = pickLatestDate(categoryMap[category].updatedAt, latestUpdatedAt)
       }
 
-      quizTreeData.value = Object.values(categoryMap)
+      allQuizTreeData.value = Object.values(categoryMap)
+      quizTreeData.value = allQuizTreeData.value
+      setTotal(allQuizTreeData.value.length)
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.message || '加载题库列表失败')
