@@ -17,7 +17,24 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
 
-app.use(cors({ origin: true, credentials: true }))
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3001',
+  process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
+].filter(Boolean) as string[]
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.some(o => origin.startsWith(o)) || origin.endsWith('.vercel.app')) {
+      return callback(null, true)
+    }
+    callback(new Error(`CORS blocked: ${origin}`))
+  },
+  credentials: true
+}))
 app.use(bodyParser.json({ limit: '10mb' }))
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }))
 
