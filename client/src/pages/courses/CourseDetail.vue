@@ -116,6 +116,7 @@ import MarkdownIt from 'markdown-it'
 import { favoriteService } from '@/services/favoriteService'
 import { ElMessage } from 'element-plus'
 import defaultCourseCoverSrc from '@/assets/images/course-beginner-cover.svg'
+import { API_BASE } from '@/config'
 
 interface Course {
   id: string
@@ -137,7 +138,7 @@ const course = ref<Course | null>(null)
 const loading = ref(true)
 const showPlayer = ref(false)
 const isFavorited = ref(false)
-const courseApiBase = 'http://localhost:3000'
+const courseApiBase = API_BASE
 
 const md = new MarkdownIt({ html: true, linkify: true })
 
@@ -204,7 +205,7 @@ const bvId = computed(() => getBvId(course.value?.url))
 const startCourse = () => {
   if (!course.value?.url) return
   // 学习人数+1
-  fetch(`http://localhost:3000/api/courses/${course.value.id}/learn`, { method: 'POST' }).catch(() => {})
+  fetch(`${API_BASE}/api/courses/${course.value.id}/learn`, { method: 'POST' }).catch(() => {})
 
   if (isBilibili.value) {
     showPlayer.value = true

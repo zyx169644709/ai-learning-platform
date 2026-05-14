@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
+import { API_BASE } from '@/config'
 
-const API_BASE_URL = 'http://localhost:3000/api/quiz'
+const API_BASE_URL = `${API_BASE}/api/quiz`
 
 const api: AxiosInstance = axios.create({ baseURL: API_BASE_URL })
 

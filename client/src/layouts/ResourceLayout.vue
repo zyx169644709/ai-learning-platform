@@ -28,6 +28,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AiPanel from '@/components/common/AiPanel.vue'
 import CatalogSidebar from '@/components/common/CatalogSidebar.vue'
 import { RESOURCE_CATEGORY_OPTIONS, type ResourceCategoryKey } from '../../../shared/constants/resourceCategories'
+import { API_BASE } from '@/config'
 
 interface ApiResource {
   id: string
@@ -51,7 +52,7 @@ const categoriesWithResources = computed(() => {
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources?status=published&limit=100')
+    const res = await fetch(`${API_BASE}/api/resources?status=published&limit=100`)
     const result = await res.json()
     const items = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = Array.isArray(items) ? items : []

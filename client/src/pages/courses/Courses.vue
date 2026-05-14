@@ -86,6 +86,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { COURSE_CATEGORY_OPTIONS, inferCourseCategory, type CourseCategoryKey } from '../../../../shared/constants/courseCategories'
 import defaultCourseCover from '@/assets/images/course-beginner-cover.svg'
 import defaultAvatar from '@/assets/images/default.png'
+import { API_BASE } from '@/config'
 
 const router = useRouter()
 const route = useRoute()
@@ -94,7 +95,7 @@ const openAiChat = () => window.dispatchEvent(new CustomEvent('open-ai-chat'))
 
 const query = ref('')
 const loadedCovers = reactive<Record<string, string>>({})
-const courseApiBase = 'http://localhost:3000'
+const courseApiBase = API_BASE
 
 type Level = string
 interface CourseCard { 

@@ -1,11 +1,9 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { notification } from '@/utils/notification'
+import { API_BASE } from '@/config'
 
-// 创建axios实例
-// 开发环境：使用 Vite 代理（/api -> http://localhost:3000）
-// 生产环境：使用环境变量 VITE_API_BASE_URL（例如 https://yourdomain.com/api）
-const apiBaseURL = (import.meta as any)?.env?.VITE_API_BASE_URL || '/api'
+const apiBaseURL = `${API_BASE}/api`
 
 const api: AxiosInstance = axios.create({
   baseURL: apiBaseURL,

@@ -76,6 +76,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { RESOURCE_CATEGORY_OPTIONS, type ResourceCategoryMeta } from '../../../../shared/constants/resourceCategories'
+import { API_BASE } from '@/config'
 
 const route = useRoute()
 const router = useRouter()
@@ -133,13 +134,6 @@ const query = ref('')
 const sortBy = ref('title')
 
 // 排序选项
-const sortOptions = [
-  { value: 'title', label: '标题' },
-  { value: 'viewCount', label: '浏览量' },
-  { value: 'likeCount', label: '点赞数' }
-]
-
-const API_BASE = 'http://localhost:3000'
 const defaultCover = new URL('/src/assets/images/document-cover.svg', import.meta.url).href
 
 function resolveResourceCover(cover?: string): string {
@@ -159,7 +153,7 @@ interface ApiResource { id: string; title: string; description?: string; url?: s
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/resources?status=published&limit=100')
+    const res = await fetch(`${API_BASE}/api/resources?status=published&limit=100`)
     const result = await res.json()
     const data: ApiResource[] = result.success ? result.data.items : (Array.isArray(result) ? result : [])
     resources.value = (data || []).map((r) => ({
@@ -231,7 +225,7 @@ const handleResourceClick = (resource: ResourceCard) => {
 const handleLike = async (event: Event, resource: ResourceCard) => {
   event.stopPropagation()
   try {
-    const res = await fetch(`http://localhost:3000/api/resources/${resource.id}/like`, { method: 'POST' })
+    const res = await fetch(`${API_BASE}/api/resources/${resource.id}/like`, { method: 'POST' })
     const json = await res.json()
     if (json.success) {
       resource.likeCount = json.data.likeCount

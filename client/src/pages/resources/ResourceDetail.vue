@@ -49,7 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { API_BASE } from '@/config'
 import { useRoute } from 'vue-router'
 import { favoriteService } from '@/services/favoriteService'
 import { ElMessage } from 'element-plus'
@@ -231,7 +232,7 @@ const loadResourceDetail = async () => {
   if (!resourceId) return
   
   try {
-    const res = await fetch(`http://localhost:3000/api/resources/${resourceId}`)
+    const res = await fetch(`${API_BASE}/api/resources/${resourceId}`)
     const result = await res.json()
     if (result.success && result.data) {
       const r = result.data
@@ -244,7 +245,7 @@ const loadResourceDetail = async () => {
           const val = (r.cover || '').trim()
           if (!val) return new URL('/src/assets/images/document-cover.svg', import.meta.url).href
           if (val.startsWith('http://') || val.startsWith('https://')) return val
-          if (val.startsWith('/uploads/')) return `http://localhost:3000${val}`
+          if (val.startsWith('/uploads/')) return `${API_BASE}${val}`
           if (val.startsWith('/assets/')) {
             try { return new URL(val.replace('/assets/', '/src/assets/'), import.meta.url).href } catch { return val }
           }
@@ -261,7 +262,7 @@ const loadResourceDetail = async () => {
       }
       favoriteCount.value = r.favoriteCount || 0
       // 增加浏览量
-      fetch(`http://localhost:3000/api/resources/${resourceId}/view`, { method: 'POST' }).catch(() => {})
+      fetch(`${API_BASE}/api/resources/${resourceId}/view`, { method: 'POST' }).catch(() => {})
       // 检查收藏状态
       await checkFavoriteStatus()
     }

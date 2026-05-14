@@ -28,6 +28,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AiPanel from '@/components/common/AiPanel.vue'
 import CatalogSidebar from '@/components/common/CatalogSidebar.vue'
 import { COURSE_CATEGORY_OPTIONS, inferCourseCategory, type CourseCategoryKey } from '../../../shared/constants/courseCategories'
+import { API_BASE } from '@/config'
 
 interface ApiCourse {
   id: string
@@ -55,7 +56,7 @@ const categoriesWithCourses = computed(() => {
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/courses')
+    const res = await fetch(`${API_BASE}/api/courses`)
     const data: ApiCourse[] = await res.json()
     courses.value = Array.isArray(data) ? data : []
   } catch (error) {

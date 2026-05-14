@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
+import { API_BASE } from '@/config'
 
-const API_BASE_URL = 'http://localhost:3000/api/community'
+const API_BASE_URL = `${API_BASE}/api/community`
 
 // 为社区模块创建专用 axios 实例并自动附带 JWT
 const api: AxiosInstance = axios.create({ baseURL: API_BASE_URL })

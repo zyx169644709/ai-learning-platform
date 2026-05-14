@@ -27,6 +27,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AiPanel from '@/components/common/AiPanel.vue'
 import CatalogSidebar from '@/components/common/CatalogSidebar.vue'
+import { API_BASE } from '@/config'
 
 const COMMUNITY_CATEGORIES = [
   { key: 'tech',       label: '💻 技术讨论' },
@@ -56,7 +57,7 @@ const categoriesWithDiscussions = computed(() =>
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3000/api/community')
+    const res = await fetch(`${API_BASE}/api/community`)
     const data = await res.json()
     discussions.value = Array.isArray(data) ? data : []
   } catch (error) {
