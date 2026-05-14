@@ -202,6 +202,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import request from '@/utils/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
@@ -508,7 +509,12 @@ const batchPublish = async () => {
   }
 }
 
+const route = useRoute()
+
 onMounted(() => {
+  if (route.query.search) {
+    filterForm.title = route.query.search as string
+  }
   loadCourses()
 })
 </script>

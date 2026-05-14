@@ -209,6 +209,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Plus } from '@element-plus/icons-vue'
 import BatchActionBar from '@/components/BatchActionBar.vue'
@@ -532,7 +533,12 @@ const getCategoryLabel = (category: string): string => {
 }
 
 // 初始化
+const route = useRoute()
+
 onMounted(() => {
+  if (route.query.search) {
+    filterForm.title = route.query.search as string
+  }
   loadResources()
 })
 </script>

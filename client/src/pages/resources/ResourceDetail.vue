@@ -240,7 +240,16 @@ const loadResourceDetail = async () => {
         title: r.title,
         description: r.description || '',
         type: (r.type as ResType) || 'document',
-        preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
+        preview: (() => {
+          const val = (r.cover || '').trim()
+          if (!val) return new URL('/src/assets/images/document-cover.svg', import.meta.url).href
+          if (val.startsWith('http://') || val.startsWith('https://')) return val
+          if (val.startsWith('/uploads/')) return `http://localhost:3000${val}`
+          if (val.startsWith('/assets/')) {
+            try { return new URL(val.replace('/assets/', '/src/assets/'), import.meta.url).href } catch { return val }
+          }
+          return new URL('/src/assets/images/document-cover.svg', import.meta.url).href
+        })(),
         downloads: r.viewCount || 0,
         author: r.author || 'AI学院',
         authorAvatar: new URL('/src/assets/images/default.png', import.meta.url).href,

@@ -143,6 +143,7 @@
           v-for="(item, index) in currentRankList" 
           :key="index"
           class="rank-item"
+          style="cursor: pointer"
           @click="viewDetail(item)"
         >
           <div class="rank-badge" :class="`rank-${index + 1}`">
@@ -152,10 +153,6 @@
           
           <div class="rank-content">
             <div class="rank-title">{{ item.title }}</div>
-            <div class="rank-meta">
-              <el-tag size="small" type="info">{{ item.category }}</el-tag>
-              <span class="author">{{ item.author }}</span>
-            </div>
           </div>
           
           <div class="rank-stats">
@@ -175,6 +172,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, markRaw } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { 
   User, 
@@ -997,8 +995,19 @@ const exportReport = async () => {
 }
 
 // 查看详情
-const viewDetail = (item: any) => {
-  ElMessage.info(`查看详情: ${item.title}`)
+const router = useRouter()
+
+const viewDetail = (item: RankItem) => {
+  const routeMap: Record<string, string> = {
+    '课程': '/admin/courses',
+    '小节': '/admin/chapters',
+    '资源': '/admin/resources',
+    '帖子': '/admin/community/discussions'
+  }
+  const target = routeMap[rankContentType.value]
+  if (target) {
+    router.push({ path: target, query: { search: item.title } })
+  }
 }
 
 onMounted(() => {

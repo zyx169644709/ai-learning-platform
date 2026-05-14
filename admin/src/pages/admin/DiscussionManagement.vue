@@ -332,6 +332,9 @@ const getCategoryLabel = (category: string) => {
 }
 
 onMounted(async () => {
+  if (route.query.search) {
+    filterForm.keyword = route.query.search as string
+  }
   loadDiscussions()
   const reviewTab = route.query.review as string
   if (reviewTab === 'discussions' || reviewTab === 'comments') {

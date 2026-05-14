@@ -6,8 +6,13 @@ import path from 'node:path'
 const prisma = new PrismaClient()
 const uploadsDir = path.resolve(__dirname, '../../uploads')
 
-// 通过 Microlink API 获取网站封面图（优先 og:image，降级 logo）
-async function fetchCoverFromMicrolink(url: string): Promise<string | null> {
+// 延迟函数，避免请求过快触发限流
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+// 通过 Microlink API 获取网站封面图（优先 og:image，降级 logo），最多重试 3 次
+async function fetchCoverFromMicrolink(url: string, retryCount = 0): Promise<string | null> {
+  const MAX_RETRIES = 3
+
   if (url.startsWith('https://github.com')) {
     return 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
   }
@@ -33,16 +38,28 @@ async function fetchCoverFromMicrolink(url: string): Promise<string | null> {
 
     console.error(`  Microlink 返回非成功状态 (${url}): status=${data.status}`)
     return null
-  } catch (error) {
+  } catch (error: any) {
+    const isNetworkError = ['ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND'].includes(error?.cause?.code)
+    if (isNetworkError && retryCount < MAX_RETRIES) {
+      const waitMs = 2000 * Math.pow(2, retryCount)  // 2s → 4s → 8s
+      console.log(`  ↳ 网络错误(${error?.cause?.code})，${waitMs / 1000}秒后重试 (${retryCount + 1}/${MAX_RETRIES})...`)
+      await sleep(waitMs)
+      return fetchCoverFromMicrolink(url, retryCount + 1)
+    }
     console.error(`  请求失败 (${url}):`, error)
     return null
   }
 }
 
 async function saveRemoteCoverToUploads(imageUrl: string, prefix: string, entityId: string) {
-  const response = await fetch(imageUrl)
-  if (!response.ok) {
-    throw new Error(`下载封面失败: ${response.status} ${response.statusText}`)
+  let response: Response
+  try {
+    response = await fetch(imageUrl)
+  } catch (error: any) {
+    throw new Error(`下载封面网络错误: ${error?.cause?.code || error?.message}`)
+  }
+  if (!response!.ok) {
+    throw new Error(`下载封面失败: ${response!.status} ${response!.statusText}`)
   }
 
   const arrayBuffer = await response.arrayBuffer()
@@ -59,9 +76,6 @@ async function saveRemoteCoverToUploads(imageUrl: string, prefix: string, entity
   return `/uploads/${fileName}`
 }
 
-// 延迟函数，避免请求过快触发限流
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
 async function fetchAndUpdateResourceCovers() {
   console.log('开始批量获取资源封面（Microlink API）...\n')
 
@@ -75,7 +89,7 @@ async function fetchAndUpdateResourceCovers() {
   console.log(`找到 ${resources.length} 个候选资源\n`)
 
   let successCount = 0
-  let failCount = 0
+  let deleteCount = 0
   let skipCount = 0
 
   for (const resource of resources) {
@@ -85,8 +99,8 @@ async function fetchAndUpdateResourceCovers() {
       continue
     }
 
-    if (resource.cover?.startsWith('/uploads/')) {
-      console.log(`- 已是本地封面，跳过: ${resource.title}`)
+    if (resource.cover) {
+      console.log(`  ⏭ 已有封面数据，跳过: ${resource.title}`)
       skipCount++
       continue
     }
@@ -97,23 +111,30 @@ async function fetchAndUpdateResourceCovers() {
     const coverUrl = await fetchCoverFromMicrolink(resource.url)
 
     if (coverUrl) {
-      const localCoverUrl = await saveRemoteCoverToUploads(coverUrl, 'resource-cover', resource.id)
-      await prisma.resource.update({
-        where: { id: resource.id },
-        data: { cover: localCoverUrl }
-      })
-      console.log(`  ✓ 封面已更新: ${localCoverUrl}`)
-      successCount++
+      try {
+        const localCoverUrl = await saveRemoteCoverToUploads(coverUrl, 'resource-cover', resource.id)
+        await prisma.resource.update({
+          where: { id: resource.id },
+          data: { cover: localCoverUrl }
+        })
+        console.log(`  ✓ 封面已更新: ${localCoverUrl}`)
+        successCount++
+      } catch (error: any) {
+        console.error(`  ✗ 下载封面失败，删除资源: ${error.message}`)
+        await prisma.resource.delete({ where: { id: resource.id } })
+        deleteCount++
+      }
     } else {
-      console.log(`  ✗ 未获取到封面，跳过`)
-      failCount++
+      console.log(`  ✗ 未获取到封面，删除资源`)
+      await prisma.resource.delete({ where: { id: resource.id } })
+      deleteCount++
     }
 
     // 每次请求间隔 800ms，避免触发 Microlink 免费版限流（50次/天）
     await sleep(800)
   }
 
-  console.log(`\n完成！成功: ${successCount} 个，失败: ${failCount} 个，跳过: ${skipCount} 个`)
+  console.log(`\n完成！成功: ${successCount} 个，已删除: ${deleteCount} 个，跳过: ${skipCount} 个`)
 }
 
 fetchAndUpdateResourceCovers()

@@ -139,6 +139,20 @@ const sortOptions = [
   { value: 'likeCount', label: '点赞数' }
 ]
 
+const API_BASE = 'http://localhost:3000'
+const defaultCover = new URL('/src/assets/images/document-cover.svg', import.meta.url).href
+
+function resolveResourceCover(cover?: string): string {
+  const val = (cover || '').trim()
+  if (!val) return defaultCover
+  if (val.startsWith('http://') || val.startsWith('https://')) return val
+  if (val.startsWith('/uploads/')) return `${API_BASE}${val}`
+  if (val.startsWith('/assets/')) {
+    try { return new URL(val.replace('/assets/', '/src/assets/'), import.meta.url).href } catch { return val }
+  }
+  return defaultCover
+}
+
 const resources = ref<ResourceCard[]>([])
 
 interface ApiResource { id: string; title: string; description?: string; url?: string; cover?: string; icon?: string; tags?: any; viewCount?: number; likeCount?: number; type?: string; category?: string; status?: string }
@@ -154,7 +168,7 @@ onMounted(async () => {
       description: r.description || '',
       type: (r.type as ResType) || 'website',
       category: r.category || '',
-      preview: r.cover ? new URL(r.cover.replace('/assets/', '/src/assets/'), import.meta.url).href : new URL('/src/assets/images/document-cover.svg', import.meta.url).href,
+      preview: resolveResourceCover(r.cover),
       url: r.url || '',
       icon: r.icon || '',
       tags: Array.isArray(r.tags) ? r.tags : [],

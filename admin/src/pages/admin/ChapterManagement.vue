@@ -173,7 +173,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormRules } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
@@ -587,7 +587,12 @@ const batchPublish = async () => {
 }
 
 // 初始化
+const route = useRoute()
+
 onMounted(() => {
+  if (route.query.search) {
+    filterForm.sectionTitle = route.query.search as string
+  }
   loadParentChapters()
   loadChapters()
 })
